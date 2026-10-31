@@ -1,0 +1,76 @@
+name: Where to Go - Cargar directorio real de RD
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/actualizar-directorio-rd.yml'
+      - 'Where_to_Go_Proyecto_Completo/tools/import_osm_rd.py'
+permissions:
+  contents: write
+concurrency:
+  group: wtg-import-rd
+  cancel-in-progress: false
+jobs:
+  directorio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Instalar lector OSM
+        run: python -m pip install 'osmium>=4,<6' 'shapely>=2,<3'
+      - name: Descargar datos públicos y frontera de RD
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 4 --retry-delay 5 --connect-timeout 30 --max-time 420 --output /tmp/rd-haiti.osm.pbf 'https://download.geofabrik.de/central-america/haiti-and-domrep-latest.osm.pbf'
+          curl --fail --location --retry 4 --retry-delay 5 --connect-timeout 30 --max-time 180 --output /tmp/countries.geojson 'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson'
+          test "$(stat -c%s /tmp/rd-haiti.osm.pbf)" -gt 10000000
+      - name: Probar fuente antes de importar
+        run: |
+          python - <<'PYTEST'
+          from pathlib import Path
+          assert Path('/tmp/rd-haiti.osm.pbf').stat().st_size > 10000000
+          assert Path('/tmp/countries.geojson').stat().st_size > 1000
+          print('Fuentes descargadas. Construyendo índice dominicano...')
+          PYTEST
+      - name: Construir catalogo RD validado
+        run: |
+          python Where_to_Go_Proyecto_Completo/tools/import_osm_rd.py --pbf /tmp/rd-haiti.osm.pbf --countries /tmp/countries.geojson --out Where_to_Go_Proyecto_Completo/public/data/places
+          python - <<'PY'
+          import json
+          p='Where_to_Go_Proyecto_Completo/public/data/places/manifest.json'
+          x=json.load(open(p));assert x['recordCount']>=100, x
+          print('RECUENTO NACIONAL PUBLICABLE:',x['recordCount'])
+          print('POR CATEGORÍA:',x['categories'])
+          PY
+      - name: Comprobar categorías y archivos antes de publicar
+        run: |
+          python - <<'PY'
+          import pathlib,json
+          out=pathlib.Path('Where_to_Go_Proyecto_Completo/public/data/places')
+          m=json.loads((out/'manifest.json').read_text())
+          assert m['recordCount']>=100, m
+          assert m['cells'], 'Sin celdas generadas'
+          for cell in m['cells']:
+            f=out/f'cell_{cell}.json'
+            assert f.exists(), f
+          print('OK:',m['recordCount'],'lugares reales;',len(m['cells']),'celdas en RD')
+          PY
+      - name: Publicar los datos en el mismo GitHub
+        run: |
+          set -euo pipefail
+          git config user.name 'Where to Go Open Data'
+          git config user.email 'actions@users.noreply.github.com'
+          git add Where_to_Go_Proyecto_Completo/public/data/places/
+          if ! git diff --cached --quiet; then
+             git commit -m 'Directorio RD: lugares reales OSM clasificados'
+             git push origin HEAD:main
+          else
+             echo 'Sin cambios en catálogo'
+          fi
