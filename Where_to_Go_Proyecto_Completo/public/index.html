@@ -16,10 +16,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/premium.css?v=3.2" />
+  <link rel="stylesheet" href="/premium.css?v=4.2" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
+  <section id="auth-gate" class="auth-gate" role="dialog" aria-modal="true" aria-labelledby="auth-title"><div class="auth-shell"><div class="auth-brand"><span class="auth-logo">W</span><div><strong>Where to Go<span class="brand-dot">.</span></strong><small>A DÓNDE IR · REPÚBLICA DOMINICANA</small></div></div><span class="auth-overline">DESCUBRE TU PRÓXIMA AVENTURA</span><h1 id="auth-title">El mundo está esperando por ti.</h1><p>Entra para guardar tus lugares favoritos y descubrir nuevas experiencias cerca de donde estás.</p><div class="auth-options"><button type="button" data-social="google" class="auth-social"><span>G</span> Continuar con Google</button><button type="button" data-social="apple" class="auth-social"><span>●</span> Continuar con Apple</button><button type="button" data-social="facebook" class="auth-social"><span>f</span> Continuar con Facebook</button></div><div class="auth-divider">O UTILIZA TU CORREO</div><form id="auth-email-form"><label>Correo electrónico <input id="auth-email" type="email" autocomplete="email" required placeholder="correo@ejemplo.com"></label><label>Contraseña <input id="auth-password" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label><div class="auth-email-actions"><button type="submit" data-auth-action="login">Entrar</button><button type="button" id="auth-create">Crear cuenta</button></div></form><p class="auth-error" id="auth-error" role="alert" hidden></p><label class="auth-optin"><input type="checkbox" id="auth-consent"> Quiero guardar mi historial de lugares vistos para recibir recomendaciones personalizadas. Puedo desactivarlo.</label><button type="button" id="auth-demo">Explorar demostración sin cuenta →</button><small id="auth-config-note" class="auth-config-note">El acceso real se activa al conectar Supabase y los proveedores.</small></div></section>
   <div id="app">
     <aside class="sidebar">
       <a class="brand" href="#inicio" aria-label="Where to Go inicio">
@@ -41,7 +42,7 @@
       </nav>
       <div class="sidebar-bottom">
         <div class="sidebar-promo"><span class="sidebar-promo-icon">✷</span><strong>¿Tienes un negocio?</strong><p>Haz que más personas te descubran.</p><button id="side-promote" class="tiny-white-btn">Quiero anunciarme →</button></div>
-        <p class="copyright">© 2026 Where to Go · Versión 3.0</p>
+        <p class="copyright">© 2026 Where to Go · Versión 4.1</p>
       </div>
     </aside>
 
@@ -52,27 +53,32 @@
         <div class="topbar-actions">
           <button class="location-pill" id="location-pill" title="Cambiar ubicación"><span class="pin-icon">⌖</span><span class="location-pill-text" id="location-label">Puerto Plata, RD</span><span class="chevron">⌄</span></button>
           <button class="top-icon-btn" id="top-refresh" title="Actualizar lugares" aria-label="Actualizar lugares">↻</button>
-          <button class="top-avatar" id="top-business" title="Registrar negocio" aria-label="Registrar negocio">WT</button>
+          <button class="top-avatar" id="top-business" title="Mi cuenta" aria-label="Abrir mi cuenta">WT</button>
         </div>
       </header>
 
+      <div id="provider-banner" class="provider-banner" role="status" aria-live="polite" hidden>
+        <div><strong>Google Places está temporalmente fuera de servicio</strong><small id="provider-notice-desc">La búsqueda continúa con datos reales de OpenStreetMap.</small></div>
+        <button type="button" id="retry-google-provider">Reintentar Google ↻</button>
+      </div>
       <main id="main-content" tabindex="-1">
         <section class="view active" id="view-inicio" aria-labelledby="welcome-title">
-          <div class="welcome-row"><div><div class="eyebrow"><span class="eyebrow-dot"></span> TU GUÍA PARA EXPLORAR</div><h1 id="welcome-title">Hola, explorador <span>👋</span></h1><p>El mundo está lleno de lugares increíbles. Encuentra el tuyo.</p></div><div class="date-pill" id="today-label"></div></div>
+          <div class="welcome-row"><div><div class="eyebrow"><span class="eyebrow-dot"></span> TU GUÍA PARA EXPLORAR</div><h1 id="welcome-title">Tu próxima aventura empieza aquí <span>👋</span></h1><p>El mundo está lleno de lugares increíbles. Encuentra el tuyo.</p></div><div class="date-pill" id="today-label"></div></div>
           <section class="hero" aria-label="Descubre lugares">
             <div class="hero-art" aria-hidden="true"></div>
             <div class="hero-content"><span class="hero-pill">✦ TU GUÍA EXCLUSIVA DE DESTINOS</span><h2>La República Dominicana<br>se vive <em>explorando.</em></h2><p>De playas escondidas a experiencias inolvidables. Explora lugares reales, descubre negocios locales y planea tu próxima salida.</p><button id="hero-explore" class="btn btn-light">Explorar lugares <span>↗</span></button></div>
             <div class="hero-coordinate">✦ <span>PUERTO PLATA · FOTO REAL</span></div>
           </section>
           <p class="hero-credit">Portada: Puerto Plata, fotografía de Jusunx · <a href="https://commons.wikimedia.org/wiki/File:Aerial_view_of_Puerto_Plata,_June_2023.jpg" target="_blank" rel="noopener">CC BY-SA 4.0 / Wikimedia Commons</a></p>
+          <section id="province-explorer" class="province-explorer" aria-label="Portadas por provincia"><div><span class="mini-eyebrow">32 DEMARCACIONES · 158 MUNICIPIOS</span><h3>Explora cada provincia</h3><p>Elige una provincia para ver su portada real. Selecciona un municipio para cambiar la búsqueda de lugares.</p></div><div class="province-control-row"><label for="hero-province" class="visually-hidden">Provincia</label><select id="hero-province" aria-label="Provincia"></select><button class="btn btn-primary" id="hero-choose-municipio">Elegir municipio ↗</button></div><small id="hero-preview-note" hidden>Vista previa de portada: los lugares cercanos siguen vinculados a tu ubicación hasta que elijas un municipio.</small></section>
           <div class="location-alert" id="location-alert"><span class="alert-icon">◎</span><div><strong id="location-alert-title">Explorando Puerto Plata</strong><small id="location-alert-desc">Activa tu ubicación para encontrar lugares realmente cercanos.</small></div><button id="alert-locate">Usar mi ubicación <span>→</span></button></div>
           <div class="section-heading"><div><span class="mini-eyebrow">ENCUENTRA TU PLAN IDEAL</span><h2>¿Qué te gustaría hacer?</h2></div><button class="text-action" id="show-all-categories">Todas las categorías →</button></div>
           <div class="category-grid" id="home-categories"></div>
           <section class="taxi-teaser" aria-label="Transporte VIP en Puerto Plata"><div class="taxi-teaser-symbol">CT</div><div><span class="mini-eyebrow">SERVICIO DESTACADO · PUERTO PLATA</span><h3>Tu próximo trayecto, en manos expertas.</h3><p>Clemente Transport VIP · Aeropuertos, hoteles y traslados privados.</p></div><div class="taxi-teaser-actions"><button class="btn btn-primary" id="home-see-taxis">Explorar transporte ↗</button></div></section>
-          <div class="section-heading results-heading"><div><span class="mini-eyebrow">SELECCIÓN CERCA DE TI</span><h2>Descubre a tu alrededor <span class="result-count" id="home-count"></span></h2></div><button class="text-action" id="home-see-all">Ver más lugares →</button></div>
+          <div class="section-heading results-heading"><div><span class="mini-eyebrow">SELECCIÓN CERCA DE TI</span><h2>Destinos cerca de tu ubicación <span class="result-count" id="home-count"></span></h2></div><button class="text-action" id="home-see-all">Ver más lugares →</button></div>
           <div id="home-list" class="place-grid"></div>
           <section class="promo-banner"><div class="promo-banner-graphic">✦</div><div><span class="promo-badge">PARA EMPRENDEDORES</span><h2>Tu negocio merece ser descubierto.</h2><p>Aparece frente a personas que están buscando exactamente lo que ofreces.</p></div><button id="promo-banner-btn" class="btn btn-dark">Promocionar negocio ↗</button></section>
-          <div class="data-credit">Lugares: © colaboradores de OpenStreetMap · Fotos vinculadas a lugares reales o ausencia indicada explícitamente · Nunca se usan fotos genéricas para las fichas</div>
+          <div class="data-credit">Fuentes: Ministerio de Turismo RD y © colaboradores de OpenStreetMap · Fotos vinculadas a lugares reales o ausencia indicada explícitamente · Nunca se usan fotos genéricas para las fichas</div>
         </section>
 
         <section class="view" id="view-explorar" aria-labelledby="explore-title">
@@ -80,7 +86,7 @@
           <div class="filter-panel"><div class="searchbar"><span class="search-icon">⌕</span><input id="search-input" type="search" placeholder="Buscar restaurantes, playas, hoteles, nombres..." autocomplete="off" aria-label="Buscar lugares"><button id="clear-search" class="clear-search" title="Borrar búsqueda">×</button></div><div class="filter-row"><div class="filter-chips" id="filter-categories"></div><select id="distance-select" aria-label="Radio de búsqueda"><option value="2000">A 2 km</option><option value="5000">A 5 km</option><option value="12000" selected>A 12 km</option><option value="20000">A 20 km</option><option value="30000">A 30 km</option></select></div></div>
           <div class="section-heading explorer-result-heading"><div><h2>Resultados <span class="result-count" id="explore-count"></span></h2><p id="explore-context">Buscando lugares cercanos...</p></div><button id="explore-map" class="outline-btn">▤ Ver en mapa</button></div>
           <div id="explore-list" class="place-grid explore-grid"></div>
-          <p class="data-credit">Lugares de OpenStreetMap (o Google Places si se configura la API). La cobertura depende del proveedor. Sin fotografía comprobable no mostramos otra foto.</p>
+          <p class="data-credit">Destinos turísticos documentados + datos de OpenStreetMap (o Google Places si se configura la API). La cobertura depende del proveedor. Sin fotografía comprobable no mostramos otra foto.</p>
         </section>
 
 
@@ -118,6 +124,9 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script defer src="/app.js?v=3.2"></script>
+  <script defer src="/province-heroes.js?v=4.2"></script>
+  <script defer src="/config.js?v=4.2"></script>
+  <script defer src="/app.js?v=4.2"></script>
+  <script type="module" src="/auth.js?v=4.2"></script>
 </body>
 </html>

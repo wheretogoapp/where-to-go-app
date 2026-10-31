@@ -1,56 +1,60 @@
-# Where to Go — A dónde ir · V3 Premium República Dominicana
+# Where to Go · V4.2 Premium · República Dominicana
 
-## Cambios en esta versión
+**Sobre la web premium elegida**: esta versión se construyó a partir del proyecto V4.1 (diseño premium V3), preservando secciones de explorar, mapa, favoritos, taxis, promociones, mis negocios y geolocalización.
 
-- Rediseño premium oscuro/champán, portada con fotografía identificada de Puerto Plata y crédito visible.
-- 31 provincias + Distrito Nacional, 158 municipios en selector territorial (datos offline incluidos).
-- Sección **Taxis y transporte** con filtros por provincia y municipio. **Clemente Transport VIP** aparece primero para Puerto Plata y todos sus municipios con WhatsApp **829-586-9111**, teléfono y página web. No se inventa sede ni coordenada.
-- Sección de resultados con enlace de respaldo a una búsqueda real en Google Maps si faltan datos.
-- Radio inicial ampliado a 12 km, con opciones de 5, 12, 20 y 30 km.
-- Lugares OSM/Overpass; la disponibilidad y completitud dependen del proveedor. Fotos vinculadas al lugar o “Foto no disponible”.
-- Netlify Functions (fuera de `public`) para conectar Google Places (New): búsquedas, teléfono y foto por identidad del establecimiento, únicamente si configuras la clave.
+## Contenido efectivamente incluido
 
-## Cómo publicar la demo SIN clave Google
+- 31 provincias + Distrito Nacional = **32 demarcaciones**.
+- **158 municipios** en `public/data/municipios-rd.json` (los municipios están listados; la localización de cada uno mediante Nominatim necesita conexión).
+- **32 fotografías provinciales distintas**, vinculadas a archivos de Wikimedia Commons de lugares reales de cada demarcación, declaradas en `public/data/province-heroes.json`. Una foto por provincia, no una foto individual para cada uno de los 158 municipios.
+- Cada portada muestra lugar representado y vínculo a fotografía, autor/licencia. Las imágenes se descargan desde Wikimedia únicamente cuando se necesita esa provincia (no se cargan las 32 a la vez); si la descarga falla no se sustituye por una foto de otra provincia.
+- Selector de portada por provincia, más selección de municipio para **mover el centro de búsqueda**. Solo la vista previa cambia de portada; **los resultados cercanos no cambian hasta confirmar ubicación**.
+- Pantalla inicial de acceso con Google, Facebook, Apple y correo/contraseña, con implementación real de Supabase Auth, pendiente de conectar. **Nunca se simula un inicio de sesión real**; sin credenciales hay un modo demostración explícito.
+- Autenticación configurada: sesión persistente, perfil de usuario, favoritos que pueden sincronizarse; registro de vistas **solo con consentimiento expreso**.
+- Se conserva la lógica de cercanía de V4.1, Google Places opcional, respaldo con OpenStreetMap, y ficha de Clemente Transport VIP de Puerto Plata. Los errores de permisos de Google Cloud no se resuelven por este cambio.
 
-1. Descomprime la carpeta y sube **únicamente la carpeta `public/`** a Netlify Drop: https://app.netlify.com/drop
-2. El despliegue estático muestra el directorio de transporte, GPS y municipios. La búsqueda pública gratuita OSM puede devolver 0 resultados o fallar por disponibilidad.
-3. Desde una URL HTTPS abre la página, toca “Usar mi ubicación” y permite el permiso GPS (se abre desde clic del usuario, no se fuerza).
-4. La geolocalización debe probarse en dispositivo real. También puedes seleccionar provincia/municipio manualmente.
+## Instalación en el proyecto de GitHub existente
 
-**IMPORTANTE:** al subir solo `public/` desde Netlify Drop, no se despliegan las funciones del servidor. Para Google Places publica el proyecto completo mediante Git → Netlify, con funciones y la variable de entorno.
+1. **No crees un sitio nuevo ni elimines los archivos antiguos.** Haz copia de seguridad en GitHub.
+2. Descomprime el ZIP. Dentro están las carpetas `public`, `netlify`, `supabase`, y `netlify.toml`.
+3. En el repositorio `wheretogoapp/where-to-go-app`, abre la carpeta actual `Where_to_Go_Proyecto_Completo`. Sustituye los archivos por los de este ZIP **sin crear otra carpeta anidada**.
+4. Conserva el directorio base de Netlify `Where_to_Go_Proyecto_Completo`, publicación `public`, funciones `netlify/functions`. Revisa que el despliegue esté `Published`.
+5. Prueba Santiago → Monumento, Pedernales → Bahía de las Águilas, Monte Cristi → entorno de El Morro, y las 32 provincias desde el selector. La imagen tiene que aparecer en línea según la conexión con Wikimedia.
+6. El login real **no funciona hasta que configures Supabase**; la demo permite probar todo sin cuenta.
 
-## Configurar Google Places API (New)
+## Activar registro real con Supabase (sin volver a usar Google Places)
 
-1. Abre https://console.cloud.google.com y crea proyecto **Where-to-Go-RD**.
-2. En Facturación (Billing), asocia una cuenta con método de pago válido.
-3. API y servicios → Biblioteca → habilita **Places API (New)**. No necesitas **Google Play Console** para las búsquedas web.
-4. API y servicios → Credenciales → Crear credenciales → Clave de API; restringe la clave para Places API (New). **No la pegues en el código público.**
-5. En Netlify, publica el repo Git vinculado a la carpeta del proyecto. Define la variable de entorno **GOOGLE_MAPS_API_KEY** con alcance para funciones, en producción, sin compartirla.
-6. Vuelve a desplegar. Comprueba que `/.netlify/functions/provider-status` devuelva `googlePlacesEnabled: true`.
-7. Configura **límites de cuota** para Text Search, Place Details y Place Photos y alarmas de costos en Google Cloud. Los avisos de presupuesto **no limitan automáticamente el gasto**.
-8. Verifica las políticas de Places API, uso de Google logo, datos fotográficos, condiciones y privacidad: https://developers.google.com/maps/documentation/places/web-service/policies
+1. Crea un proyecto Supabase en https://supabase.com/dashboard. Si piden plan, revisa tarifas y comienza por el plan gratuito si está disponible.
+2. En **SQL Editor**, ejecuta `supabase/schema.sql`, que crea `profiles`, `favorites` y `activity_events` con seguridad RLS, entre otras tablas.
+3. En **Project Settings / API**, copia **Project URL** y **anon/publishable key** (públicas) a `public/config.js`:
 
-## Costos (Google Maps Platform, octubre 2026; verificar precios antes de contratar)
+```js
+window.WTG_CONFIG = {
+  supabaseUrl: 'https://TU-PROYECTO.supabase.co',
+  supabaseAnonKey: 'TU_CLAVE_PUBLICA_PUBLISHABLE_O_ANON',
+  requireLogin: true,
+  allowDemo: false // cambiar a true para conservar un acceso demostración
+};
+```
 
-- Places API Text Search Pro: **5,000 solicitudes/mes gratis**; luego **US$32 por 1,000 solicitudes** (primer escalón).
-- Places API Place Details Enterprise, con teléfonos: **1,000/mes gratis**; luego **US$20 por 1,000**.
-- Place Photos: **1,000/mes gratis**; luego **US$7 por 1,000**.
-- Google no cobra por cada visitante sino por SKU y consultas; el total depende de qué datos se pidan y cuántas fotos se abran.
-- Fuente oficial de precios: https://developers.google.com/maps/billing-and-pricing/pricing
+**No incluyas** `service_role`, contraseñas ni secretos de terceros en GitHub.
 
-## Estado comercial REAL
+4. En Supabase → Authentication → URL Configuration: configura `Site URL` con el dominio HTTPS de tu Netlify y `Redirect URLs` con la dirección raíz que utilizarás (por ejemplo, `https://reliable-daffodil-8673f5.netlify.app/**`).
+5. Correo/contraseña: habilita proveedor Email en Supabase. Si confirmación por correo está activada, el usuario tendrá que verificar su correo.
+6. **Google:** Supabase → Authentication → Providers → Google; en Google Cloud crea las credenciales OAuth web correspondientes (no reutilices la clave de Google Places). El redirect de OAuth autorizado será `https://<PROJECT-REF>.supabase.co/auth/v1/callback`. Aplica la guía oficial Supabase.
+7. **Facebook:** crear una aplicación en Meta for Developers; configurar Facebook Login y permisos de `email`. Configurar ID y secret de Facebook en Supabase y misma URL de callback.
+8. **Apple:** cuenta/configuración en Apple Developer, crear App ID y Services ID, dominio/callback del login web y credenciales Apple en Supabase. Puede requerir membresía de Apple Developer (costos sujetos a Apple).
+9. Publica y prueba en HTTPS con cuentas reales, proveedores autorizados y políticas completas. Si aún no habilitaste un proveedor, su botón debe mostrar el error del proveedor, no crear una cuenta falsa.
 
-✅ Listo: interfaz, PWA, catálogo territorial, taxi destacado con contacto, filtros, código de integración opcional con Google, formulario local sin cobro.
-⚠️ Requiere API + publicación Git: resultados consistentes de Google con fotos y teléfonos reales.
-❌ Todavía no disponible: cuentas verificadas, dashboard multiempresa real, cobros recurrentes y activación automática de anuncios.
+## Datos y privacidad
 
-La app **no promete** que todos los negocios, contactos y fotos de la República Dominicana estén disponibles o auditados. No está lista para comercializar suscripciones automáticas. Puedes enseñar el prototipo como demostración y recoger interés, explicando que los pagos se habilitarán tras la fase piloto.
+La app pide ubicación solo con permiso del navegador. El GPS se utiliza para encontrar lugares cercanos y no se registra automáticamente en `activity_events`. Las vistas se guardan **solo con opt-in**; desmarcar el consentimiento impide nuevos registros. Antes del lanzamiento comercial: implementar eliminación/exportación de datos, política de retención, soporte y una política de privacidad adaptada a la ley aplicable.
 
-## Estructura de publicación
+Las fotografías se sirven desde Wikimedia Commons, sujetas a sus licencias individuales; la ficha de cada fotografía está enlazada en la portada. Las fotografías de lugares cercanos no se sustituyen por otras genéricas.
 
-- `public/`: archivos que ve el visitante, aptos para demo Netlify Drop.
-- `netlify/functions/`: consultas seguras en servidor para Google Places; no exponer en web pública.
-- `netlify.toml`: publicación de `public/` y empaquetado de funciones.
-- `PROPUESTA_COMERCIAL.md`: texto claro para presentar a negocios en el programa piloto.
+## Limitaciones que no se deben ocultar
 
-*Subir la carpeta `public/` a Drop sirve para la demo de diseño y transporte; no activa la API de Google.*
+- 32 portadas de provincias + 158 municipios listados **no es** un catálogo verificado de todos los negocios y balnearios del país.
+- Falta probar en Netlify y en dispositivos reales las fotografías remotas, GPS, login de proveedores y rendimiento en producción.
+- Google Places todavía puede devolver `403 PERMISSION_DENIED` por cuenta/proyecto de facturación; esta entrega no modifica esas credenciales ni promete resolverlo.
+- Los registros de promoción comercial siguen siendo fichas de prueba sin pago; falta backend y facturación.

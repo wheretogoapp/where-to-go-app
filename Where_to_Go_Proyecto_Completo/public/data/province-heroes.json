@@ -1,0 +1,322 @@
+{
+  "Azua": {
+    "province": "Azua",
+    "landmark": "Playa Blanca y la costa de Azua",
+    "file": "Azua Dominican Republic Landscape.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Azua%20Dominican%20Republic%20Landscape.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Azua_Dominican_Republic_Landscape.jpg",
+    "author": "FronterizoRD",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "Playas y paisaje del sur dominicano."
+  },
+  "Baoruco": {
+    "province": "Baoruco",
+    "landmark": "Parque central de Neiba",
+    "file": "Neiba Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Neiba%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Neiba_Dominican_Republic.jpg",
+    "author": "Cordillero88",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "El encanto del valle de Neiba."
+  },
+  "Barahona": {
+    "province": "Barahona",
+    "landmark": "Balnearios de La Ciénaga",
+    "file": "Barahona.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Barahona.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Barahona.jpg",
+    "author": "Fuente indicada en Wikimedia Commons",
+    "license": "CC BY 3.0",
+    "subtitle": "Ríos, balnearios y paisajes del sur."
+  },
+  "Dajabón": {
+    "province": "Dajabón",
+    "landmark": "Ciudad fronteriza de Dajabón",
+    "file": "Dajabon Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Dajabon%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Dajabon_Dominican_Republic.jpg",
+    "author": "FronterizoRD",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "Historia y vida fronteriza."
+  },
+  "Distrito Nacional": {
+    "province": "Distrito Nacional",
+    "landmark": "Zona Colonial de Santo Domingo",
+    "file": "Zona Colonial - Santo Domingo, Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Zona%20Colonial%20-%20Santo%20Domingo%2C%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Zona_Colonial_-_Santo_Domingo%2C_Dominican_Republic.jpg",
+    "author": "luilui01",
+    "license": "Licencia en Wikimedia Commons",
+    "subtitle": "Historia viva junto al mar Caribe."
+  },
+  "Duarte": {
+    "province": "Duarte",
+    "landmark": "San Francisco de Macorís",
+    "file": "San Francisco de Macoris Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/San%20Francisco%20de%20Macoris%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:San_Francisco_de_Macoris_Dominican_Republic.jpg",
+    "author": "Autor en Wikimedia Commons",
+    "license": "Licencia en Wikimedia Commons",
+    "subtitle": "Cultura y rincones del Nordeste."
+  },
+  "El Seibo": {
+    "province": "El Seibo",
+    "landmark": "Santa Cruz de El Seibo",
+    "file": "El Seibo Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/El%20Seibo%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:El_Seibo_Dominican_Republic.jpg",
+    "author": "CristoRey99",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "Tradición y pueblos con historia."
+  },
+  "Elías Piña": {
+    "province": "Elías Piña",
+    "landmark": "Iglesia de Comendador",
+    "file": "Comendador, Elias Pina Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Comendador%2C%20Elias%20Pina%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Comendador%2C_Elias_Pina_Dominican_Republic.jpg",
+    "author": "Ultimo1988",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "Montañas y tradiciones fronterizas."
+  },
+  "Espaillat": {
+    "province": "Espaillat",
+    "landmark": "Iglesia de Moca",
+    "file": "Church of Moca, Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Church%20of%20Moca%2C%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Church_of_Moca%2C_Dominican_Republic.jpg",
+    "author": "Seibano17",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "Café, cultura y arquitectura."
+  },
+  "Hato Mayor": {
+    "province": "Hato Mayor",
+    "landmark": "Cascada de Hato Mayor",
+    "file": "Hato mayor, dominican republic waterfall.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Hato%20mayor%2C%20dominican%20republic%20waterfall.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Hato_mayor%2C_dominican_republic_waterfall.jpg",
+    "author": "Pueblos RD",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "Aventura entre agua y montaña."
+  },
+  "Hermanas Mirabal": {
+    "province": "Hermanas Mirabal",
+    "landmark": "Monumento a las Hermanas Mirabal",
+    "file": "Monumento hermanas Mirabal.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Monumento%20hermanas%20Mirabal.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Monumento_hermanas_Mirabal.jpg",
+    "author": "Ronny Medina",
+    "license": "Licencia en Wikimedia Commons",
+    "subtitle": "Memoria, cultura y orgullo dominicano."
+  },
+  "Independencia": {
+    "province": "Independencia",
+    "landmark": "Lago Enriquillo desde La Descubierta",
+    "file": "Lago Enriquillo.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Lago%20Enriquillo.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Lago_Enriquillo.jpg",
+    "author": "Jast",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "Paisajes únicos del suroeste."
+  },
+  "La Altagracia": {
+    "province": "La Altagracia",
+    "landmark": "Playa Bávaro",
+    "file": "2024 - Bávaro Beach - 03.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/2024%20-%20B%C3%A1varo%20Beach%20-%2003.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:2024_-_B%C3%A1varo_Beach_-_03.jpg",
+    "author": "Autor en Wikimedia Commons",
+    "license": "Licencia en Wikimedia Commons",
+    "subtitle": "Playas luminosas y experiencias inolvidables."
+  },
+  "La Romana": {
+    "province": "La Romana",
+    "landmark": "Altos de Chavón",
+    "file": "Altos de Chavón. Casa de Campo, La Romana, Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Altos%20de%20Chav%C3%B3n.%20Casa%20de%20Campo%2C%20La%20Romana%2C%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Altos_de_Chav%C3%B3n._Casa_de_Campo%2C_La_Romana%2C_Dominican_Republic.jpg",
+    "author": "Mstyslav Chernov",
+    "license": "CC BY-SA 3.0",
+    "subtitle": "Arte, historia y paisajes junto al Chavón."
+  },
+  "La Vega": {
+    "province": "La Vega",
+    "landmark": "Salto Jimenoa, Jarabacoa",
+    "file": "Salto de Jimenoa 263.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Salto%20de%20Jimenoa%20263.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Salto_de_Jimenoa_263.jpg",
+    "author": "Autor en Wikimedia Commons",
+    "license": "Licencia en Wikimedia Commons",
+    "subtitle": "Montañas, saltos y aventura fresca."
+  },
+  "María Trinidad Sánchez": {
+    "province": "María Trinidad Sánchez",
+    "landmark": "Centro de Nagua",
+    "file": "Nagua Dominican Republic beach town.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Nagua%20Dominican%20Republic%20beach%20town.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Nagua_Dominican_Republic_beach_town.jpg",
+    "author": "Nagero88",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "Playas y paisajes del Nordeste."
+  },
+  "Monseñor Nouel": {
+    "province": "Monseñor Nouel",
+    "landmark": "Ciudad de Bonao",
+    "file": "Bonao Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Bonao%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Bonao_Dominican_Republic.jpg",
+    "author": "CristoRey99",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "Ríos, montañas y cultura del Cibao."
+  },
+  "Monte Cristi": {
+    "province": "Monte Cristi",
+    "landmark": "Entorno de El Morro",
+    "file": "Montecristi Dominican Republic El Morro 2.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Montecristi%20Dominican%20Republic%20El%20Morro%202.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Montecristi_Dominican_Republic_El_Morro_2.jpg",
+    "author": "Ultimo1988",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "Desierto costero y mar en el noroeste."
+  },
+  "Monte Plata": {
+    "province": "Monte Plata",
+    "landmark": "Cascadas de Bayaguana",
+    "file": "Wasserfälle bei Bayaguana.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Wasserf%C3%A4lle%20bei%20Bayaguana.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Wasserf%C3%A4lle_bei_Bayaguana.jpg",
+    "author": "Dr. Eugen Lehle",
+    "license": "CC BY-SA 3.0",
+    "subtitle": "Saltos, naturaleza y escapadas."
+  },
+  "Pedernales": {
+    "province": "Pedernales",
+    "landmark": "Bahía de las Águilas",
+    "file": "Bahia de las Aguilas.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Bahia%20de%20las%20Aguilas.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Bahia_de_las_Aguilas.jpg",
+    "author": "Scmjht",
+    "license": "CC BY-SA (ver ficha)",
+    "subtitle": "Naturaleza protegida y playas extraordinarias."
+  },
+  "Peravia": {
+    "province": "Peravia",
+    "landmark": "Dunas de Baní",
+    "file": "Dunas de Baní 1.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Dunas%20de%20Ban%C3%AD%201.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Dunas_de_Ban%C3%AD_1.jpg",
+    "author": "Ronny Medina",
+    "license": "CC BY 4.0",
+    "subtitle": "Arena, mar y aventura."
+  },
+  "Puerto Plata": {
+    "province": "Puerto Plata",
+    "landmark": "Vista aérea de Puerto Plata",
+    "file": "Aerial view of Puerto Plata, June 2023.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Aerial%20view%20of%20Puerto%20Plata%2C%20June%202023.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Aerial_view_of_Puerto_Plata%2C_June_2023.jpg",
+    "author": "Jusunx",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "La costa, la ciudad y el mundo por descubrir."
+  },
+  "Samaná": {
+    "province": "Samaná",
+    "landmark": "Salto El Limón",
+    "file": "Salto de Limon waterfall in Samana, Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Salto%20de%20Limon%20waterfall%20in%20Samana%2C%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Salto_de_Limon_waterfall_in_Samana%2C_Dominican_Republic.jpg",
+    "author": "Autor en Wikimedia Commons",
+    "license": "Licencia en Wikimedia Commons",
+    "subtitle": "Cascadas, bahías y selva tropical."
+  },
+  "San Cristóbal": {
+    "province": "San Cristóbal",
+    "landmark": "Iglesia y ciudad de San Cristóbal",
+    "file": "San Cristobal Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/San%20Cristobal%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:San_Cristobal_Dominican_Republic.jpg",
+    "author": "CristoRey99",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "Historia y escapadas cerca de la capital."
+  },
+  "San José de Ocoa": {
+    "province": "San José de Ocoa",
+    "landmark": "Paisaje de San José de Ocoa",
+    "file": "San Jose de Ocoa Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/San%20Jose%20de%20Ocoa%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:San_Jose_de_Ocoa_Dominican_Republic.jpg",
+    "author": "Autor en Wikimedia Commons",
+    "license": "Licencia en Wikimedia Commons",
+    "subtitle": "Montañas, aire fresco y aventura."
+  },
+  "San Juan": {
+    "province": "San Juan",
+    "landmark": "Arco de Triunfo de San Juan de la Maguana",
+    "file": "Triumphbogen (Arco del triunfo).jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Triumphbogen%20%28Arco%20del%20triunfo%29.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Triumphbogen_%28Arco_del_triunfo%29.jpg",
+    "author": "Autor en Wikimedia Commons",
+    "license": "Licencia en Wikimedia Commons",
+    "subtitle": "Historia y paisajes del valle de San Juan."
+  },
+  "San Pedro de Macorís": {
+    "province": "San Pedro de Macorís",
+    "landmark": "Catedral San Pedro Apóstol",
+    "file": "Catedral San Pedro.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Catedral%20San%20Pedro.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Catedral_San_Pedro.jpg",
+    "author": "PJAQUEZ19",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "Historia urbana y tradiciones del este."
+  },
+  "Sánchez Ramírez": {
+    "province": "Sánchez Ramírez",
+    "landmark": "Plaza de Cotuí",
+    "file": "Cotui Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Cotui%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Cotui_Dominican_Republic.jpg",
+    "author": "CristoRey99",
+    "license": "Licencia en Wikimedia Commons",
+    "subtitle": "Naturaleza y cultura del Cibao oriental."
+  },
+  "Santiago": {
+    "province": "Santiago",
+    "landmark": "Monumento a los Héroes de la Restauración",
+    "file": "Monumento a los heroes de la restauracion - panoramio.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Monumento%20a%20los%20heroes%20de%20la%20restauracion%20-%20panoramio.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Monumento_a_los_heroes_de_la_restauracion_-_panoramio.jpg",
+    "author": "Autor en Wikimedia Commons",
+    "license": "Licencia en Wikimedia Commons",
+    "subtitle": "La ciudad corazón te invita a explorar."
+  },
+  "Santiago Rodríguez": {
+    "province": "Santiago Rodríguez",
+    "landmark": "Presa de Monción",
+    "file": "Presa de Monción.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Presa%20de%20Monci%C3%B3n.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Presa_de_Monci%C3%B3n.jpg",
+    "author": "Autor en Wikimedia Commons",
+    "license": "Licencia en Wikimedia Commons",
+    "subtitle": "Montañas y paisajes junto al embalse."
+  },
+  "Santo Domingo": {
+    "province": "Santo Domingo",
+    "landmark": "Faro a Colón, Santo Domingo Este",
+    "file": "Santo Domingo - Faro a Colon.JPG",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Santo%20Domingo%20-%20Faro%20a%20Colon.JPG?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Santo_Domingo_-_Faro_a_Colon.JPG",
+    "author": "Martin Falbisoner",
+    "license": "Licencia en Wikimedia Commons",
+    "subtitle": "Descubre rincones del Gran Santo Domingo."
+  },
+  "Valverde": {
+    "province": "Valverde",
+    "landmark": "Ciudad de Mao",
+    "file": "Mao Dominican Republic.jpg",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Mao%20Dominican%20Republic.jpg?width=1600",
+    "source": "https://commons.wikimedia.org/wiki/File:Mao_Dominican_Republic.jpg",
+    "author": "Ultimo1988",
+    "license": "CC BY-SA 4.0",
+    "subtitle": "El valle del Yaque y su gente."
+  }
+}
