@@ -1,60 +1,48 @@
-# Where to Go · V4.2 Premium · República Dominicana
+# Where to Go V5 — Directorio RD · misma web premium
 
-**Sobre la web premium elegida**: esta versión se construyó a partir del proyecto V4.1 (diseño premium V3), preservando secciones de explorar, mapa, favoritos, taxis, promociones, mis negocios y geolocalización.
+Este proyecto **conserva** la interfaz aprobada, 32 demarcaciones, 158 municipios, GPS, el mapa, favoritos, sesiones con Supabase (requiere configuración) y Clemente Transport VIP.
 
-## Contenido efectivamente incluido
+## Cambios V5
 
-- 31 provincias + Distrito Nacional = **32 demarcaciones**.
-- **158 municipios** en `public/data/municipios-rd.json` (los municipios están listados; la localización de cada uno mediante Nominatim necesita conexión).
-- **32 fotografías provinciales distintas**, vinculadas a archivos de Wikimedia Commons de lugares reales de cada demarcación, declaradas en `public/data/province-heroes.json`. Una foto por provincia, no una foto individual para cada uno de los 158 municipios.
-- Cada portada muestra lugar representado y vínculo a fotografía, autor/licencia. Las imágenes se descargan desde Wikimedia únicamente cuando se necesita esa provincia (no se cargan las 32 a la vez); si la descarga falla no se sustituye por una foto de otra provincia.
-- Selector de portada por provincia, más selección de municipio para **mover el centro de búsqueda**. Solo la vista previa cambia de portada; **los resultados cercanos no cambian hasta confirmar ubicación**.
-- Pantalla inicial de acceso con Google, Facebook, Apple y correo/contraseña, con implementación real de Supabase Auth, pendiente de conectar. **Nunca se simula un inicio de sesión real**; sin credenciales hay un modo demostración explícito.
-- Autenticación configurada: sesión persistente, perfil de usuario, favoritos que pueden sincronizarse; registro de vistas **solo con consentimiento expreso**.
-- Se conserva la lógica de cercanía de V4.1, Google Places opcional, respaldo con OpenStreetMap, y ficha de Clemente Transport VIP de Puerto Plata. Los errores de permisos de Google Cloud no se resuelven por este cambio.
+- 50 categorías de turismo, comidas, compras, belleza, salud, servicios y transporte, organizadas en seis grupos.
+- Cabarete como distrito municipal de Sosúa, aparte de los 158 municipios.
+- Patrocinio provincial: en la portada de Puerto Plata aparece Clemente Transport VIP; en las listas solo se muestran anuncios aprobados de la categoría pertinente y dentro del radio de búsqueda.
+- Registro gratuito de negocios mediante **Netlify Forms**, previa aprobación (sin pagos automáticos). Cada negocio puede enviar nombre, categoría, provincia, localidad, dirección, contacto, enlaces de mapa y fotografía propia.
+- Dos catálogos separados: POIs abiertos de OSM y negocios propietarios revisados (`public/data/negocios-aprobados.json`). Las solicitudes de Forms nunca se publican sin revisión.
+- Importador nacional OSM activado desde GitHub Actions. **El ZIP no contiene todavía los POIs masivos**, se generan al ejecutar el flujo.
+- Coordenadas OSM y Waze para rutas, fotos de Wikimedia/OSM solo si realmente están vinculadas a la ficha (sin sustituciones por fotos genéricas).
 
-## Instalación en el proyecto de GitHub existente
+## Instalación, sin perder el Netlify actual
 
-1. **No crees un sitio nuevo ni elimines los archivos antiguos.** Haz copia de seguridad en GitHub.
-2. Descomprime el ZIP. Dentro están las carpetas `public`, `netlify`, `supabase`, y `netlify.toml`.
-3. En el repositorio `wheretogoapp/where-to-go-app`, abre la carpeta actual `Where_to_Go_Proyecto_Completo`. Sustituye los archivos por los de este ZIP **sin crear otra carpeta anidada**.
-4. Conserva el directorio base de Netlify `Where_to_Go_Proyecto_Completo`, publicación `public`, funciones `netlify/functions`. Revisa que el despliegue esté `Published`.
-5. Prueba Santiago → Monumento, Pedernales → Bahía de las Águilas, Monte Cristi → entorno de El Morro, y las 32 provincias desde el selector. La imagen tiene que aparecer en línea según la conexión con Wikimedia.
-6. El login real **no funciona hasta que configures Supabase**; la demo permite probar todo sin cuenta.
+En el ZIP, `.github/workflows/actualizar-directorio-rd.yml` se sube a la **raíz** del repositorio `wheretogoapp/where-to-go-app`. `Where_to_Go_Proyecto_Completo` debe ocupar la misma carpeta de ese nombre que ya existe en tu repositorio, conservando sus archivos de datos.
 
-## Activar registro real con Supabase (sin volver a usar Google Places)
+Confirma el commit en la rama `main`. La acción `Where to Go - Cargar directorio real de RD` se ejecuta automáticamente al detectar el importador nuevo o el propio workflow.
 
-1. Crea un proyecto Supabase en https://supabase.com/dashboard. Si piden plan, revisa tarifas y comienza por el plan gratuito si está disponible.
-2. En **SQL Editor**, ejecuta `supabase/schema.sql`, que crea `profiles`, `favorites` y `activity_events` con seguridad RLS, entre otras tablas.
-3. En **Project Settings / API**, copia **Project URL** y **anon/publishable key** (públicas) a `public/config.js`:
+Si en GitHub no se ejecuta: pestaña **Actions** > `Where to Go - Cargar directorio real de RD` > **Run workflow**. Si falla `git push` por permisos: Settings > Actions > General > Workflow permissions > Read and write, según permisos de tu cuenta.
 
-```js
-window.WTG_CONFIG = {
-  supabaseUrl: 'https://TU-PROYECTO.supabase.co',
-  supabaseAnonKey: 'TU_CLAVE_PUBLICA_PUBLISHABLE_O_ANON',
-  requireLogin: true,
-  allowDemo: false // cambiar a true para conservar un acceso demostración
-};
+Espera el commit automático `Directorio RD: lugares reales OSM clasificados`, y luego el estado **Published** del segundo despliegue de Netlify. Comprueba `https://reliable-daffodil-8673f5.netlify.app/data/places/manifest.json` y que `recordCount` sea mayor de cero. Si el flujo falla, no habrá un catálogo nacional importado; revisa los logs.
+
+## Registro gratis de negocios
+
+Activa una sola vez **Forms > Enable form detection** en Netlify antes de publicar esta versión. El formulario está descrito en `public/__forms.html`. Haz una solicitud real de prueba y comprueba que aparece en Netlify Forms. Los envíos **no** implican publicación ni pago.
+
+Para **aprobar una ficha gratuita** con coordenadas verificadas, agrega un objeto al arreglo `public/data/negocios-aprobados.json`. Ejemplo de estructura (NO es un negocio real):
+
+```json
+{"id":"slug-unico","name":"Negocio verificado","cat":"supermercados","province":"Puerto Plata","municipality":"Puerto Plata","lat":19.0,"lon":-70.0,"approved":true,"address":"Dirección revisada","phone":"","website":"","sourceUrl":"https://www.openstreetmap.org/node/...","photo":"","photoRightsConfirmed":false}
 ```
 
-**No incluyas** `service_role`, contraseñas ni secretos de terceros en GitHub.
+**Nunca copies el ejemplo como ficha real**: son valores estructurales de prueba. Solo publica coordenadas, número y fotografía comprobados por una fuente real o el propietario.
 
-4. En Supabase → Authentication → URL Configuration: configura `Site URL` con el dominio HTTPS de tu Netlify y `Redirect URLs` con la dirección raíz que utilizarás (por ejemplo, `https://reliable-daffodil-8673f5.netlify.app/**`).
-5. Correo/contraseña: habilita proveedor Email en Supabase. Si confirmación por correo está activada, el usuario tendrá que verificar su correo.
-6. **Google:** Supabase → Authentication → Providers → Google; en Google Cloud crea las credenciales OAuth web correspondientes (no reutilices la clave de Google Places). El redirect de OAuth autorizado será `https://<PROJECT-REF>.supabase.co/auth/v1/callback`. Aplica la guía oficial Supabase.
-7. **Facebook:** crear una aplicación en Meta for Developers; configurar Facebook Login y permisos de `email`. Configurar ID y secret de Facebook en Supabase y misma URL de callback.
-8. **Apple:** cuenta/configuración en Apple Developer, crear App ID y Services ID, dominio/callback del login web y credenciales Apple en Supabase. Puede requerir membresía de Apple Developer (costos sujetos a Apple).
-9. Publica y prueba en HTTPS con cuentas reales, proveedores autorizados y políticas completas. Si aún no habilitaste un proveedor, su botón debe mostrar el error del proveedor, no crear una cuenta falsa.
+Para **aprobar una promoción** usa `public/data/promociones.json` y configura `active=true`, `approved=true`, categoría exacta (`cat`), provincia, coordenadas y enlace comprobados. Mientras no tenga coordenadas públicas, Clemente Transport VIP se muestra únicamente en el espacio editorial de Puerto Plata y en Transporte, sin pin de oficina inventado. Las opciones de US$30/US$50 son propuestas, no cobros activos.
 
-## Datos y privacidad
+## Usuarios
 
-La app pide ubicación solo con permiso del navegador. El GPS se utiliza para encontrar lugares cercanos y no se registra automáticamente en `activity_events`. Las vistas se guardan **solo con opt-in**; desmarcar el consentimiento impide nuevos registros. Antes del lanzamiento comercial: implementar eliminación/exportación de datos, política de retención, soporte y una política de privacidad adaptada a la ley aplicable.
+La pantalla de acceso existe, pero para iniciar sesión de verdad con Google/Apple/Facebook/correo debes activar Supabase y los proveedores. `public/config.js` tiene los valores públicos, **nunca uses una service_role en el navegador**. El historial personal requiere consentimiento explícito.
 
-Las fotografías se sirven desde Wikimedia Commons, sujetas a sus licencias individuales; la ficha de cada fotografía está enlazada en la portada. Las fotografías de lugares cercanos no se sustituyen por otras genéricas.
+## Fuentes y licencias
 
-## Limitaciones que no se deben ocultar
+© OpenStreetMap contributors · ODbL: https://www.openstreetmap.org/copyright
+Geofabrik: https://download.geofabrik.de/central-america/haiti-and-domrep.html
 
-- 32 portadas de provincias + 158 municipios listados **no es** un catálogo verificado de todos los negocios y balnearios del país.
-- Falta probar en Netlify y en dispositivos reales las fotografías remotas, GPS, login de proveedores y rendimiento en producción.
-- Google Places todavía puede devolver `403 PERMISSION_DENIED` por cuenta/proyecto de facturación; esta entrega no modifica esas credenciales ni promete resolverlo.
-- Los registros de promoción comercial siguen siendo fichas de prueba sin pago; falta backend y facturación.
+La calidad de los puntos y la cobertura dependen de los datos OSM, y algunos way centroid NO son entradas de estacionamiento. No garantizamos todos los negocios ni fotografías de cada uno. Verificar antes de presentar fichas a empresas.
