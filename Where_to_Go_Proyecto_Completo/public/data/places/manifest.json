@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "updatedAt": null,
+  "source": "Geofabrik / OpenStreetMap",
+  "cells": [],
+  "recordCount": 0,
+  "note": "No se importaron entradas OSM. Solamente 8 destinos curados están disponibles hasta ejecutar importador."
+}
