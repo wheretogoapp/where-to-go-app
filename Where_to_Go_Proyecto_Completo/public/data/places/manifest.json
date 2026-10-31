@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "updatedAt": "2026-10-31T20:34:44.463366+00:00",
+  "updatedAt": "2026-10-31T20:44:06.356860+00:00",
   "source": "© OpenStreetMap contributors · ODbL / Geofabrik",
   "recordCount": 26837,
   "categories": {
@@ -187,5 +187,14 @@
     "549_546"
   ],
   "license": "https://www.openstreetmap.org/copyright",
-  "note": "Los puntos de áreas y ríos NO son entradas confirmadas. Teléfonos e imágenes son opcionales."
+  "note": "Los puntos de áreas y ríos NO son entradas confirmadas. Teléfonos e imágenes son opcionales.",
+  "licensedPhotoCount": 5,
+  "licensedPhotoEnrichment": {
+    "runAt": "2026-10-31T20:44:18.096064+00:00",
+    "linkedCandidates": 227,
+    "wikidataIDsQueried": 221,
+    "commonsFilesChecked": 53,
+    "withVerifiedLicense": 5,
+    "description": "Solo fotos vinculadas al lugar por OSM/Wikidata y con licencia libre verificable en Wikimedia Commons"
+  }
 }
