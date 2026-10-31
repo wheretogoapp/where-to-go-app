@@ -448,7 +448,7 @@ function wtgImportedPlace(row){
   if(!Number.isFinite(row.lat)||!Number.isFinite(row.lon)||!row.id||!row.name||!CATEGORY_BY_ID[row.cat])return null;
   return {
     id:row.id,name:row.name,cat:row.cat,lat:row.lat,lon:row.lon,
-    address:row.address||'',phone:row.phone||'',website:row.website||'',photo:photoFromTags({image:row.image||'',wikimedia_commons:row.wikimedia_commons||''}),
+    address:row.address||'',phone:row.phone||'',website:row.website||'',photo:row.photoSource&&row.image?row.image:photoFromTags({image:row.image||'',wikimedia_commons:row.wikimedia_commons||''}),photoSource:row.photoSource||'',photoAttribution:row.photoAttribution||'',
     tags:row.wikidata?{wikidata:row.wikidata}:{},source:'osm',accuracy:row.accuracy||'Punto registrado en OpenStreetMap',
     sourceUrl:row.sourceUrl||'https://www.openstreetmap.org/',
     description:row.description||'',distance:haversine(state.lat,state.lon,row.lat,row.lon)
