@@ -41,3 +41,6 @@ body{background:#f7f6f2;color:#182732}.sidebar{background:#111e29;color:#e9eef0;
 .wtg-taxi-item strong{display:block}.wtg-taxi-item small{display:block;margin-top:5px;color:#667984}.wtg-taxi-item a{color:#916939;font-weight:700;text-decoration:underline;white-space:nowrap}
 @media(max-width:1250px){.wtg-category-group{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:560px){.wtg-category-group{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.wtg-taxi-item{display:block}.wtg-taxi-item a{display:inline-block;margin-top:10px}}
+
+/* V5.1 · Publicidad Premium provincial (solo tras cobro confirmado) */
+.wtg-premium-province{padding:24px 0}.wtg-premium-province[hidden]{display:none!important}#province-premium-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:12px}.wtg-provincial-premium{background:linear-gradient(115deg,#0d2732,#1a3b47);color:white;padding:18px 20px;border:1px solid #b69852;border-radius:16px;display:grid;gap:8px;box-shadow:0 6px 24px #001e2218}.wtg-provincial-premium strong{display:block;font-size:18px}.wtg-provincial-premium small{display:block;font-size:12px;opacity:.78;margin-top:4px}.wtg-provincial-premium a{color:#ebd797;text-decoration:underline;font-weight:700;font-size:13px}.premium-marker{font-size:10px;font-weight:800;letter-spacing:.12em;color:#eed398}

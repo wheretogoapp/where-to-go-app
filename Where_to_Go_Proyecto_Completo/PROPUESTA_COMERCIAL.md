@@ -1,38 +1,21 @@
-# WHERE TO GO · A DÓNDE IR
-## Propuesta comercial para restaurantes, bares, hoteles y transporte — República Dominicana
+# Where to Go — propuesta comercial inicial
 
-**Una guía digital para que te descubran viajeros y residentes.** El usuario elige su provincia o municipio o activa su GPS, explora categorías y visita perfiles de negocios con un contacto directo.
+**Where to Go — A dónde ir** es un directorio de turismo y negocios con búsqueda por cercanía. La portada cambia según la provincia; las categorías están separadas por actividad.
 
-### ¿Qué recibe tu negocio?
+## Planes propuestos
 
-- Ficha con nombre comercial, categoría, descripción, fotos propias aprobadas, ubicación real verificada y contacto (cuando el negocio lo proporcione).
-- Botón de WhatsApp, sitio web y llamada; acceso a indicaciones si la dirección está verificada.
-- Ubicación en la categoría y municipio correspondiente; espacio promocional identificado como publicidad.
-- Estadísticas de clics y visibilidad **previstas para una fase siguiente**.
-
-### Planes propuestos para el piloto comercial
-
-| Plan | Precio propuesto | Aparición prevista |
+| Plan | Precio | Beneficio |
 | --- | --- | --- |
-| Destacado | US$30/mes | Ficha destacada en una categoría/localidad |
-| Premium | US$50/mes | Prioridad publicitaria en la categoría y área de recomendados |
+| Básico | US$10, pago único | Publicación de ficha verificada, sin prioridad publicitaria |
+| Destacado | US$30 mensuales | Primero dentro de su categoría y provincia, por delante de fichas básicas |
+| Premium | US$50 mensuales | Espacio en la portada de la provincia y posición prioritaria en su categoría |
 
-**Estos son precios sugeridos, NO hay suscripciones activas ni cobros habilitados actualmente.** Los lugares que no pagan seguirán visibles; los destacados tendrán etiqueta publicitaria.
+Los planes mensuales incluyen la ficha básica (no se cobran US$10 adicionales). Los anuncios deben llevar la etiqueta **Publicidad**. La información y la ubicación se verifican antes de publicarse.
 
-### Preguntas frecuentes
+## Condiciones
 
-**¿Mi negocio aparece automáticamente después de registrarme?** Por ahora no. Los formularios de la demo se guardan solo en el teléfono/navegador; habrá que activar base de datos, revisión y cobros en la siguiente fase.
+Los planes están diseñados pero **los pagos automáticos aún no están disponibles**. El formulario recibe solicitudes; se envía una propuesta y se confirma el pago por un medio formal antes de publicar. No prometemos un número mínimo de clientes, visitas, fotos ni negocios donde los datos abiertos no los contengan.
 
-**¿De dónde salen los restaurantes?** OpenStreetMap en modo gratuito y Google Places (New) cuando se habilite una clave facturable. La cobertura de ambas fuentes varía.
+Para empresas que operan en varias provincias, cada colocación provincial necesita un acuerdo separado. Publicidad por categoría: un restaurante no aparece como patrocinado en la sección Taxis, ni una barbería en Ríos.
 
-**¿Todas las fotos y teléfonos están confirmados?** Cada ficha usa la imagen y el teléfono asociados por la fuente de ese negocio; si faltan, se ocultan o se marca "No disponible". Antes de vender campañas, cada empresa verifica los datos de su ficha.
-
-**¿Mi negocio aparecerá en Google?** La publicidad en Where to Go no equivale a un anuncio pagado en Google Maps ni garantiza posicionamiento dentro de Google.
-
-### Mensaje para presentarlo
-
-> Hola, estamos preparando Where to Go — A dónde ir, una guía de lugares y experiencias que comienza en República Dominicana. Queremos invitar a tu negocio al programa piloto. El visitante podrá descubrir tu establecimiento por zona y categoría, ver su ficha y contactarte directamente. Estamos recopilando negocios interesados en planes de visibilidad de US$30 y US$50 al mes, con condiciones que confirmaremos cuando terminemos de activar la plataforma. ¿Te gustaría recibir una demostración?
-
-### Qué falta antes de cobrar
-
-Habilitar Google Places API y garantizar resultados; registro central de negocios y verificación de propietarios; pasarela de pagos recurrentes; anuncios medibles; condiciones comerciales y política de privacidad; pruebas de ubicación, fotos y teléfonos con operadores reales.
+**Clemente Transport VIP** aparece en la portada editorial de Puerto Plata y como primer servicio propio de Transporte de esa provincia; no se publica una dirección de oficina inventada.

@@ -217,7 +217,7 @@ function localNearby(){
 let wtgSponsors=[];
 async function loadApprovedSponsors(){
   try {const r=await fetch('/data/promociones.json',{cache:'no-cache'});if(!r.ok)return;
-    const items=await r.json();wtgSponsors=(Array.isArray(items)?items:[]).filter(x=>x.approved===true&&x.active===true&&CATEGORIES.some(c=>c.id===x.cat));}
+    const items=await r.json();wtgSponsors=(Array.isArray(items)?items:[]).filter(x=>x.approved===true&&x.active===true&&x.paymentVerified===true&&['destacado','premium'].includes(x.plan)&&!!x.paidUntil&&Date.parse(x.paidUntil+'T23:59:59Z')>=Date.now()&&CATEGORIES.some(c=>c.id===x.cat));}
   catch {wtgSponsors=[];}
 }
 
@@ -226,26 +226,26 @@ async function loadApprovedFreeBusinesses(){
   const r=await fetch('/data/negocios-aprobados.json',{cache:'no-cache'});if(!r.ok)return;
   const list=await r.json();if(!Array.isArray(list))return;
   for(const b of list){
-    if(b.approved!==true||!b.id||!b.name||!CATEGORIES.some(c=>c.id===b.cat)||!Number.isFinite(b.lat)||!Number.isFinite(b.lon)||!b.sourceUrl)continue;
+    if(b.approved!==true||b.registrationPaid!==true||!b.id||!b.name||!CATEGORIES.some(c=>c.id===b.cat)||!Number.isFinite(b.lat)||!Number.isFinite(b.lon)||!b.sourceUrl)continue;
     state.catalog.push({id:'business-'+b.id,name:b.name,cat:b.cat,lat:b.lat,lon:b.lon,
       address:b.address||'',phone:b.phone||'',website:b.website||'',photo:b.photoRightsConfirmed?b.photo||'':'',
       photoSource:b.photoRightsConfirmed?b.photoSource||'':'',photoAttribution:b.photoAttribution||'',
       province:b.province||'',municipality:b.municipality||'',source:'propietario',sourceUrl:b.sourceUrl,
       accuracy:b.accuracy||'Ubicación verificada al aprobar la ficha; confirma la entrada',description:b.description||'',tags:{}});
   }
- }catch(e){console.warn('Directorio gratuito pendiente:',e.message)}
+ }catch(e){console.warn('Directorio de registros básicos pendiente:',e.message)}
 }
 function sponsorInScope(s){
-  return s.province===state.province && (state.category==='todos'||state.category===s.cat) &&
+  return s.province===provinceFromCity() && (state.category==='todos'||state.category===s.cat) &&
     Number.isFinite(s.lat)&&Number.isFinite(s.lon) && haversine(state.lat,state.lon,s.lat,s.lon)<=state.radius;
 }
 function sponsorNearby(){return wtgSponsors.filter(sponsorInScope).map(s=>({
  id:'sponsor-'+s.id,name:s.name,cat:s.cat,lat:s.lat,lon:s.lon,province:s.province,
  municipality:s.municipality||'',address:s.address||'',phone:s.phone||'',website:s.website||'',
- description:s.description||'',source:'patrocinado',sourceUrl:s.sourceUrl||'',sponsored:true,
+ description:s.description||'',source:'patrocinado',sourceUrl:s.sourceUrl||'',sponsored:true,plan:s.plan,
  photo:s.photo||'',distance:haversine(state.lat,state.lon,s.lat,s.lon),accuracy:'Punto proporcionado y revisado por el anunciante',tags:{}
 }));}
-function promoSort(arr){return arr.sort((a,b)=>Number(!!b.sponsored)-Number(!!a.sponsored)||a.distance-b.distance||a.name.localeCompare(b.name,'es'));}
+function promoSort(arr){const rank=p=>p.sponsored?(p.plan==='premium'?3:2):0;return arr.sort((a,b)=>rank(b)-rank(a)||a.distance-b.distance||a.name.localeCompare(b.name,'es'));}
 
 function combineNearby(remote=[]){
   const output=new Map();
@@ -462,7 +462,7 @@ async function loadPlaces(force=false){
   const manifest=await wtgManifest();
   if(token!==state.loadingId)return;
   if(!manifest||!Array.isArray(manifest.cells)||!manifest.cells.length){
-    state.dataError='Catálogo inicial verificado (8 puntos nacionales) · más negocios por importar';
+    state.dataError='Importación pendiente: 0 negocios nacionales cargados. El administrador debe ejecutar GitHub → Actions → Cargar directorio real de RD.';
     renderAll();return;
   }
   const keys=wtgCellsNearby(state.lat,state.lon,state.radius,manifest);
@@ -509,12 +509,22 @@ function renderCategories(){const counts={};state.places.forEach(p=>{counts[p.ca
   $('filter-categories').innerHTML=[{id:'todos',name:'Todo',emoji:'✨'},...CATEGORIES].map(c=>`<button class="filter-chip ${state.category===c.id?'active':''}" data-filter="${c.id}">${c.emoji} ${c.name}</button>`).join('');
   $('business-category').innerHTML=CATEGORIES.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
 }
-function placeCard(p){const c=catInfo(p.cat),fav=state.favorites.includes(p.id);const provenance=p.source==='patrocinado'?'Publicidad · Ficha verificada por el anunciante':p.source==='propietario'?'Ficha gratuita revisada · Datos del propietario':p.source==='google'?GOOGLE_BRAND:(p.source==='mitur'?'Guía oficial de Turismo RD':'© OpenStreetMap');return `<article class="place-card"><div class="place-photo">${placePhotoMarkup(p)}<span class="card-tag">${p.sponsored?'★ Anuncio · ':''}${c.emoji} ${esc(c.name)}</span><button class="fav-button ${fav?'active':''}" data-fav="${esc(p.id)}" aria-label="${fav?'Quitar de favoritos':'Agregar a favoritos'}">${fav?'♥':'♡'}</button>${p.photo?'<span class="card-image-caption">Foto vinculada al lugar</span>':''}</div><div class="place-body"><button class="place-title" data-place="${esc(p.id)}">${esc(p.name)}</button><div class="place-meta"><span>⌖</span><b>${esc(p.address||'Dirección no publicada')}</b></div><div class="place-footer"><span class="distance-badge">↗ ${distance(p.distance)}</span><button class="card-open" data-place="${esc(p.id)}">Ver detalles →</button></div><small class="source-credit">${provenance}</small>${googleAttribution(p)}${p.photoAttribution?`<small class="photo-authors"><a href="${esc(p.photoSource)}" target="_blank" rel="noopener">Foto: ${esc(p.photoAttribution)}</a></small>`:''}</div></article>`}
-function emptyBlock(msg,action='Cambiar ubicación',target='location'){const categoryLabel=state.category==='todos'?'sitios de interés':(catInfo(state.category)?.name||'lugares');const mapsUrl='https://www.openstreetmap.org/#map=12/'+state.lat+'/'+state.lon;return `<div class="empty-state"><span class="empty-emoji">🧭</span><h3>${msg}</h3><p>${state.dataMode==='error'?'No se pudo conectar con el catálogo en vivo. No mostraremos lugares inventados; intenta de nuevo.':'Prueba otra categoría, aumenta la distancia o selecciona otro municipio. Un lugar no verificado no aparece como si fuera real.'}</p><button data-empty="${target}">${action} →</button><a class="empty-external" href="${esc(mapsUrl)}" target="_blank" rel="noopener">Explorar la zona en OpenStreetMap ↗</a></div>`}
-function renderHome(){const teaser=document.querySelector('.taxi-teaser');if(teaser)teaser.hidden=!(state.province==='Puerto Plata'||['Puerto Plata','Sosúa','Cabarete'].includes(state.city));const list=$('home-list');$('home-count').textContent=state.dataMode==='loading'?'...':state.places.filter(p=>p.distance<=state.radius+100).length;const sorted=sortByDistance(state.places.filter(p=>p.distance<=state.radius+100)).slice(0,6);
+function placeCard(p){const c=catInfo(p.cat),fav=state.favorites.includes(p.id);const provenance=p.source==='patrocinado'?'Publicidad · '+(p.plan==='premium'?'Premium':'Destacado')+' · Ficha verificada por el anunciante':p.source==='propietario'?'Ficha básica verificada · Datos del propietario':p.source==='google'?GOOGLE_BRAND:(p.source==='mitur'?'Guía oficial de Turismo RD':'© OpenStreetMap');return `<article class="place-card"><div class="place-photo">${placePhotoMarkup(p)}<span class="card-tag">${p.sponsored?'★ Anuncio · ':''}${c.emoji} ${esc(c.name)}</span><button class="fav-button ${fav?'active':''}" data-fav="${esc(p.id)}" aria-label="${fav?'Quitar de favoritos':'Agregar a favoritos'}">${fav?'♥':'♡'}</button>${p.photo?'<span class="card-image-caption">Foto vinculada al lugar</span>':''}</div><div class="place-body"><button class="place-title" data-place="${esc(p.id)}">${esc(p.name)}</button><div class="place-meta"><span>⌖</span><b>${esc(p.address||'Dirección no publicada')}</b></div><div class="place-footer"><span class="distance-badge">↗ ${distance(p.distance)}</span><button class="card-open" data-place="${esc(p.id)}">Ver detalles →</button></div><small class="source-credit">${provenance}</small>${googleAttribution(p)}${p.photoAttribution?`<small class="photo-authors"><a href="${esc(p.photoSource)}" target="_blank" rel="noopener">Foto: ${esc(p.photoAttribution)}</a></small>`:''}</div></article>`}
+function emptyBlock(msg,action='Cambiar ubicación',target='location'){const categoryLabel=state.category==='todos'?'sitios de interés':(catInfo(state.category)?.name||'lugares');const mapsUrl='https://www.openstreetmap.org/#map=12/'+state.lat+'/'+state.lon;return `<div class="empty-state"><span class="empty-emoji">🧭</span><h3>${msg}</h3><p>${state.dataMode==='error'?'No se pudo conectar con el catálogo en vivo. No mostraremos lugares inventados; intenta de nuevo.':(String(state.dataError).includes('Importación pendiente')?'Todavía no se ha importado el directorio nacional. No es un problema del filtro: faltan datos por publicar.':'Prueba otra categoría, aumenta la distancia o selecciona otro municipio. No inventamos establecimientos.')}</p><button data-empty="${target}">${action} →</button><a class="empty-external" href="${esc(mapsUrl)}" target="_blank" rel="noopener">Explorar la zona en OpenStreetMap ↗</a></div>`}
+function renderProvincePremium(){
+  const panel=document.getElementById('province-premium-list');if(!panel)return;
+  const prov=provinceFromCity();
+  const selected=wtgSponsors.filter(x=>x.province===prov&&x.plan==='premium'&&x.active&&x.approved&&x.paymentVerified)
+    .sort((a,b)=>String(a.name).localeCompare(String(b.name),'es')).slice(0,8);
+  const container=document.getElementById('province-premium-container');if(container)container.hidden=!selected.length;
+  panel.innerHTML=selected.map(x=>{const source=safeUrl(x.sourceUrl||x.website||'');const cat=catInfo(x.cat);
+    return `<article class="wtg-provincial-premium"><div class="premium-marker">PUBLICIDAD · PREMIUM</div><div><strong>${esc(x.name)}</strong><small>${esc(cat.name)} · ${esc(x.province)}</small></div>${source?`<a target="_blank" rel="noopener noreferrer" href="${esc(source)}">Ver negocio ↗</a>`:''}</article>`;
+  }).join('');
+}
+function renderHome(){renderProvincePremium();const teaser=document.querySelector('.taxi-teaser');if(teaser)teaser.hidden=!(state.province==='Puerto Plata'||['Puerto Plata','Sosúa','Cabarete'].includes(state.city));const list=$('home-list');$('home-count').textContent=state.dataMode==='loading'?'...':state.places.filter(p=>p.distance<=state.radius+100).length;const sorted=sortByDistance(state.places.filter(p=>p.distance<=state.radius+100)).slice(0,6);
   list.innerHTML=state.dataMode==='loading'?'<div class="loading-state"><span class="spinner"></span><div>Preparando lugares cercanos…</div></div>':sorted.length?sorted.map(placeCard).join(''):emptyBlock('Tu próxima aventura está por descubrirse');
   const mainPromo=document.getElementById('province-anchor-sponsor');
-  if(mainPromo){mainPromo.hidden=state.province!=='Puerto Plata';}
+  if(mainPromo){mainPromo.hidden=provinceFromCity()!=='Puerto Plata';}
   const alert=$('location-alert'),title=$('location-alert-title'),desc=$('location-alert-desc'),btn=$('alert-locate');
   if(state.dataMode==='error'){alert.style.background='#fff6e9';alert.style.borderColor='#f1e0c7';title.textContent='Catálogo temporalmente no disponible';desc.textContent='No se cargaron fichas de muestra ni coordenadas estimadas. Reintenta la consulta.';btn.innerHTML='Reintentar ↻';btn.dataset.action='retry';}
   else if(state.mode==='gps'){alert.style.background='#e9f7f4';alert.style.borderColor='#d8efea';title.textContent='Ubicación actual activada';desc.textContent=`Mostrando lugares cerca de tus coordenadas · ${state.places.length} encontrados`;btn.innerHTML='Cambiar zona →';btn.dataset.action='change';}
@@ -542,8 +552,8 @@ function openPlace(id){window.WTG_auth?.recordView?.(id, state.places.find(p=>p.
 }
 function openModal(id){closeModals();$(id).hidden=false;$('overlay').hidden=false;state.modal=id;document.body.style.overflow='hidden';const focused=$(id).querySelector('button:not([disabled])');focused?.focus({preventScroll:true})}
 function closeModals(){for(const id of ['place-modal','location-modal','register-modal'])$(id).hidden=true;$('overlay').hidden=true;state.modal=null;document.body.style.overflow='';wtgProvincePreview='';updateProvinceHero();}
-function openRegister(plan='destacado'){$('register-form').reset();$('business-city').value=state.mode==='gps'?'':state.city;
-  if($('business-province')){$('business-province').innerHTML='<option value="">Selecciona una provincia</option>'+PROVINCES.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');$('business-province').value=state.province||'';}$('business-plan').value=plan;openModal('register-modal')}
+function openRegister(plan='basico'){$('register-form').reset();$('business-city').value=state.mode==='gps'?'':state.city;
+  if($('business-province')){$('business-province').innerHTML='<option value="">Selecciona una provincia</option>'+PROVINCES.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');$('business-province').value=state.province||'';}$('business-plan').value=['basico','destacado','premium'].includes(plan)?plan:'basico';openModal('register-modal')}
 function renderCities(){
   $('city-options').innerHTML=CITIES.map(c=>`<button class="city-btn" data-city="${esc(c.name)}"><span>${c.emoji}</span><div>${esc(c.name)}<small>${esc(c.region)}</small></div></button>`).join('');
   $('province-select').innerHTML='<option value="">Selecciona provincia o Distrito Nacional</option>'+PROVINCES.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
@@ -683,7 +693,7 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
     const fav=e.target.closest('[data-fav]');if(fav){toggleFavorite(fav.dataset.fav);if(state.modal==='place-modal')openPlace(fav.dataset.fav);return}
     const place=e.target.closest('[data-place]');if(place){openPlace(place.dataset.place);return}
     const city=e.target.closest('[data-city]');if(city){selectCity(city.dataset.city);return}
-    const promo=e.target.closest('[data-open-register],.choose-plan');if(promo){openRegister(promo.dataset.plan||promo.dataset.openRegister);return}
+    const promo=e.target.closest('[data-open-register],.choose-plan');if(promo){openRegister(promo.dataset.plan||promo.dataset.openRegister||'basico');return}
     const rem=e.target.closest('[data-remove-business]');if(rem){if(confirm('¿Quieres eliminar esta ficha de prueba de este dispositivo?')){state.businesses.splice(Number(rem.dataset.removeBusiness),1);saveJSON('wtg_businesses',state.businesses);renderMyBusinesses();toast('Ficha eliminada.')}return}
     const mp=e.target.closest('[data-map-place]');if(mp){const p=state.places.find(x=>x.id===mp.dataset.mapPlace);if(p&&state.map){state.map.setView([p.lat,p.lon],15);state.markers.find(m=>m.getLatLng&&Math.abs(m.getLatLng().lat-p.lat)<.00001&&Math.abs(m.getLatLng().lng-p.lon)<.00001)?.openPopup()}return}
     const empty=e.target.closest('[data-empty]');if(empty){if(empty.dataset.empty==='radius'){$('distance-select').value='30000';state.radius=30000;loadPlaces()}else if(empty.dataset.empty==='explore')navigate('explorar');else openModal('location-modal');return}
@@ -693,7 +703,7 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
   $('location-pill').onclick=()=>openModal('location-modal');$('top-refresh').onclick=()=>{toast('Actualizando lugares...');loadPlaces(true)};$('top-business').onclick=()=>navigate('promocionar');$('side-promote').onclick=()=>navigate('promocionar');$('mobile-brand').onclick=()=>navigate('inicio');
   $('hero-explore').onclick=()=>navigate('explorar');$('home-see-all').onclick=()=>navigate('explorar');$('show-all-categories').onclick=()=>navigate('explorar');$('promo-banner-btn').onclick=()=>navigate('promocionar');
   $('alert-locate').onclick=()=>{if($('alert-locate').dataset.action==='retry'){loadPlaces(true)}else if($('alert-locate').dataset.action==='change'){openModal('location-modal')}else requestLocation()};
-  $('use-live-location').onclick=requestLocation;$('province-select').onchange=refreshMunicipalitySelect;$('municipality-select').onchange=()=>{$('municipality-go').disabled=!$('municipality-select').value};$('municipality-go').onclick=selectMunicipality;$('municipal-retry').onclick=()=>{ $('municipal-retry').hidden=true;loadMunicipalities()};$('business-cta').onclick=()=>openRegister('destacado');$('home-see-taxis').onclick=()=>navigate('taxis');$('taxi-register').onclick=()=>{openRegister('destacado');$('business-category').value='taxis'};$('add-another-business').onclick=()=>openRegister('destacado');$('explore-map').onclick=()=>navigate('mapa');
+  $('use-live-location').onclick=requestLocation;$('province-select').onchange=refreshMunicipalitySelect;$('municipality-select').onchange=()=>{$('municipality-go').disabled=!$('municipality-select').value};$('municipality-go').onclick=selectMunicipality;$('municipal-retry').onclick=()=>{ $('municipal-retry').hidden=true;loadMunicipalities()};$('business-cta').onclick=()=>openRegister('basico');$('home-see-taxis').onclick=()=>navigate('taxis');$('taxi-register').onclick=()=>{openRegister('basico');$('business-category').value='taxis'};$('add-another-business').onclick=()=>openRegister('basico');$('explore-map').onclick=()=>navigate('mapa');
   $('recenter-map').onclick=()=>{if(state.map)state.map.setView([state.lat,state.lon],13)};
   if($('retry-google-provider'))$('retry-google-provider').onclick=()=>toast('Esta versión funciona sin Google Places.');
   $('search-input').addEventListener('input',e=>{state.search=e.target.value.trim();renderExplore()});$('search-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&state.googleEnabled)loadPlaces()});$('clear-search').onclick=()=>{state.search='';$('search-input').value='';renderExplore()};
@@ -710,13 +720,13 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
     try{
       const payload=new URLSearchParams({'form-name':'wtg-negocios','bot-field':'',
         nombre:b.name,categoria:b.category,provincia:b.province,ciudad:b.city,direccion:b.address,
-        mapa:b.mapUrl,foto:b.photoUrl,telefono:b.phone,plan:b.plan,descripcion:b.description,
+        mapa:b.mapUrl,foto:b.photoUrl,telefono:b.phone,plan:b.plan,tarifa:b.plan==='basico'?'US$10 una vez':b.plan==='destacado'?'US$30 mensual':'US$50 mensual',descripcion:b.description,
         consentimiento:'Confirmo ser propietario o representante del negocio',fecha:b.createdAt});
       const res=await fetch('/__forms.html',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:payload.toString()});
       if(!res.ok)throw Error('HTTP '+res.status);
-      state.businesses.unshift({...b,status:'Enviado para revisión'});saveJSON('wtg_businesses',state.businesses);
+      state.businesses.unshift({...b,status:'Pendiente de revisión y pago'});saveJSON('wtg_businesses',state.businesses);
       closeModals();navigate('mis-negocios');renderMyBusinesses();
-      toast('Solicitud enviada. Se revisará antes de publicar; no se ha cobrado. Comprueba Netlify Forms.');
+      toast('Solicitud recibida, no publicada. Revisaremos el negocio y te indicaremos cómo pagar; no se ha cobrado.');
     }catch(err){
       state.businesses.unshift({...b,status:'Borrador local · no enviado'});saveJSON('wtg_businesses',state.businesses);
       closeModals();navigate('mis-negocios');renderMyBusinesses();

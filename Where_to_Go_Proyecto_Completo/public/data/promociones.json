@@ -13,6 +13,11 @@
     "website": "https://clementetransportvip.netlify.app/",
     "description": "Traslados privados y turísticos; servicio sujeto a reservación.",
     "sourceUrl": "https://clementetransportvip.netlify.app/",
-    "photo": ""
+    "photo": "",
+    "plan": "premium",
+    "paymentVerified": false,
+    "paidUntil": null,
+    "ownerEditorial": true,
+    "note": "Empresa propia: bloque editorial fijo de Puerto Plata; no se trata como anuncio de pago sin coordenadas verificadas."
   }
 ]
