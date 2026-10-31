@@ -1,6 +1,0 @@
-/* Cache only the app shell. Do not cache personal GPS responses or OSM API results. */
-const CACHE='where-to-go-shell-v3';
-const ASSETS=['/','/index.html','/styles.css','/premium.css','/app.js','/manifest.webmanifest','/data/municipios-rd.json','/privacidad.html','/terminos.html','/assets/favicon.svg','/assets/hero-coast.svg','/assets/icon-192.png','/assets/icon-512.png','/assets/scene-food.svg','/assets/scene-night.svg','/assets/scene-beach.svg','/assets/scene-pool.svg','/assets/scene-hotel.svg','/assets/scene-nature.svg','/assets/scene-attraction.svg'];
-self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));self.skipWaiting()});
-self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))));self.clients.claim()});
-self.addEventListener('fetch',event=>{const u=new URL(event.request.url);if(event.request.method!=='GET'||u.origin!==self.location.origin||u.pathname.startsWith('/.netlify/functions/'))return;event.respondWith(fetch(event.request).catch(()=>caches.match(event.request).then(cached=>cached||caches.match('/index.html'))))});
