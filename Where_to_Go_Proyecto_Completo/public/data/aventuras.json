@@ -1,14 +1,306 @@
 [
- {"id":"mitur-damajagua","name":"27 Charcos de Damajagua","cat":"cascadas","province":"Puerto Plata","municipality":"Imbert","lat":19.7317231,"lon":-70.8257846,"type":"Cascadas · excursión guiada","description":"Recorrido de cascadas y charcos con guías locales. El equipo de seguridad es obligatorio.","source":"Ministerio de Turismo RD","sourceUrl":"https://es.godominicanrepublic.com/que-hacer/27-charcos-de-damajagua","accuracy":"Punto de destino enlazado por Turismo RD","tags":["aventura","cascadas","balnearios"],"safety":"Consulta horarios y disponibilidad de guías. No entres a zonas cerradas."},
- {"id":"mitur-jamao","name":"Río Jamao","cat":"rios","province":"Espaillat","municipality":"Jamao al Norte","lat":19.6316156,"lon":-70.4448647,"type":"Río · naturaleza y kayak","description":"Río conocido por sus paisajes, senderos y excursiones en kayak en la región norte.","source":"Ministerio de Turismo RD","sourceUrl":"https://es.godominicanrepublic.com/que-hacer/rio-jamao","accuracy":"Punto de destino enlazado por Turismo RD","tags":["rios","balnearios","aventura"],"safety":"Consulta las condiciones de la corriente y el clima."},
- {"id":"mitur-lospatos","name":"Balneario Los Patos","cat":"balnearios","province":"Barahona","municipality":"Paraíso","lat":17.9559653,"lon":-71.1846785,"type":"Balneario de río junto al mar","description":"Piscina natural de agua fresca donde el río se encuentra con la costa de Barahona.","source":"Ministerio de Turismo RD","sourceUrl":"https://es.godominicanrepublic.com/que-hacer/los-patos","accuracy":"Punto de destino enlazado por Turismo RD","tags":["rios","balnearios","aventura"],"safety":"No confundas el baño de río con las condiciones del oleaje en la playa."},
- {"id":"mitur-baiguate","name":"Salto de Baiguate","cat":"cascadas","province":"La Vega","municipality":"Jarabacoa","lat":19.1068982379,"lon":-70.6201922226,"type":"Cascada · baño de río","description":"Cascada de montaña cerca de Jarabacoa, con poza de agua dulce.","source":"Ministerio de Turismo RD","sourceUrl":"https://es.godominicanrepublic.com/que-hacer/salto-de-baiguate","accuracy":"Punto de destino enlazado por Turismo RD","tags":["cascadas","balnearios","senderismo","aventura"],"safety":"Precaución con superficies mojadas y cambios del nivel de agua."},
- {"id":"mitur-limon","name":"Salto El Limón","cat":"cascadas","province":"Samaná","municipality":"Samaná","lat":19.2703106,"lon":-69.4462559,"type":"Cascada · senderismo","description":"Cascada de la península de Samaná accesible mediante recorrido a pie o a caballo.","source":"Ministerio de Turismo RD","sourceUrl":"https://es.godominicanrepublic.com/que-hacer/salto-el-limon","accuracy":"Punto de destino enlazado por Turismo RD","tags":["cascadas","senderismo","aventura"],"safety":"Consulta el acceso y el estado de senderos antes de salir."},
- {"id":"mitur-grigri","name":"Laguna Gri-Gri","cat":"lagunas","province":"María Trinidad Sánchez","municipality":"Río San Juan","lat":19.6471792,"lon":-70.0776674,"type":"Laguna · manglares y paseos en bote","description":"Laguna rodeada de manglares en Río San Juan, con excursiones guiadas en bote.","source":"Ministerio de Turismo RD","sourceUrl":"https://es.godominicanrepublic.com/que-hacer/laguna-gri-gri","accuracy":"Punto de destino enlazado por Turismo RD","tags":["lagunas","aventura","familia"],"safety":"Para recorridos en bote, usa operadores responsables y chaleco salvavidas."},
- {"id":"mitur-confluencia","name":"La Confluencia","cat":"rios","province":"La Vega","municipality":"Jarabacoa","lat":19.1517491,"lon":-70.6425006,"type":"Encuentro de dos ríos · parque natural","description":"Área de recreo donde se encuentran los ríos Jimenoa y Yaque del Norte.","source":"Ministerio de Turismo RD","sourceUrl":"https://es.godominicanrepublic.com/que-hacer/la-confluencia","accuracy":"Punto de destino enlazado por Turismo RD","tags":["rios","balnearios","familia","aventura"],"safety":"No entres al agua si el río está crecido."},
- {"id":"mitur-playalospatos","name":"Playa Los Patos","cat":"playas","province":"Barahona","municipality":"Paraíso","lat":17.9559653,"lon":-71.1846785,"type":"Playa de piedras · junto al río","description":"Playa del litoral sur con oleaje y un balneario de agua dulce cercano.","source":"Ministerio de Turismo RD","sourceUrl":"https://es.godominicanrepublic.com/que-hacer/playa-los-patos","accuracy":"Punto de área compartido con la ficha oficial de Los Patos; acceso exacto por confirmar","tags":["playas","aventura"],"safety":"El oleaje puede ser fuerte. Comprueba acceso y bandera de baño."},
- {"id":"mitur-fula","name":"Río Fula / Balneario El Camellón","cat":"balnearios","province":"Monseñor Nouel","municipality":"Bonao","lat":null,"lon":null,"type":"Río · balneario","description":"Balneario mencionado en la guía oficial de Bonao; punto de entrada pendiente de verificación.","source":"Ministerio de Turismo RD","sourceUrl":"https://es.godominicanrepublic.com/destinos/bonao","accuracy":"Sin coordenadas de acceso verificadas","tags":["rios","balnearios","aventura"],"safety":"Consultar acceso local; no publicamos un pin aproximado."},
- {"id":"mitur-jima","name":"Saltos de Jima","cat":"cascadas","province":"Monseñor Nouel","municipality":"Bonao","lat":null,"lon":null,"type":"Cascadas · naturaleza","description":"Destino natural destacado en la guía turística oficial de Bonao; acceso pendiente de verificación.","source":"Ministerio de Turismo RD","sourceUrl":"https://es.godominicanrepublic.com/destinos/bonao","accuracy":"Sin coordenadas de acceso verificadas","tags":["cascadas","senderismo","aventura"],"safety":"Confirmar acceso autorizado y condiciones del sendero."},
- {"id":"mitur-sanrafael","name":"Balneario San Rafael","cat":"balnearios","province":"Barahona","municipality":"La Ciénaga","lat":null,"lon":null,"type":"Balneario · agua dulce y costa","description":"Balneario reconocido en la guía oficial de Barahona; el punto de entrada requiere verificación.","source":"Ministerio de Turismo RD","sourceUrl":"https://es.godominicanrepublic.com/destinos/barahona","accuracy":"Sin coordenadas de acceso verificadas","tags":["balnearios","rios","aventura"],"safety":"Verifica las condiciones del río y del mar por separado."},
- {"id":"mitur-villamiriam","name":"Villa Miriam","cat":"balnearios","province":"Barahona","municipality":"La Ciénaga","lat":null,"lon":null,"type":"Balneario · piscinas naturales","description":"Balneario incluido en la guía oficial de Barahona; teléfono y entrada por verificar.","source":"Ministerio de Turismo RD","sourceUrl":"https://es.godominicanrepublic.com/destinos/barahona","accuracy":"Sin coordenadas de acceso verificadas","tags":["balnearios","aventura"],"safety":"Consulta condiciones de entrada y disponibilidad antes de viajar."}
+  {
+    "id": "mitur-damajagua",
+    "name": "27 Charcos de Damajagua",
+    "cat": "cascadas",
+    "province": "Puerto Plata",
+    "municipality": "Imbert",
+    "lat": 19.7317231,
+    "lon": -70.8257846,
+    "type": "Cascadas · excursión guiada",
+    "description": "Recorrido de cascadas y charcos con guías locales. El equipo de seguridad es obligatorio.",
+    "source": "Ministerio de Turismo RD",
+    "sourceUrl": "https://es.godominicanrepublic.com/que-hacer/27-charcos-de-damajagua",
+    "accuracy": "Punto de destino enlazado por Turismo RD",
+    "tags": [
+      "aventura",
+      "cascadas",
+      "balnearios"
+    ],
+    "safety": "Consulta horarios y disponibilidad de guías. No entres a zonas cerradas."
+  },
+  {
+    "id": "mitur-jamao",
+    "name": "Río Jamao",
+    "cat": "rios",
+    "province": "Espaillat",
+    "municipality": "Jamao al Norte",
+    "lat": 19.6316156,
+    "lon": -70.4448647,
+    "type": "Río · naturaleza y kayak",
+    "description": "Río conocido por sus paisajes, senderos y excursiones en kayak en la región norte.",
+    "source": "Ministerio de Turismo RD",
+    "sourceUrl": "https://es.godominicanrepublic.com/que-hacer/rio-jamao",
+    "accuracy": "Punto de destino enlazado por Turismo RD",
+    "tags": [
+      "rios",
+      "balnearios",
+      "aventura"
+    ],
+    "safety": "Consulta las condiciones de la corriente y el clima."
+  },
+  {
+    "id": "mitur-lospatos",
+    "name": "Balneario Los Patos",
+    "cat": "balnearios",
+    "province": "Barahona",
+    "municipality": "Paraíso",
+    "lat": 17.9559653,
+    "lon": -71.1846785,
+    "type": "Balneario de río junto al mar",
+    "description": "Piscina natural de agua fresca donde el río se encuentra con la costa de Barahona.",
+    "source": "Ministerio de Turismo RD",
+    "sourceUrl": "https://es.godominicanrepublic.com/que-hacer/los-patos",
+    "accuracy": "Punto de destino enlazado por Turismo RD",
+    "tags": [
+      "rios",
+      "balnearios",
+      "aventura"
+    ],
+    "safety": "No confundas el baño de río con las condiciones del oleaje en la playa."
+  },
+  {
+    "id": "mitur-baiguate",
+    "name": "Salto de Baiguate",
+    "cat": "cascadas",
+    "province": "La Vega",
+    "municipality": "Jarabacoa",
+    "lat": 19.1068982379,
+    "lon": -70.6201922226,
+    "type": "Cascada · baño de río",
+    "description": "Cascada de montaña cerca de Jarabacoa, con poza de agua dulce.",
+    "source": "Ministerio de Turismo RD",
+    "sourceUrl": "https://es.godominicanrepublic.com/que-hacer/salto-de-baiguate",
+    "accuracy": "Punto de destino enlazado por Turismo RD",
+    "tags": [
+      "cascadas",
+      "balnearios",
+      "senderismo",
+      "aventura"
+    ],
+    "safety": "Precaución con superficies mojadas y cambios del nivel de agua."
+  },
+  {
+    "id": "mitur-limon",
+    "name": "Salto El Limón",
+    "cat": "cascadas",
+    "province": "Samaná",
+    "municipality": "Samaná",
+    "lat": 19.2703106,
+    "lon": -69.4462559,
+    "type": "Cascada · senderismo",
+    "description": "Cascada de la península de Samaná accesible mediante recorrido a pie o a caballo.",
+    "source": "Ministerio de Turismo RD",
+    "sourceUrl": "https://es.godominicanrepublic.com/que-hacer/salto-el-limon",
+    "accuracy": "Punto de destino enlazado por Turismo RD",
+    "tags": [
+      "cascadas",
+      "senderismo",
+      "aventura"
+    ],
+    "safety": "Consulta el acceso y el estado de senderos antes de salir."
+  },
+  {
+    "id": "mitur-grigri",
+    "name": "Laguna Gri-Gri",
+    "cat": "lagunas",
+    "province": "María Trinidad Sánchez",
+    "municipality": "Río San Juan",
+    "lat": 19.6471792,
+    "lon": -70.0776674,
+    "type": "Laguna · manglares y paseos en bote",
+    "description": "Laguna rodeada de manglares en Río San Juan, con excursiones guiadas en bote.",
+    "source": "Ministerio de Turismo RD",
+    "sourceUrl": "https://es.godominicanrepublic.com/que-hacer/laguna-gri-gri",
+    "accuracy": "Punto de destino enlazado por Turismo RD",
+    "tags": [
+      "lagunas",
+      "aventura",
+      "familia"
+    ],
+    "safety": "Para recorridos en bote, usa operadores responsables y chaleco salvavidas."
+  },
+  {
+    "id": "mitur-confluencia",
+    "name": "La Confluencia",
+    "cat": "rios",
+    "province": "La Vega",
+    "municipality": "Jarabacoa",
+    "lat": 19.1517491,
+    "lon": -70.6425006,
+    "type": "Encuentro de dos ríos · parque natural",
+    "description": "Área de recreo donde se encuentran los ríos Jimenoa y Yaque del Norte.",
+    "source": "Ministerio de Turismo RD",
+    "sourceUrl": "https://es.godominicanrepublic.com/que-hacer/la-confluencia",
+    "accuracy": "Punto de destino enlazado por Turismo RD",
+    "tags": [
+      "rios",
+      "balnearios",
+      "familia",
+      "aventura"
+    ],
+    "safety": "No entres al agua si el río está crecido."
+  },
+  {
+    "id": "mitur-playalospatos",
+    "name": "Playa Los Patos",
+    "cat": "playas",
+    "province": "Barahona",
+    "municipality": "Paraíso",
+    "lat": 17.9559653,
+    "lon": -71.1846785,
+    "type": "Playa de piedras · junto al río",
+    "description": "Playa del litoral sur con oleaje y un balneario de agua dulce cercano.",
+    "source": "Ministerio de Turismo RD",
+    "sourceUrl": "https://es.godominicanrepublic.com/que-hacer/playa-los-patos",
+    "accuracy": "Punto de área compartido con la ficha oficial de Los Patos; acceso exacto por confirmar",
+    "tags": [
+      "playas",
+      "aventura"
+    ],
+    "safety": "El oleaje puede ser fuerte. Comprueba acceso y bandera de baño."
+  },
+  {
+    "id": "mitur-fula",
+    "name": "Río Fula / Balneario El Camellón",
+    "cat": "balnearios",
+    "province": "Monseñor Nouel",
+    "municipality": "Bonao",
+    "lat": null,
+    "lon": null,
+    "type": "Río · balneario",
+    "description": "Balneario mencionado en la guía oficial de Bonao; punto de entrada pendiente de verificación.",
+    "source": "Ministerio de Turismo RD",
+    "sourceUrl": "https://es.godominicanrepublic.com/destinos/bonao",
+    "accuracy": "Sin coordenadas de acceso verificadas",
+    "tags": [
+      "rios",
+      "balnearios",
+      "aventura"
+    ],
+    "safety": "Consultar acceso local; no publicamos un pin aproximado."
+  },
+  {
+    "id": "mitur-jima",
+    "name": "Saltos de Jima",
+    "cat": "cascadas",
+    "province": "Monseñor Nouel",
+    "municipality": "Bonao",
+    "lat": null,
+    "lon": null,
+    "type": "Cascadas · naturaleza",
+    "description": "Destino natural destacado en la guía turística oficial de Bonao; acceso pendiente de verificación.",
+    "source": "Ministerio de Turismo RD",
+    "sourceUrl": "https://es.godominicanrepublic.com/destinos/bonao",
+    "accuracy": "Sin coordenadas de acceso verificadas",
+    "tags": [
+      "cascadas",
+      "senderismo",
+      "aventura"
+    ],
+    "safety": "Confirmar acceso autorizado y condiciones del sendero."
+  },
+  {
+    "id": "mitur-sanrafael",
+    "name": "Balneario San Rafael",
+    "cat": "balnearios",
+    "province": "Barahona",
+    "municipality": "La Ciénaga",
+    "lat": null,
+    "lon": null,
+    "type": "Balneario · agua dulce y costa",
+    "description": "Balneario reconocido en la guía oficial de Barahona; el punto de entrada requiere verificación.",
+    "source": "Ministerio de Turismo RD",
+    "sourceUrl": "https://es.godominicanrepublic.com/destinos/barahona",
+    "accuracy": "Sin coordenadas de acceso verificadas",
+    "tags": [
+      "balnearios",
+      "rios",
+      "aventura"
+    ],
+    "safety": "Verifica las condiciones del río y del mar por separado."
+  },
+  {
+    "id": "mitur-villamiriam",
+    "name": "Villa Miriam",
+    "cat": "balnearios",
+    "province": "Barahona",
+    "municipality": "La Ciénaga",
+    "lat": null,
+    "lon": null,
+    "type": "Balneario · piscinas naturales",
+    "description": "Balneario incluido en la guía oficial de Barahona; teléfono y entrada por verificar.",
+    "source": "Ministerio de Turismo RD",
+    "sourceUrl": "https://es.godominicanrepublic.com/destinos/barahona",
+    "accuracy": "Sin coordenadas de acceso verificadas",
+    "tags": [
+      "balnearios",
+      "aventura"
+    ],
+    "safety": "Consulta condiciones de entrada y disponibilidad antes de viajar."
+  },
+  {
+    "id": "osm-way-254282388",
+    "name": "Fortaleza de San Felipe",
+    "cat": "atracciones",
+    "lat": 19.80411,
+    "lon": -70.69586,
+    "province": "Puerto Plata",
+    "municipality": "Puerto Plata",
+    "description": "Fortaleza histórica junto a La Puntilla. Las coordenadas se refieren al recinto cartografiado; confirma el acceso.",
+    "sourceUrl": "https://mapcarta.com/es/36019646",
+    "accuracy": "Punto documentado en cartografía",
+    "sourceType": "cartografia",
+    "tags": [
+      "atracciones"
+    ]
+  },
+  {
+    "id": "editorial-plaza-independencia-pp",
+    "name": "Parque Central (Plaza Independencia)",
+    "cat": "parques",
+    "lat": 19.79762,
+    "lon": -70.69306,
+    "province": "Puerto Plata",
+    "municipality": "Puerto Plata",
+    "description": "Plaza central del casco histórico de Puerto Plata. Coordenada de la plaza como punto de referencia.",
+    "sourceUrl": "https://mapcarta.com/es/36019654",
+    "accuracy": "Punto documentado en cartografía",
+    "sourceType": "cartografia",
+    "tags": [
+      "atracciones"
+    ]
+  },
+  {
+    "id": "editorial-paseo-dona-blanca",
+    "name": "Paseo de Doña Blanca (Calle Rosada)",
+    "cat": "atracciones",
+    "lat": 19.7987778,
+    "lon": -70.6962222,
+    "province": "Puerto Plata",
+    "municipality": "Puerto Plata",
+    "description": "Callejón rosado del centro histórico. Coordenadas publicadas por la Dirección General de Cine; no son una entrada de estacionamiento.",
+    "sourceUrl": "https://dgcine.gob.do/locaciones/locacion/paseo-de-dona-blanca/",
+    "accuracy": "Punto identificado por organismo público",
+    "sourceType": "editorial",
+    "tags": [
+      "atracciones"
+    ]
+  },
+  {
+    "id": "editorial-malecon-pp",
+    "name": "Malecón de Puerto Plata · La Puntilla",
+    "cat": "atracciones",
+    "lat": 19.80324,
+    "lon": -70.69423,
+    "province": "Puerto Plata",
+    "municipality": "Puerto Plata",
+    "description": "Un punto representativo del malecón de Puerto Plata, que es un paseo extenso; la coordenada no representa toda la avenida.",
+    "sourceUrl": "https://mapcarta.com/es/36019648",
+    "accuracy": "Punto documentado en cartografía",
+    "sourceType": "cartografia",
+    "tags": [
+      "atracciones"
+    ]
+  }
 ]
