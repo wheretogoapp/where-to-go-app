@@ -14,8 +14,9 @@ exports.handler=async event=>{
  const category=QUERIES[q.category]?q.category:'todos';
  const loc=String(q.city||'República Dominicana').slice(0,70).replace(/[<>]/g,'');
  const textQuery=`${String(q.search||'').slice(0,70).trim()||QUERIES[category]} cerca de ${loc}`;
+ const limit=Math.min(8,Math.max(1,Number.parseInt(q.limit,10)||5));
  try{
-  const r=await fetch('https://places.googleapis.com/v1/places:searchText',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':key,'X-Goog-FieldMask':'places.id,places.displayName,places.location,places.formattedAddress,places.photos,places.googleMapsLinks,places.googleMapsUri,places.types,places.primaryType'},body:JSON.stringify({textQuery,languageCode:'es',regionCode:'DO',pageSize:20,locationBias:{circle:{center:{latitude:lat,longitude:lon},radius}}})});
+  const r=await fetch('https://places.googleapis.com/v1/places:searchText',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':key,'X-Goog-FieldMask':'places.id,places.displayName,places.location,places.formattedAddress,places.photos,places.googleMapsLinks,places.googleMapsUri,places.types,places.primaryType'},body:JSON.stringify({textQuery,languageCode:'es',pageSize:limit,locationBias:{circle:{center:{latitude:lat,longitude:lon},radius}}})});
   const data=await r.json();
   if(!r.ok){
    // Share only public diagnostic categories; never expose the API key or Google response headers.
