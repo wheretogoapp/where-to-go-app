@@ -1,0 +1,44 @@
+name: Where to Go - Validar datos y GPS
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Comprobar sintaxis de scripts de datos
+        run: |
+          python -m py_compile Where_to_Go_Proyecto_Completo/tools/enrich_photos.py Where_to_Go_Proyecto_Completo/tools/enrich_geo_photos.py Where_to_Go_Proyecto_Completo/tools/preserve_photos.py
+      - name: Verificar geoposición y preservación sin conexión
+        run: |
+          PYTHONPATH=Where_to_Go_Proyecto_Completo/tools python - <<'PY'
+          import tempfile, json, pathlib
+          from enrich_geo_photos import norm, meters
+          from preserve_photos import save, restore
+          assert norm('Fortaleza San Felipe') == 'fortaleza san felipe'
+          assert meters(19.8, -70.7, 19.8, -70.7) < 1
+          assert 100 < meters(19.8, -70.7, 19.802, -70.7) < 250
+          with tempfile.TemporaryDirectory() as folder:
+              d=pathlib.Path(folder); snapshot=d/'snapshot.json'
+              row={'id':'osm-node-42','name':'Fortaleza','cat':'atracciones','lat':19.8,'lon':-70.7,
+                   'image':'https://upload.wikimedia.org/wikipedia/commons/a/a1/verified.jpg',
+                   'photoSource':'https://commons.wikimedia.org/wiki/File:verified.jpg',
+                   'photoAttribution':'Autor · CC BY-SA · Wikimedia Commons'}
+              (d/'cell_1_1.json').write_text(json.dumps([row]))
+              (d/'manifest.json').write_text(json.dumps({'recordCount':1}))
+              save(d,snapshot)
+              row.pop('image');row.pop('photoSource');row.pop('photoAttribution')
+              (d/'cell_1_1.json').write_text(json.dumps([row]))
+              restore(d,snapshot)
+              updated=json.loads((d/'cell_1_1.json').read_text())[0]
+              assert updated['photoSource'].startswith('https://commons.wikimedia.org/')
+              assert json.loads((d/'manifest.json').read_text())['licensedPhotoCount']==1
+          print('PRUEBAS OK: geodistancia, nombres y fotografías preservadas.')
+          PY
