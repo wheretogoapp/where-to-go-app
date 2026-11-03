@@ -3,7 +3,7 @@
 
 Ten cities x one Text Search API call; max five returned places each.
 NEVER bulk-enriches the catalog, uploads pictures, or persists Google Places content.
-Place IDs and names are included only in an ephemeral test report.
+Only aggregate coverage statistics are written; no Google place data is stored.
 Requires GOOGLE_MAPS_API_KEY in the Actions secret; never print the key.
 """
 import json
@@ -61,9 +61,7 @@ for country,city,lat,lon in SAMPLES:
         "withPhone":sum(bool(p.get("internationalPhoneNumber")) for p in places),
         "withWebsite":sum(bool(p.get("websiteUri")) for p in places),
         "withCoordinates":sum(bool(p.get("location")) for p in places),
-        "error":error,
-        "examples":[{"name":p.get("displayName",{}).get("text",""),"photo":bool(p.get("photos")),
-                     "phone":bool(p.get("internationalPhoneNumber"))} for p in places[:5]]
+        "error":error
     })
     time.sleep(.15)
 successful=sum(not x["error"] for x in results)
