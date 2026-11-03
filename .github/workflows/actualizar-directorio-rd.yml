@@ -13,6 +13,8 @@ on:
       - '.github/workflows/actualizar-directorio-rd.yml'
       - 'Where_to_Go_Proyecto_Completo/tools/import_osm_rd.py'
       - 'Where_to_Go_Proyecto_Completo/tools/enrich_photos.py'
+      - 'Where_to_Go_Proyecto_Completo/tools/enrich_geo_photos.py'
+      - 'Where_to_Go_Proyecto_Completo/tools/preserve_photos.py'
       - 'Where_to_Go_Proyecto_Completo/tools/import_overture_rd.py'
 permissions:
   contents: write
@@ -47,6 +49,11 @@ jobs:
           assert Path('/tmp/countries.geojson').stat().st_size > 1000
           print('Fuentes descargadas. Construyendo índice dominicano...')
           PYTEST
+      - name: Guardar fotografías verificadas de la publicación anterior
+        run: |
+          python Where_to_Go_Proyecto_Completo/tools/preserve_photos.py snapshot \
+            --out Where_to_Go_Proyecto_Completo/public/data/places \
+            --snapshot /tmp/wtg-verified-photos-before-import.json
       - name: Construir catalogo RD validado
         run: |
           python Where_to_Go_Proyecto_Completo/tools/import_osm_rd.py --pbf /tmp/rd-haiti.osm.pbf --countries /tmp/countries.geojson --out Where_to_Go_Proyecto_Completo/public/data/places
@@ -80,6 +87,15 @@ jobs:
           d=json.load(open('Where_to_Go_Proyecto_Completo/public/data/places/manifest.json'))
           print('FOTOGRAFÍAS CON LICENCIA COMPROBADA:',d.get('licensedPhotoCount',0))
           PY
+      - name: Descubrir imágenes adicionales solo con nombre y geolocalización Wikidata verificables
+        run: |
+          python -m py_compile Where_to_Go_Proyecto_Completo/tools/enrich_photos.py Where_to_Go_Proyecto_Completo/tools/enrich_geo_photos.py Where_to_Go_Proyecto_Completo/tools/preserve_photos.py
+          python Where_to_Go_Proyecto_Completo/tools/enrich_geo_photos.py --out Where_to_Go_Proyecto_Completo/public/data/places --max-queries 120
+      - name: Restaurar fotografías anteriores cuando el mismo lugar conserve su ID
+        run: |
+          python Where_to_Go_Proyecto_Completo/tools/preserve_photos.py restore \
+            --out Where_to_Go_Proyecto_Completo/public/data/places \
+            --snapshot /tmp/wtg-verified-photos-before-import.json
       - name: Comprobar categorías y archivos antes de publicar
         run: |
           python - <<'PY'
