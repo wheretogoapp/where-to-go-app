@@ -15,7 +15,7 @@ jobs:
           python-version: '3.11'
       - name: Comprobar sintaxis de scripts de datos
         run: |
-          python -m py_compile Where_to_Go_Proyecto_Completo/tools/enrich_photos.py Where_to_Go_Proyecto_Completo/tools/enrich_geo_photos.py Where_to_Go_Proyecto_Completo/tools/preserve_photos.py
+          python -m py_compile Where_to_Go_Proyecto_Completo/tools/enrich_photos.py Where_to_Go_Proyecto_Completo/tools/enrich_geo_photos.py Where_to_Go_Proyecto_Completo/tools/preserve_photos.py Where_to_Go_Proyecto_Completo/tools/probe_google_global.py
       - name: Verificar geoposición y preservación sin conexión
         run: |
           PYTHONPATH=Where_to_Go_Proyecto_Completo/tools python - <<'PY'

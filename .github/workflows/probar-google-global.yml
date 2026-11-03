@@ -1,0 +1,28 @@
+name: Where to Go - Probar Google Places mundial (10 consultas)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prueba-global:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verificar sintaxis del probador
+        run: python -m py_compile Where_to_Go_Proyecto_Completo/tools/probe_google_global.py
+      - name: Comprobar 10 países sin guardar datos de Google
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        run: python Where_to_Go_Proyecto_Completo/tools/probe_google_global.py
+      - name: Adjuntar informe de resultados
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: google-places-10-paises
+          path: google-global-probe-report.json
+          if-no-files-found: ignore
+          retention-days: 7
