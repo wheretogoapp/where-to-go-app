@@ -1,0 +1,7 @@
+# Seguridad y licencias — Where to Go V6.0
+
+**Seguridad**: no hay posibilidad de garantizar inmunidad a intrusiones o caídas. Buenas prácticas básicas: HTTPS en Netlify, cabeceras defensivas, claves privadas en variables del servidor, Supabase Row Level Security para perfiles/favoritos, inicio de sesión con OAuth solo tras configurar proveedores, 2FA en cuentas administrativas, protección ante abuso de formularios, moderación de fotografías, copias de seguridad, revisión de dependencias y auditoría de acceso periódica.
+
+**Licencias**: no se usan fotografías genéricas haciéndolas pasar por establecimientos. Las cinco fichas turísticas con imágenes identificadas enlazan al archivo y autor en Wikimedia Commons; respeta CC BY-SA o CC0 según el archivo. Las imágenes de portadas provinciales provienen del catálogo documental existente; revisar que cada URL funcione y su licencia antes del lanzamiento comercial. OpenStreetMap © colaboradores, ODbL. Overture Maps tiene conjuntos con condiciones permisivas por proveedor; al combinarlos con OSM, verifica las obligaciones de base derivada y de atribución antes de distribuir una copia comercial.
+
+**Privacidad**: la geolocalización se pide al usuario o se reutiliza solo si el navegador ya autorizó el acceso. El geocodificador de terceros recibe coordenadas para identificar provincia. Los formularios pueden recibir fotos/datos personales; publicar aviso de privacidad y política de retención antes de aceptar registros empresariales en producción.
