@@ -1,12 +1,19 @@
 name: Where to Go - Cargar directorio real de RD
 on:
   workflow_dispatch:
+    inputs:
+      incluir_overture:
+        description: "Incluir Overture Maps (descarga adicional opcional de mayor duración)"
+        type: boolean
+        default: false
+        required: false
   push:
     branches: [main]
     paths:
       - '.github/workflows/actualizar-directorio-rd.yml'
       - 'Where_to_Go_Proyecto_Completo/tools/import_osm_rd.py'
       - 'Where_to_Go_Proyecto_Completo/tools/enrich_photos.py'
+      - 'Where_to_Go_Proyecto_Completo/tools/import_overture_rd.py'
 permissions:
   contents: write
 concurrency:
@@ -15,7 +22,7 @@ concurrency:
 jobs:
   directorio:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
@@ -50,9 +57,24 @@ jobs:
           print('RECUENTO NACIONAL PUBLICABLE:',x['recordCount'])
           print('POR CATEGORÍA:',x['categories'])
           PY
+      - name: Instalar cliente Overture (opcional)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.incluir_overture == true }}
+        run: python -m pip install 'overturemaps>=0.13,<1'
+      - name: Descargar puntos Overture de la zona RD (opcional)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.incluir_overture == true }}
+        run: |
+          overturemaps download --type=place --bbox=-72.15,17.1,-68.0,20.25 -f geojsonseq -o /tmp/rd-overture.geojsonseq
+          test -s /tmp/rd-overture.geojsonseq
+      - name: Combinar Overture con OSM, filtrando frontera y duplicados (opcional)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.incluir_overture == true }}
+        run: |
+          python Where_to_Go_Proyecto_Completo/tools/import_overture_rd.py \
+            --input /tmp/rd-overture.geojsonseq \
+            --countries /tmp/countries.geojson \
+            --out Where_to_Go_Proyecto_Completo/public/data/places
       - name: Añadir fotos auténticas y licencias de Wikimedia (si están enlazadas al sitio)
         run: |
-          python Where_to_Go_Proyecto_Completo/tools/enrich_photos.py --out Where_to_Go_Proyecto_Completo/public/data/places --max-wikidata 600 --max-photos 600
+          python Where_to_Go_Proyecto_Completo/tools/enrich_photos.py --out Where_to_Go_Proyecto_Completo/public/data/places --max-wikidata 1200 --max-photos 1200
           python - <<'PY'
           import json
           d=json.load(open('Where_to_Go_Proyecto_Completo/public/data/places/manifest.json'))
