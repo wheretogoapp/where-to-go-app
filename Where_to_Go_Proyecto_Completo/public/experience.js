@@ -115,7 +115,7 @@
     const name=region();const slides=slideSet(name);
     updateSet('hero',slides,'hero:'+name);
     updateSet('auth',slides,'auth:'+name);
-    const eligible=typeof state!=='undefined'?state.places.filter(p=>isTouristDiscovery(p)&&p.distance<=state.radius+100).slice().sort((a,b)=>Number(!!b.photo)-Number(!!a.photo)||a.distance-b.distance):[];
+    const eligible=typeof state!=='undefined'?state.places.filter(p=>isTouristDiscovery(p)&&!!validUrl(p.photo||'')&&p.distance<=state.radius+100).slice().sort((a,b)=>a.distance-b.distance):[];
     updateSet('spotlight',eligible.slice(0,24),'spotlight:'+name+'|'+eligible.map(p=>p.id).join(','));
     const nodes=[...document.querySelectorAll('[data-premium-slide]')];
     updateSet('premium',nodes,'premium:'+name+'|'+nodes.map(n=>n.querySelector('strong')?.textContent||'').join(','));
