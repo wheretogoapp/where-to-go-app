@@ -110,11 +110,17 @@ def run(out, max_wikidata, max_photos):
         for row in cell:
             if commons_name(row) or re.fullmatch(r'Q\d+',str(row.get('wikidata') or '')):
                 candidates.append((path,row))
-    candidates.sort(key=lambda x:(PRIORITY.get(x[1].get('cat'),20),x[1]['id']))
-    chosen=[];seen_cells=collections.Counter()
-    for path,row in candidates:
-        if seen_cells[path]>=80:continue
-        seen_cells[path]+=1;chosen.append(row)
+    # Round-robin across geographic cells so one major city does not consume
+    # the entire image quota before schools/landmarks elsewhere are reached.
+    groups=collections.defaultdict(list)
+    for path,row in candidates:groups[path].append(row)
+    for rows_in_cell in groups.values():
+        rows_in_cell.sort(key=lambda r:(0 if commons_name(r) else 1,PRIORITY.get(r.get('cat'),20),r['id']))
+    chosen=[]
+    max_len=max((len(v) for v in groups.values()),default=0)
+    for depth in range(min(max_len,80)):
+        for key in sorted(groups):
+            if depth<len(groups[key]):chosen.append(groups[key][depth])
     qids=list(dict.fromkeys(str(r['wikidata']) for r in chosen if not commons_name(r) and re.fullmatch(r'Q\d+',str(r.get('wikidata') or ''))))[:max_wikidata]
     wikidata_images=fetch_wikidata_images(qids)
     file_for={}
@@ -136,6 +142,7 @@ def run(out, max_wikidata, max_photos):
     for p,cell in contents.items():
         p.write_text(json.dumps(cell,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
     manifest['licensedPhotoCount']=sum(bool(r.get('photoSource')) for r in rows)
+    manifest['photoCoverageByCategory']=dict(sorted(collections.Counter(r.get('cat') for r in rows if r.get('photoSource')).items()))
     manifest['licensedPhotoEnrichment']={'runAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),
         'linkedCandidates':len(candidates),'wikidataIDsQueried':len(qids),
         'commonsFilesChecked':len(distinct),'withVerifiedLicense':manifest['licensedPhotoCount'],

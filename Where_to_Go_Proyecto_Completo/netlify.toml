@@ -6,8 +6,11 @@
   for = "/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Content-Security-Policy = "object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+    Strict-Transport-Security = "max-age=31536000"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "geolocation=(self)"
+    Permissions-Policy = "geolocation=(self), microphone=(), camera=()"
 
 [[headers]]
   for = "/service-worker.js"

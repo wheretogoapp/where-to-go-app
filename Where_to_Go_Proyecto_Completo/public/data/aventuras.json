@@ -17,7 +17,10 @@
       "cascadas",
       "balnearios"
     ],
-    "safety": "Consulta horarios y disponibilidad de guías. No entres a zonas cerradas."
+    "safety": "Consulta horarios y disponibilidad de guías. No entres a zonas cerradas.",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Damajagua%20Waterfall.jpg?width=750",
+    "photoSource": "https://commons.wikimedia.org/wiki/File:Damajagua_Waterfall.jpg",
+    "photoAttribution": "Funcheta · CC BY-SA 4.0 · Wikimedia Commons"
   },
   {
     "id": "mitur-jamao",
@@ -98,7 +101,10 @@
       "senderismo",
       "aventura"
     ],
-    "safety": "Consulta el acceso y el estado de senderos antes de salir."
+    "safety": "Consulta el acceso y el estado de senderos antes de salir.",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Wasserfall%20El%20Limon.jpg?width=750",
+    "photoSource": "https://commons.wikimedia.org/wiki/File:Wasserfall_El_Limon.jpg",
+    "photoAttribution": "Thetornado76 · CC BY-SA 4.0 · Wikimedia Commons"
   },
   {
     "id": "mitur-grigri",
@@ -118,7 +124,10 @@
       "aventura",
       "familia"
     ],
-    "safety": "Para recorridos en bote, usa operadores responsables y chaleco salvavidas."
+    "safety": "Para recorridos en bote, usa operadores responsables y chaleco salvavidas.",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Laguna%20Gri-Gri.jpg?width=750",
+    "photoSource": "https://commons.wikimedia.org/wiki/File:Laguna_Gri-Gri.jpg",
+    "photoAttribution": "Pelie777 · CC BY-SA 4.0 · Wikimedia Commons"
   },
   {
     "id": "mitur-confluencia",
@@ -253,7 +262,10 @@
     "sourceType": "cartografia",
     "tags": [
       "atracciones"
-    ]
+    ],
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Fortaleza%20de%20San%20Felipe%20DR%202.jpg?width=750",
+    "photoSource": "https://commons.wikimedia.org/wiki/File:Fortaleza_de_San_Felipe_DR_2.jpg",
+    "photoAttribution": "CareAhLine · CC0 · Wikimedia Commons"
   },
   {
     "id": "editorial-plaza-independencia-pp",
@@ -269,7 +281,10 @@
     "sourceType": "cartografia",
     "tags": [
       "atracciones"
-    ]
+    ],
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Plaza%20Independencia%20de%20Puerto%20Plata.jpg?width=750",
+    "photoSource": "https://commons.wikimedia.org/wiki/File:Plaza_Independencia_de_Puerto_Plata.jpg",
+    "photoAttribution": "Ronny Medina · CC BY-SA 4.0 · Wikimedia Commons"
   },
   {
     "id": "editorial-paseo-dona-blanca",

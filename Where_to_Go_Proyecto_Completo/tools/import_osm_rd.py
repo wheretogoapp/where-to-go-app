@@ -35,7 +35,7 @@ def get_categories(tags):
     if a in ('hospital','clinic','doctors') or h in ('hospital','clinic','doctor'):return 'hospitales'
     if a=='dentist' or h=='dentist':return 'odontologia'
     if a=='veterinary' or h=='veterinary':return 'veterinarias'
-    if a in ('school','kindergarten','college'):return 'escuelas'
+    if a in ('school','kindergarten','college','university'):return 'escuelas'
     if a=='place_of_worship':return 'iglesias'
     if a in ('fast_food','food_court'):return 'comidarapida'
     if a=='restaurant':return 'restaurantes'
@@ -96,8 +96,16 @@ class Collector(osmium.SimpleHandler):
         if not self.polygon.covers(Point(lon,lat)):return
         tags=dict(obj.tags)
         cat=get_categories(tags)
-        name=clean(tags.get('name:es') or tags.get('name') or tags.get('brand'),130)
-        if not cat or not name:return
+        # Unnamed mapped civic POIs still exist. Name them transparently, never invent a school/church identity.
+        name=clean(tags.get('name:es') or tags.get('name') or tags.get('official_name') or tags.get('brand'),130)
+        name_known=bool(name)
+        unnamed_allowed={'escuelas':'Escuela','iglesias':'Templo religioso','parques':'Parque',
+            'hospitales':'Centro de salud','cajeros':'Cajero automático',
+            'gasolineras':'Gasolinera','infantil':'Área infantil','piscinas':'Piscina'}
+        if not cat:return
+        if not name:
+            if cat not in unnamed_allowed:return
+            name=unnamed_allowed[cat]+' (sin nombre registrado)'
         place_id=f'osm-{kind}-{obj.id}'
         if place_id in self.ids:return
         self.ids.add(place_id)
@@ -106,13 +114,14 @@ class Collector(osmium.SimpleHandler):
         if unique in self.dedupe:return
         self.dedupe.add(unique)
         cell=f'{math.floor((lat+90)/GRID)}_{math.floor((lon+180)/GRID)}'
-        record={'id':place_id,'name':name,'cat':cat,'lat':round(lat,7),'lon':round(lon,7),
+        record={'id':place_id,'name':name,'nameKnown':name_known,'cat':cat,'lat':round(lat,7),'lon':round(lon,7),
             'address':clean(' '.join(x for x in [tags.get('addr:street',''),tags.get('addr:housenumber','')] if x),145),
             'phone':clean(tags.get('contact:phone') or tags.get('phone'),60),
             'website':clean(tags.get('contact:website') or tags.get('website'),230),
-            'image':clean(tags.get('image'),280),'wikimedia_commons':clean(tags.get('wikimedia_commons'),170),
+            'image':clean(tags.get('image') or tags.get('image:0'),280),'wikimedia_commons':clean(tags.get('wikimedia_commons'),170),
             'wikidata':clean(tags.get('wikidata'),24),
-            'accuracy':accuracy,'sourceUrl':f'https://www.openstreetmap.org/{kind}/{obj.id}'}
+            'accuracy':accuracy,'opening_hours':clean(tags.get('opening_hours'),120),
+            'description':clean(tags.get('description'),300),'sourceUrl':f'https://www.openstreetmap.org/{kind}/{obj.id}'}
         self.cells[cell].append(record);self.category_counts[cat]+=1
     def node(self,obj):
         if obj.location.valid():self.add(obj,'node',obj.location.lat,obj.location.lon,'Punto cartográfico OSM; verifica el acceso')
@@ -144,7 +153,7 @@ def run(pbf,countries,out):
       'source':'© OpenStreetMap contributors · ODbL / Geofabrik','recordCount':total,
       'categories':dict(sorted(handler.category_counts.items())), 'cells':sorted(handler.cells),
       'license':'https://www.openstreetmap.org/copyright',
-      'note':'Los puntos de áreas y ríos NO son entradas confirmadas. Teléfonos e imágenes son opcionales.'}
+      'note':'Los puntos de áreas y ríos NO son entradas confirmadas. Algunos sitios públicos carecen de nombre en OSM y se indican como tales. Fotos y teléfonos no se inventan.'}
     (out/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),'utf8')
     print('IMPORTACIÓN OK:',total,'lugares reales con ID OSM,',len(handler.cells),'celdas. Categorías:',handler.category_counts.most_common(15))
 if __name__=='__main__':
