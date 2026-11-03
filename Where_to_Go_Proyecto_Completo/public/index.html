@@ -3,29 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#121f29" />
+  <meta name="theme-color" content="#041b40" />
   <meta name="description" content="Where to Go — A dónde ir. Descubre restaurantes, playas, hoteles y lugares increíbles cerca de ti." />
   <meta property="og:title" content="Where to Go · A dónde ir" />
   <meta property="og:description" content="Explora lo mejor de tu ciudad, estés donde estés." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="/assets/og-cover.png" />
-  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/assets/wtg-brand.svg?v=8" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/assets/icon-192.png" />
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/premium.css?v=6.0" /><link rel="stylesheet" href="/experience.css?v=6.0" /><link rel="stylesheet" href="/visual-v7.css?v=7.0" />
+  <link rel="stylesheet" href="/premium.css?v=6.0" /><link rel="stylesheet" href="/experience.css?v=6.0" /><link rel="stylesheet" href="/visual-v7.css?v=7.0" /><link rel="stylesheet" href="/world-v8.css?v=8.0" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
-  <section id="auth-gate" class="auth-gate" role="dialog" aria-modal="true" aria-labelledby="auth-title"><div class="wtg-auth-scenery"><div class="wtg-auth-kicker">WHERE TO GO · DESCUBRE EL MUNDO</div><h2 id="wtg-auth-scenery-title">Cada lugar tiene una historia.</h2><p id="wtg-auth-scenery-place">Paisajes auténticos de República Dominicana</p><div class="wtg-auth-attribution" id="wtg-auth-credit"></div><div class="wtg-auth-controls"><button type="button" id="wtg-auth-prev" aria-label="Paisaje anterior">‹</button><button type="button" id="wtg-auth-pause" aria-label="Pausar paisajes">Ⅱ</button><button type="button" id="wtg-auth-next" aria-label="Siguiente paisaje">›</button><span id="wtg-auth-count" aria-live="off">1 / 3</span></div></div><div class="auth-shell"><div class="auth-brand"><span class="auth-logo">W</span><div><strong>Where to Go<span class="brand-dot">.</span></strong><small>A DÓNDE IR · EXPLORA EL MUNDO</small></div></div><span class="auth-overline">DESCUBRE TU PRÓXIMA AVENTURA</span><h1 id="auth-title">El mundo está esperando por ti.</h1><p>Entra para guardar tus lugares favoritos y descubrir nuevas experiencias cerca de donde estás.</p><div class="wtg-auth-language"><label for="wtg-auth-language-select">🌐 Idioma / Language</label> <select id="wtg-auth-language-select" aria-label="Idioma / Language"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option></select></div><div class="auth-options"><button type="button" data-social="google" class="auth-social"><span>G</span> Continuar con Google</button><button type="button" data-social="apple" class="auth-social"><span>●</span> Continuar con Apple</button><button type="button" data-social="facebook" class="auth-social"><span>f</span> Continuar con Facebook</button></div><div class="auth-divider">O UTILIZA TU CORREO</div><form id="auth-email-form"><label>Correo electrónico <input id="auth-email" type="email" autocomplete="email" required placeholder="correo@ejemplo.com"></label><label>Contraseña <input id="auth-password" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label><div class="auth-email-actions"><button type="submit" data-auth-action="login">Entrar</button><button type="button" id="auth-create">Crear cuenta</button></div></form><p class="auth-error" id="auth-error" role="alert" hidden></p><label class="auth-optin"><input type="checkbox" id="auth-consent"> Quiero guardar mi historial de lugares vistos para recibir recomendaciones personalizadas. Puedo desactivarlo.</label><button type="button" id="auth-demo">Explorar demostración sin cuenta →</button><small id="auth-config-note" class="auth-config-note">Google, Facebook, Apple y correo requieren conectar Supabase y habilitar cada proveedor.</small></div></section>
+  <section id="auth-gate" class="auth-gate" role="dialog" aria-modal="true" aria-labelledby="auth-title"><div class="wtg-auth-scenery"><div class="wtg-auth-kicker">WHERE TO GO · DESCUBRE EL MUNDO</div><h2 id="wtg-auth-scenery-title">Cada lugar tiene una historia.</h2><p id="wtg-auth-scenery-place">Paisajes auténticos de República Dominicana</p><div class="wtg-auth-attribution" id="wtg-auth-credit"></div><div class="wtg-auth-controls"><button type="button" id="wtg-auth-prev" aria-label="Paisaje anterior">‹</button><button type="button" id="wtg-auth-pause" aria-label="Pausar paisajes">Ⅱ</button><button type="button" id="wtg-auth-next" aria-label="Siguiente paisaje">›</button><span id="wtg-auth-count" aria-live="off">1 / 3</span></div></div><div class="auth-shell"><div class="auth-brand"><span class="auth-logo"><img src="/assets/wtg-brand.svg" alt="" width="54" height="54"></span><div><strong>Where to Go<span class="brand-dot">.</span></strong><small>A DÓNDE IR · EXPLORA EL MUNDO</small></div></div><span class="auth-overline">DESCUBRE TU PRÓXIMA AVENTURA</span><h1 id="auth-title">El mundo está esperando por ti.</h1><p>Entra para guardar tus lugares favoritos y descubrir nuevas experiencias cerca de donde estás.</p><div class="wtg-auth-language"><label for="wtg-auth-language-select">🌐 Idioma / Language</label> <select id="wtg-auth-language-select" aria-label="Idioma / Language"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option></select></div><div class="auth-options"><button type="button" data-social="google" class="auth-social"><span>G</span> Continuar con Google</button><button type="button" data-social="apple" class="auth-social"><span>●</span> Continuar con Apple</button><button type="button" data-social="facebook" class="auth-social"><span>f</span> Continuar con Facebook</button></div><div class="auth-divider">O UTILIZA TU CORREO</div><form id="auth-email-form"><label>Correo electrónico <input id="auth-email" type="email" autocomplete="email" required placeholder="correo@ejemplo.com"></label><label>Contraseña <input id="auth-password" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label><div class="auth-email-actions"><button type="submit" data-auth-action="login">Entrar</button><button type="button" id="auth-create">Crear cuenta</button></div></form><p class="auth-error" id="auth-error" role="alert" hidden></p><label class="auth-optin"><input type="checkbox" id="auth-consent"> Quiero guardar mi historial de lugares vistos para recibir recomendaciones personalizadas. Puedo desactivarlo.</label><button type="button" id="auth-demo">Explorar demostración sin cuenta →</button><small id="auth-config-note" class="auth-config-note">Google, Facebook, Apple y correo requieren conectar Supabase y habilitar cada proveedor.</small></div></section>
   <div id="app">
     <aside class="sidebar">
       <a class="brand" href="#inicio" aria-label="Where to Go inicio">
-        <span class="brand-mark"><span class="premium-monogram">W</span></span>
-        <span class="brand-copy"><strong>Where to Go<span class="brand-dot">.</span></strong><small>A DÓNDE IR · RD</small></span>
+        <span class="brand-mark"><img src="/assets/wtg-brand.svg" alt="" width="48" height="48"></span>
+        <span class="brand-copy"><strong>Where to Go<span class="brand-dot">.</span></strong><small>DESCUBRE · EXPLORA · VIVE</small></span>
       </a>
       <div class="sidebar-label">EXPLORAR</div>
       <nav class="nav-main" aria-label="Navegación principal">
@@ -42,13 +42,13 @@
       </nav>
       <div class="sidebar-bottom">
         <div class="sidebar-promo"><span class="sidebar-promo-icon">✷</span><strong>¿Tienes un negocio?</strong><p>Haz que más personas te descubran.</p><button id="side-promote" class="tiny-white-btn">Quiero anunciarme →</button></div>
-        <p class="copyright">© 2026 Where to Go · Versión 7.0</p>
+        <p class="copyright">© 2026 Where to Go · V8</p>
       </div>
     </aside>
 
     <div class="main-shell">
       <header class="topbar">
-        <button id="mobile-brand" class="mobile-brand" aria-label="Volver al inicio"><span class="mobile-brand-icon">✦</span><span>Where to Go<span class="brand-dot">.</span></span></button>
+        <button id="mobile-brand" class="mobile-brand" aria-label="Volver al inicio"><span class="mobile-brand-icon"><img src="/assets/wtg-brand.svg" width="34" height="34" alt=""></span><span>Where to Go<span class="brand-dot">.</span></span></button>
         <div class="topbar-left"><span class="breadcrumb">Descubre el mundo</span><span class="crumb-separator">/</span><strong id="current-page-label">Inicio</strong></div>
         <div class="topbar-actions"><label class="wtg-language-control" for="wtg-language-select"><span aria-hidden="true">🌐</span> <span class="visually-hidden">Idioma / Language</span><select id="wtg-language-select" aria-label="Idioma / Language"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option></select></label>
           <button class="location-pill" id="location-pill" title="Cambiar ubicación"><span class="pin-icon">⌖</span><span class="location-pill-text" id="location-label">Puerto Plata, RD</span><span class="chevron">⌄</span></button>
@@ -63,18 +63,46 @@
       </div>
       <main id="main-content" tabindex="-1">
         <section class="view active" id="view-inicio" aria-labelledby="welcome-title">
-          <div class="welcome-row"><div><div class="eyebrow"><span class="eyebrow-dot"></span> TU GUÍA PARA EXPLORAR</div><h1 id="welcome-title">Tu próxima aventura empieza aquí <span>👋</span></h1><p>El mundo está lleno de lugares increíbles. Encuentra el tuyo.</p></div><div class="date-pill" id="today-label"></div></div>
+          <div class="welcome-row"><div><div class="eyebrow"><span class="eyebrow-dot"></span> WHERE TO GO · DESCUBRE EL MUNDO</div><h1 id="welcome-title">Explora lo extraordinario<span class="wtg-v8-gold-dot">.</span></h1><p>Playas, cultura y aventuras reales. Descubre tu próximo lugar favorito.</p></div><div class="date-pill" id="today-label"></div></div>
           <section class="hero" aria-label="Descubre lugares">
             <div class="hero-art" aria-hidden="true"></div>
-            <div class="hero-content"><span class="hero-pill">✦ TU GUÍA EXCLUSIVA DE DESTINOS</span><h2>La República Dominicana<br>se vive <em>explorando.</em></h2><p>De playas escondidas a experiencias inolvidables. Explora lugares reales, descubre negocios locales y planea tu próxima salida.</p><button id="hero-explore" class="btn btn-light">Explorar lugares <span>↗</span></button></div>
+            <div class="hero-content"><span class="hero-pill">✦ DESTINOS QUE INSPIRAN</span><h2>La República Dominicana<br>se vive <em>explorando.</em></h2><p>De playas escondidas a experiencias inolvidables. Explora lugares reales, descubre negocios locales y planea tu próxima salida.</p><button id="hero-explore" class="btn btn-light">Comenzar a explorar <span>↗</span></button></div>
             <div class="hero-coordinate">✦ <span>PUERTO PLATA · FOTO REAL</span></div>
             <div class="wtg-hero-controls" aria-label="Fotografías de destinos"><button type="button" id="wtg-hero-prev" aria-label="Destino anterior">‹</button><button type="button" id="wtg-hero-pause" aria-label="Pausar carrusel">Ⅱ</button><button type="button" id="wtg-hero-next" aria-label="Siguiente destino">›</button><span id="wtg-hero-progress" aria-live="off">1 / 3</span></div>
           </section>
+          <div class="wtg-v8-home-tools" aria-label="Encuentra tu próxima experiencia">
+            <form id="wtg-v8-search" class="wtg-v8-search" role="search">
+              <span aria-hidden="true">⌕</span><label class="visually-hidden" for="wtg-v8-query">Buscar destinos y establecimientos</label>
+              <input id="wtg-v8-query" type="search" placeholder="Buscar playas, excursiones, restaurantes..." autocomplete="off">
+              <button type="submit">Buscar <span aria-hidden="true">→</span></button>
+            </form>
+            <div class="wtg-v8-quick" aria-label="Accesos rápidos">
+              <button type="button" data-cat="playas"><span>🏝️</span> Playas</button>
+              <button type="button" data-cat="cascadas"><span>🌊</span> Cascadas</button>
+              <button type="button" data-cat="restaurantes"><span>🍽️</span> Restaurantes</button>
+              <button type="button" data-cat="hoteles"><span>🏨</span> Hoteles</button>
+              <button type="button" data-view="mapa"><span>🗺️</span> Mapa</button>
+            </div>
+          </div>
           <p class="hero-credit">Portada: Puerto Plata, fotografía de Jusunx · <a href="https://commons.wikimedia.org/wiki/File:Aerial_view_of_Puerto_Plata,_June_2023.jpg" target="_blank" rel="noopener">CC BY-SA 4.0 / Wikimedia Commons</a></p>
+          <section id="wtg-v8-destinations" class="wtg-v8-destinations" aria-label="Destinos emblemáticos">
+            <div class="wtg-v8-section-title"><div><span class="mini-eyebrow">✦ INSPIRACIÓN PARA TU PRÓXIMO VIAJE</span><h2>Un mundo por descubrir</h2></div><button type="button" data-view="explorar">Explorar lugares ↗</button></div>
+            <div id="wtg-v8-destination-rail" class="wtg-v8-destination-rail" aria-live="off"></div>
+          </section>
           <section id="province-explorer" class="province-explorer" aria-label="Portadas por provincia"><div><span class="mini-eyebrow">32 DEMARCACIONES · 158 MUNICIPIOS</span><h3>Explora cada provincia</h3><p>Elige una provincia para ver su portada real. Selecciona un municipio para cambiar la búsqueda de lugares.</p></div><div class="province-control-row"><label for="hero-province" class="visually-hidden">Provincia</label><select id="hero-province" aria-label="Provincia"></select><button class="btn btn-primary" id="hero-choose-municipio">Elegir municipio ↗</button></div><small id="hero-preview-note" hidden>Vista previa de portada: los lugares cercanos siguen vinculados a tu ubicación hasta que elijas un municipio.</small></section>
           <div class="location-alert" id="location-alert"><span class="alert-icon">◎</span><div><strong id="location-alert-title">Explorando Puerto Plata</strong><small id="location-alert-desc">Activa tu ubicación para encontrar lugares realmente cercanos.</small></div><button id="alert-locate">Usar mi ubicación <span>→</span></button></div>
-          <div class="section-heading"><div><span class="mini-eyebrow">ENCUENTRA TU PLAN IDEAL</span><h2>¿Qué te gustaría hacer?</h2></div><button class="text-action" id="show-all-categories">Todas las categorías →</button></div>
-          <div class="category-grid" id="home-categories"></div>
+          <div class="section-heading"><div><span class="mini-eyebrow">TU PRÓXIMA EXPERIENCIA</span><h2>¿Qué te gustaría descubrir?</h2></div><button class="text-action" id="show-all-categories">Todas las categorías ↓</button></div>
+          <div class="wtg-v8-category-shortcuts" aria-label="Categorías para viajar">
+            <button type="button" data-cat="playas"><span>🏖️</span><strong>Playas</strong></button>
+            <button type="button" data-cat="rios"><span>🌿</span><strong>Ríos</strong></button>
+            <button type="button" data-cat="cascadas"><span>💦</span><strong>Cascadas</strong></button>
+            <button type="button" data-cat="atracciones"><span>🏛️</span><strong>Atractivos</strong></button>
+            <button type="button" data-cat="restaurantes"><span>🍽️</span><strong>Comer</strong></button>
+            <button type="button" data-cat="hoteles"><span>🏨</span><strong>Hoteles</strong></button>
+            <button type="button" data-cat="cafes"><span>☕</span><strong>Cafeterías</strong></button>
+            <button type="button" data-cat="taxis"><span>🚘</span><strong>Transporte</strong></button>
+          </div>
+          <div class="category-grid" id="home-categories" aria-label="Directorio completo de categorías"></div>
           <section class="taxi-teaser" aria-label="Transporte VIP en Puerto Plata"><div class="taxi-teaser-symbol">CT</div><div><span class="mini-eyebrow">SERVICIO DESTACADO · PUERTO PLATA</span><h3>Tu próximo trayecto, en manos expertas.</h3><p>Clemente Transport VIP · Aeropuertos, hoteles y traslados privados.</p></div><div class="taxi-teaser-actions"><button class="btn btn-primary" id="home-see-taxis">Explorar transporte ↗</button></div></section>
           <div class="section-heading results-heading"><div><span class="mini-eyebrow">SELECCIÓN CERCA DE TI</span><h2>Destinos cerca de tu ubicación <span class="result-count" id="home-count"></span></h2></div><button class="text-action" id="home-see-all">Ver más lugares →</button></div>
           <aside id="province-anchor-sponsor" class="wtg-owner-sponsor" hidden aria-label="Anunciante de transporte en Puerto Plata">
@@ -86,7 +114,7 @@
           <div id="home-list" class="place-grid"></div>
           <section id="province-premium-container" class="wtg-premium-province" hidden aria-label="Anunciantes premium de la provincia"><div class="section-heading"><div><span class="mini-eyebrow">PUBLICIDAD · ESPACIOS PREMIUM</span><h2>Negocios destacados de tu provincia</h2></div></div><div id="province-premium-list"></div><div class="wtg-ad-controls"><button type="button" id="wtg-premium-prev" aria-label="Anuncio anterior">‹</button><button type="button" id="wtg-premium-pause" aria-label="Pausar anuncios">Ⅱ</button><button type="button" id="wtg-premium-next" aria-label="Siguiente anuncio">›</button><span id="wtg-premium-progress" aria-live="off"></span></div></section>
           <section class="promo-banner"><div class="promo-banner-graphic">✦</div><div><span class="promo-badge">PARA EMPRENDEDORES</span><h2>Tu negocio merece ser descubierto.</h2><p>Aparece frente a personas que están buscando exactamente lo que ofreces.</p></div><button id="promo-banner-btn" class="btn btn-dark">Promocionar negocio ↗</button></section>
-          <div class="data-credit">Fuentes: Ministerio de Turismo RD y © colaboradores de OpenStreetMap · Fotos vinculadas a lugares reales o ausencia indicada explícitamente · Nunca se usan fotos genéricas para las fichas</div>
+          <div class="data-credit">Fuentes: Ministerio de Turismo RD y © colaboradores de OpenStreetMap · Fotografías identificadas y crédito cuando existen; otras fichas indican que no hay foto disponible · Nunca se usan fotos genéricas para las fichas</div>
         </section>
 
         <section class="view" id="view-explorar" aria-labelledby="explore-title">
@@ -153,8 +181,9 @@
   <script defer src="/language.js?v=6.0"></script>
   <script defer src="/province-heroes.js?v=5.2"></script>
   <script defer src="/config.js?v=5.2"></script>
-  <script defer src="/app.js?v=7.0"></script>
+  <script defer src="/app.js?v=8.0"></script>
   <script defer src="/experience.js?v=7.0"></script>
+  <script defer src="/world-v8.js?v=8.0"></script>
   <script type="module" src="/auth.js?v=5.2"></script>
 </body>
 </html>

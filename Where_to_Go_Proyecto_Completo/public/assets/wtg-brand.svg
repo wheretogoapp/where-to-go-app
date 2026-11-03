@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title">
+<title id="title">Where to Go — Brújula de viaje</title>
+<defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#64e5ff"/><stop offset=".48" stop-color="#087afc"/><stop offset="1" stop-color="#06329b"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe7a6"/><stop offset="1" stop-color="#d6a047"/></linearGradient>
+<filter id="s" x="-.4" y="-.4" width="1.8" height="1.8"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#001334" flood-opacity=".5"/></filter></defs>
+<path d="M48 88C40 73 17 49 17 32A31 31 0 0 1 79 32c0 17-23 41-31 56Z" fill="url(#b)" stroke="#79d9ff" stroke-width="2.4" filter="url(#s)"/>
+<circle cx="48" cy="32" r="21" fill="#002052" opacity=".62"/>
+<circle cx="48" cy="32" r="18.5" fill="none" stroke="#a8e8ff" stroke-width="1.5" opacity=".5"/>
+<path d="m32 41 10-9 15-10c2-1 4 1 2 3L49 40l-9 10-4-12z" fill="#fff" stroke="#e6f8ff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="m33 40-10 2-5 7 11-2z M46 43l1 10-6 6-1-12z" fill="url(#g)"/><path d="M64 19l7-8" stroke="url(#g)" stroke-linecap="round" stroke-width="4"/>
+</svg>

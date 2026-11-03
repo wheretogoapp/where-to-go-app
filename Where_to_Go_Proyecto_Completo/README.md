@@ -1,3 +1,11 @@
+# WHERE TO GO V8 · Azul Caribe — Móvil + Web
+
+**Esta versión transforma visualmente el sitio existente, no crea otra aplicación.** No contiene la base nacional importada desde GitHub; al combinar archivos no elimines `public/data/places/`.
+
+Cambios: azul Caribe/dorado, identidad de marca, inicio turístico, búsqueda real desde Inicio, accesos a categorías, galería provincial y listado compacto para fichas sin fotografía. Mantiene los enlaces de Clemente y los controles existentes de autenticación, ubicación, patrocinio y directorio.
+
+Las imágenes de destinos se enlazan a sus fuentes documentadas en Wikimedia Commons. La cobertura de fotos y negocios depende de las fuentes disponibles y registros aprobados. Google, Apple, Facebook, correo y pagos no están activos sin backend configurado.
+
 # Where to Go V5 — Directorio RD · misma web premium
 
 Este proyecto **conserva** la interfaz aprobada, 32 demarcaciones, 158 municipios, GPS, el mapa, favoritos, sesiones con Supabase (requiere configuración) y Clemente Transport VIP.
