@@ -1,8 +1,8 @@
 {
   "version": 5,
-  "updatedAt": "2026-11-03T13:31:39.017232+00:00",
+  "updatedAt": "2026-11-05T00:37:28.880726+00:00",
   "source": "© OpenStreetMap contributors · ODbL / Geofabrik",
-  "recordCount": 27180,
+  "recordCount": 27179,
   "categories": {
     "atracciones": 366,
     "bancos": 731,
@@ -36,7 +36,7 @@
     "panaderias": 190,
     "parques": 738,
     "pescaderias": 16,
-    "piscinas": 70,
+    "piscinas": 69,
     "playas": 75,
     "resorts": 16,
     "restaurantes": 1396,
@@ -197,16 +197,16 @@
     "tiendas": 1
   },
   "licensedPhotoEnrichment": {
-    "runAt": "2026-11-03T13:31:51.339756+00:00",
+    "runAt": "2026-11-05T00:37:37.210860+00:00",
     "linkedCandidates": 233,
     "wikidataIDsQueried": 227,
-    "commonsFilesChecked": 48,
+    "commonsFilesChecked": 53,
     "withVerifiedLicense": 0,
     "description": "Solo fotos vinculadas al lugar por OSM/Wikidata y con licencia libre verificable en Wikimedia Commons"
   },
   "geoPhotoEnrichment": {
-    "runAt": "2026-11-03T13:36:53.342494+00:00",
-    "candidatesQueried": 120,
+    "runAt": "2026-11-05T00:38:54.499617+00:00",
+    "candidatesQueried": 480,
     "exactNameGeoMatches": 0,
     "newPhotosVerified": 0,
     "totalLicensedPhotos": 0,
