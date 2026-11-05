@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "updatedAt": "2026-11-05T00:37:28.880726+00:00",
+  "updatedAt": "2026-11-05T00:45:45.880972+00:00",
   "source": "© OpenStreetMap contributors · ODbL / Geofabrik",
   "recordCount": 27179,
   "categories": {
@@ -191,14 +191,14 @@
   "licensedPhotoCount": 15,
   "photoCoverageByCategory": {
     "atracciones": 8,
+    "cascadas": 1,
     "deportes": 3,
     "iglesias": 1,
     "parques": 1,
-    "tiendas": 1,
-    "cascadas": 1
+    "tiendas": 1
   },
   "licensedPhotoEnrichment": {
-    "runAt": "2026-11-05T00:37:37.210860+00:00",
+    "runAt": "2026-11-05T00:45:52.602788+00:00",
     "linkedCandidates": 233,
     "wikidataIDsQueried": 227,
     "commonsFilesChecked": 53,
@@ -206,22 +206,12 @@
     "description": "Solo fotos vinculadas al lugar por OSM/Wikidata y con licencia libre verificable en Wikimedia Commons"
   },
   "geoPhotoEnrichment": {
-    "runAt": "2026-11-05T00:38:54.499617+00:00",
+    "runAt": "2026-11-05T00:47:09.816454+00:00",
     "candidatesQueried": 480,
     "exactNameGeoMatches": 0,
     "newPhotosVerified": 0,
     "totalLicensedPhotos": 0,
     "rule": "Coincidencia de nombre exacto, distancia <=120 metros, P18 y licencia Commons confirmada"
   },
-  "photoPreservedAcrossImports": 11,
-  "curatedPhotoEnrichment": {
-    "count": 4,
-    "source": "Fichas de Wikimedia Commons revisadas manualmente: identidad geográfica, autor y licencia",
-    "osmIDs": [
-      "osm-node-10633818705",
-      "osm-way-320449984",
-      "osm-node-1645554843",
-      "osm-node-3684543648"
-    ]
-  }
+  "photoPreservedAcrossImports": 15
 }
