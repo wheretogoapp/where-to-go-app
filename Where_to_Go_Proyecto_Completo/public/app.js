@@ -143,7 +143,7 @@ const VERIFIED_OSM_IMAGES={'osm-way-254282388':{photo:'https://commons.wikimedia
 const GOOGLE_BRAND='<a class="google-credit" href="https://maps.google.com" target="_blank" rel="noopener"><img src="https://www.gstatic.com/images/branding/product/1x/maps_48dp.png" width="16" height="16" alt="Google Maps" /> Google Maps</a>';
 const state = {
   view:'inicio', lat:CITIES[0].lat, lon:CITIES[0].lon, city:'Puerto Plata', region:'República Dominicana',
-  mode:'city', gpsAccuracy:null, places:[], catalog:[], remotePlaces:[], dataMode:'live', dataError:'', category:'todos', radius:2000, search:'', googleEnabled:false, googleIssue:'',province:'Puerto Plata', placesProvider:'osm',
+  mode:'city', gpsAccuracy:null, places:[], catalog:[], remotePlaces:[], dataMode:'live', dataError:'', category:'todos', radius:12000, search:'', googleEnabled:false, googleIssue:'',province:'Puerto Plata', placesProvider:'osm',
   favorites:loadJSON('wtg_favorites',[]), favoritePlaces:loadJSON('wtg_favorite_places',[]), businesses:loadJSON('wtg_businesses',[]),
   map:null, markers:[], loadingId:0, modal:null, toastTimeout:null
 };
@@ -466,16 +466,30 @@ function wtgCellsNearby(lat,lon,radius,manifest){
   const [loA,loB]=wtgCell(lat-kmLat,lon-kmLon);
   const [hiA,hiB]=wtgCell(lat+kmLat,lon+kmLon);
   const available=new Set(manifest?.cells||[]), cells=[];
+  // Manifest V6 lists finer cells only in dense areas. Old V5 catalogues
+  // keep working without the splitCells field.
+  const fine=manifest?.fineCellDegrees||.04;
+  const fineLoA=Math.floor((lat-kmLat+90)/fine),fineHiA=Math.floor((lat+kmLat+90)/fine);
+  const fineLoB=Math.floor((lon-kmLon+180)/fine),fineHiB=Math.floor((lon+kmLon+180)/fine);
   for(let a=loA;a<=hiA;a++)for(let b=loB;b<=hiB;b++){
     const key=`${a}_${b}`;
-    if(available.has(key))cells.push(key);
+    if(!available.has(key))continue;
+    const split=manifest?.splitCells?.[key];
+    if(!Array.isArray(split)||!split.length){cells.push(key);continue}
+    for(const sub of split){
+      const coords=sub.split('_');
+      const subA=Number(coords[2]),subB=Number(coords[3]);
+      if(!Number.isInteger(subA)||!Number.isInteger(subB))continue;
+      const indexA=a*5+subA,indexB=b*5+subB;
+      if(indexA>=fineLoA&&indexA<=fineHiA&&indexB>=fineLoB&&indexB<=fineHiB)cells.push(sub);
+    }
   }
   return cells;
 }
 async function wtgGrid(key){
   if(wtgGridCache.has(key))return wtgGridCache.get(key);
   const promise=(async()=>{
-    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),6500);
+    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),12000);
     try{
       const r=await fetch(`/data/places/cell_${key}.json`,{signal:controller.signal,cache:'force-cache'});
       if(!r.ok)throw Error(`Celda ${key}: HTTP ${r.status}`);
@@ -517,7 +531,15 @@ async function loadPlaces(force=false){
     renderAll();return;
   }
   const keys=wtgCellsNearby(state.lat,state.lon,state.radius,manifest);
-  const responses=await Promise.all(keys.map(wtgGrid));
+  // Small, bounded parallel batches avoid overloading mobile networks.
+  const responses=new Array(keys.length);
+  let next=0;
+  await Promise.all(Array.from({length:Math.min(14,keys.length)},async()=>{
+    while(next<keys.length){
+      const i=next++;
+      responses[i]=await wtgGrid(keys[i]);
+    }
+  }));
   if(token!==state.loadingId)return;
   const unique=new Map();
   for(const rows of responses)for(const item of rows){const p=wtgImportedPlace(item);if(p&&!unique.has(p.id))unique.set(p.id,p)}
@@ -698,7 +720,7 @@ function showFirstLocationChoice(){
 }
 function requestLocation(){if(!window.isSecureContext){toast('La ubicación requiere HTTPS. Abre la URL segura de Netlify, no un archivo local.');openModal('location-modal');return;}if(!('geolocation' in navigator)){toast('Este navegador no admite ubicación. Elige un municipio.');openModal('location-modal');return;}
   toast('Solicitando permiso para usar tu ubicación...');navigator.geolocation.getCurrentPosition(pos=>{
-    state.lat=pos.coords.latitude;state.lon=pos.coords.longitude;state.gpsAccuracy=Number.isFinite(pos.coords.accuracy)?pos.coords.accuracy:null;state.mode='gps';state.city='Cerca de mí';state.province='';state.region='Ubicación actual';state.category='todos';state.search='';closeModals();toast('¡Ubicación detectada! Buscando lugares cercanos.');loadPlaces();resolveCurrentCity(state.lat,state.lon);
+    state.lat=pos.coords.latitude;state.lon=pos.coords.longitude;state.gpsAccuracy=Number.isFinite(pos.coords.accuracy)?pos.coords.accuracy:null;state.mode='gps';state.city='Cerca de mí';state.province='';state.region='Ubicación actual';state.category='todos';state.search='';state.radius=2000;closeModals();toast('¡Ubicación detectada! Buscando lugares cercanos.');loadPlaces();resolveCurrentCity(state.lat,state.lon);
   },e=>{const msg=e.code===1?'Ubicación bloqueada. Abre el candado de la URL, permite ubicación y reintenta; o elige municipio.':e.code===2?'El dispositivo no pudo localizarte. Activa GPS/Wi-Fi o elige municipio.':'Tiempo de GPS agotado. Inténtalo de nuevo o selecciona un municipio.';toast(msg);if(!state.modal)openModal('location-modal');},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
 }
 function renderMap(){if(state.placesProvider==='google'){renderGoogleMapLinks();return;}$('map-help').textContent='Mapa: © OpenStreetMap contributors · Leaflet. Las coordenadas pueden representar el centro de un área.';const arr=sortByDistance(state.places.filter(p=>p.source!=='google'&&placeMatchesCategory(p,state.category)&&(state.category!=='todos'||isTouristDiscovery(p))&&p.distance<=state.radius));$('map-count').textContent=arr.length;$('map-places').innerHTML=arr.length?arr.slice(0,85).map(p=>`<div class="map-place" role="button" tabindex="0" data-map-place="${esc(p.id)}"><span class="map-emoji">${catInfo(p.cat).emoji}</span><div><strong>${esc(p.name)}</strong><small>${catInfo(p.cat).name} · ${distance(p.distance)}</small></div></div>`).join(''):'<div style="padding:20px;font-size:12px;color:#8aa1ac">Sin lugares cargados. Prueba ampliar la zona.</div>';
