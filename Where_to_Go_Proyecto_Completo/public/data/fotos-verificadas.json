@@ -38,5 +38,45 @@
     "attribution": "Juan Alberto Silver · CC BY-SA 4.0 · Wikimedia Commons",
     "source": "https://commons.wikimedia.org/wiki/File:Lago_Enriquillo.jpg",
     "note": "Imagen del mismo destino, identidad y licencia comprobadas manualmente en la ficha pública de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-node-1440518529",
+    "nombre": "El Salto Jimenoa",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Saltos%20de%20Jimenoa.jpg?width=700",
+    "attribution": "Treeman · Dominio público · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Saltos_de_Jimenoa.jpg",
+    "note": "Imagen vinculada a este mismo lugar con identidad y licencia comprobadas en la página de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-way-329792669",
+    "nombre": "Arco del Triunfo",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Triumphbogen(Arco%20del%20triunfo).jpg?width=700",
+    "attribution": "Escape2606 · CC BY-SA 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Triumphbogen(Arco_del_triunfo).jpg",
+    "note": "Imagen vinculada a este mismo lugar con identidad y licencia comprobadas en la página de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-way-140159249",
+    "nombre": "Anfiteatro Altos de Chavón",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Altos%20de%20Chavon%20Amphitheater.JPG?width=700",
+    "attribution": "Compro · Dominio público · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Altos_de_Chavon_Amphitheater.JPG",
+    "note": "Imagen vinculada a este mismo lugar con identidad y licencia comprobadas en la página de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-way-246753931",
+    "nombre": "Catedral San Pedro Apóstol",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Catedral%20San%20Pedro.jpg?width=700",
+    "attribution": "PJAQUEZ19 · CC BY-SA 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Catedral_San_Pedro.jpg",
+    "note": "Imagen vinculada a este mismo lugar con identidad y licencia comprobadas en la página de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-node-7074406573",
+    "nombre": "Monumento Hermanas Mirabal",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Monumento%20hermanas%20Mirabal.jpg?width=700",
+    "attribution": "Ronny Medina · CC BY-SA 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Monumento_hermanas_Mirabal.jpg",
+    "note": "Imagen vinculada a este mismo lugar con identidad y licencia comprobadas en la página de Wikimedia Commons"
   }
 ]
