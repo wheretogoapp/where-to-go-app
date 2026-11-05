@@ -164,8 +164,13 @@ document.addEventListener('error', event => {
   const fallback=document.createElement('div');fallback.className='photo-empty wtg-photo-placeholder';
   const sign=document.createElement('span');sign.className='wtg-photo-icon';sign.textContent=icon;
   const label=document.createElement('span');label.className='wtg-photo-label';label.textContent='FOTO NO DISPONIBLE';
+  const card=parent?.closest('.place-card');
+  if(el.classList.contains('wtg-regional-photo')){
+    parent?.querySelector('.wtg-regional-disclaimer')?.remove();
+    card?.querySelector('.wtg-regional-credit')?.remove();
+  }
   fallback.append(sign,label);el.replaceWith(fallback);
-  parent?.closest('.place-card')?.classList.add('wtg-photo-load-failed');
+  card?.classList.add('wtg-photo-load-failed');
 },true);
 function regionalScene(p){
   // Province scenery is never published as the photo of a particular business.
