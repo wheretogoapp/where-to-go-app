@@ -73,7 +73,8 @@ def run(args):
     out=Path(args.out);mf=out/'manifest.json';m=json.loads(mf.read_text(encoding='utf8'))
     if not m.get('cells') or m.get('recordCount',0)<1:raise RuntimeError('Importar primero OpenStreetMap. No crear un catálogo vacío.')
     cache={};seen=set();by_index=collections.defaultdict(list)
-    for key in m['cells']:
+    for parent in m['cells']:
+      for key in (m.get('splitCells',{}).get(parent) or [parent]):
         file=out/f'cell_{key}.json';cache[key]=json.loads(file.read_text(encoding='utf8'))
         for x in cache[key]:
             if x.get('name') and x.get('nameKnown') is not False:
@@ -115,12 +116,23 @@ def run(args):
              'website':website,'source':'overture','sourceUrl':'https://docs.overturemaps.org/guides/places/',
              'confidence':confidence,'accuracy':'Punto catalogado por Overture Maps; confirmar entrada',
              'image':'','photoSource':'','photoAttribution':''}
-        key=f'{int(math.floor((lat+90)/GRID))}_{int(math.floor((lon+180)/GRID))}'
+        parent=f'{int(math.floor((lat+90)/GRID))}_{int(math.floor((lon+180)/GRID))}'
+        split=m.get('splitCells',{}).get(parent)
+        if split:
+            base_a,base_b=(int(x) for x in parent.split('_'))
+            a=max(0,min(4,int(math.floor((lat+90)/(GRID/5))-base_a*5)))
+            b=max(0,min(4,int(math.floor((lon+180)/(GRID/5))-base_b*5)))
+            key=next((t for t in split if t.startswith(f'{parent}_{a}_{b}_')),None)
+            if not key:
+                key=f'{parent}_{a}_{b}_0'
+                split.append(key)
+        else:
+            key=parent
         cache.setdefault(key,[]).append(row);by_index[idx].append((lat,lon,row));seen.add(pid);stats[cat]+=1;count+=1
     if count:
         for key,items in cache.items():
             (out/f'cell_{key}.json').write_text(json.dumps(items,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf8')
-        m['cells']=sorted(cache)
+        m['cells']=sorted(set(m['cells'])|{key.rsplit('_',3)[0] if len(key.split('_'))==5 else key for key in cache})
         m['recordCount']=sum(map(len,cache.values()))
         m['updatedAt']=datetime.datetime.now(datetime.timezone.utc).isoformat()
         m['sources']=['Geofabrik / OpenStreetMap','Overture Maps']
