@@ -7,7 +7,7 @@ Does not perform fuzzy name matching, scrape third-party business websites,
 or invent images/attribution. No credentials or paid APIs.
 The Commons file metadata must identify an allowed free license.
 """
-import argparse, collections, datetime, html, json, re, time, urllib.parse, urllib.request
+import argparse, collections, datetime, html, json, re, time, urllib.parse, urllib.request, urllib.error
 from pathlib import Path
 
 USER_AGENT='WhereToGoTourism/1.0 (open-data photo metadata; contact via repository github.com/wheretogoapp/where-to-go-app) Python-urllib'
@@ -15,12 +15,23 @@ WIKIDATA='https://www.wikidata.org/w/api.php'
 COMMONS='https://commons.wikimedia.org/w/api.php'
 PRIORITY={'atracciones':0,'cascadas':1,'playas':2,'balnearios':3,'hoteles':4,'parques':5,'rios':6,'restaurantes':7,'bares':8,'supermercados':9}
 
+RATE_LIMITED_HOSTS=set()
 def get_json(url):
+    host=urllib.parse.urlsplit(url).netloc
+    if host in RATE_LIMITED_HOSTS:return {}
     request=urllib.request.Request(url,headers={'User-Agent':USER_AGENT,'Accept':'application/json'})
     for attempt in range(2):
         try:
             with urllib.request.urlopen(request,timeout=12) as response:
                 return json.load(response)
+        except urllib.error.HTTPError as exc:
+            if exc.code==429:
+                RATE_LIMITED_HOSTS.add(host)
+                print('RATE LIMIT:',host,'rechazó nuevas consultas (429); detener peticiones de esta fuente')
+                return {}
+            if attempt==1:
+                print('METADATA WARNING:',type(exc).__name__,str(exc)[:100]);return {}
+            time.sleep(1.25)
         except Exception as exc:
             if attempt==1:
                 print('METADATA WARNING:',type(exc).__name__,str(exc)[:100]);return {}
