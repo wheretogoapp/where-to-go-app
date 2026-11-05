@@ -188,13 +188,14 @@
   ],
   "license": "https://www.openstreetmap.org/copyright",
   "note": "Los puntos de áreas y ríos NO son entradas confirmadas. Algunos sitios públicos carecen de nombre en OSM y se indican como tales. Fotos y teléfonos no se inventan.",
-  "licensedPhotoCount": 11,
+  "licensedPhotoCount": 15,
   "photoCoverageByCategory": {
-    "atracciones": 5,
+    "atracciones": 8,
     "deportes": 3,
     "iglesias": 1,
     "parques": 1,
-    "tiendas": 1
+    "tiendas": 1,
+    "cascadas": 1
   },
   "licensedPhotoEnrichment": {
     "runAt": "2026-11-05T00:37:37.210860+00:00",
@@ -212,5 +213,15 @@
     "totalLicensedPhotos": 0,
     "rule": "Coincidencia de nombre exacto, distancia <=120 metros, P18 y licencia Commons confirmada"
   },
-  "photoPreservedAcrossImports": 11
+  "photoPreservedAcrossImports": 11,
+  "curatedPhotoEnrichment": {
+    "count": 4,
+    "source": "Fichas de Wikimedia Commons revisadas manualmente: identidad geográfica, autor y licencia",
+    "osmIDs": [
+      "osm-node-10633818705",
+      "osm-way-320449984",
+      "osm-node-1645554843",
+      "osm-node-3684543648"
+    ]
+  }
 }

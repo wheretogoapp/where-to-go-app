@@ -1,10 +1,42 @@
 [
   {
-    "osm_id":"osm-way-254282388",
-    "nombre":"Fortaleza San Felipe",
-    "photo":"https://commons.wikimedia.org/wiki/Special:FilePath/Fortaleza_de_San_Felipe_DR_2.jpg?width=700",
-    "attribution":"CareAhLine · CC0 · Wikimedia Commons",
-    "source":"https://commons.wikimedia.org/wiki/File:Fortaleza_de_San_Felipe_DR_2.jpg",
-    "note":"Imagen autenticada contra la categoría de Fortaleza de San Felipe, Puerto Plata, y el identificador del objeto OSM."
+    "osm_id": "osm-way-254282388",
+    "nombre": "Fortaleza San Felipe",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Fortaleza_de_San_Felipe_DR_2.jpg?width=700",
+    "attribution": "CareAhLine · CC0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Fortaleza_de_San_Felipe_DR_2.jpg",
+    "note": "Imagen autenticada contra la categoría de Fortaleza de San Felipe, Puerto Plata, y el identificador del objeto OSM."
+  },
+  {
+    "osm_id": "osm-node-10633818705",
+    "nombre": "Dunas de Baní",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Dunas%20de%20Ban%C3%AD%201.jpg?width=700",
+    "attribution": "Ronny Medina · CC BY 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Dunas_de_Ban%C3%AD_1.jpg",
+    "note": "Imagen del mismo destino, identidad y licencia comprobadas manualmente en la ficha pública de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-way-320449984",
+    "nombre": "Saltos de Damajagua",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Damajagua%20Waterfall.jpg?width=700",
+    "attribution": "Funcheta · CC BY-SA 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Damajagua_Waterfall.jpg",
+    "note": "Imagen del mismo destino, identidad y licencia comprobadas manualmente en la ficha pública de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-node-1645554843",
+    "nombre": "Salto El Limón",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Wasserfall%20El%20Limon.jpg?width=700",
+    "attribution": "Thetornado76 · CC BY-SA 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Wasserfall_El_Limon.jpg",
+    "note": "Imagen del mismo destino, identidad y licencia comprobadas manualmente en la ficha pública de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-node-3684543648",
+    "nombre": "Parque Nacional Lago Enriquillo",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Lago%20Enriquillo.jpg?width=700",
+    "attribution": "Juan Alberto Silver · CC BY-SA 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Lago_Enriquillo.jpg",
+    "note": "Imagen del mismo destino, identidad y licencia comprobadas manualmente en la ficha pública de Wikimedia Commons"
   }
 ]
