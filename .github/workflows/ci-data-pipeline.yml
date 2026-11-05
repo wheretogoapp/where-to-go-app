@@ -1,5 +1,13 @@
 name: Where to Go - Validar datos y GPS
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci-data-pipeline.yml'
+      - 'Where_to_Go_Proyecto_Completo/public/app.js'
+      - 'Where_to_Go_Proyecto_Completo/public/index.html'
+      - 'Where_to_Go_Proyecto_Completo/public/world-v8.css'
+      - 'Where_to_Go_Proyecto_Completo/public/service-worker.js'
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -9,10 +17,15 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
+      - name: Comprobar sintaxis JavaScript de la aplicación
+        run: |
+          node --check Where_to_Go_Proyecto_Completo/public/app.js
+          node --check Where_to_Go_Proyecto_Completo/public/experience.js
+          node --check Where_to_Go_Proyecto_Completo/public/service-worker.js
       - name: Comprobar sintaxis de scripts de datos
         run: |
           python -m py_compile Where_to_Go_Proyecto_Completo/tools/enrich_photos.py Where_to_Go_Proyecto_Completo/tools/enrich_geo_photos.py Where_to_Go_Proyecto_Completo/tools/preserve_photos.py Where_to_Go_Proyecto_Completo/tools/probe_google_global.py
