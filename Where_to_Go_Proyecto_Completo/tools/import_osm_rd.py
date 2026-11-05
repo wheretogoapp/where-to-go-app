@@ -146,16 +146,54 @@ def run(pbf,countries,out):
     if total<100:
         raise RuntimeError(f'Importación insuficiente: {total} negocios. No sustituir catálogo con datos parciales.')
     for f in out.glob('cell_*.json'):f.unlink()
+    # Dense cities previously required downloading multi-megabyte files just to
+    # show places within 2 km. Split only oversized cells into 0.04-degree
+    # geographic tiles, then cap every tile at about 220 KB. Manifest lists
+    # each tile so the browser requests only the tiles intersecting its radius.
+    split_cells={}
+    tile_count=0
+    max_tile_bytes=220000
+    def dump_group(key, rows):
+        nonlocal tile_count
+        (out/f'cell_{key}.json').write_text(
+            json.dumps(rows,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
+        tile_count+=1
     for cell,entries in sorted(handler.cells.items()):
         entries.sort(key=lambda r:(r['cat'],r['name']))
-        (out/f'cell_{cell}.json').write_text(json.dumps(entries,ensure_ascii=False,separators=(',',':')),'utf8')
-    manifest={'version':5,'updatedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        raw=json.dumps(entries,ensure_ascii=False,separators=(',',':'))
+        if len(raw.encode('utf-8'))<=max_tile_bytes:
+            dump_group(cell,entries)
+            continue
+        base_a,base_b=(int(x) for x in cell.split('_'))
+        fine=collections.defaultdict(list)
+        for row in entries:
+            a=max(0,min(4,math.floor((row['lat']+90)/(GRID/5))-base_a*5))
+            b=max(0,min(4,math.floor((row['lon']+180)/(GRID/5))-base_b*5))
+            fine[(a,b)].append(row)
+        split_cells[cell]=[]
+        for (a,b),group in sorted(fine.items()):
+            segment=[];size=2;part=0
+            for row in group:
+                text=json.dumps(row,ensure_ascii=False,separators=(',',':'))
+                length=len(text.encode('utf-8'))+1
+                if segment and size+length>max_tile_bytes:
+                    key=f'{cell}_{a}_{b}_{part}'
+                    dump_group(key,segment)
+                    split_cells[cell].append(key)
+                    segment=[];size=2;part+=1
+                segment.append(row);size+=length
+            if segment:
+                key=f'{cell}_{a}_{b}_{part}'
+                dump_group(key,segment)
+                split_cells[cell].append(key)
+    manifest={'version':6,'updatedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),
       'source':'© OpenStreetMap contributors · ODbL / Geofabrik','recordCount':total,
       'categories':dict(sorted(handler.category_counts.items())), 'cells':sorted(handler.cells),
+      'splitCells':split_cells,'fineCellDegrees':GRID/5,
       'license':'https://www.openstreetmap.org/copyright',
       'note':'Los puntos de áreas y ríos NO son entradas confirmadas. Algunos sitios públicos carecen de nombre en OSM y se indican como tales. Fotos y teléfonos no se inventan.'}
     (out/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),'utf8')
-    print('IMPORTACIÓN OK:',total,'lugares reales con ID OSM,',len(handler.cells),'celdas. Categorías:',handler.category_counts.most_common(15))
+    print('IMPORTACIÓN OK:',total,'lugares reales con ID OSM,',len(handler.cells),'zonas,',tile_count,'archivos ligeros. Categorías:',handler.category_counts.most_common(15))
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--pbf',required=True);p.add_argument('--countries',required=True);p.add_argument('--out',default='public/data/places')
     a=p.parse_args();run(a.pbf,a.countries,a.out)
