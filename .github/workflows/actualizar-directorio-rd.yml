@@ -81,7 +81,7 @@ jobs:
             --out Where_to_Go_Proyecto_Completo/public/data/places
       - name: Añadir fotos auténticas y licencias de Wikimedia (si están enlazadas al sitio)
         run: |
-          python Where_to_Go_Proyecto_Completo/tools/enrich_photos.py --out Where_to_Go_Proyecto_Completo/public/data/places --max-wikidata 1200 --max-photos 1200
+          python Where_to_Go_Proyecto_Completo/tools/enrich_photos.py --out Where_to_Go_Proyecto_Completo/public/data/places --max-wikidata 1600 --max-photos 1600
           python - <<'PY'
           import json
           d=json.load(open('Where_to_Go_Proyecto_Completo/public/data/places/manifest.json'))
@@ -90,7 +90,7 @@ jobs:
       - name: Descubrir imágenes adicionales solo con nombre y geolocalización Wikidata verificables
         run: |
           python -m py_compile Where_to_Go_Proyecto_Completo/tools/enrich_photos.py Where_to_Go_Proyecto_Completo/tools/enrich_geo_photos.py Where_to_Go_Proyecto_Completo/tools/preserve_photos.py
-          python Where_to_Go_Proyecto_Completo/tools/enrich_geo_photos.py --out Where_to_Go_Proyecto_Completo/public/data/places --max-queries 120
+          python Where_to_Go_Proyecto_Completo/tools/enrich_geo_photos.py --out Where_to_Go_Proyecto_Completo/public/data/places --max-queries 480
       - name: Restaurar fotografías anteriores cuando el mismo lugar conserve su ID
         run: |
           python Where_to_Go_Proyecto_Completo/tools/preserve_photos.py restore \
@@ -108,6 +108,8 @@ jobs:
             f=out/f'cell_{cell}.json'
             assert f.exists(), f
           print('OK:',m['recordCount'],'lugares reales;',len(m['cells']),'celdas en RD')
+          print('FOTOGRAFÍAS REALES VERIFICADAS:',m.get('licensedPhotoCount',0))
+          assert m.get('licensedPhotoCount',0)>=0
           PY
       - name: Publicar los datos en el mismo GitHub
         run: |
