@@ -26,11 +26,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: main
           persist-credentials: true
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
       - name: Instalar lector OSM
@@ -119,7 +119,20 @@ jobs:
           git add Where_to_Go_Proyecto_Completo/public/data/places/
           if ! git diff --cached --quiet; then
              git commit -m 'Directorio RD: lugares reales OSM clasificados'
-             git push origin HEAD:main
+             # Another edit may have reached main while this long import ran.
+             # Rebase only our generated-data commit; never force-push over application changes.
+             for attempt in 1 2 3 4; do
+               git fetch origin main
+               git rebase origin/main
+               if git push origin HEAD:main; then
+                 echo 'Catálogo actualizado sin sobrescribir otros cambios'
+                 exit 0
+               fi
+               echo "Publicación concurrente, reintentando: $attempt"
+               sleep 3
+             done
+             echo 'Error: no se pudo publicar sin conflicto; revisar rebase' >&2
+             exit 1
           else
              echo 'Sin cambios en catálogo'
           fi
