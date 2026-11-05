@@ -287,7 +287,7 @@ function placeMatchesCategory(p,cat){
 const WTG_DISCOVERY_CATEGORIES = new Set(['rios','balnearios','cascadas','lagunas','senderismo','playas','parques','atracciones','entretenimiento','infantil','piscinas','restaurantes','bares','discotecas','hoteles','resorts','villas']);
 const WTG_DISCOVERY_PRIORITY = {atracciones:9,cascadas:9,balnearios:9,rios:9,playas:9,parques:8,senderismo:8,lagunas:8,entretenimiento:7,infantil:7,piscinas:6,restaurantes:5,hoteles:5,resorts:5,villas:4,bares:3,discotecas:3};
 function isTouristDiscovery(p){return WTG_DISCOVERY_CATEGORIES.has(p.cat) && p.nameKnown!==false && !!String(p.name||'').trim();}
-function tourismSort(arr){return arr.sort((a,b)=>(Number(b.sponsored&&b.plan==='premium')-Number(a.sponsored&&a.plan==='premium')) || (a.distance-b.distance) || ((WTG_DISCOVERY_PRIORITY[b.cat]||0)-(WTG_DISCOVERY_PRIORITY[a.cat]||0)) || a.name.localeCompare(b.name,'es'));}
+function tourismSort(arr){return arr.sort((a,b)=>(Number(b.sponsored&&b.plan==='premium')-Number(a.sponsored&&a.plan==='premium')) || (Number(Boolean(b.photo&&b.photoSource))-Number(Boolean(a.photo&&a.photoSource))) || ((WTG_DISCOVERY_PRIORITY[b.cat]||0)-(WTG_DISCOVERY_PRIORITY[a.cat]||0)) || (a.distance-b.distance) || a.name.localeCompare(b.name,'es'));}
 function discoveryMatches(p){return state.category!=='todos'||!!state.search||isTouristDiscovery(p);}
 function sortByDistance(arr){return promoSort(arr)}
 function classify(tags){
