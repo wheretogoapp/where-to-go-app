@@ -752,8 +752,8 @@ renderTaxis=function(){
 function startup(){createProvinceControls();ensureProviderBanner();renderCities();loadMunicipalities();renderCategories();const d=new Date();$('today-label').textContent=new Intl.DateTimeFormat('es',{day:'numeric',month:'long',year:'numeric'}).format(d);const startView=location.hash.slice(1);navigate($('view-'+startView)?startView:'inicio');
   document.addEventListener('click',e=>{
     const v=e.target.closest('[data-view]');if(v){navigate(v.dataset.view);return}
-    const c=e.target.closest('[data-cat]');if(c){if(c.dataset.cat==='taxis'){navigate('taxis');return}state.category=c.dataset.cat;state.search='';navigate('explorar');loadPlaces();return}
-    const f=e.target.closest('[data-filter]');if(f){if(f.dataset.filter==='taxis'){navigate('taxis');return}state.category=f.dataset.filter;loadPlaces();return}
+    const c=e.target.closest('[data-cat]');if(c){if(c.dataset.cat==='taxis'){navigate('taxis');return}state.category=c.dataset.cat;state.search='';if(state.mode!=='gps'&&state.radius<30000)state.radius=30000;navigate('explorar');loadPlaces();return}
+    const f=e.target.closest('[data-filter]');if(f){if(f.dataset.filter==='taxis'){navigate('taxis');return}state.category=f.dataset.filter;if(state.mode!=='gps'&&state.category!=='todos'&&state.radius<30000)state.radius=30000;loadPlaces();return}
     const photo=e.target.closest('[data-photo-place]');if(photo){openReport(photo.dataset.photoPlace);return}
     const missing=e.target.closest('[data-report-missing]');if(missing){openReport();return}
     const fav=e.target.closest('[data-fav]');if(fav){toggleFavorite(fav.dataset.fav);if(state.modal==='place-modal')openPlace(fav.dataset.fav);return}
