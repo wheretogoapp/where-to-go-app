@@ -145,7 +145,7 @@ const state = {
   view:'inicio', lat:CITIES[0].lat, lon:CITIES[0].lon, city:'Puerto Plata', region:'República Dominicana',
   mode:'city', gpsAccuracy:null, places:[], catalog:[], remotePlaces:[], dataMode:'live', dataError:'', category:'todos', radius:12000, search:'', googleEnabled:false, googleIssue:'',province:'Puerto Plata', placesProvider:'osm',
   favorites:loadJSON('wtg_favorites',[]), favoritePlaces:loadJSON('wtg_favorite_places',[]), businesses:loadJSON('wtg_businesses',[]),
-  map:null, markers:[], loadingId:0, modal:null, toastTimeout:null
+  map:null, markers:[], loadingId:0, modal:null, toastTimeout:null, exploreLimit:80
 };
 function loadJSON(key,def){try{const v=JSON.parse(localStorage.getItem(key));return Array.isArray(v)?v:def}catch{return def}}
 function saveJSON(key,data){try{localStorage.setItem(key,JSON.stringify(data));return true}catch{toast('No se pudo guardar en este dispositivo.');return false}}
@@ -607,7 +607,8 @@ function renderHome(){renderProvincePremium();const teaser=document.querySelecto
 function matches(p){return placeMatchesCategory(p,state.category)&&(!state.search||`${p.name} ${p.address} ${catInfo(p.cat).name}`.toLocaleLowerCase('es').includes(state.search.toLocaleLowerCase('es')))&&p.distance<=state.radius+100}
 function renderExplore(){const arr=state.category==='todos'&&!state.search ? tourismSort(state.places.filter(p=>matches(p)&&isTouristDiscovery(p))) : sortByDistance(state.places.filter(matches));$('explore-count').textContent=state.dataMode==='loading'?'...':arr.length;
   $('explore-context').textContent=`${state.dataError||'Catálogo local'} · ${state.city} · hasta ${distance(state.radius)}`;
-  $('explore-list').innerHTML=state.dataMode==='loading'?'<div class="loading-state"><span class="spinner"></span><div>Consultando lugares cercanos...</div></div>':arr.length?arr.map(placeCard).join(''):emptyBlock('No encontramos lugares con esos filtros', 'Ampliar búsqueda','radius');
+  const shown=arr.slice(0,state.exploreLimit||80);
+  $('explore-list').innerHTML=state.dataMode==='loading'?'<div class="loading-state"><span class="spinner"></span><div>Consultando lugares cercanos...</div></div>':arr.length?shown.map(placeCard).join('')+(arr.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${arr.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:''):emptyBlock('No encontramos lugares con esos filtros', 'Ampliar búsqueda','radius');
   $('filter-categories').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.category));$('distance-select').value=String(state.radius);if($('search-input').value!==state.search)$('search-input').value=state.search;
 }
 function renderFavorites(){const arr=state.favoritePlaces.map(p=>({...p,distance:haversine(state.lat,state.lon,p.lat,p.lon)}));$('favorite-list').innerHTML=arr.length?arr.map(placeCard).join(''):`<div class="empty-state"><span class="empty-emoji">💚</span><h3>¡Aquí comienza tu lista!</h3><p>Cuando encuentres un lugar especial, toca el corazón para guardarlo. Los favoritos se guardan en este dispositivo.</p><button data-empty="explore">Explorar lugares →</button></div>`}
@@ -789,8 +790,9 @@ renderTaxis=function(){
 function startup(){createProvinceControls();ensureProviderBanner();renderCities();loadMunicipalities();renderCategories();const d=new Date();$('today-label').textContent=new Intl.DateTimeFormat('es',{day:'numeric',month:'long',year:'numeric'}).format(d);const startView=location.hash.slice(1);navigate($('view-'+startView)?startView:'inicio');
   document.addEventListener('click',e=>{
     const v=e.target.closest('[data-view]');if(v){navigate(v.dataset.view);return}
-    const c=e.target.closest('[data-cat]');if(c){if(c.dataset.cat==='taxis'){navigate('taxis');return}state.category=c.dataset.cat;state.search='';if(state.mode!=='gps'&&state.radius<30000)state.radius=30000;navigate('explorar');loadPlaces();return}
-    const f=e.target.closest('[data-filter]');if(f){if(f.dataset.filter==='taxis'){navigate('taxis');return}state.category=f.dataset.filter;if(state.mode!=='gps'&&state.category!=='todos'&&state.radius<30000)state.radius=30000;loadPlaces();return}
+    const c=e.target.closest('[data-cat]');if(c){if(c.dataset.cat==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=c.dataset.cat;state.search='';if(state.mode!=='gps'&&state.radius<30000)state.radius=30000;navigate('explorar');loadPlaces();return}
+    const f=e.target.closest('[data-filter]');if(f){if(f.dataset.filter==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=f.dataset.filter;if(state.mode!=='gps'&&state.category!=='todos'&&state.radius<30000)state.radius=30000;loadPlaces();return}
+    const more=e.target.closest('[data-more-explore]');if(more){state.exploreLimit=(state.exploreLimit||80)+80;renderExplore();return}
     const photo=e.target.closest('[data-photo-place]');if(photo){openReport(photo.dataset.photoPlace);return}
     const missing=e.target.closest('[data-report-missing]');if(missing){openReport();return}
     const fav=e.target.closest('[data-fav]');if(fav){toggleFavorite(fav.dataset.fav);if(state.modal==='place-modal')openPlace(fav.dataset.fav);return}
