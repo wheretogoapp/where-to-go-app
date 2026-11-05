@@ -104,10 +104,18 @@ jobs:
           m=json.loads((out/'manifest.json').read_text())
           assert m['recordCount']>=100, m
           assert m['cells'], 'Sin celdas generadas'
+          seen=0
           for cell in m['cells']:
-            f=out/f'cell_{cell}.json'
-            assert f.exists(), f
-          print('OK:',m['recordCount'],'lugares reales;',len(m['cells']),'celdas en RD')
+            keys=m.get('splitCells',{}).get(cell) or [cell]
+            assert keys, ('Zona vacía',cell)
+            for key in keys:
+              f=out/f'cell_{key}.json'
+              assert f.exists(), f
+              rows=json.loads(f.read_text(encoding='utf-8'))
+              assert isinstance(rows,list), f
+              seen+=len(rows)
+          assert seen==m['recordCount'], (seen,m['recordCount'])
+          print('OK:',seen,'lugares reales;',len(m['cells']),'zonas geográficas')
           print('FOTOGRAFÍAS REALES VERIFICADAS:',m.get('licensedPhotoCount',0))
           assert m.get('licensedPhotoCount',0)>=0
           PY
