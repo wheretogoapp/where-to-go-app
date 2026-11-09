@@ -616,19 +616,44 @@ async function loadPlaces(force=false){
     renderAll();return;
   }
   const keys=wtgCellsNearby(state.lat,state.lon,state.radius,manifest);
-  // Small, bounded parallel batches avoid overloading mobile networks.
-  const responses=new Array(keys.length);
-  let next=0;
-  await Promise.all(Array.from({length:Math.min(14,keys.length)},async()=>{
-    while(next<keys.length){
-      const i=next++;
-      responses[i]=await wtgGrid(keys[i]);
+  // Request nearest geographic tiles first, not the entire 12 km zone in arbitrary order.
+  // Show the first places quickly; additional tiles enrich the same list progressively.
+  const tileDistance=key=>{
+    const parts=key.split('_').map(Number);
+    if(parts.length>=5){
+      const fine=Number(manifest.fineCellDegrees)||.04;
+      const lat=-90+(parts[0]*5+parts[2]+.5)*fine;
+      const lon=-180+(parts[1]*5+parts[3]+.5)*fine;
+      return haversine(state.lat,state.lon,lat,lon);
+    }
+    return haversine(state.lat,state.lon,-90+(parts[0]+.5)*.2,-180+(parts[1]+.5)*.2);
+  };
+  keys.sort((a,b)=>tileDistance(a)-tileDistance(b));
+  const unique=new Map();
+  let next=0,finished=0;
+  const total=keys.length;
+  const publish=complete=>{
+    if(token!==state.loadingId)return;
+    if(!unique.size&&!complete)return;
+    const msg=complete?`Lugares dentro de ${distance(state.radius)} · ${wtgFailedCells.size?'Algunos bloques sin cargar; pulsa Actualizar':'Catálogo actualizado'}`:'Ampliando los resultados cercanos…';
+    applyNearby([...unique.values()],msg);
+  };
+  await Promise.all(Array.from({length:Math.min(9,total)},async()=>{
+    while(next<total){
+      const key=keys[next++];
+      const rows=await wtgGrid(key);
+      if(token!==state.loadingId)return;
+      for(const item of rows){
+        if(!item||unique.has(item.id))continue;
+        const p=wtgImportedPlace(item);
+        if(p&&insideNearbyRadius(p))unique.set(p.id,p);
+      }
+      finished++;
+      if(finished===4||finished%10===0)publish(false);
     }
   }));
   if(token!==state.loadingId)return;
-  const unique=new Map();
-  for(const rows of responses)for(const item of rows){const p=wtgImportedPlace(item);if(p&&!unique.has(p.id))unique.set(p.id,p)}
-  applyNearby([...unique.values()],`Catálogo local de ${manifest.sources?.length>1?'OSM y Overture Maps':'OpenStreetMap'} · actualizado ${manifest.updatedAt||'sin fecha'} · filtrado por distancia${wtgFailedCells.size?' · ⚠ '+wtgFailedCells.size+' bloques sin cargar; pulsa Actualizar':''}`);
+  publish(true);
 }
 
 function ensureProviderBanner(){
@@ -681,7 +706,7 @@ function renderProvincePremium(){
   }).join('');
 }
 function renderHome(){renderProvincePremium();const teaser=document.querySelector('.taxi-teaser');if(teaser)teaser.hidden=!(state.province==='Puerto Plata'||['Puerto Plata','Sosúa','Cabarete'].includes(state.city));const list=$('home-list');$('home-count').textContent=state.dataMode==='loading'?'...':state.places.filter(p=>p.distance<=state.radius+100&&isTouristDiscovery(p)).length;const sorted=tourismSort(state.places.filter(p=>p.distance<=state.radius+100&&isTouristDiscovery(p))).slice(0,12);
-  list.innerHTML=state.dataMode==='loading'?'<div class="loading-state"><span class="spinner"></span><div>Preparando lugares cercanos…</div></div>':sorted.length?sorted.map(placeCard).join(''):emptyBlock('No hay lugares cartografiados en este radio; amplía la distancia o cambia de zona');
+  list.innerHTML=state.dataMode==='loading'&&!sorted.length?'<div class="wtg-loading-cards" aria-label="Buscando lugares cerca de ti"><div class="wtg-skeleton-card"></div><div class="wtg-skeleton-card"></div><div class="wtg-skeleton-card"></div></div>':sorted.length?sorted.map(placeCard).join(''):emptyBlock('No hay lugares cartografiados en este radio; amplía la distancia o cambia de zona');
   const mainPromo=document.getElementById('province-anchor-sponsor');
   if(mainPromo){mainPromo.hidden=provinceFromCity()!=='Puerto Plata';}
   const alert=$('location-alert'),title=$('location-alert-title'),desc=$('location-alert-desc'),btn=$('alert-locate');
@@ -876,7 +901,9 @@ function putNearbyResultsFirst(){
   const welcome=home?.querySelector('.welcome-row');
   if(!home||!heading||!list||!tools||!welcome)return;
   welcome.insertAdjacentElement('afterend',tools);
-  tools.insertAdjacentElement('afterend',heading);
+  const shortcuts=home.querySelector('.wtg-v8-category-shortcuts');
+  if(shortcuts)tools.insertAdjacentElement('afterend',shortcuts);
+  (shortcuts||tools).insertAdjacentElement('afterend',heading);
   heading.insertAdjacentElement('afterend',list);
 }
 function startup(){createProvinceControls();ensureProviderBanner();putNearbyResultsFirst();renderCities();loadMunicipalities();renderCategories();const d=new Date();$('today-label').textContent=new Intl.DateTimeFormat('es',{day:'numeric',month:'long',year:'numeric'}).format(d);const startView=location.hash.slice(1);navigate($('view-'+startView)?startView:'inicio');
@@ -967,8 +994,16 @@ function startup(){createProvinceControls();ensureProviderBanner();putNearbyResu
     }finally{if(submitBtn)submitBtn.disabled=false;}
   };
   renderAll();
-  loadLocalAdventureCatalog().then(()=>Promise.all([loadApprovedFreeBusinesses(),loadApprovedSponsors()]))
-    .then(()=>{if(state.mode!=='pending')loadPlaces()});
+  // Do not block nearby places behind editorial catalogs and business extras.
+  // These can load in parallel and enrich the visible list once ready.
+  void wtgManifest();
+  void loadLocalAdventureCatalog().then(()=>{
+    if(state.dataMode==='live'&&state.places.length)applyNearby(state.remotePlaces,state.dataError);
+  });
+  void Promise.allSettled([loadApprovedFreeBusinesses(),loadApprovedSponsors()]).then(()=>{
+    if(state.dataMode==='live'&&state.places.length)applyNearby(state.remotePlaces,state.dataError);
+  });
+  if(state.mode!=='pending')void loadPlaces();
   // El visitante entra a ver negocios cercanos. Pide ubicación HTTPS
   // automáticamente; si el navegador la rechaza, ofrece selección manual.
   if(window.isSecureContext&&navigator.geolocation){
