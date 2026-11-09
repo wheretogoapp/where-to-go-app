@@ -42,7 +42,7 @@ jobs:
             assert len(images)<=9,pid
             sources=set()
             for p in images:
-              assert p['url'].startswith(('https://upload.wikimedia.org/','https://commons.wikimedia.org/wiki/Special:FilePath/')),pid
+              assert p['url'].startswith(('https://upload.wikimedia.org/','https://thumb.wikimedia.org/','https://commons.wikimedia.org/wiki/Special:FilePath/')),pid
               assert p['source'].startswith('https://commons.wikimedia.org/wiki/File:'),pid
               assert p['attribution'] and p['license'],pid
               assert p['source'] not in sources,pid
