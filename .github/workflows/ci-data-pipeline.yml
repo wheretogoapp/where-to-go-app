@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci-data-pipeline.yml'
+      - 'netlify.toml'
+      - 'Where_to_Go_Proyecto_Completo/netlify.toml'
       - 'Where_to_Go_Proyecto_Completo/public/app.js'
       - 'Where_to_Go_Proyecto_Completo/public/index.html'
       - 'Where_to_Go_Proyecto_Completo/public/world-v8.css'
@@ -31,6 +33,23 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
+      - name: Comprobar configuración de publicación para Netlify
+        run: |
+          python - <<'PY'
+          import pathlib,tomllib
+          repo=pathlib.Path('.')
+          root=tomllib.loads((repo/'netlify.toml').read_text())
+          nested=tomllib.loads((repo/'Where_to_Go_Proyecto_Completo/netlify.toml').read_text())
+          assert root['build']['publish']=='Where_to_Go_Proyecto_Completo/public'
+          assert nested['build']['publish']=='public'
+          for folder in (repo/root['build']['publish'],repo/'Where_to_Go_Proyecto_Completo'/nested['build']['publish']):
+              assert folder.is_dir(),folder
+              assert (folder/'index.html').is_file(),folder
+              assert (folder/'photo-atlas.js').is_file(),folder
+              assert (folder/'data'/'photo-atlas-rd.json').is_file(),folder
+              assert (folder/'data'/'places'/'manifest.json').is_file(),folder
+          print('NETLIFY: configuración de raíz y carpeta interna apuntan al mismo sitio')
+          PY
       - name: Comprobar sintaxis JavaScript de la aplicación
         run: |
           node --check Where_to_Go_Proyecto_Completo/public/app.js
