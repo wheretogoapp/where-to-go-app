@@ -1,0 +1,50 @@
+name: Where to Go - Probar enlace móvil publicado
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verificar-pages-en-linea.yml'
+jobs:
+  comprobar_web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - name: Comprobar página, mapas, Las Terrenas y las 500 fotos desde Internet
+        run: |
+          python - <<'PY'
+          import json,time,urllib.error,urllib.request
+          base='https://wheretogoapp.github.io/where-to-go-app/'
+          def fetch(path):
+              url=base+path
+              for attempt in range(5):
+                  try:
+                      with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'WhereToGo-DeploymentTest/1.0'}),timeout=30) as r:
+                          data=r.read();print(r.status,path,len(data),'bytes',flush=True)
+                          assert r.status==200,(r.status,path)
+                          return data
+                  except Exception as e:
+                      print('Intento',attempt+1,path,type(e).__name__,str(e)[:150],flush=True)
+                      if attempt==4:raise
+                      time.sleep(5)
+          html=fetch('').decode('utf-8')
+          assert 'photo-atlas.js' in html
+          assert 'Las Terrenas' in html
+          js=fetch('app.js').decode('utf-8')
+          assert 'Las Terrenas' in js
+          assert 'placeGalleryMarkup' in js
+          fetch('photo-atlas.js')
+          fetch('photo-atlas.css')
+          manifest=json.loads(fetch('data/places/manifest.json'))
+          assert manifest['recordCount']>=44000
+          assert manifest['categories']['restaurantes']>=3700
+          assert manifest['categories']['discotecas']>=200
+          atlas=json.loads(fetch('data/photo-atlas-rd.json'))
+          assert atlas['count']==500
+          assert len(atlas['coverageByProvince'])==32
+          near=sum(((p['lat']-19.311)*111)**2+((p['lon']+69.543)*105)**2<=12**2 for p in atlas['photos'])
+          assert near>=40,near
+          terrenas=json.loads(fetch('data/places/cell_546_552_2_1_0.json'))
+          assert any(p['name']=='Terra Bar' for p in terrenas)
+          print('SITIO PÚBLICO OK:',manifest['recordCount'],'lugares;',atlas['count'],'fotos;',near,'fotos cerca de Las Terrenas')
+          PY
