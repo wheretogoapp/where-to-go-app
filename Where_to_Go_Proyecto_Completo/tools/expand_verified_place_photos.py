@@ -77,6 +77,11 @@ def km(a,b,c,d):
     p=math.pi/180
     v=math.sin((c-a)*p/2)**2+math.cos(a*p)*math.cos(c*p)*math.sin((d-b)*p/2)**2
     return 12742*math.atan2(math.sqrt(v),math.sqrt(max(0,1-v)))
+def geodist_placeholder_unavailable(coords,lat,lon):
+    if not coords:return True
+    try:return km(lat,lon,float(coords[0]['lat']),float(coords[0]['lon']))>1
+    except (TypeError,ValueError,KeyError,IndexError):return True
+
 def match_title(name,title,cat,lat,lon,coords,context):
     bare=title.removeprefix('File:').rsplit('.',1)[0]
     if BAD_PHOTO.search(bare):return False
@@ -88,7 +93,15 @@ def match_title(name,title,cat,lat,lon,coords,context):
     # Require at least two meaningful words, or one rare distinctive word of
     # length >=8 (e.g. Damajagua) AND matching geolocation or locality.
     if not all(re.search(r'\b'+re.escape(tok)+r'\b',filename) for tok in set(core)):return False
-    if len(set(core))==1 and len(core[0])<8:return False
+    # Many beaches have one short distinctive word (Playa Macao, Playa Cosón).
+    # Accept them ONLY if the photo title also carries Dominican locality
+    # context, or an actual Commons GPS coordinate confirms the same place.
+    single_short=len(set(core))==1 and len(core[0])<8
+    local_photo=bool(re.search(r'\b(dominican|dominicana|dominicano|republica dominicana|dom|dr|rd|ccsd|santo domingo|puerto plata|santiago de los caballeros|samana|las terrenas|constanza|bani|sosua|cabarete|higuey|la romana|pedernales)\b',filename))
+    if single_short:
+        raw_place=[x for x in name_n.split() if x not in {'de','del','el','la','los','las','en','santo','san','santa'}]
+        if len(raw_place)<2 or not all(t in file_tokens for t in raw_place):return False
+        if not local_photo and geodist_placeholder_unavailable(coords,lat,lon):return False
     file_tokens=set(filename.split())
     locality=normalize(context)
     locality_tokens=[t for t in locality.split() if t not in GENERIC and len(t)>=5]
