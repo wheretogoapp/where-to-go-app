@@ -383,7 +383,7 @@ function placeMatchesCategory(p,cat){
 }
 // Tourist discovery excludes everyday services from the default Explore/Home feeds.
 // Categories remain completely accessible when chosen explicitly, or by an exact text search.
-const WTG_DISCOVERY_CATEGORIES = new Set(['rios','balnearios','cascadas','lagunas','senderismo','playas','parques','atracciones','entretenimiento','infantil','piscinas','restaurantes','bares','discotecas','hoteles','resorts','villas','cafes','comidarapida','heladerias','supermercados']);
+const WTG_DISCOVERY_CATEGORIES = new Set(['rios','balnearios','cascadas','lagunas','senderismo','playas','parques','atracciones','entretenimiento','infantil','piscinas','restaurantes','bares','discotecas','hoteles','resorts','villas','cafes','comidarapida','heladerias']);
 const WTG_DISCOVERY_PRIORITY = {atracciones:9,cascadas:9,balnearios:9,rios:9,playas:9,parques:8,senderismo:8,lagunas:8,entretenimiento:7,infantil:7,piscinas:6,restaurantes:5,hoteles:5,resorts:5,villas:4,bares:3,discotecas:3};
 function isTouristDiscovery(p){return WTG_DISCOVERY_CATEGORIES.has(p.cat) && p.nameKnown!==false && !!String(p.name||'').trim();}
 function tourismSort(arr){return arr.sort((a,b)=>(a.distance-b.distance) || ((WTG_DISCOVERY_PRIORITY[b.cat]||0)-(WTG_DISCOVERY_PRIORITY[a.cat]||0)) || a.name.localeCompare(b.name,'es'));}
@@ -678,7 +678,31 @@ function updateProviderNotice(){
   }
 }
 function viewTitle(id){return {inicio:'Inicio',explorar:'Explorar lugares',mapa:'Mapa interactivo',favoritos:'Mis favoritos',promocionar:'Promocionar', 'mis-negocios':'Mis negocios',taxis:'Taxis y transporte',piloto:'Destinos con fotos',negocioDemo:'Presentar a un negocio',atlas:'Fotos reales de RD'}[id]||'Inicio'}
-function navigate(view){if(!$("view-"+view))view='inicio';state.view=view;document.querySelectorAll('.view').forEach(el=>el.classList.toggle('active',el.id===`view-${view}`));document.querySelectorAll('[data-view]').forEach(el=>el.classList.toggle('active',el.dataset.view===view));$('current-page-label').textContent=viewTitle(view);if(view==='taxis')renderTaxis();if(view==='explorar')renderExplore();if(view==='favoritos')renderFavorites();if(view==='mis-negocios')renderMyBusinesses();if(view==='mapa')setTimeout(renderMap,100);window.scrollTo({top:0,behavior:'instant'});try{history.replaceState(null,'',`#${view}`)}catch{}}
+let wtgLeafletLoading=null;
+function ensureLeaflet(){
+  if(window.L)return Promise.resolve(true);
+  if(wtgLeafletLoading)return wtgLeafletLoading;
+  wtgLeafletLoading=new Promise(resolve=>{
+    if(!document.querySelector('link[data-wtg-leaflet]')){
+      const css=document.createElement('link');
+      css.rel='stylesheet';css.dataset.wtgLeaflet='true';
+      css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(css);
+    }
+    const script=document.createElement('script');
+    script.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.async=true;
+    script.onload=()=>resolve(!!window.L);
+    script.onerror=()=>resolve(false);
+    document.head.appendChild(script);
+  });
+  return wtgLeafletLoading;
+}
+function navigate(view){if(!$("view-"+view))view='inicio';state.view=view;document.querySelectorAll('.view').forEach(el=>el.classList.toggle('active',el.id===`view-${view}`));document.querySelectorAll('[data-view]').forEach(el=>el.classList.toggle('active',el.dataset.view===view));$('current-page-label').textContent=viewTitle(view);if(view==='taxis')renderTaxis();if(view==='explorar')renderExplore();if(view==='favoritos')renderFavorites();if(view==='mis-negocios')renderMyBusinesses();if(view==='mapa'){
+  const map=$('world-map');
+  if(map&&!window.L)map.textContent='Preparando mapa de esta zona…';
+  void ensureLeaflet().then(()=>{if(state.view==='mapa')renderMap()});
+}window.scrollTo({top:0,behavior:'instant'});try{history.replaceState(null,'',`#${view}`)}catch{}}
 function renderCategories(){const counts={};state.places.forEach(p=>{counts[p.cat]=(counts[p.cat]||0)+1;if(p.relatedTags)for(const tag of p.relatedTags)counts[tag]=(counts[tag]||0)+1});
   const blocks=[
     ['🌿 Aventuras y naturaleza','rios balnearios cascadas lagunas senderismo playas parques atracciones entretenimiento infantil piscinas'],
