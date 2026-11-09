@@ -1,0 +1,38 @@
+{
+  "updatedAt": "2026-11-09T16:31:01.055534+00:00",
+  "placesInCatalogue": 44696,
+  "placesWithNationalPhoto": 51,
+  "curatedPlacesWithKnownPhoto": 116,
+  "galleryPlaceCount": 63,
+  "galleryImageCount": 295,
+  "newVerifiedGalleryPhotos": 283,
+  "placesSearched": 116,
+  "candidateTitlesMatched": 313,
+  "apiRequests": 174,
+  "http429Count": 0,
+  "newPhotosByCategory": {
+    "atracciones": 223,
+    "deportes": 17,
+    "entretenimiento": 2,
+    "iglesias": 30,
+    "parques": 9,
+    "playas": 2
+  },
+  "newPhotosByProvince": {
+    "Distrito Nacional": 169,
+    "Duarte": 6,
+    "La Altagracia": 6,
+    "La Romana": 1,
+    "La Vega": 14,
+    "Pedernales": 2,
+    "Peravia": 9,
+    "Puerto Plata": 10,
+    "Samaná": 7,
+    "San Juan": 15,
+    "San Pedro de Macorís": 6,
+    "Santiago": 17,
+    "Santo Domingo": 20,
+    "Sin provincia": 1
+  },
+  "description": "Fotos adicionales verificadas por título exacto del lugar y licencia libre Commons; negocios exigen confirmación de ubicación"
+}
