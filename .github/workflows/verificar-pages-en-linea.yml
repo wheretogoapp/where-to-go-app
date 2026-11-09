@@ -40,8 +40,14 @@ jobs:
           assert manifest['recordCount']>=44000
           assert manifest['categories']['restaurantes']>=3700
           assert manifest['categories']['discotecas']>=200
-          stats=json.loads(fetch('data/place-gallery-stats.json'))
-          gallery=json.loads(fetch('data/place-gallery.json'))
+          # Validate the same published build after the CDN receives the new files.
+          for attempt in range(12):
+              stats=json.loads(fetch('data/place-gallery-stats.json'))
+              gallery=json.loads(fetch('data/place-gallery.json'))
+              if stats.get('newVerifiedGalleryPhotos',0)>=252 and sum(map(len,gallery.values()))==stats.get('galleryImageCount',0):
+                  break
+              print('Datos propagándose a Pages; intento',attempt+1,flush=True)
+              time.sleep(10)
           assert stats['newVerifiedGalleryPhotos']>=252,stats
           assert stats['galleryImageCount']>=264,stats
           assert sum(map(len,gallery.values()))==stats['galleryImageCount']
