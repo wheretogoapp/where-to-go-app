@@ -276,3 +276,29 @@ button,a,select,input {touch-action:manipulation}
 .wtg-more-explore button{padding:12px 22px;border-radius:12px;background:#086aab;border:0;color:white;
   font-size:14px;font-weight:800;cursor:pointer;min-width:180px}
 .wtg-more-explore button:hover{background:#084c87}
+
+/* Where to Go - Photo tap opens the real place detail; favorites remain independent. */
+.place-photo{isolation:isolate}
+.place-photo .wtg-open-photo{position:absolute;inset:0;z-index:2;display:block;width:100%;height:100%;border:0;border-radius:0;background:transparent;cursor:pointer}
+.place-photo .wtg-open-photo:focus-visible{outline:3px solid #0fb7c4;outline-offset:-4px}
+.place-photo .card-tag,.place-photo .card-image-caption,.place-photo .wtg-regional-disclaimer{z-index:3;pointer-events:none}
+.place-photo .fav-button{z-index:4}
+.wtg-gallery{background:#081e35;color:#fff;overflow:hidden;border-radius:16px 16px 0 0}
+.wtg-gallery-stage{height:clamp(230px,40vw,425px);position:relative;background:#0c263e;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.wtg-gallery-stage .wtg-gallery-main{width:100%;height:100%;object-fit:cover;object-position:center}
+.wtg-gallery-prev,.wtg-gallery-next{position:absolute;top:50%;transform:translateY(-50%);z-index:2;background:rgba(0,24,44,.78);color:white;border:1px solid #ffffff69;border-radius:50%;height:42px;width:42px;font-weight:800;font-size:28px;display:grid;place-items:center;line-height:1;box-shadow:0 5px 22px #0017}
+.wtg-gallery-prev{left:12px}.wtg-gallery-next{right:12px}
+.wtg-gallery-count{position:absolute;bottom:12px;right:13px;padding:7px 11px;border-radius:30px;background:#001c33db;color:#fff;font-size:12px;font-weight:800}
+.wtg-gallery-thumbnails{display:flex;gap:9px;padding:12px 14px 6px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin}
+.wtg-gallery-thumbnails button{border:2px solid transparent;flex:0 0 78px;height:62px;padding:0;border-radius:9px;overflow:hidden;background:#062338;opacity:.72}
+.wtg-gallery-thumbnails button.active{border-color:#45e4e2;opacity:1}
+.wtg-gallery-thumbnails img{width:100%;height:100%;object-fit:cover}
+.wtg-gallery-credit{font-size:10px;line-height:1.65;color:#e0edf8;padding:9px 16px 14px;margin:0;overflow-wrap:anywhere}
+.wtg-gallery-credit a{color:#b5f3fc;text-decoration:underline;margin-left:4px}
+.wtg-external-photos{background:#e9f5ff!important;color:#135a95!important;border:1px solid #b6d8f5!important}
+@media(max-width:640px){
+ .wtg-gallery-stage{height:245px}
+ .wtg-gallery-prev,.wtg-gallery-next{height:36px;width:36px;font-size:25px}
+ .wtg-gallery-thumbnails button{flex-basis:65px;height:56px}
+ .wtg-gallery-credit{font-size:10px;padding:10px 13px 13px}
+}
