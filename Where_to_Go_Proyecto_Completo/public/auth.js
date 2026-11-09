@@ -86,11 +86,20 @@ document.getElementById('auth-email-form').addEventListener('submit',e=>{e.preve
 document.getElementById('auth-create').addEventListener('click',()=>loginEmail(true));
 demo.addEventListener('click',()=>{if(settings.allowDemo===false)return;demoMode=true;showMessage('');closeGate()});
 document.getElementById('auth-consent').addEventListener('change',e=>setPersonalization(e.target.checked));
-document.getElementById('top-business').addEventListener('click',e=>{
-  e.stopImmediatePropagation();
-  if(currentUser){if(confirm('¿Quieres cerrar sesión en Where to Go?'))window.WTG_auth.signOut();}
-  else{demoMode=false;openGate();}
-},true);
+const account=document.getElementById('wtg-account'),legal=document.getElementById('wtg-legal');
+const accountMsg=document.getElementById('wtg-account-message');
+function accountMessage(value){accountMsg.textContent=value;}
+function openAccount(){if(!currentUser){demoMode=false;openGate();return;}document.getElementById('wtg-account-email').textContent=currentUser.email||'Usuario';document.getElementById('wtg-account-status').textContent=currentUser.email_confirmed_at?'Correo confirmado ✓':'Correo pendiente de confirmación';accountMessage('');account.hidden=false;document.getElementById('wtg-account-close').focus();}
+document.getElementById('top-business').addEventListener('click',e=>{e.stopImmediatePropagation();openAccount()},true);
+document.getElementById('wtg-account-close').addEventListener('click',()=>account.hidden=true);
+document.getElementById('wtg-legal-close').addEventListener('click',()=>legal.hidden=true);
+document.getElementById('wtg-account-privacy').addEventListener('click',()=>{account.hidden=true;legal.hidden=false});
+document.getElementById('wtg-account-favorites').addEventListener('click',()=>{account.hidden=true;document.querySelector('[data-view="favoritos"].mobile-tab')?.click()||document.querySelector('[data-view="favoritos"].nav-btn')?.click()});
+document.getElementById('wtg-account-signout').addEventListener('click',async()=>{try{await window.WTG_auth.signOut();account.hidden=true;accountMessage('')}catch(e){accountMessage('No se pudo cerrar sesión: '+e.message)}});
+document.getElementById('wtg-account-resend').addEventListener('click',async()=>{if(!client||!currentUser?.email)return accountMessage('Inicia sesión primero.');try{const {error:e}=await client.auth.resend({type:'signup',email:currentUser.email,options:{emailRedirectTo:location.origin+location.pathname}});if(e)throw e;accountMessage('Si la cuenta necesita confirmación, recibirás un correo.')}catch(e){accountMessage('No se pudo reenviar: '+e.message)}});
+document.getElementById('wtg-account-reset').addEventListener('click',async()=>{if(!client||!currentUser?.email)return accountMessage('Inicia sesión primero.');try{const {error:e}=await client.auth.resetPasswordForEmail(currentUser.email,{redirectTo:location.origin+location.pathname});if(e)throw e;accountMessage('Si la cuenta existe, recibirás instrucciones por correo. Para establecer una contraseña nueva se necesita completar el flujo de recuperación.')}catch(e){accountMessage('No se pudo solicitar: '+e.message)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){account.hidden=true;legal.hidden=true}});
+
 if(settings.allowDemo===false){demo.hidden=true;}
 if(!settings.supabaseUrl||!settings.supabaseAnonKey){
   demo.textContent='Abrir la app de prueba →';
