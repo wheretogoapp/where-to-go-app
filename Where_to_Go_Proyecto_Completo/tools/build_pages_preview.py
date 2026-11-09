@@ -40,7 +40,7 @@ def build(source,destination,prefix):
     app=(destination/'app.js').read_text(encoding='utf-8')
     assert '`'+prefix+'/data/places/cell_${key}.json' in app, 'FATAL: las celdas siguen apuntando a /data en la raíz'
     assert "fetch('"+prefix+"/data/places/manifest.json'" in app, 'FATAL: manifest fuera de GitHub Pages'
-    assert prefix+'/photo-atlas.js' not in html, 'No mostrar una galería separada de fotos reales'
+    assert 'data-view="tours"' in html, 'Falta Tours en navegación móvil'
     assert (destination/'data'/'photo-atlas-rd.json').exists()
     atlas=json.loads((destination/'data'/'photo-atlas-rd.json').read_text(encoding='utf-8'))
     assert atlas['count']>=500
