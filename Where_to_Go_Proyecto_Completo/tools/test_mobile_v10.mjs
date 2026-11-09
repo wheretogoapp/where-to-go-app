@@ -21,7 +21,7 @@ try {
   await page.goto(site,{waitUntil:'domcontentloaded',timeout:45000});
   await page.waitForFunction(()=>{
     return typeof state!=='undefined' && state.mode==='gps' && state.dataMode==='live' && state.places.length>100;
-  },{timeout:75000});
+  },null,{timeout:75000});
   const initial=await page.evaluate(()=>({
     mode:state.mode,count:state.places.length,
     categories:Object.fromEntries(['restaurantes','bares','discotecas','playas','hoteles'].map(c=>[c,state.places.filter(p=>p.cat===c).length])),
@@ -46,7 +46,7 @@ try {
     'Tapping a card photo did not open its correct place');
   await page.evaluate(()=>closeModals());
   await page.evaluate(()=>selectCity('Las Terrenas'));
-  await page.waitForFunction(()=>state.mode==='city'&&state.dataMode==='live'&&state.places.length>100,{timeout:75000});
+  await page.waitForFunction(()=>state.mode==='city'&&state.dataMode==='live'&&state.places.length>100,null,{timeout:75000});
   const selected=await page.evaluate(()=>({
     city:state.city,province:provinceFromCity(),count:state.places.length,
     heroTitle:document.querySelector('.hero h2')?.textContent,
