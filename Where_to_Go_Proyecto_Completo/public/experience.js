@@ -46,11 +46,8 @@
     return additional.length ? [...additional] : [first];
   }
   function slideSet(name){
-    if(name)return provSlides(name);
-    // No selected province: do not show Puerto Plata while detecting GPS.
-    return [];
-    const candidates=nationalNames.flatMap(n=>provSlides(n).slice(0,n==='Puerto Plata'?1:1));
-    return candidates.length?candidates:PP;
+    // Without a confirmed province, don't invent a backdrop from Puerto Plata.
+    return name ? provSlides(name) : [];
   }
   function updateSet(key, items,signature){
     const s=stateSlider[key];
@@ -60,7 +57,7 @@
   }
   function applyHero(){
     const s=stateSlider.hero,x=s.items[s.index];
-    if(!x){const art=$('view-inicio')?.querySelector('.hero .hero-art');if(art)art.style.backgroundImage='';const title=document.querySelector('.hero h2');if(title)title.textContent='Descubre los lugares más cercanos';const note=document.querySelector('.hero .hero-coordinate span');if(note)note.textContent='ACTIVA TU UBICACIÓN';return;}
+    if(!x){const art=$('view-inicio')?.querySelector('.hero .hero-art');if(art)art.style.backgroundImage='none';const title=document.querySelector('.hero h2');if(title)title.textContent='Descubre los lugares más cercanos';const note=document.querySelector('.hero .hero-coordinate span');if(note)note.textContent='ACTIVA TU UBICACIÓN';return;}
     const art=document.querySelector('.hero .hero-art');
     const title=document.querySelector('.hero h2');
     const note=document.querySelector('.hero .hero-coordinate span');
