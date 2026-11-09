@@ -1,0 +1,95 @@
+/* Where to Go — compact premium travel discovery. Mobile-first hierarchy.
+   Nearby places, search and location precede editorial photos and promotions. */
+:root{--wtg-ink:#142b41;--wtg-turquoise:#0b8f93;--wtg-line:#e0e8ee;--wtg-canvas:#f6f8fb}
+body{background:var(--wtg-canvas)!important;color:var(--wtg-ink)}
+.main-shell{background:transparent}
+#view-inicio .welcome-row{margin:0 0 12px!important}
+#view-inicio .welcome-row .eyebrow{color:#148c93!important;font-weight:850!important;font-size:10px!important;letter-spacing:.11em}
+#view-inicio .welcome-row h1{font-family:'Outfit','DM Sans',sans-serif;font-weight:850;letter-spacing:-.055em;line-height:1.08;color:#12324b!important}
+#view-inicio .welcome-row p{color:#637c8a!important;font-size:13px;line-height:1.45;margin:5px 0 0}
+#view-inicio .date-pill{opacity:.7}
+#view-inicio .wtg-v8-home-tools{margin:0 0 11px!important;border-radius:19px!important;padding:8px!important;background:#fff!important;box-shadow:0 5px 23px #173b5220!important;border:1px solid #e2eaf1!important}
+#view-inicio .wtg-v8-search{background:#fff!important;box-shadow:none!important;border:none!important;border-radius:14px;display:flex;align-items:center;gap:7px;padding:3px 4px!important}
+#view-inicio .wtg-v8-search input{flex:1;min-width:0;border:0!important;background:transparent!important;color:#173d4d!important;font-size:15px!important;padding:12px 7px!important;box-shadow:none!important;outline:none}
+#view-inicio .wtg-v8-search input::placeholder{color:#8698a6}
+#view-inicio .wtg-v8-search>span{color:#138a99!important;font-size:24px!important;padding-left:9px}
+#view-inicio .wtg-v8-search button{background:#087f85!important;color:#fff!important;box-shadow:none!important;border:0!important;min-width:84px;border-radius:12px!important;padding:13px 12px!important;font-size:13px!important;font-weight:850}
+#view-inicio .wtg-v8-quick{display:none!important}
+#view-inicio .wtg-v8-category-shortcuts{display:flex!important;flex-wrap:nowrap!important;gap:10px!important;overflow-x:auto!important;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none;padding:3px 1px 12px;margin:0 0 4px!important}
+#view-inicio .wtg-v8-category-shortcuts::-webkit-scrollbar{display:none}
+#view-inicio .wtg-v8-category-shortcuts button{display:flex!important;flex-direction:column;align-items:center;justify-content:center;flex:0 0 104px!important;min-width:104px!important;max-width:104px!important;min-height:81px!important;height:81px!important;scroll-snap-align:start;border-radius:15px!important;border:1px solid #dce7ee!important;background:#fff!important;color:#214352!important;box-shadow:0 2px 7px #0b41580a!important;padding:8px!important;gap:3px!important}
+#view-inicio .wtg-v8-category-shortcuts button>span{font-size:26px!important;line-height:1.2;background:none!important;box-shadow:none!important;border:0!important;padding:0!important}
+#view-inicio .wtg-v8-category-shortcuts button strong{font-size:12px!important;font-weight:750;color:#23435c!important;white-space:nowrap}
+#view-inicio .results-heading{margin:8px 0 11px!important;gap:8px!important}
+#view-inicio .results-heading .mini-eyebrow{font-size:9px!important;letter-spacing:.12em;color:#138a92!important}
+#view-inicio .results-heading h2{font-size:clamp(22px,5.3vw,28px)!important;font-family:'Outfit',sans-serif!important;letter-spacing:-.045em!important;line-height:1.08!important;margin:5px 0 0!important}
+#view-inicio .results-heading .text-action{font-size:11px!important;color:#12878a!important;white-space:nowrap;font-weight:800}
+#view-inicio #home-count{font-size:11px!important;display:inline-block;vertical-align:middle;background:#d9f5ee;color:#096a69!important;border-radius:20px;padding:5px 9px;line-height:1}
+#view-inicio #home-list{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;margin:0 0 26px!important}
+#view-inicio #home-list>.place-card{min-height:112px!important;margin:0!important;border-radius:16px!important;border:1px solid #e2eaf0!important;box-shadow:0 5px 20px #173b5211!important;background:#fff!important;overflow:hidden}
+#view-inicio #home-list>.place-card.wtg-no-photo,
+#view-inicio #home-list>.place-card.wtg-photo-load-failed{display:grid!important;grid-template-columns:87px minmax(0,1fr)!important;min-height:114px!important}
+#view-inicio #home-list>.place-card.wtg-no-photo .place-photo,
+#view-inicio #home-list>.place-card.wtg-photo-load-failed .place-photo{height:100%!important;min-height:114px!important;border-radius:0!important;background:linear-gradient(155deg,#e5f7f5,#d7eaf2 92%)!important}
+#view-inicio #home-list .wtg-no-photo .photo-empty,
+#view-inicio #home-list .wtg-photo-load-failed .photo-empty{background:transparent!important;color:#185771!important}
+#view-inicio #home-list .wtg-photo-icon{font-size:31px!important;filter:none!important}
+#view-inicio #home-list .wtg-photo-label{font-size:9px!important;color:#355b70!important;font-weight:800!important;max-width:78px}
+#view-inicio #home-list .wtg-no-photo .card-tag{display:none!important}
+#view-inicio #home-list .place-body{padding:12px 13px!important;min-width:0}
+#view-inicio #home-list .place-title{font-size:17px!important;line-height:1.15!important;font-weight:850!important;color:#17354c!important;text-align:left}
+#view-inicio #home-list .place-meta{font-size:11px!important;color:#738798!important;line-height:1.35}
+#view-inicio #home-list .place-meta b{font-weight:550!important}
+#view-inicio #home-list .place-footer{margin-top:7px!important;gap:6px!important}
+#view-inicio #home-list .distance-badge{background:#e2f4f0!important;color:#0b7776!important;border-radius:20px!important;font-size:12px!important;padding:6px 9px!important;font-weight:850!important}
+#view-inicio #home-list .card-open{background:#ecf6f7!important;color:#11737d!important;border-radius:20px!important;font-size:10px!important;padding:7px 9px!important;font-weight:800}
+#view-inicio #home-list .source-credit,
+#view-inicio #home-list .photo-authors,
+#view-inicio #home-list .card-image-caption{display:none!important}
+#view-inicio #home-list>.place-card.wtg-has-photo{display:grid!important;grid-template-columns:106px minmax(0,1fr)!important;align-items:stretch}
+#view-inicio #home-list>.place-card.wtg-has-photo .place-photo{height:100%!important;min-height:132px!important}
+#view-inicio #home-list>.place-card.wtg-has-photo .actual-photo{height:100%;width:100%;object-fit:cover}
+#view-inicio .hero{min-height:285px!important;border-radius:20px!important;box-shadow:0 10px 30px #12394b30!important}
+#view-inicio .hero .hero-content{padding:24px 22px 72px!important}
+#view-inicio .hero .hero-content h2{font-size:clamp(27px,5.4vw,37px)!important;line-height:1.06!important;max-width:16ch!important;margin:13px 0 10px!important}
+#view-inicio .hero .hero-content p{font-size:12px!important;line-height:1.42!important;max-width:42ch!important}
+#view-inicio .hero .btn-light{min-height:39px!important;font-size:12px!important;padding:9px 12px!important}
+#view-inicio .hero .hero-pill{font-size:8px!important;padding:6px 10px!important}
+#view-inicio .hero .wtg-hero-controls{display:none!important}
+#view-inicio .hero .hero-coordinate{bottom:19px!important;left:22px!important;font-size:8px!important}
+#view-inicio .hero-credit{margin:7px 5px!important;font-size:9px!important;color:#7e8f9c!important}
+#view-inicio .promo-banner{background:#153b4f!important;box-shadow:none!important}
+#view-inicio .location-alert{border:1px solid #dbece6!important;border-radius:16px!important;padding:11px!important;background:#f3faf8!important}
+#view-inicio .location-alert strong{font-size:12px}
+#view-inicio .location-alert small{font-size:10px!important;line-height:1.4}
+#view-inicio .wtg-v8-destinations{display:none!important}
+#view-inicio .province-explorer{margin-top:18px}
+#view-inicio .category-grid:not(.wtg-v8-expanded){display:none!important}
+#view-inicio .pilot-toolbar,.pilot-toolbar{display:none!important}
+.wtg-loading-cards{display:grid;gap:9px;width:100%}
+.wtg-skeleton-card{height:108px;width:100%;border-radius:16px;background:linear-gradient(100deg,#e5edf1 9%,#f8fbfd 30%,#e5edf1 52%);background-size:220% 100%;animation:wtg-loading-sweep 1.35s ease-in-out infinite}
+@keyframes wtg-loading-sweep{0%{background-position:100% 0}100%{background-position:-100% 0}}
+@media(min-width:770px){
+  #view-inicio #home-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #view-inicio .wtg-v8-category-shortcuts{flex-wrap:wrap!important;overflow:visible!important}
+  #view-inicio .wtg-v8-category-shortcuts button{flex:0 0 120px!important;max-width:120px!important}
+}
+@media(max-width:600px){
+  #view-inicio{padding-top:4px}
+  #view-inicio .welcome-row h1{font-size:32px!important;margin:5px 0!important}
+  #view-inicio .welcome-row p{font-size:12px!important}
+  #view-inicio .welcome-row .date-pill{display:none!important}
+  #view-inicio .hero{min-height:246px!important}
+  #view-inicio .hero .hero-content{padding:20px 19px 58px!important}
+  #view-inicio .hero .hero-content h2{font-size:29px!important}
+  #view-inicio .hero .hero-content p{font-size:11px!important}
+  #view-inicio .province-explorer{display:none!important}
+  #view-inicio .promo-banner{display:none!important}
+  #view-inicio .taxi-teaser{display:none!important}
+  #view-inicio .wtg-v8-section-title{display:none!important}
+  #view-inicio .wtg-v8-category-shortcuts button{flex-basis:98px!important;min-width:98px!important;max-width:98px!important}
+  #view-inicio #home-list .card-open{white-space:nowrap}
+  #view-inicio .section-heading:not(.results-heading){margin-top:18px}
+  #view-inicio .location-alert{margin-top:13px}
+}
+@media(prefers-reduced-motion:reduce){.wtg-skeleton-card{animation:none!important}}
