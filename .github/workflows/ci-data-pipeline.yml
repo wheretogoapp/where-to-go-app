@@ -8,6 +8,9 @@ on:
       - 'Where_to_Go_Proyecto_Completo/public/index.html'
       - 'Where_to_Go_Proyecto_Completo/public/world-v8.css'
       - 'Where_to_Go_Proyecto_Completo/public/service-worker.js'
+      - 'Where_to_Go_Proyecto_Completo/public/pilot.js'
+      - 'Where_to_Go_Proyecto_Completo/public/pilot.css'
+      - 'Where_to_Go_Proyecto_Completo/public/data/place-gallery.json'
       - 'Where_to_Go_Proyecto_Completo/tools/import_osm_rd.py'
       - 'Where_to_Go_Proyecto_Completo/tools/import_overture_rd.py'
   pull_request:
@@ -27,7 +30,30 @@ jobs:
         run: |
           node --check Where_to_Go_Proyecto_Completo/public/app.js
           node --check Where_to_Go_Proyecto_Completo/public/experience.js
+          node --check Where_to_Go_Proyecto_Completo/public/pilot.js
           node --check Where_to_Go_Proyecto_Completo/public/service-worker.js
+      - name: Validar fotos múltiples del mismo destino y sus licencias
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          root=pathlib.Path('Where_to_Go_Proyecto_Completo/public/data')
+          places=json.loads((root/'pilot-places.json').read_text(encoding='utf-8'))
+          known={p['id'] for p in places}
+          gallery=json.loads((root/'place-gallery.json').read_text(encoding='utf-8'))
+          assert len(gallery)>=5
+          for place_id,photos in gallery.items():
+            assert place_id in known, place_id
+            assert 1<=len(photos)<=9, place_id
+            seen=set()
+            for photo in photos:
+              assert photo['url'].startswith('https://commons.wikimedia.org/wiki/Special:FilePath/')
+              assert photo['source'].startswith('https://commons.wikimedia.org/wiki/File:')
+              assert photo['license'].startswith('https://creativecommons.org/licenses/')
+              assert photo['attribution'].strip()
+              assert photo['source'] not in seen, 'Foto duplicada en '+place_id
+              seen.add(photo['source'])
+          print('Galerías verificables:',len(gallery),'fotografías adicionales:',sum(len(x) for x in gallery.values()))
+          PY
       - name: Comprobar sintaxis de scripts de datos
         run: |
           python -m py_compile Where_to_Go_Proyecto_Completo/tools/import_osm_rd.py Where_to_Go_Proyecto_Completo/tools/import_overture_rd.py Where_to_Go_Proyecto_Completo/tools/enrich_photos.py Where_to_Go_Proyecto_Completo/tools/enrich_geo_photos.py Where_to_Go_Proyecto_Completo/tools/preserve_photos.py Where_to_Go_Proyecto_Completo/tools/probe_google_global.py
