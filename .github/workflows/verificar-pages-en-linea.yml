@@ -1,12 +1,12 @@
 name: Where to Go - Probar enlace móvil publicado
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/verificar-pages-en-linea.yml'
+  workflow_run:
+    workflows: ['Where to Go - Vista móvil alternativa sin Netlify']
+    types: [completed]
 jobs:
   comprobar_web:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 7
     steps:
@@ -42,8 +42,8 @@ jobs:
           assert manifest['categories']['discotecas']>=200
           stats=json.loads(fetch('data/place-gallery-stats.json'))
           gallery=json.loads(fetch('data/place-gallery.json'))
-          assert stats['newVerifiedGalleryPhotos']>=251,stats
-          assert stats['galleryImageCount']>=263,stats
+          assert stats['newVerifiedGalleryPhotos']>=252,stats
+          assert stats['galleryImageCount']>=264,stats
           assert sum(map(len,gallery.values()))==stats['galleryImageCount']
           assert len(gallery.get('wd-Q106959726',[]))>=2, 'Falta galería de Casa del Pudín'
           assert len(gallery.get('wd-Q4208698',[]))>=4, 'Falta galería de Cayo Levantado'
