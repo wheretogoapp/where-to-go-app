@@ -95,10 +95,11 @@ if(settings.allowDemo===false){demo.hidden=true;}
 if(!settings.supabaseUrl||!settings.supabaseAnonKey){
   demo.textContent='Abrir la app de prueba →';
   demo.style.cssText='background:#0fc6c2;color:#041b40;font-size:17px;padding:16px;border-radius:14px;font-weight:800';
-  document.querySelector('.auth-options').hidden=true;
-  document.querySelector('.auth-divider').hidden=true;
-  document.getElementById('auth-email-form').hidden=true;
-  document.querySelector('.auth-optin').hidden=true;
+  // Keep approved sign-in methods visible. They explain their unavailable state when clicked.
+  document.querySelector('.auth-options').hidden=false;
+  document.querySelector('.auth-divider').hidden=false;
+  document.getElementById('auth-email-form').hidden=false;
+  document.querySelector('.auth-optin').hidden=false;
   note.textContent='Modo de prueba: el registro con Google, Apple, Facebook o correo se habilita al conectar Supabase. No se guardan cuentas reales todavía.';
   if(settings.requireLogin===false){demoMode=true;closeGate()}
 }else{
