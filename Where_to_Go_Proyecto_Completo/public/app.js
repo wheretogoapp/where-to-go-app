@@ -678,7 +678,7 @@ function updateProviderNotice(){
     $('provider-notice-desc').textContent='Google Places respondió con un error. Where to Go buscará datos reales en OpenStreetMap mientras resolvemos la configuración. La cobertura depende del proveedor.';
   }
 }
-function viewTitle(id){return {inicio:'Inicio',explorar:'Explorar lugares',mapa:'Mapa interactivo',favoritos:'Mis favoritos',promocionar:'Promocionar', 'mis-negocios':'Mis negocios',taxis:'Taxis y transporte',piloto:'Destinos con fotos',negocioDemo:'Presentar a un negocio',atlas:'Fotos reales de RD'}[id]||'Inicio'}
+function viewTitle(id){return {inicio:'Inicio',explorar:'Explorar lugares',mapa:'Mapa interactivo',favoritos:'Mis favoritos',promocionar:'Promocionar', 'mis-negocios':'Mis negocios',taxis:'Taxis y transporte',tours:'Tours y excursiones',piloto:'Destinos con fotos',negocioDemo:'Presentar a un negocio',atlas:'Fotos reales de RD'}[id]||'Inicio'}
 let wtgLeafletLoading=null;
 function ensureLeaflet(){
   if(window.L)return Promise.resolve(true);
