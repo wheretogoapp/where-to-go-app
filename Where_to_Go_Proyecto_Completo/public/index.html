@@ -18,8 +18,8 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/premium.css?v=6.0" /><link rel="stylesheet" href="/experience.css?v=6.0" /><link rel="stylesheet" href="/visual-v7.css?v=7.0" /><link rel="stylesheet" href="/world-v8.css?v=10.0" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <link rel="stylesheet" href="/pilot.css?v=10.0" />
+
+
 </head>
 <body>
   <section id="auth-gate" class="auth-gate" role="dialog" aria-modal="true" aria-labelledby="auth-title"><div class="wtg-auth-scenery"><div class="wtg-auth-kicker">WHERE TO GO · DESCUBRE EL MUNDO</div><h2 id="wtg-auth-scenery-title">Cada lugar tiene una historia.</h2><p id="wtg-auth-scenery-place">Paisajes auténticos de República Dominicana</p><div class="wtg-auth-attribution" id="wtg-auth-credit"></div><div class="wtg-auth-controls"><button type="button" id="wtg-auth-prev" aria-label="Paisaje anterior">‹</button><button type="button" id="wtg-auth-pause" aria-label="Pausar paisajes">Ⅱ</button><button type="button" id="wtg-auth-next" aria-label="Siguiente paisaje">›</button><span id="wtg-auth-count" aria-live="off">1 / 3</span></div></div><div class="auth-shell"><div class="auth-brand"><span class="auth-logo"><img src="/assets/wtg-brand.svg" alt="" width="54" height="54"></span><div><strong>Where to Go<span class="brand-dot">.</span></strong><small>A DÓNDE IR · EXPLORA EL MUNDO</small></div></div><span class="auth-overline">DESCUBRE TU PRÓXIMA AVENTURA</span><h1 id="auth-title">El mundo está esperando por ti.</h1><p>Entra para guardar tus lugares favoritos y descubrir nuevas experiencias cerca de donde estás.</p><div class="wtg-auth-language"><label for="wtg-auth-language-select">🌐 Idioma / Language</label> <select id="wtg-auth-language-select" aria-label="Idioma / Language"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option></select></div><div class="auth-options"><button type="button" data-social="google" class="auth-social"><span>G</span> Continuar con Google</button><button type="button" data-social="apple" class="auth-social"><span>●</span> Continuar con Apple</button><button type="button" data-social="facebook" class="auth-social"><span>f</span> Continuar con Facebook</button></div><div class="auth-divider">O UTILIZA TU CORREO</div><form id="auth-email-form"><label>Correo electrónico <input id="auth-email" type="email" autocomplete="email" required placeholder="correo@ejemplo.com"></label><label>Contraseña <input id="auth-password" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label><div class="auth-email-actions"><button type="submit" data-auth-action="login">Entrar</button><button type="button" id="auth-create">Crear cuenta</button></div></form><p class="auth-error" id="auth-error" role="alert" hidden></p><label class="auth-optin"><input type="checkbox" id="auth-consent"> Quiero guardar mi historial de lugares vistos para recibir recomendaciones personalizadas. Puedo desactivarlo.</label><button type="button" id="auth-demo">Explorar demostración sin cuenta →</button><small id="auth-config-note" class="auth-config-note">Google, Facebook, Apple y correo requieren conectar Supabase y habilitar cada proveedor.</small></div></section>
@@ -65,7 +65,7 @@
       </div>
       <main id="main-content" tabindex="-1">
         <section class="view active" id="view-inicio" aria-labelledby="welcome-title">
-          <div class="welcome-row"><div><div class="eyebrow"><span class="eyebrow-dot"></span> WHERE TO GO · DESCUBRE EL MUNDO</div><h1 id="welcome-title">Descubre cerca de ti<span class="wtg-v8-gold-dot">.</span></h1><p>Playas, cultura y aventuras reales. Descubre tu próximo lugar favorito.</p></div><div class="date-pill" id="today-label"></div></div>
+          <div class="welcome-row"><div><div class="eyebrow"><span class="eyebrow-dot"></span> WHERE TO GO · REPÚBLICA DOMINICANA</div><h1 id="welcome-title">¿Qué hay cerca de ti<span class="wtg-v8-gold-dot">?</span></h1><p>Restaurantes, playas, bares y planes para disfrutar.</p></div><div class="date-pill" id="today-label"></div></div>
           <section class="hero" aria-label="Descubre lugares">
             <div class="hero-art" aria-hidden="true"></div>
             <div class="hero-content"><span class="hero-pill">✦ DESTINOS QUE INSPIRAN</span><h2>La República Dominicana<br>se vive <em>explorando.</em></h2><p>De playas escondidas a experiencias inolvidables. Explora lugares reales, descubre negocios locales y planea tu próxima salida.</p><button id="hero-explore" class="btn btn-light">Comenzar a explorar <span>↗</span></button></div>
@@ -75,7 +75,7 @@
           <div class="wtg-v8-home-tools" aria-label="Encuentra tu próxima experiencia">
             <form id="wtg-v8-search" class="wtg-v8-search" role="search">
               <span aria-hidden="true">⌕</span><label class="visually-hidden" for="wtg-v8-query">Buscar destinos y establecimientos</label>
-              <input id="wtg-v8-query" type="search" placeholder="Buscar playas, excursiones, restaurantes..." autocomplete="off">
+              <input id="wtg-v8-query" type="search" placeholder="¿Qué lugar buscas?" autocomplete="off">
               <button type="submit">Buscar <span aria-hidden="true">→</span></button>
             </form>
             <div class="wtg-v8-quick" aria-label="Accesos rápidos">
@@ -183,14 +183,14 @@
     <section id="register-modal" class="sheet register-sheet" role="dialog" aria-modal="true" aria-labelledby="register-title" hidden><button class="modal-close" data-close aria-label="Cerrar">×</button><div class="sheet-icon">🏪</div><h2 id="register-title">Solicita tu registro empresarial</h2><p>Elige un plan. Solo se publicará la ficha tras revisión y confirmación del pago.</p><form id="register-form"><div class="form-grid"><label class="form-field full">Nombre del negocio *<input id="business-name" maxlength="100" required placeholder="Ej. Mi Restaurante" /></label><label class="form-field">Categoría *<select id="business-category" required></select></label><label class="form-field">Provincia *<select id="business-province" required><option value="">Selecciona provincia</option></select></label><label class="form-field">Municipio o localidad *<input id="business-city" maxlength="80" required placeholder="Ej. Puerto Plata" /></label><label class="form-field full">Dirección *<input id="business-address" maxlength="180" required placeholder="Calle, sector, referencia" /></label><label class="form-field">WhatsApp / teléfono *<input type="tel" id="business-phone" maxlength="30" required placeholder="+1 809 000 0000" /></label><label class="form-field full">Enlace de Google Maps, Waze u OSM (opcional)<input id="business-map-url" type="url" placeholder="https://..." /></label><label class="form-field full">Enlace a una foto propia autorizada (opcional)<input id="business-photo-url" type="url" placeholder="https://..." /></label><label class="form-field full">Hasta cuatro enlaces a fotos adicionales autorizadas (uno por línea)<textarea id="business-photo-links" rows="3" maxlength="1800" placeholder="https://..."></textarea></label><label class="form-field">Plan deseado<select id="business-plan"><option value="basico">Registro Básico · US$10 una vez</option><option value="destacado">Destacado · US$30/mes</option><option value="premium">Premium · US$50/mes</option></select></label><label class="form-field full">Descripción<textarea id="business-description" rows="3" maxlength="500" placeholder="Cuéntanos por qué tu negocio es especial..."></textarea></label></div><label class="form-field full"><input type="checkbox" id="business-consent" required /> Confirmo que soy propietario o representante autorizado y que puedo compartir estos datos para revisión.</label><div class="privacy-note">Al enviar, el negocio se remite para revisión humana mediante Netlify Forms, si está activo. La solicitud no es un cobro: después de revisar el negocio, confirmaremos el precio y el pago. No se publica automáticamente; se guarda una copia local.</div><button type="submit" class="btn btn-primary full-width">Enviar solicitud de registro →</button></form></section>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
   <script defer src="/language.js?v=6.0"></script>
   <script defer src="/province-heroes.js?v=10.0"></script>
   <script defer src="/config.js?v=5.2"></script>
   <script defer src="/app.js?v=10.0"></script>
   <script defer src="/experience.js?v=10.0"></script>
   <script defer src="/world-v8.js?v=10.0"></script>
-  <script defer src="/pilot.js?v=10.0"></script>
+
   
   <script type="module" src="/auth.js?v=9"></script>
 </body>
