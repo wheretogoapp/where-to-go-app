@@ -1,0 +1,39 @@
+name: Where to Go - prueba real iPhone Las Terrenas
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/test-iphone-las-terrenas.yml'
+      - 'Where_to_Go_Proyecto_Completo/tools/test_mobile_v10.mjs'
+permissions:
+  contents: read
+jobs:
+  probar_movil:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Instalar navegador de prueba
+        run: |
+          npm install --no-save playwright
+          if command -v google-chrome >/dev/null 2>&1;then
+            echo "CHROME_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            npx playwright install chromium
+          fi
+      - name: Probar selección GPS automática, tarjetas y portada provincial
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory Where_to_Go_Proyecto_Completo/public > /tmp/where-to-go-local.log 2>&1 &
+          sleep 2
+          node Where_to_Go_Proyecto_Completo/tools/test_mobile_v10.mjs
+      - name: Conservar captura de prueba si existe
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: where-to-go-las-terrenas-iphone
+          path: /tmp/where-to-go-iphone-results.png
+          if-no-files-found: ignore
