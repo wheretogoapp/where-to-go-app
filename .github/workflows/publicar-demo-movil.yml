@@ -48,7 +48,7 @@ jobs:
         uses: actions/deploy-pages@v4
         with:
           timeout: '900000'
-      - name: Verificar que se publicó y responde por HTTP
+      - name: "Verificar que se publicó y responde por HTTP"
         env:
           PAGE_URL: ${{ steps.publish.outputs.page_url }}
         run: |
