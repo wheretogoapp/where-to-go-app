@@ -1,6 +1,6 @@
 /* Offline pilot: bundled public destinations/photos; no location or personal data cached. */
 const CACHE='where-to-go-shell-v9-4';
-const ASSETS=['/','/index.html','/styles.css','/premium.css','/experience.css','/visual-v7.css','/world-v8.css','/world-v8.js','/assets/wtg-brand.svg','/experience.js','/app.js','/pilot.js','/language.js','/manifest.webmanifest','/data/place-gallery.json','/data/pilot-places.json','/data/municipios-rd.json','/data/province-heroes.json','/province-heroes.js','/auth.js','/config.js','/data/aventuras.json','/data/pilot-places.json','/pilot.js','/pilot.css','/privacidad.html','/terminos.html','/assets/favicon.svg','/assets/icon-192.png','/assets/icon-512.png'];
+const ASSETS=['/','/index.html','/styles.css','/premium.css','/experience.css','/visual-v7.css','/world-v8.css','/world-v8.js','/assets/wtg-brand.svg','/experience.js','/app.js','/pilot.js','/language.js','/manifest.webmanifest','/data/place-gallery.json','/data/pilot-places.json','/data/municipios-rd.json','/data/province-heroes.json','/province-heroes.js','/auth.js','/config.js','/data/aventuras.json','/pilot.css','/privacidad.html','/terminos.html','/assets/favicon.svg','/assets/icon-192.png','/assets/icon-512.png'];
 self.addEventListener('install',event=>{
  event.waitUntil((async()=>{
   const cache=await caches.open(CACHE);await cache.addAll(ASSETS);
