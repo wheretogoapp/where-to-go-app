@@ -132,7 +132,7 @@ def main(args):
         # Even after 500 photos, visit the remaining provinces before publishing.
         continuation={}
         new_here=0
-        for page_index in range(1):
+        for page_index in range(8):
             params={"action":"query","generator":"geosearch","ggscoord":f"{lat}|{lon}",
                 "ggsradius":10000,"ggslimit":50,"ggsnamespace":6,
                 "prop":"coordinates|imageinfo","colimit":50,"iiprop":"url|extmetadata",
@@ -172,10 +172,11 @@ def main(args):
                 new_here+=1
             # One batched Commons query per anchor, then move to another province.
             token=(obj.get("continue") or {}).get("ggscontinue")
-            if not token:break
+            if not token or len(selected)>=args.target*2:break
             continuation={"ggscontinue":token,"continue":"-||"}
             time.sleep(.5)
         print(f"ATLAS {city} ({province}): +{new_here} fotos, total {len(selected)}",flush=True)
+        if len(selected)>=args.target*2:break
         time.sleep(.65)
     # Balance the final 500 across ALL provinces with geotagged licensed photos.
     # Keep a meaningful Las Terrenas sample for the on-site pilot.
@@ -225,5 +226,5 @@ if __name__=="__main__":
     ap.add_argument("--output",required=True)
     ap.add_argument("--target",type=int,default=500)
     a=ap.parse_args()
-    if not 1<=a.target<=1000:raise SystemExit("Objetivo fuera de rango")
+    if not 1<=a.target<=10000:raise SystemExit("Objetivo fuera de rango")
     main(a)
