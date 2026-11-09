@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/premium.css?v=6.0" /><link rel="stylesheet" href="/experience.css?v=6.0" /><link rel="stylesheet" href="/visual-v7.css?v=7.0" /><link rel="stylesheet" href="/world-v8.css?v=9.0" /><link rel="stylesheet" href="/photo-atlas.css?v=1.1" />
+  <link rel="stylesheet" href="/premium.css?v=6.0" /><link rel="stylesheet" href="/experience.css?v=6.0" /><link rel="stylesheet" href="/visual-v7.css?v=7.0" /><link rel="stylesheet" href="/world-v8.css?v=9.0" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <link rel="stylesheet" href="/pilot.css?v=9.2" />
 </head>
@@ -53,7 +53,7 @@
         <button id="mobile-brand" class="mobile-brand" aria-label="Volver al inicio"><span class="mobile-brand-icon"><img src="/assets/wtg-brand.svg" width="34" height="34" alt=""></span><span>Where to Go<span class="brand-dot">.</span></span></button>
         <div class="topbar-left"><span class="breadcrumb">Descubre el mundo</span><span class="crumb-separator">/</span><strong id="current-page-label">Inicio</strong></div>
         <div class="topbar-actions"><label class="wtg-language-control" for="wtg-language-select"><span aria-hidden="true">🌐</span> <span class="visually-hidden">Idioma / Language</span><select id="wtg-language-select" aria-label="Idioma / Language"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option></select></label>
-          <button class="location-pill" id="location-pill" title="Cambiar ubicación"><span class="pin-icon">⌖</span><span class="location-pill-text" id="location-label">Puerto Plata, RD</span><span class="chevron">⌄</span></button>
+          <button class="location-pill" id="location-pill" title="Cambiar ubicación"><span class="pin-icon">⌖</span><span class="location-pill-text" id="location-label">Tu ubicación</span><span class="chevron">⌄</span></button>
           <button class="top-icon-btn" id="top-refresh" title="Actualizar lugares" aria-label="Actualizar lugares">↻</button>
           <button class="top-avatar" id="top-business" title="Mi cuenta" aria-label="Abrir mi cuenta">WT</button>
         </div>
@@ -92,7 +92,7 @@
             <div id="wtg-v8-destination-rail" class="wtg-v8-destination-rail" aria-live="off"></div>
           </section>
           <section id="province-explorer" class="province-explorer" aria-label="Portadas por provincia"><div><span class="mini-eyebrow">32 DEMARCACIONES · 158 MUNICIPIOS</span><h3>Explora cada provincia</h3><p>Elige una provincia para ver su portada real. Selecciona un municipio para cambiar la búsqueda de lugares.</p></div><div class="province-control-row"><label for="hero-province" class="visually-hidden">Provincia</label><select id="hero-province" aria-label="Provincia"></select><button class="btn btn-primary" id="hero-choose-municipio">Elegir municipio ↗</button></div><small id="hero-preview-note" hidden>Vista previa de portada: los lugares cercanos siguen vinculados a tu ubicación hasta que elijas un municipio.</small></section>
-          <div class="location-alert" id="location-alert"><span class="alert-icon">◎</span><div><strong id="location-alert-title">Explorando Puerto Plata</strong><small id="location-alert-desc">Activa tu ubicación para encontrar lugares realmente cercanos.</small></div><button id="alert-locate">Usar mi ubicación <span>→</span></button></div>
+          <div class="location-alert" id="location-alert"><span class="alert-icon">◎</span><div><strong id="location-alert-title">Detectando tu ubicación</strong><small id="location-alert-desc">Permite la ubicación para descubrir restaurantes, bares, playas y servicios cercanos.</small></div><button id="alert-locate">Usar mi ubicación <span>→</span></button></div>
           <div class="section-heading"><div><span class="mini-eyebrow">TU PRÓXIMA EXPERIENCIA</span><h2>¿Qué te gustaría descubrir?</h2></div><button class="text-action" id="show-all-categories">Todas las categorías ↓</button></div>
           <div class="wtg-v8-category-shortcuts" aria-label="Categorías para viajar">
             <button type="button" data-cat="playas"><span>🏖️</span><strong>Playas</strong></button>
@@ -103,14 +103,14 @@
             <button type="button" data-cat="discotecas"><span>🎧</span><strong>Discotecas</strong></button>
             <button type="button" data-cat="bares"><span>🍹</span><strong>Bares</strong></button>
             <button type="button" data-city="Las Terrenas"><span>🌴</span><strong>Las Terrenas</strong></button>
-            <button type="button" data-view="atlas"><span>📸</span><strong>Fotos reales RD</strong></button>
+            
             <button type="button" data-cat="hoteles"><span>🏨</span><strong>Hoteles</strong></button>
             <button type="button" data-cat="cafes"><span>☕</span><strong>Cafeterías</strong></button>
             <button type="button" data-cat="taxis"><span>🚘</span><strong>Transporte</strong></button>
           </div>
           <div class="category-grid" id="home-categories" aria-label="Directorio completo de categorías"></div>
           <section class="taxi-teaser" aria-label="Transporte VIP en Puerto Plata"><div class="taxi-teaser-symbol">CT</div><div><span class="mini-eyebrow">SERVICIO DESTACADO · PUERTO PLATA</span><h3>Tu próximo trayecto, en manos expertas.</h3><p>Clemente Transport VIP · Aeropuertos, hoteles y traslados privados.</p></div><div class="taxi-teaser-actions"><button class="btn btn-primary" id="home-see-taxis">Explorar transporte ↗</button></div></section>
-          <div class="section-heading results-heading"><div><span class="mini-eyebrow">SELECCIÓN CERCA DE TI</span><h2>Destinos cerca de tu ubicación <span class="result-count" id="home-count"></span></h2></div><button class="text-action" id="home-see-all">Ver más lugares →</button></div>
+          <div class="section-heading results-heading"><div><span class="mini-eyebrow">SELECCIÓN CERCA DE TI</span><h2>Lugares cerca de ti <span class="result-count" id="home-count"></span></h2></div><button class="text-action" id="home-see-all">Ver más lugares →</button></div>
           <aside id="province-anchor-sponsor" class="wtg-owner-sponsor" hidden aria-label="Anunciante de transporte en Puerto Plata">
  <div class="wtg-owner-mark">CT <small>VIP</small></div><div><small>TRANSPORTE · SOCIO FUNDADOR · PUERTO PLATA</small>
  <strong>Clemente Transport VIP</strong><p>Traslados privados y turísticos. Reserva por WhatsApp.</p></div>
@@ -120,7 +120,7 @@
           <div id="home-list" class="place-grid"></div>
           <section id="province-premium-container" class="wtg-premium-province" hidden aria-label="Anunciantes premium de la provincia"><div class="section-heading"><div><span class="mini-eyebrow">PUBLICIDAD · ESPACIOS PREMIUM</span><h2>Negocios destacados de tu provincia</h2></div></div><div id="province-premium-list"></div><div class="wtg-ad-controls"><button type="button" id="wtg-premium-prev" aria-label="Anuncio anterior">‹</button><button type="button" id="wtg-premium-pause" aria-label="Pausar anuncios">Ⅱ</button><button type="button" id="wtg-premium-next" aria-label="Siguiente anuncio">›</button><span id="wtg-premium-progress" aria-live="off"></span></div></section>
           <section class="promo-banner"><div class="promo-banner-graphic">✦</div><div><span class="promo-badge">PARA EMPRENDEDORES</span><h2>Tu negocio merece ser descubierto.</h2><p>Aparece frente a personas que están buscando exactamente lo que ofreces.</p></div><button id="promo-banner-btn" class="btn btn-dark">Promocionar negocio ↗</button></section>
-          <div class="data-credit">Fuentes: Ministerio de Turismo RD y © colaboradores de OpenStreetMap · Selección de fichas con fotografías identificadas y atribución · Nunca se usan fotos genéricas para las fichas</div>
+          <div class="data-credit">Fuentes: Ministerio de Turismo RD y © colaboradores de OpenStreetMap · Lugares registrados en el mapa, ordenados por cercanía; fotos del local solo cuando están verificadas</div>
         </section>
 
         <section class="view" id="view-explorar" aria-labelledby="explore-title">
@@ -191,7 +191,7 @@
   <script defer src="/experience.js?v=7.0"></script>
   <script defer src="/world-v8.js?v=8.0"></script>
   <script defer src="/pilot.js?v=9.2"></script>
-  <script defer src="/photo-atlas.js?v=1.1"></script>
+  
   <script type="module" src="/auth.js?v=9"></script>
 </body>
 </html>
