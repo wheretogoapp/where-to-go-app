@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="/premium.css?v=6.0" /><link rel="stylesheet" href="/experience.css?v=6.0" /><link rel="stylesheet" href="/visual-v7.css?v=7.0" /><link rel="stylesheet" href="/world-v8.css?v=11.0" />
   <link rel="stylesheet" href="/mobile-focus.css?v=11.0" />
   <link rel="stylesheet" href="/navy-gold-mobile.css?v=2" />
+  <link rel="stylesheet" href="/tours.css?v=1" />
 
 
 </head>
@@ -36,6 +37,7 @@
         <button class="nav-btn active" data-view="inicio"><span class="nav-ico">⌂</span> Inicio</button>
         <button class="nav-btn" data-view="explorar"><span class="nav-ico">◈</span> Explorar lugares</button>
         <button class="nav-btn" data-view="mapa"><span class="nav-ico">♧</span> Mapa interactivo</button>
+        <button class="nav-btn" data-view="tours"><span class="nav-ico">🧭</span> Tours y excursiones</button>
         <button class="nav-btn" data-view="taxis"><span class="nav-ico">🚘</span> Taxis y transporte <span class="side-mini">NUEVO</span></button>
         <button class="nav-btn" data-view="favoritos"><span class="nav-ico">♡</span> Mis favoritos</button>
       </nav>
@@ -134,6 +136,10 @@
         </section>
 
 
+        <section class="view" id="view-tours" aria-labelledby="tours-title">
+          <div class="wtg-tours-hero"><span class="wtg-tours-kicker">WHERE TO GO · EXPERIENCIAS</span><h1 id="tours-title">Tours y excursiones</h1><p>Las mejores aventuras empiezan aquí.</p></div>
+          <div class="wtg-tours-empty" role="status"><div class="wtg-tours-symbol" aria-hidden="true">🧭</div><h2>Promociona tu gira, tour o excursión aquí</h2><p>Este espacio está disponible para organizadores de experiencias y excursiones. Sé de los primeros en publicar tu actividad.</p><div class="wtg-tours-price"><strong>US$10</strong><span>por mes · por anuncio</span></div><button type="button" class="btn btn-primary" id="wtg-tours-apply">Publicar mi tour o excursión →</button><small>La publicación requiere revisión y confirmación del pago. No se cobra automáticamente en esta versión.</small></div>
+        </section>
         <section class="view" id="view-taxis" aria-labelledby="taxi-title">
           <div class="taxi-hero"><span class="hero-pill">✦ WHERE TO GO · TRANSPORTE</span><h1 id="taxi-title">Muévete con <em>confianza.</em></h1><p>Explora operadores de taxis y transporte por provincia y municipio. Reservaciones directas con cada empresa.</p></div>
           <div class="taxi-location-box">
@@ -182,6 +188,7 @@
       <p class="privacy-note">Se enviará a Netlify Forms para revisión; no se publica automáticamente. No subas fotos de niños ni información privada de terceros.</p>
       <button type="submit" class="btn btn-primary full-width">Enviar para revisión →</button></form>
     </section>
+    <section id="tours-modal" class="sheet register-sheet" role="dialog" aria-modal="true" aria-labelledby="tours-modal-title" hidden><button type="button" class="modal-close" id="wtg-tours-close" aria-label="Cerrar">×</button><h2 id="tours-modal-title">Solicitar publicación de tour o excursión</h2><p>Suscripción de US$10 al mes por anuncio. Enviaremos las instrucciones de pago tras revisar tu solicitud; todavía no hay cobro en línea.</p><form name="wtg-tours-request" id="wtg-tours-form" method="POST" data-netlify="true" netlify-honeypot="bot-field"><input type="hidden" name="form-name" value="wtg-tours-request"><p hidden><label>No llenar <input name="bot-field"></label></p><div class="form-grid"><label class="form-field full">Nombre del tour o excursión *<input name="tour_name" required maxlength="120"></label><label class="form-field">Organizador *<input name="organizer" required maxlength="100"></label><label class="form-field">WhatsApp o teléfono *<input name="contact" required maxlength="40"></label><label class="form-field">País *<input name="country" required maxlength="90" value="República Dominicana"></label><label class="form-field">Provincia o ciudad *<input name="location" required maxlength="100"></label><label class="form-field full">Descripción *<textarea name="description" required maxlength="1000" rows="3"></textarea></label><label class="form-field full">Enlace a fotografías propias o autorizadas<input name="photos_url" type="url" placeholder="https://..."></label><label class="form-field full">Fecha o frecuencia de la excursión<input name="schedule" maxlength="150"></label></div><label class="form-field full"><input name="terms" type="checkbox" required> Confirmo que soy responsable de la actividad y tengo derecho a usar las fotografías proporcionadas.</label><p class="privacy-note">US$10/mes por anuncio, sujeto a aprobación y pago confirmado. La solicitud no publica el tour ni inicia una suscripción.</p><button class="btn btn-primary full-width" type="submit">Enviar solicitud para revisión →</button><p id="wtg-tours-feedback" role="status"></p></form></section>
     <section id="register-modal" class="sheet register-sheet" role="dialog" aria-modal="true" aria-labelledby="register-title" hidden><button class="modal-close" data-close aria-label="Cerrar">×</button><div class="sheet-icon">🏪</div><h2 id="register-title">Solicita tu registro empresarial</h2><p>Elige un plan. Solo se publicará la ficha tras revisión y confirmación del pago.</p><form id="register-form"><div class="form-grid"><label class="form-field full">Nombre del negocio *<input id="business-name" maxlength="100" required placeholder="Ej. Mi Restaurante" /></label><label class="form-field">Categoría *<select id="business-category" required></select></label><label class="form-field">Provincia *<select id="business-province" required><option value="">Selecciona provincia</option></select></label><label class="form-field">Municipio o localidad *<input id="business-city" maxlength="80" required placeholder="Ej. Puerto Plata" /></label><label class="form-field full">Dirección *<input id="business-address" maxlength="180" required placeholder="Calle, sector, referencia" /></label><label class="form-field">WhatsApp / teléfono *<input type="tel" id="business-phone" maxlength="30" required placeholder="+1 809 000 0000" /></label><label class="form-field full">Enlace de Google Maps, Waze u OSM (opcional)<input id="business-map-url" type="url" placeholder="https://..." /></label><label class="form-field full">Enlace a una foto propia autorizada (opcional)<input id="business-photo-url" type="url" placeholder="https://..." /></label><label class="form-field full">Hasta cuatro enlaces a fotos adicionales autorizadas (uno por línea)<textarea id="business-photo-links" rows="3" maxlength="1800" placeholder="https://..."></textarea></label><label class="form-field">Plan deseado<select id="business-plan"><option value="basico">Registro Básico · US$10 una vez</option><option value="destacado">Destacado · US$30/mes</option><option value="premium">Premium · US$50/mes</option></select></label><label class="form-field full">Descripción<textarea id="business-description" rows="3" maxlength="500" placeholder="Cuéntanos por qué tu negocio es especial..."></textarea></label></div><label class="form-field full"><input type="checkbox" id="business-consent" required /> Confirmo que soy propietario o representante autorizado y que puedo compartir estos datos para revisión.</label><div class="privacy-note">Al enviar, el negocio se remite para revisión humana mediante Netlify Forms, si está activo. La solicitud no es un cobro: después de revisar el negocio, confirmaremos el precio y el pago. No se publica automáticamente; se guarda una copia local.</div><button type="submit" class="btn btn-primary full-width">Enviar solicitud de registro →</button></form></section>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
@@ -192,6 +199,7 @@
   <script defer src="/app.js?v=11.0"></script>
   <script defer src="/experience.js?v=11.0"></script>
   <script defer src="/world-v8.js?v=11.0"></script>
+  <script defer src="/tours.js?v=1"></script>
   <script type="module" src="/auth.js?v=9"></script>
 </body>
 </html>
