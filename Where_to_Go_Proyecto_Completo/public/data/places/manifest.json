@@ -1,14 +1,14 @@
 {
   "version": 6,
-  "updatedAt": "2026-11-05T01:10:21.929499+00:00",
+  "updatedAt": "2026-11-09T12:23:28.003131+00:00",
   "source": "© OpenStreetMap contributors · ODbL / Geofabrik",
-  "recordCount": 27179,
+  "recordCount": 27184,
   "categories": {
     "atracciones": 366,
     "bancos": 731,
     "barberias": 5,
     "bares": 463,
-    "cafes": 495,
+    "cafes": 496,
     "cajeros": 180,
     "cascadas": 20,
     "colmados": 1327,
@@ -23,7 +23,7 @@
     "gasolineras": 946,
     "gimnasios": 97,
     "heladerias": 135,
-    "hospitales": 585,
+    "hospitales": 586,
     "hoteles": 832,
     "iglesias": 805,
     "infantil": 91,
@@ -39,16 +39,16 @@
     "piscinas": 69,
     "playas": 75,
     "resorts": 16,
-    "restaurantes": 1396,
+    "restaurantes": 1397,
     "rios": 441,
     "salones": 561,
     "servicios": 228,
     "spas": 11,
-    "supermercados": 637,
+    "supermercados": 638,
     "talleres": 2249,
     "taxis": 11,
     "tecnologia": 609,
-    "tiendas": 7082,
+    "tiendas": 7083,
     "veterinarias": 63,
     "villas": 550
   },
@@ -350,18 +350,19 @@
   "fineCellDegrees": 0.04,
   "license": "https://www.openstreetmap.org/copyright",
   "note": "Los puntos de áreas y ríos NO son entradas confirmadas. Algunos sitios públicos carecen de nombre en OSM y se indican como tales. Fotos y teléfonos no se inventan.",
-  "licensedPhotoCount": 20,
+  "licensedPhotoCount": 25,
   "photoCoverageByCategory": {
-    "atracciones": 10,
+    "atracciones": 11,
     "cascadas": 2,
     "deportes": 3,
     "entretenimiento": 1,
-    "iglesias": 2,
+    "iglesias": 3,
     "parques": 1,
-    "tiendas": 1
+    "playas": 3,
+    "rios": 1
   },
   "licensedPhotoEnrichment": {
-    "runAt": "2026-11-05T01:10:28.692441+00:00",
+    "runAt": "2026-11-09T12:23:33.767240+00:00",
     "linkedCandidates": 233,
     "wikidataIDsQueried": 227,
     "commonsFilesChecked": 53,
@@ -369,12 +370,12 @@
     "description": "Solo fotos vinculadas al lugar por OSM/Wikidata y con licencia libre verificable en Wikimedia Commons"
   },
   "geoPhotoEnrichment": {
-    "runAt": "2026-11-05T01:11:45.948878+00:00",
+    "runAt": "2026-11-09T12:24:51.015731+00:00",
     "candidatesQueried": 480,
     "exactNameGeoMatches": 0,
     "newPhotosVerified": 0,
     "totalLicensedPhotos": 0,
     "rule": "Coincidencia de nombre exacto, distancia <=120 metros, P18 y licencia Commons confirmada"
   },
-  "photoPreservedAcrossImports": 20
+  "photoPreservedAcrossImports": 25
 }
