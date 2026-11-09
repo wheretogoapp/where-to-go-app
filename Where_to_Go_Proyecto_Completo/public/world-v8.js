@@ -3,7 +3,7 @@
 (function(){
   'use strict';
   const $=id=>document.getElementById(id);
-  const imageURL=value=>{try{const u=new URL(String(value));return u.protocol==='https:' ? u.href : ''}catch{return''}};
+  const imageURL=value=>{if(/^\/assets\/places\/[a-z0-9-]+\.(jpg|webp|png)$/.test(value))return value;try{const u=new URL(String(value));return u.protocol==='https:' ? u.href : ''}catch{return''}};
   const currentRegion=()=>{
     try{return typeof wtgProvincePreview==='string' && wtgProvincePreview || provinceFromCity() || 'Puerto Plata';}
     catch{return 'Puerto Plata';}

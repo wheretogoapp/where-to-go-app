@@ -13,6 +13,7 @@ from pathlib import Path
 USER_AGENT='WhereToGoTourism/1.0 (open-data photo metadata; contact via repository github.com/wheretogoapp/where-to-go-app) Python-urllib'
 WIKIDATA='https://www.wikidata.org/w/api.php'
 COMMONS='https://commons.wikimedia.org/w/api.php'
+REJECTED_PHOTO_IDS={'osm-node-1653013577','osm-node-1645591600','osm-node-1852199123','osm-way-677786667','osm-node-7243037034','osm-node-7353313837','osm-way-27582400'}
 PRIORITY={'atracciones':0,'cascadas':1,'playas':2,'balnearios':3,'hoteles':4,'parques':5,'rios':6,'restaurantes':7,'bares':8,'supermercados':9}
 
 RATE_LIMITED_HOSTS=set()
@@ -95,7 +96,7 @@ def fetch_commons_metadata(filenames):
             if not is_free or not title.startswith('File:'):continue
             name=title[5:]
             uri=info.get('thumburl') or info.get('url') or ''
-            if not uri.startswith('https://upload.wikimedia.org/') or not valid_file(name):continue
+            if urllib.parse.urlparse(uri).hostname not in {'upload.wikimedia.org', 'thumb.wikimedia.org'} or not valid_file(name):continue
             # Commons' Artist is HTML; remove tags. Don't claim a specific photographer
             # when Commons does not provide one.
             artist=metadata_value(meta,'Artist') or metadata_value(meta,'Credit') or 'Wikimedia Commons'
@@ -143,6 +144,7 @@ def run(out, max_wikidata, max_photos):
     resolved=fetch_commons_metadata(distinct)
     updated=0
     for row in rows:
+        if row.get('id') in REJECTED_PHOTO_IDS:continue
         name=file_for.get(row['id'])
         if not name:continue
         meta=resolved.get(name.replace('_',' ').casefold())

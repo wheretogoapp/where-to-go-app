@@ -30,12 +30,14 @@
     premium:{items:[], index:0, paused:reduced, signature:'', delay:9000}
   };
   let interval=null;
-  const validUrl=s=>{try{let x=new URL(s);return x.protocol==='https:'?x.href:''}catch{return''}};
+  const validUrl=s=>{if(/^\/assets\/places\/[a-z0-9-]+\.(jpg|webp|png)$/.test(s))return s;try{let x=new URL(s);return x.protocol==='https:'?x.href:''}catch{return''}};
   function region(){
     try{return typeof wtgProvincePreview==='string'&&wtgProvincePreview||provinceFromCity()||''}
     catch{return ''}
   }
   function provSlides(name){
+    const bundled=(window.WTG_PILOT_PLACES||[]).filter(p=>p.province===name&&['playas','cascadas','atracciones','restaurantes','parques','lagunas'].includes(p.cat)).slice(0,6);
+    if(bundled.length)return bundled.map(p=>({title:p.name,place:name+' · República Dominicana',image:p.photo,source:p.photoSource,credit:p.photoAttribution}));
     const entries = window.WTG_PROVINCE_HEROES || {};
     const d = entries[name];
     const additional=(name==='Puerto Plata' ? PP : []);

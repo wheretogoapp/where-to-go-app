@@ -20,7 +20,7 @@ def save(out, snapshot):
             key, src, image, credit = (row.get(k) for k in ('id', 'photoSource', 'image', 'photoAttribution'))
             if (isinstance(key, str) and isinstance(src, str)
                     and src.startswith('https://commons.wikimedia.org/wiki/File:')
-                    and isinstance(image, str) and (image.startswith('https://upload.wikimedia.org/') or image.startswith('https://commons.wikimedia.org/wiki/Special:FilePath/'))
+                    and isinstance(image, str) and image.startswith(('https://upload.wikimedia.org/', 'https://thumb.wikimedia.org/', 'https://commons.wikimedia.org/wiki/Special:FilePath/'))
                     and isinstance(credit, str) and credit.strip()):
                 photos[key] = {field: row[field] for field in FIELDS}
     Path(snapshot).write_text(json.dumps(photos, ensure_ascii=False), encoding='utf-8')
