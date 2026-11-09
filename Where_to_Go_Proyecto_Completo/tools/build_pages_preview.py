@@ -16,6 +16,11 @@ def build(source,destination,prefix):
         if not file.is_file() or file.suffix not in ('.html','.css','.js','.webmanifest','.json'):continue
         content=file.read_text(encoding='utf-8')
         updated=static.sub(lambda m:m.group('q')+prefix+'/'+m.group('path'),content)
+        # Dynamic JS template literals must also point inside the GitHub Pages
+        # project directory. Without this, manifest loads but every cell tile
+        # fetches /data/places/cell_... from domain root and returns 404.
+        if file.suffix=='.js':
+            updated=updated.replace('`/data/', '`'+prefix+'/data/').replace('`/assets/', '`'+prefix+'/assets/')
         if file.name=='manifest.webmanifest':
             data=json.loads(updated)
             data['start_url']=prefix+'/'
@@ -32,6 +37,9 @@ def build(source,destination,prefix):
     (destination/'.nojekyll').write_text('',encoding='utf-8')
     html=(destination/'index.html').read_text(encoding='utf-8')
     assert prefix+'/app.js' in html
+    app=(destination/'app.js').read_text(encoding='utf-8')
+    assert '`'+prefix+'/data/places/cell_${key}.json' in app, 'FATAL: las celdas siguen apuntando a /data en la raíz'
+    assert "fetch('"+prefix+"/data/places/manifest.json'" in app, 'FATAL: manifest fuera de GitHub Pages'
     assert prefix+'/photo-atlas.js' not in html, 'La galería fuera del tema no debe mostrarse'
     assert (destination/'data'/'photo-atlas-rd.json').exists()
     atlas=json.loads((destination/'data'/'photo-atlas-rd.json').read_text(encoding='utf-8'))
