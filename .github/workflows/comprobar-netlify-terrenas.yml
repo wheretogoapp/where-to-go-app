@@ -15,14 +15,20 @@ jobs:
           SITE: https://reliable-daffodil-8673f5.netlify.app
         run: |
           python - <<'PY'
-          import os, urllib.request, json
+          import os, urllib.request, urllib.error, json, time
           base=os.environ['SITE']
           def get(path):
               request=urllib.request.Request(base+path,headers={'User-Agent':'WhereToGo-Deployment-SmokeTest/1.0'})
-              with urllib.request.urlopen(request,timeout=25) as r:
-                  content=r.read()
-                  print('HTTP',r.status,path,'bytes',len(content))
-                  return content
+              for attempt in range(4):
+                  try:
+                      with urllib.request.urlopen(request,timeout=25) as r:
+                          content=r.read()
+                          print('HTTP',r.status,path,'bytes',len(content),flush=True)
+                          return content
+                  except (urllib.error.HTTPError,urllib.error.URLError,TimeoutError) as err:
+                      print('ERROR al acceder a',path,str(err),'intento',attempt+1,flush=True)
+                      if attempt==3:raise
+                      time.sleep(4*(attempt+1))
           html=get('/').decode('utf-8',errors='replace')
           assert 'photo-atlas.js' in html, 'El HTML desplegado NO incluye la galería nacional de fotos'
           assert 'Las Terrenas' in html, 'No aparece el acceso rápido a Las Terrenas'
