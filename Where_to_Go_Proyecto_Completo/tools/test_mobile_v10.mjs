@@ -40,8 +40,18 @@ try {
   assert(initial.unknownPhotoPlaces>30,'Photo-only filter still hides places');
   assert.equal(initial.photoAtlasShortcut,false,'Off-topic photo atlas still visible');
   const before=await page.locator('#home-list .place-title').first().textContent();
-  await page.locator('#home-list .wtg-open-photo').first().click({force:true});
-  await page.waitForFunction(()=>document.querySelector('#place-modal')&&!document.querySelector('#place-modal').hidden,{timeout:10000});
+  console.log('INITIAL MOBILE:',JSON.stringify(initial));
+  const photoButton=page.locator('#home-list .wtg-open-photo').first();
+  console.log('PHOTO BUTTON ID:',await photoButton.getAttribute('data-place'));
+  await photoButton.click({force:true});
+  await page.waitForTimeout(500);
+  console.log('AFTER PHOTO CLICK:',JSON.stringify(await page.evaluate(()=>({
+    modal:state.modal,
+    hidden:document.getElementById('place-modal')?.hidden,
+    title:document.getElementById('place-modal-title')?.textContent,
+    body:document.getElementById('place-modal-body')?.textContent?.slice(0,160)
+  }))),JSON.stringify(errors));
+  await page.waitForFunction(()=>document.querySelector('#place-modal')&&!document.querySelector('#place-modal').hidden,null,{timeout:10000});
   assert.equal((await page.locator('#place-modal-title').textContent()).trim(),before.trim(),
     'Tapping a card photo did not open its correct place');
   await page.evaluate(()=>closeModals());
