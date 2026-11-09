@@ -1,0 +1,78 @@
+name: Where to Go - Ampliar fotos verificadas de lugares RD
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fotos-verificadas-lugares-rd.yml'
+      - 'Where_to_Go_Proyecto_Completo/tools/expand_verified_place_photos.py'
+permissions:
+  contents: write
+concurrency:
+  group: where-to-go-curated-place-gallery
+  cancel-in-progress: false
+jobs:
+  fotos_lugares:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Comprobar sintaxis del enriquecimiento Commons
+        run: python -m py_compile Where_to_Go_Proyecto_Completo/tools/expand_verified_place_photos.py
+      - name: Encontrar fotos adicionales del MISMO lugar y verificar derechos
+        run: |
+          python -u Where_to_Go_Proyecto_Completo/tools/expand_verified_place_photos.py \
+            --public Where_to_Go_Proyecto_Completo/public \
+            --max-places 165 --max-images 9
+      - name: Verificar fuentes, créditos y que no se duplique una foto en la ficha
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          root=pathlib.Path('Where_to_Go_Proyecto_Completo/public/data')
+          galleries=json.loads((root/'place-gallery.json').read_text(encoding='utf-8'))
+          stats=json.loads((root/'place-gallery-stats.json').read_text(encoding='utf-8'))
+          assert stats['galleryImageCount']==sum(map(len,galleries.values()))
+          for pid,images in galleries.items():
+            assert len(images)<=9,pid
+            sources=set()
+            for p in images:
+              assert p['url'].startswith(('https://upload.wikimedia.org/','https://commons.wikimedia.org/wiki/Special:FilePath/')),pid
+              assert p['source'].startswith('https://commons.wikimedia.org/wiki/File:'),pid
+              assert p['attribution'] and p['license'],pid
+              assert p['source'] not in sources,pid
+              sources.add(p['source'])
+          print('FOTOS ADICIONALES REALES:',stats['newVerifiedGalleryPhotos'])
+          print('GALERÍAS DE LUGARES:',stats['galleryPlaceCount'])
+          print('IMÁGENES ADICIONALES TOTALES:',stats['galleryImageCount'])
+          print('POR PROVINCIA:',stats['newPhotosByProvince'])
+          PY
+      - name: Publicar fotos adicionales y estadísticas auditables
+        run: |
+          set -euo pipefail
+          git config user.name 'Where to Go - fotos verificadas'
+          git config user.email 'actions@users.noreply.github.com'
+          git add Where_to_Go_Proyecto_Completo/public/data/place-gallery.json \
+                  Where_to_Go_Proyecto_Completo/public/data/place-gallery-stats.json
+          if git diff --cached --quiet;then
+            echo 'Ninguna nueva foto: la web conserva las imágenes anteriores.'
+            exit 0
+          fi
+          git commit -m 'Galerías RD: nuevas fotos auténticas de destinos con autor y licencia'
+          for attempt in 1 2 3 4;do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main;then
+              echo 'Fotos del mismo lugar publicadas'
+              exit 0
+            fi
+            echo "Reintento de publicación tras cambio concurrente: $attempt"
+            sleep 4
+          done
+          echo 'No se pudo publicar sin sobrescribir cambios; revisar GitHub' >&2
+          exit 1
