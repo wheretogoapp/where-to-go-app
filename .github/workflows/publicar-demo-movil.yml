@@ -23,65 +23,49 @@ jobs:
       url: ${{ steps.publish.outputs.page_url }}
     steps:
       - uses: actions/checkout@v5
-      - name: Comprobar si GitHub Pages está realmente habilitado
-        id: pages
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          code=$(curl -sS --max-time 20 -o /tmp/wtg-pages.json -w '%{http_code}' \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$GITHUB_REPOSITORY/pages")
-          if [ "$code" = "200" ]; then
-            echo "enabled=true" >> "$GITHUB_OUTPUT"
-            echo 'GitHub Pages está activo. Publicando versión móvil alternativa.'
-          else
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "PAGES AÚN NO ACTIVADO (respuesta $code)"
-            echo "Una sola vez, desde el celular: https://github.com/$GITHUB_REPOSITORY/settings/pages"
-            echo "Source: GitHub Actions; guardar. Ejecutar de nuevo este flujo."
-            echo "### Publicación no realizada" >> "$GITHUB_STEP_SUMMARY"
-            echo "El sitio alternativo todavía no está habilitado (API HTTP $code). Este flujo **no ha publicado una página**." >> "$GITHUB_STEP_SUMMARY"
-            echo "Desde Safari, entra primero al repositorio con la cuenta administradora y luego en Settings → Pages → Source: GitHub Actions." >> "$GITHUB_STEP_SUMMARY"
-          fi
-      - name: Empaquetar web y atlas de 500 fotos para sitio de prueba
+      - name: Empaquetar aplicación para GitHub Pages
         run: |
           python Where_to_Go_Proyecto_Completo/tools/build_pages_preview.py \
             --source Where_to_Go_Proyecto_Completo/public \
             --output /tmp/where-to-go-pages --prefix /where-to-go-app
-      - uses: actions/configure-pages@v5
-        if: steps.pages.outputs.enabled == 'true'
-      - uses: actions/upload-pages-artifact@v4
-        if: steps.pages.outputs.enabled == 'true'
+          test -s /tmp/where-to-go-pages/index.html
+          test -s /tmp/where-to-go-pages/navy-gold-mobile.css
+      - name: Activar o configurar GitHub Pages automáticamente
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Subir sitio web
+        uses: actions/upload-pages-artifact@v4
         with:
           path: /tmp/where-to-go-pages
-          name: wtg-pages-${{ github.run_id }}-${{ github.run_attempt }}
-      - name: Publicar vista móvil independiente de Netlify
+      - name: Publicar aplicación
         id: publish
-        if: steps.pages.outputs.enabled == 'true'
         uses: actions/deploy-pages@v4
         with:
-          artifact_name: wtg-pages-${{ github.run_id }}-${{ github.run_attempt }}
           timeout: '900000'
-      - name: Comprobar el resultado real de la publicación
-        if: always()
+      - name: Verificar que se publicó y responde por HTTP
         env:
-          PAGES_ENABLED: ${{ steps.pages.outputs.enabled }}
           PAGE_URL: ${{ steps.publish.outputs.page_url }}
         run: |
-          if [ "$PAGES_ENABLED" != "true" ]; then
-            echo "::error::No hay URL pública: falta activar GitHub Pages desde la cuenta administradora."
-            exit 1
-          fi
           if [ -z "$PAGE_URL" ]; then
-            echo "::error::No se confirmó un enlace de GitHub Pages publicado."
+            echo "::error::GitHub no devolvió URL de publicación."
             exit 1
           fi
-          if [ "${{ steps.publish.conclusion }}" != "success" ]; then
-            echo "::error::GitHub Pages no confirmó la publicación; no indicar éxito."
-            exit 1
-          fi
-          echo "Publicado en: $PAGE_URL"
-          echo "### Aplicación publicada" >> "$GITHUB_STEP_SUMMARY"
-          echo "$PAGE_URL" >> "$GITHUB_STEP_SUMMARY"
-
+          python - <<'PY'
+          import os,time,urllib.request
+          base=os.environ['PAGE_URL'].rstrip('/')+'/'
+          for attempt in range(12):
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(base,headers={'User-Agent':'WhereToGo-DeploymentCheck/1.0'}),timeout=20) as response:
+                      body=response.read()
+                      if response.status==200 and b'navy-gold-mobile.css' in body:
+                          print('Aplicación publicada y verificada:',base)
+                          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out:
+                              out.write('### Aplicación publicada y comprobada\n'+base+'\n')
+                          break
+                      raise RuntimeError('Respuesta inesperada: '+str(response.status))
+              except Exception as exc:
+                  print('Esperando propagación:',attempt+1,str(exc))
+                  if attempt==11:raise
+                  time.sleep(10)
+          PY
