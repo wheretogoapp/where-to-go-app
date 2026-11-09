@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-11-09T16:46:53.206592+00:00",
+  "updatedAt": "2026-11-09T16:52:22.582791+00:00",
   "placesInCatalogue": 44696,
   "placesWithNationalPhoto": 51,
   "curatedPlacesWithKnownPhoto": 116,
   "galleryPlaceCount": 57,
-  "galleryImageCount": 263,
-  "newVerifiedGalleryPhotos": 251,
+  "galleryImageCount": 264,
+  "newVerifiedGalleryPhotos": 252,
   "placesSearched": 116,
   "candidateTitlesMatched": 387,
   "apiRequests": 186,
@@ -15,13 +15,13 @@
     "cascadas": 1,
     "deportes": 17,
     "entretenimiento": 2,
-    "iglesias": 14,
+    "iglesias": 15,
     "lagunas": 2,
     "parques": 13,
     "playas": 23
   },
   "newPhotosByProvince": {
-    "Distrito Nacional": 154,
+    "Distrito Nacional": 155,
     "Independencia": 2,
     "La Altagracia": 5,
     "La Romana": 1,
@@ -36,6 +36,6 @@
     "Santo Domingo": 20
   },
   "description": "Fotos adicionales verificadas por título exacto del lugar y licencia libre Commons; negocios exigen confirmación de ubicación",
-  "imagesRejectedDuringPlaceAudit": 95,
+  "imagesRejectedDuringPlaceAudit": 94,
   "geographicAudit": "Excluidas fotos de otros países, obras de arte, animales y nombres compartidos sin contexto geográfico verificable"
 }
