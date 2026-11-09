@@ -37,3 +37,11 @@ Plataforma mundial de descubrimiento turístico. República Dominicana es el mer
 5. Escalar la ingesta por países sin romper la experiencia piloto.
 
 **Nota:** este documento define requisitos. No certifica que todas estas capacidades estén implementadas.
+
+## Tours y excursiones — requisitos aprobados
+- Sección en navegación inferior móvil, vacía hasta tener anuncios verificados y pagados.
+- US$10 mensuales por anuncio, con renovación y expiración controladas por servidor cuando se integre la pasarela de pagos.
+- Solicitud con 1 a 5 fotos propias/autorizadas, punto y hora de salida, fecha, regreso, itinerario, destino, precio, cupos, inclusiones, exclusiones, política de cancelación, contacto y seguridad.
+- Mostrar cada excursión solamente en su país y provincia/región correspondiente, con filtros geográficos del servidor, no solo de la interfaz.
+- Revisión humana del organizador y fotos; no declarar una excursión segura sin verificación independiente.
+- GitHub Pages es estático: para recibir fotos, almacenar anuncios, cobrar y publicar se necesita backend y almacenamiento seguro. No simular pagos o envíos exitosos.
