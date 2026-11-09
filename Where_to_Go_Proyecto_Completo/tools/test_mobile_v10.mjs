@@ -32,6 +32,30 @@ try {
   }));
   assert.equal(initial.mode,'gps','Auto GPS was not enabled');
   assert(initial.cardCount>=8,'Home cards are empty');
+  const design=await page.evaluate(()=>{
+    const search=document.getElementById('wtg-v8-search'),firstCard=document.querySelector('#home-list .place-card');
+    const hero=document.querySelector('#view-inicio .hero');
+    const tools=document.querySelector('#view-inicio .wtg-v8-home-tools');
+    return {
+      noPilot:!document.querySelector('.pilot-toolbar'),
+      premiumStyle:!!document.querySelector('link[href*="mobile-focus.css"]'),
+      searchTop:search?.getBoundingClientRect().top,
+      firstCardTop:firstCard?.getBoundingClientRect().top,
+      heroTop:hero?.getBoundingClientRect().top,
+      searchBackground:tools?getComputedStyle(tools).backgroundColor:'',
+      leafletNotLoaded:!document.querySelector('script[src*="leaflet.js"]'),
+      firstCardName:firstCard?.querySelector('.place-title')?.textContent,
+      hasPhotosAtlas:!!document.querySelector('[data-view="atlas"]')
+    };
+  });
+  assert(design.noPilot,'The obsolete "Piloto con lugares reales" toolbar is still visible');
+  assert(design.premiumStyle,'Mobile premium layout stylesheet was not loaded');
+  assert(design.leafletNotLoaded,'Leaflet map loads before someone opens the map');
+  assert(design.firstCardTop>design.searchTop&&design.heroTop>design.firstCardTop,
+    'Search and nearby places must appear before the large cover');
+  assert(design.searchBackground==='rgb(255, 255, 255)',
+    'Search wrapper should look like a clean premium white surface');
+  console.log('MOBILE PREMIUM DESIGN:',JSON.stringify(design));
   const front=await page.evaluate(()=>{
     const home=document.querySelector('#view-inicio');
     const nodes=[...home.children].map(x=>x.id||x.className||x.tagName);
