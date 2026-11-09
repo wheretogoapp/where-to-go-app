@@ -13,7 +13,7 @@ permissions:
   id-token: write
 concurrency:
   group: wtg-pages-mobile-backup
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   demo_movil:
     runs-on: ubuntu-latest
