@@ -921,14 +921,16 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
     const b={id:`draft-${Date.now()}`,name:get('business-name'),category:get('business-category'),
       province:get('business-province'),city:get('business-city'),address:get('business-address'),phone:get('business-phone'),
       mapUrl:get('business-map-url'),photoUrl:get('business-photo-url'),
+      extraPhotoUrls:get('business-photo-links').split(/\r?\n/).map(x=>x.trim()).filter(Boolean),
       plan:get('business-plan'),description:get('business-description'),createdAt:new Date().toISOString()};
     if(!b.name||!b.province||!b.city||!b.address||!b.phone||!$('business-consent').checked){toast('Completa los campos obligatorios.');return;}
+    if(b.extraPhotoUrls.length>4||b.extraPhotoUrls.some(x=>!safeUrl(x))){toast('Agrega hasta cuatro enlaces válidos a fotos autorizadas.');return;}
     const submitBtn=$('register-form').querySelector('[type="submit"]');
     if(submitBtn)submitBtn.disabled=true;
     try{
       const payload=new URLSearchParams({'form-name':'wtg-negocios','bot-field':'',
         nombre:b.name,categoria:b.category,provincia:b.province,ciudad:b.city,direccion:b.address,
-        mapa:b.mapUrl,foto:b.photoUrl,telefono:b.phone,plan:b.plan,tarifa:b.plan==='basico'?'US$10 una vez':b.plan==='destacado'?'US$30 mensual':'US$50 mensual',descripcion:b.description,
+        mapa:b.mapUrl,foto:b.photoUrl,fotos_adicionales:b.extraPhotoUrls.join('\n'),telefono:b.phone,plan:b.plan,tarifa:b.plan==='basico'?'US$10 una vez':b.plan==='destacado'?'US$30 mensual':'US$50 mensual',descripcion:b.description,
         consentimiento:'Confirmo ser propietario o representante del negocio',fecha:b.createdAt});
       const res=await fetch('/__forms.html',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:payload.toString()});
       if(!res.ok)throw Error('HTTP '+res.status);
