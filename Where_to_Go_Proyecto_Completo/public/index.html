@@ -221,9 +221,20 @@
 <button class="btn btn-primary full-width" type="submit">Enviar solicitud para revisión →</button><p id="wtg-tours-feedback" role="status"></p>
 </form></section>
     <section id="register-modal" class="sheet register-sheet" role="dialog" aria-modal="true" aria-labelledby="register-title" hidden><button class="modal-close" data-close aria-label="Cerrar">×</button><div class="sheet-icon">🏪</div><h2 id="register-title">Solicita tu registro empresarial</h2><p>Elige un plan. Solo se publicará la ficha tras revisión y confirmación del pago.</p><form id="register-form"><div class="form-grid"><label class="form-field full">Nombre del negocio *<input id="business-name" maxlength="100" required placeholder="Ej. Mi Restaurante" /></label><label class="form-field">Categoría *<select id="business-category" required></select></label><label class="form-field">Provincia *<select id="business-province" required><option value="">Selecciona provincia</option></select></label><label class="form-field">Municipio o localidad *<input id="business-city" maxlength="80" required placeholder="Ej. Puerto Plata" /></label><label class="form-field full">Dirección *<input id="business-address" maxlength="180" required placeholder="Calle, sector, referencia" /></label><label class="form-field">WhatsApp / teléfono *<input type="tel" id="business-phone" maxlength="30" required placeholder="+1 809 000 0000" /></label><label class="form-field full">Enlace de Google Maps, Waze u OSM (opcional)<input id="business-map-url" type="url" placeholder="https://..." /></label><label class="form-field full">Enlace a una foto propia autorizada (opcional)<input id="business-photo-url" type="url" placeholder="https://..." /></label><label class="form-field full">Hasta cuatro enlaces a fotos adicionales autorizadas (uno por línea)<textarea id="business-photo-links" rows="3" maxlength="1800" placeholder="https://..."></textarea></label><label class="form-field">Plan deseado<select id="business-plan"><option value="basico">Registro Básico · US$10 una vez</option><option value="destacado">Destacado · US$30/mes</option><option value="premium">Premium · US$50/mes</option></select></label><label class="form-field full">Descripción<textarea id="business-description" rows="3" maxlength="500" placeholder="Cuéntanos por qué tu negocio es especial..."></textarea></label></div><label class="form-field full"><input type="checkbox" id="business-consent" required /> Confirmo que soy propietario o representante autorizado y que puedo compartir estos datos para revisión.</label><div class="privacy-note">Al enviar, el negocio se remite para revisión humana mediante Netlify Forms, si está activo. La solicitud no es un cobro: después de revisar el negocio, confirmaremos el precio y el pago. No se publica automáticamente; se guarda una copia local.</div><button type="submit" class="btn btn-primary full-width">Enviar solicitud de registro →</button></form></section>
+<section id="wtg-account" class="wtg-account" role="dialog" aria-modal="true" aria-labelledby="wtg-account-title" hidden>
+<div class="wtg-account-card"><div class="wtg-account-head"><h2 id="wtg-account-title">Mi cuenta</h2><button type="button" id="wtg-account-close" aria-label="Cerrar cuenta">✕</button></div>
+<p id="wtg-account-status">Comprobando sesión…</p><p id="wtg-account-email"></p>
+<div class="wtg-account-actions"><button type="button" id="wtg-account-favorites">♡ Mis lugares favoritos</button><button type="button" id="wtg-account-resend">✉ Reenviar confirmación de correo</button><button type="button" id="wtg-account-reset">🔐 Cambiar contraseña por correo</button><button type="button" id="wtg-account-privacy">Privacidad y condiciones</button><button type="button" id="wtg-account-signout">Cerrar sesión</button></div>
+<p id="wtg-account-message" role="status"></p></div></section>
+<section id="wtg-legal" class="wtg-account" role="dialog" aria-modal="true" aria-labelledby="wtg-legal-title" hidden><div class="wtg-account-card"><div class="wtg-account-head"><h2 id="wtg-legal-title">Privacidad y condiciones — versión de prueba</h2><button type="button" id="wtg-legal-close" aria-label="Cerrar">✕</button></div>
+<h3>Información que tratamos</h3><p>Supabase gestiona tu correo y autenticación. Si aceptas la personalización, podemos guardar tus lugares vistos y favoritos vinculados a tu cuenta. Los proveedores de mapas pueden procesar búsquedas o ubicación cuando los utilizas.</p>
+<h3>Control de tus datos</h3><p>Puedes cerrar sesión y desactivar la personalización. Para solicitar acceso, corrección o eliminación de datos, necesitamos habilitar un canal de atención verificado antes del lanzamiento público.</p>
+<h3>Condiciones de uso</h3><p>Where to Go está en fase de prueba. Las fichas, fotos, horarios, precios y excursiones deben comprobarse con el proveedor. Ninguna excursión está certificada como segura por aparecer aquí. Los anuncios requieren revisión y pago confirmado antes de publicarse.</p>
+<p><strong>Aviso:</strong> este resumen provisional no sustituye una política legal definitiva ni constituye consentimiento automático para nuevos tratamientos.</p></div></section>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
 
+  <link rel="stylesheet" href="/account.css?v=1" />
   <script defer src="/language.js?v=6.0"></script>
   <script defer src="/province-heroes.js?v=10.0"></script>
   <script defer src="/config.js?v=6"></script>
@@ -231,6 +242,6 @@
   <script defer src="/experience.js?v=11.0"></script>
   <script defer src="/world-v8.js?v=11.0"></script>
   <script defer src="/tours.js?v=1"></script>
-  <script type="module" src="/auth.js?v=11"></script>
+  <script type="module" src="/auth.js?v=12"></script>
 </body>
 </html>
