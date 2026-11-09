@@ -172,11 +172,11 @@ def main(args):
                 new_here+=1
             # One batched Commons query per anchor, then move to another province.
             token=(obj.get("continue") or {}).get("ggscontinue")
-            if not token or len(selected)>=args.target*2:break
+            if not token or (args.target>0 and len(selected)>=args.target*2):break
             continuation={"ggscontinue":token,"continue":"-||"}
             time.sleep(.5)
         print(f"ATLAS {city} ({province}): +{new_here} fotos, total {len(selected)}",flush=True)
-        if len(selected)>=args.target*2:break
+        if args.target>0 and len(selected)>=args.target*2:break
         time.sleep(.65)
     # Balance the final 500 across ALL provinces with geotagged licensed photos.
     # Keep a meaningful Las Terrenas sample for the on-site pilot.
@@ -199,13 +199,13 @@ def main(args):
     for group in buckets.values():
         group.sort(key=lambda x:(x["title"].lower().startswith(("img","dsc","home","pict")),x["area"],x["title"]))
     provinces=sorted(buckets)
-    while len(images)<args.target and provinces:
+    while (args.target==0 or len(images)<args.target) and provinces:
         remaining=[]
         for province in provinces:
             group=buckets[province]
             if group:
                 images.append(group.pop(0))
-                if len(images)>=args.target:break
+                if args.target>0 and len(images)>=args.target:break
             if group:remaining.append(province)
         provinces=remaining
     byprov=dict(sorted(collections.Counter(x["province"] for x in images).items()))
@@ -219,12 +219,12 @@ def main(args):
     output.parent.mkdir(parents=True,exist_ok=True)
     output.write_text(json.dumps(result,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
     print("RESULTADO REAL:",len(images),"fotos geolocalizadas;",len(byprov),"provincias;",searches,"consultas",flush=True)
-    if len(images)<args.target:print("META NO ALCANZADA: faltan",args.target-len(images),"fotos",flush=True)
+    if args.target>0 and len(images)<args.target:print("META NO ALCANZADA: faltan",args.target-len(images),"fotos",flush=True)
 if __name__=="__main__":
     ap=argparse.ArgumentParser()
     ap.add_argument("--countries",required=True)
     ap.add_argument("--output",required=True)
     ap.add_argument("--target",type=int,default=500)
     a=ap.parse_args()
-    if not 1<=a.target<=10000:raise SystemExit("Objetivo fuera de rango")
+    if not 0<=a.target<=1000000:raise SystemExit("Objetivo fuera de rango")
     main(a)
