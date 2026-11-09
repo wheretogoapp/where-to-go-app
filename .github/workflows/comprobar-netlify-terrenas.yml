@@ -1,0 +1,40 @@
+name: Where to Go - Probar web publicada en Las Terrenas
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/comprobar-netlify-terrenas.yml'
+  workflow_dispatch:
+jobs:
+  comprobar_publicacion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Verificar que Netlify publique fotos y restaurantes de Las Terrenas
+        env:
+          SITE: https://reliable-daffodil-8673f5.netlify.app
+        run: |
+          python - <<'PY'
+          import os, urllib.request, json
+          base=os.environ['SITE']
+          def get(path):
+              request=urllib.request.Request(base+path,headers={'User-Agent':'WhereToGo-Deployment-SmokeTest/1.0'})
+              with urllib.request.urlopen(request,timeout=25) as r:
+                  content=r.read()
+                  print('HTTP',r.status,path,'bytes',len(content))
+                  return content
+          html=get('/').decode('utf-8',errors='replace')
+          assert 'photo-atlas.js' in html, 'El HTML desplegado NO incluye la galería nacional de fotos'
+          assert 'Las Terrenas' in html, 'No aparece el acceso rápido a Las Terrenas'
+          manifest=json.loads(get('/data/places/manifest.json'))
+          assert manifest.get('recordCount',0)>=44000, 'Catálogo desplegado desactualizado'
+          assert manifest.get('categories',{}).get('restaurantes',0)>=3700
+          assert manifest.get('categories',{}).get('discotecas',0)>=200
+          atlas=json.loads(get('/data/photo-atlas-rd.json'))
+          assert atlas.get('count',0)>=500, 'Aún no hay 500 fotografías en la web publicada'
+          get('/photo-atlas.js')
+          get('/photo-atlas.css')
+          terrenas=json.loads(get('/data/places/cell_546_552_2_1_0.json'))
+          assert any(x['name']=='Terra Bar' for x in terrenas), 'Falta Terra Bar en el catálogo publicado'
+          print('PUBLICACIÓN VERIFICADA:',manifest['recordCount'],'lugares;',atlas['count'],'fotos;',len(terrenas),'lugares en subzona de Las Terrenas')
+          PY
