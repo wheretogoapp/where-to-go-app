@@ -32,6 +32,21 @@ try {
   }));
   assert.equal(initial.mode,'gps','Auto GPS was not enabled');
   assert(initial.cardCount>=8,'Home cards are empty');
+  const front=await page.evaluate(()=>{
+    const home=document.querySelector('#view-inicio');
+    const nodes=[...home.children].map(x=>x.id||x.className||x.tagName);
+    const nearbyIndex=[...home.children].findIndex(x=>x.id==='home-list');
+    const heroIndex=[...home.children].findIndex(x=>x.classList.contains('hero'));
+    const first12=state.places.filter(p=>isTouristDiscovery(p)&&p.distance<=state.radius+100).sort((a,b)=>a.distance-b.distance).slice(0,12);
+    const closestDistances=first12.map(p=>Math.round(p.distance));
+    return {nearbyIndex,heroIndex,nodes:nodes.slice(0,9),closestDistances};
+  });
+  assert(front.nearbyIndex>=0&&front.nearbyIndex<front.heroIndex,
+    'First screen should show nearby places before the scenic province hero');
+  assert(front.closestDistances.length>=8,'Too few nearby businesses and tourist places');
+  assert(front.closestDistances.every((d,i,a)=>!i||d>=a[i-1]),
+    'Nearby establishments not sorted by distance');
+  console.log('FIRST-SCREEN RESULTS:',JSON.stringify(front));
   assert(initial.count>100,'Geo-grid failed to load nearby places');
   assert(initial.categories.restaurantes>=20,'Restaurants missing');
   assert(initial.categories.bares>=5,'Bars missing');
@@ -86,6 +101,8 @@ try {
   assert(selected.heroSource?.includes('Saman')||selected.heroSource?.includes('View%20of%20Saman'), 'Wrong regional hero for Samaná');
   assert(!selected.heroSource?.includes('Puerto_Plata'), 'Puerto Plata image wrongly used in Samaná');
   assert.equal(selected.countCards,12,'Nearby cards should be before other catalog sections');
+  assert(!selected.heroSource?.includes('Aerial%20view%20of%20Puerto')&&!selected.heroSource?.includes('Aerial_view_of_Puerto'),
+    'Hero still uses Puerto Plata imagery in Samaná');
   assert(Number(selected.homeCount)>100,'Nearby count still shows zero');
   await page.screenshot({path:'/tmp/where-to-go-iphone-results.png',fullPage:false});
   outcome={initial,selected,pageErrors:errors};
