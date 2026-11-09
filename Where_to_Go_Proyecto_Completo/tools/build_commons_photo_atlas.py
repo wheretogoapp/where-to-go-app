@@ -127,12 +127,16 @@ def main(args):
     rejects=collections.Counter()
     searches=0
     anchors=list(ANCHORS)
+    # Search adjacent geographic cells for broader nationwide coverage.
+    for city,province,lat,lon in ANCHORS:
+        for dlat,dlon in ((.095,0),(-.095,0),(0,.105),(0,-.105)):
+            anchors.append((city,province,round(lat+dlat,5),round(lon+dlon,5)))
     # Explore geotagged file pages. The API does not establish a business identity.
     for city,province,lat,lon in anchors:
         # Even after 500 photos, visit the remaining provinces before publishing.
         continuation={}
         new_here=0
-        for page_index in range(8):
+        for page_index in range(4):
             params={"action":"query","generator":"geosearch","ggscoord":f"{lat}|{lon}",
                 "ggsradius":10000,"ggslimit":50,"ggsnamespace":6,
                 "prop":"coordinates|imageinfo","colimit":50,"iiprop":"url|extmetadata",
@@ -177,7 +181,7 @@ def main(args):
             time.sleep(.5)
         print(f"ATLAS {city} ({province}): +{new_here} fotos, total {len(selected)}",flush=True)
         if args.target>0 and len(selected)>=args.target*2:break
-        time.sleep(.65)
+        time.sleep(.25)
     # Balance the final 500 across ALL provinces with geotagged licensed photos.
     # Keep a meaningful Las Terrenas sample for the on-site pilot.
     import math
