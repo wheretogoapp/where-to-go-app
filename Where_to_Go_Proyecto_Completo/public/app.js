@@ -361,7 +361,7 @@ function sponsorNearby(){return wtgSponsors.filter(sponsorInScope).map(s=>({
  photos:s.photoRightsConfirmed===true&&Array.isArray(s.photos)?s.photos:[],
  distance:haversine(state.lat,state.lon,s.lat,s.lon),accuracy:'Punto proporcionado y revisado por el anunciante',tags:{}
 }));}
-function promoSort(arr){const rank=p=>p.sponsored?(p.plan==='premium'?3:2):0;return arr.sort((a,b)=>rank(b)-rank(a)||a.distance-b.distance||a.name.localeCompare(b.name,'es'));}
+function promoSort(arr){const rank=p=>p.sponsored?(p.plan==='premium'?3:2):0;return arr.sort((a,b)=>(a.distance-b.distance)||rank(b)-rank(a)||a.name.localeCompare(b.name,'es'));}
 
 function combineNearby(remote=[]){
   const output=new Map();
@@ -606,8 +606,8 @@ function wtgImportedPlace(row){
 async function loadPlaces(force=false){
   const token=++state.loadingId;
   state.googleEnabled=false;state.googleIssue='';state.placesProvider='osm';
-  // Render as soon as we have the curated local points. Never wait for an API.
-  applyNearby([],'Catálogo guardado · lugares dentro del radio elegido');
+  // Do not flash a misleading 0 while downloading the regional catalogue.
+  state.remotePlaces=[];state.places=[];state.dataMode='loading';state.dataError='Cargando establecimientos cercanos…';renderAll();
   wtgFailedCells.clear();
   const manifest=await wtgManifest(force);
   if(token!==state.loadingId)return;
@@ -799,15 +799,11 @@ async function resolveCurrentCity(lat,lon){
   finally{clearTimeout(timer)}
 }
 // Many mobile browsers require a tap before requesting precise location.
-function showFirstLocationChoice(){
-  try{if(sessionStorage.getItem('wtg-location-choice-shown-v1'))return;
-    sessionStorage.setItem('wtg-location-choice-shown-v1','1');}catch{}
-  if(!state.modal)openModal('location-modal');
-}
+function showFirstLocationChoice(){if(!state.modal)openModal('location-modal')}
 function requestLocation(){if(!window.isSecureContext){toast('La ubicación requiere HTTPS. Abre la URL segura de Netlify, no un archivo local.');openModal('location-modal');return;}if(!('geolocation' in navigator)){toast('Este navegador no admite ubicación. Elige un municipio.');openModal('location-modal');return;}
   toast('Solicitando permiso para usar tu ubicación...');navigator.geolocation.getCurrentPosition(pos=>{
     state.lat=pos.coords.latitude;state.lon=pos.coords.longitude;state.gpsAccuracy=Number.isFinite(pos.coords.accuracy)?pos.coords.accuracy:null;state.mode='gps';state.city='Cerca de mí';state.province='';state.region='Ubicación actual';state.category='todos';state.search='';state.radius=12000;closeModals();toast('¡Ubicación detectada! Mostrando lugares de menor a mayor distancia.');loadPlaces();resolveCurrentCity(state.lat,state.lon);
-  },e=>{const msg=e.code===1?'Ubicación bloqueada. Abre el candado de la URL, permite ubicación y reintenta; o elige municipio.':e.code===2?'El dispositivo no pudo localizarte. Activa GPS/Wi-Fi o elige municipio.':'Tiempo de GPS agotado. Inténtalo de nuevo o selecciona un municipio.';toast(msg);if(!state.modal)openModal('location-modal');},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+  },e=>{const msg=e.code===1?'Chrome no tiene permiso de ubicación. Permítelo en la configuración del sitio o elige tu municipio.':e.code===2?'El teléfono no pudo localizarte. Activa Ubicación en el iPhone o elige un municipio.':'La ubicación no respondió. Inténtalo otra vez o elige municipio.';toast(msg);if(state.mode==='pending'){state.dataMode='live';renderAll();}if(!state.modal)openModal('location-modal');},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
 }
 function renderMap(){if(state.placesProvider==='google'){renderGoogleMapLinks();return;}$('map-help').textContent='Mapa: © OpenStreetMap contributors · Leaflet. Las coordenadas pueden representar el centro de un área.';const arr=sortByDistance(state.places.filter(p=>p.source!=='google'&&placeMatchesCategory(p,state.category)&&(state.category!=='todos'||isTouristDiscovery(p))&&p.distance<=state.radius));$('map-count').textContent=arr.length;$('map-places').innerHTML=arr.length?arr.slice(0,85).map(p=>`<div class="map-place" role="button" tabindex="0" data-map-place="${esc(p.id)}"><span class="map-emoji">${catInfo(p.cat).emoji}</span><div><strong>${esc(p.name)}</strong><small>${catInfo(p.cat).name} · ${distance(p.distance)}</small></div></div>`).join(''):'<div style="padding:20px;font-size:12px;color:#8aa1ac">Sin lugares cargados. Prueba ampliar la zona.</div>';
   const mapElement=$('world-map');if(typeof window.L==='undefined'){mapElement.innerHTML='<div class="map-fallback"><div><b>🗺️ Mapa no disponible</b>Se requiere conexión a internet para cargar el mapa. Puedes abrir los lugares desde las fichas.</div></div>';return;}
