@@ -19,7 +19,7 @@ function updateProvinceHero(forPreview=false){
   const hero=document.querySelector('.hero');if(!hero)return;
   const art=hero.querySelector('.hero-art');const title=hero.querySelector('h2');const subtitle=hero.querySelector('.hero-content p');const place=hero.querySelector('.hero-coordinate span');const credit=document.querySelector('.hero-credit');
   if(!data){
-    art.style.backgroundImage='';title.innerHTML=(window.WTG_I18N?.t('Descubre lugares')||'Descubre lugares')+'<br><em>'+(window.WTG_I18N?.t('cerca de ti.')||'cerca de ti.')+'</em>';
+    art.style.backgroundImage='none';title.innerHTML=(window.WTG_I18N?.t('Descubre lugares')||'Descubre lugares')+'<br><em>'+(window.WTG_I18N?.t('cerca de ti.')||'cerca de ti.')+'</em>';
     subtitle.textContent='Activa tu ubicación o elige un municipio para explorar tu entorno, sin resultados de zonas lejanas.';
     place.textContent='TU PRÓXIMA AVENTURA';credit.textContent='Elige una provincia para ver su fotografía identificada.';
     return;
