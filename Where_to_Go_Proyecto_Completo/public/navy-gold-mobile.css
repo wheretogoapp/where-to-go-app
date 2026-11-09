@@ -46,3 +46,18 @@ html,body,#app,.main-shell,#main-content{background:#061d48!important;color:#fff
 #view-inicio .section-heading h2{color:#fff!important}
 #view-inicio .wtg-v8-destinations,#view-inicio .promo-banner{display:none!important}
 }
+
+/* Brand masthead matching the navy/gold reference on phones */
+@media(max-width:769px){
+.topbar{min-height:75px!important;padding-top:max(8px,env(safe-area-inset-top))!important;padding-bottom:8px!important}
+#mobile-brand{display:flex!important;align-items:center!important;gap:9px!important;flex:0 1 auto!important;min-width:0!important;white-space:nowrap!important;font-family:Outfit,"DM Sans",sans-serif!important;font-size:clamp(19px,5.5vw,25px)!important;font-weight:900!important;letter-spacing:-.045em!important;text-shadow:0 2px 8px #0005}
+#mobile-brand .mobile-brand-icon{width:51px!important;height:59px!important;display:flex!important;align-items:center!important;justify-content:center!important;flex:none!important}
+#mobile-brand img{width:48px!important;height:56px!important;object-fit:contain!important;filter:drop-shadow(0 3px 6px #0008)!important}
+#mobile-brand .brand-dot{color:#f4c75c!important}
+.topbar-actions{flex:0 1 auto!important}
+.topbar .wtg-language-control{max-width:54px!important}
+.topbar .location-pill{max-width:100px!important}
+#view-inicio .wtg-v8-home-tools{margin-top:14px!important}
+#view-inicio .wtg-v8-home-tools:before{content:"DESCUBRE TU PRÓXIMA AVENTURA";display:block;color:#f7d17a;font-size:10px;font-weight:850;letter-spacing:.16em;margin:0 0 8px 3px}
+}
+@media(max-width:380px){#mobile-brand{font-size:19px!important}#mobile-brand .mobile-brand-icon{width:42px!important}#mobile-brand img{width:40px!important}.topbar .location-pill{max-width:85px!important}}
