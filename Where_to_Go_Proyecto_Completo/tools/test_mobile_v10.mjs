@@ -50,7 +50,14 @@ try {
       overlayHidden:document.querySelector('#overlay')?.hidden};
   });
   console.log('CLICK DIAGNOSTIC:',JSON.stringify(diagnostic));
-  await photoButton.evaluate(el=>el.click());
+  // The product intentionally has a login gate for new visitors. Simulate
+  // an already signed-in user, so a real touch (not JS/programmatic click)
+  // reaches the card instead of the unrelated sign-in overlay.
+  await page.evaluate(()=>{
+    const gate=document.querySelector('#auth-gate');
+    if(gate){gate.hidden=true;gate.style.display='none';}
+  });
+  await photoButton.click({timeout:15000});
   await page.waitForTimeout(500);
   console.log('AFTER PHOTO CLICK:',JSON.stringify(await page.evaluate(()=>({
     modal:state.modal,
