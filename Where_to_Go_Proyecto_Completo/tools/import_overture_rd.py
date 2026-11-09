@@ -130,16 +130,62 @@ def run(args):
             key=parent
         cache.setdefault(key,[]).append(row);by_index[idx].append((lat,lon,row));seen.add(pid);stats[cat]+=1;count+=1
     if count:
-        for key,items in cache.items():
-            (out/f'cell_{key}.json').write_text(json.dumps(items,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf8')
-        m['cells']=sorted(set(m['cells'])|{key.rsplit('_',3)[0] if len(key.split('_'))==5 else key for key in cache})
-        m['recordCount']=sum(map(len,cache.values()))
+        # Repartition the merged catalogue so phones do not need to fetch a
+        # multi-megabyte city tile just to display nearby restaurants and nightlife.
+        grouped=collections.defaultdict(list)
+        for rows in cache.values():
+            for x in rows:
+                key=f"{math.floor((x['lat']+90)/GRID)}_{math.floor((x['lon']+180)/GRID)}"
+                grouped[key].append(x)
+        old_count=sum(map(len,cache.values()))
+        if sum(map(len,grouped.values()))!=old_count:raise RuntimeError('Pérdida de lugares al reagrupar')
+        split_cells={}
+        sizes=[]
+        for f in out.glob('cell_*.json'):f.unlink()
+        def save_tile(key,rows):
+            content=json.dumps(rows,ensure_ascii=False,separators=(',',':'))
+            data=content.encode('utf-8')
+            if len(data)>220000:raise RuntimeError('Subzona supera 220 KB: '+key)
+            (out/f'cell_{key}.json').write_bytes(data)
+            sizes.append(len(data))
+        for parent,rows in sorted(grouped.items()):
+            rows.sort(key=lambda x:(x['cat'],x['name']))
+            content=json.dumps(rows,ensure_ascii=False,separators=(',',':')).encode('utf-8')
+            if len(content)<=220000:
+                save_tile(parent,rows)
+                continue
+            pa,pb=(int(n) for n in parent.split('_'))
+            fine=collections.defaultdict(list)
+            for row in rows:
+                a=max(0,min(4,math.floor((row['lat']+90)/(GRID/5))-pa*5))
+                b=max(0,min(4,math.floor((row['lon']+180)/(GRID/5))-pb*5))
+                fine[(a,b)].append(row)
+            split_cells[parent]=[]
+            for (a,b),group in sorted(fine.items()):
+                partial=[];used=2;part=0
+                for row in group:
+                    length=len(json.dumps(row,ensure_ascii=False,separators=(',',':')).encode('utf-8'))+1
+                    if partial and used+length>220000:
+                        key=f'{parent}_{a}_{b}_{part}'
+                        save_tile(key,partial);split_cells[parent].append(key)
+                        partial=[];used=2;part+=1
+                    partial.append(row);used+=length
+                if partial:
+                    key=f'{parent}_{a}_{b}_{part}'
+                    save_tile(key,partial);split_cells[parent].append(key)
+        m['version']=6
+        m['cells']=sorted(grouped)
+        m['splitCells']=split_cells
+        m['fineCellDegrees']=GRID/5
+        m['recordCount']=old_count
         m['updatedAt']=datetime.datetime.now(datetime.timezone.utc).isoformat()
         m['sources']=['Geofabrik / OpenStreetMap','Overture Maps']
         by_cat=collections.Counter()
-        for items in cache.values():by_cat.update(x['cat'] for x in items)
+        for items in grouped.values():by_cat.update(x['cat'] for x in items)
         m['categories']=dict(sorted(by_cat.items()))
         m['overtureAdded']=count;m['overtureDuplicates']=dup
+        m['overtureAddedByCategory']=dict(sorted(stats.items()))
+        m['maxCellBytes']=max(sizes,default=0)
         mf.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
     print('Overture incorporados:',count,'duplicados:',dup,'filtrados baja confianza:',filtered,'total:',m['recordCount'])
 
