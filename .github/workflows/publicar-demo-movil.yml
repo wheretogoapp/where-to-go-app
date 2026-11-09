@@ -32,14 +32,13 @@ jobs:
           test -s /tmp/where-to-go-pages/navy-gold-mobile.css
           test -s /tmp/where-to-go-pages/tours.js
           test -s /tmp/where-to-go-pages/tours.css
+          test -s /tmp/where-to-go-pages/assets/wtg-brand.svg
           grep -q 'data-view="tours"' /tmp/where-to-go-pages/index.html
           grep -q 'data-social="google"' /tmp/where-to-go-pages/index.html
           grep -q 'data-social="apple"' /tmp/where-to-go-pages/index.html
           grep -q 'data-social="facebook"' /tmp/where-to-go-pages/index.html
-      - name: Activar o configurar GitHub Pages automáticamente
+      - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Subir sitio web
         uses: actions/upload-pages-artifact@v4
         with:
