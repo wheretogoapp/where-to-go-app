@@ -42,7 +42,6 @@ jobs:
             echo "Source: GitHub Actions; guardar. Ejecutar de nuevo este flujo."
           fi
       - name: Empaquetar web y atlas de 500 fotos para sitio de prueba
-        if: steps.pages.outputs.enabled == 'true'
         run: |
           python Where_to_Go_Proyecto_Completo/tools/build_pages_preview.py \
             --source Where_to_Go_Proyecto_Completo/public \
