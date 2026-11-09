@@ -40,7 +40,7 @@ async function loginEmail(create){
   if(!email||password.length<6){showMessage('Escribe un correo válido y una contraseña de al menos 6 caracteres.');return;}
   busy=true;showMessage('');
   try{
-    const res=create?await client.auth.signUp({email,password}):await client.auth.signInWithPassword({email,password});
+    const res=create?await client.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}}):await client.auth.signInWithPassword({email,password});
     if(res.error)throw res.error;
     if(create&&!res.data.session)showMessage('Cuenta creada. Revisa tu correo para confirmar la dirección y después inicia sesión.');
   }catch(e){showMessage(e?.message||'No se pudo acceder. Comprueba la configuración y vuelve a intentarlo.');}
