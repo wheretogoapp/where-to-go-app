@@ -1,0 +1,49 @@
+name: Where to Go - Auditar portadas auténticas por provincia
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/auditar-portadas.yml'
+permissions:
+  contents: read
+jobs:
+  comprobar_portadas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v5
+      - name: Validar archivos reales de Wikimedia Commons para las 32 portadas
+        run: |
+          python - <<'PY'
+          import json,pathlib,urllib.parse,urllib.request,time
+          p=pathlib.Path('Where_to_Go_Proyecto_Completo/public/data/province-heroes.json')
+          d=json.loads(p.read_text(encoding='utf-8'))
+          assert len(d)==32
+          missing=[];verified=[];errors=[]
+          for i in range(0,len(d),10):
+            batch=list(d.items())[i:i+10]
+            payload={'action':'query','format':'json','formatversion':'2',
+              'titles':'|'.join('File:'+a['file'] for _,a in batch),
+              'prop':'imageinfo','iiprop':'url|extmetadata'}
+            url='https://commons.wikimedia.org/w/api.php?'+urllib.parse.urlencode(payload)
+            try:
+              req=urllib.request.Request(url,headers={'User-Agent':'WhereToGoRDPhotoAudit/1.0 (github.com/wheretogoapp/where-to-go-app)'})
+              with urllib.request.urlopen(req,timeout=30) as response:pages=json.load(response)['query']['pages']
+              ok={v.get('title','').lower():v for v in pages}
+              for province,data in batch:
+                page=ok.get(('File:'+data['file']).lower(),{})
+                if page.get('missing') or not page.get('imageinfo'):
+                  missing.append((province,data['file']))
+                else:
+                  verified.append((province,data['file']))
+            except Exception as exc:
+              errors.append(str(exc))
+            time.sleep(1)
+          print('PORTADAS CONSULTADAS:',len(d))
+          print('COMPROBADAS:',len(verified),repr(verified))
+          print('NO ENCONTRADAS:',len(missing),repr(missing))
+          print('ERRORES DE CONSULTA:',errors)
+          if errors:raise RuntimeError('Fallo la consulta, no afirmar que están verificadas')
+          if missing:raise RuntimeError(str(len(missing))+' portadas provinciales inexistentes en Commons')
+          PY
