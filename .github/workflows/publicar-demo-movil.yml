@@ -43,11 +43,47 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: /tmp/where-to-go-pages
+      - name: Liberar despliegue anterior bloqueado de GitHub Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request, urllib.error
+          # SHA devuelto literalmente por GitHub en "Please cancel ... first".
+          old_sha='34aa74e7ce81dbc0b5d9435d5f226752921294f6'
+          url='https://api.github.com/repos/'+os.environ['GITHUB_REPOSITORY']+'/pages/deployments/'+old_sha
+          headers={
+            'Accept':'application/vnd.github+json',
+            'Authorization':'Bearer '+os.environ['GH_TOKEN'],
+            'X-GitHub-Api-Version':'2022-11-28',
+            'User-Agent':'WhereToGo-Pages-Recovery'
+          }
+          def api(method, endpoint):
+            req=urllib.request.Request(endpoint,headers=headers,method=method)
+            with urllib.request.urlopen(req,timeout=25) as response:
+              return response.status,response.read()
+          try:
+            code,body=api('GET',url)
+            status=json.loads(body.decode()).get('status','unknown')
+            print('Despliegue antiguo '+old_sha[:9]+': '+status)
+            if status in ('succeed','deployment_cancelled','failed','cancelled','errored'):
+              print('Estado terminal; no es necesario cancelar ese despliegue.')
+            else:
+              code,_=api('POST',url+'/cancel')
+              print('Cancelación solicitada al API oficial de Pages. Respuesta HTTP '+str(code))
+          except urllib.error.HTTPError as error:
+            details=error.read().decode('utf-8','replace')[:1200]
+            if error.code==404:
+              print('El despliegue anterior ya no existe (404).')
+            else:
+              print('No se pudo liberar la publicación: HTTP '+str(error.code)+' '+details)
+              raise
+          PY
       - name: Publicar aplicación
         id: publish
         uses: actions/deploy-pages@v4
         with:
-          timeout: '900000'
+          timeout: '600000'
       - name: "Verificar que se publicó y responde por HTTP"
         env:
           PAGE_URL: ${{ steps.publish.outputs.page_url }}
