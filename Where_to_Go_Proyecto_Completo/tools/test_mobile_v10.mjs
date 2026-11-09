@@ -78,6 +78,21 @@ try {
   assert(initial.categories.playas>=5,'Beaches missing');
   assert(initial.unknownPhotoPlaces>30,'Photo-only filter still hides places');
   assert.equal(initial.photoAtlasShortcut,false,'Off-topic photo atlas still visible');
+  await page.waitForFunction(()=>window.WTG_GALLERY_PHOTOS &&
+    Object.keys(window.WTG_GALLERY_PHOTOS).length>=45,null,{timeout:20000});
+  const destinationPhotos=await page.evaluate(()=>{
+    const destinations=['wd-Q4208698','wd-Q6683320','wd-Q62620342'];
+    return destinations.map(id=>{
+      const p=state.catalog.find(x=>x.id===id);
+      const images=p?placeGalleryPhotos(p):[];
+      return {id,name:p?.name||'',count:images.length,
+        sources:images.map(x=>x.source),hasSource:images.every(x=>x.source&&x.attribution)};
+    });
+  });
+  assert(destinationPhotos.every(x=>x.count>=2&&x.hasSource),
+    'Photos from Commons must appear in the actual destination card');
+  console.log('REAL PHOTO GALLERIES:',JSON.stringify(destinationPhotos.map(x=>({name:x.name,count:x.count}))));
+
   const before=await page.locator('#home-list .place-title').first().textContent();
   console.log('INITIAL MOBILE:',JSON.stringify(initial));
   const photoButton=page.locator('#home-list .wtg-open-photo').first();
