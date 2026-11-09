@@ -1,6 +1,9 @@
 name: Where to Go - prueba real iPhone Las Terrenas
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ['Where to Go - Vista móvil alternativa sin Netlify']
+    types: [completed]
   push:
     branches: [main]
     paths:
@@ -10,6 +13,8 @@ permissions:
   contents: read
 jobs:
   probar_movil:
+    # Public e2e must run AFTER GitHub Pages finishes deploying, not while CDN is stale.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
