@@ -6,7 +6,6 @@ on:
     paths:
       - '.github/workflows/publicar-demo-movil.yml'
       - 'Where_to_Go_Proyecto_Completo/tools/build_pages_preview.py'
-      - 'Where_to_Go_Proyecto_Completo/public/**'
 permissions:
   contents: read
   pages: write
@@ -23,7 +22,7 @@ jobs:
       url: ${{ steps.publish.outputs.page_url }}
     steps:
       - uses: actions/checkout@v5
-      - name: Comprobar disponibilidad de GitHub Pages sin provocar error rojo
+      - name: Comprobar si GitHub Pages está realmente habilitado
         id: pages
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -40,6 +39,9 @@ jobs:
             echo "PAGES AÚN NO ACTIVADO (respuesta $code)"
             echo "Una sola vez, desde el celular: https://github.com/$GITHUB_REPOSITORY/settings/pages"
             echo "Source: GitHub Actions; guardar. Ejecutar de nuevo este flujo."
+            echo "### Publicación no realizada" >> "$GITHUB_STEP_SUMMARY"
+            echo "El sitio alternativo todavía no está habilitado (API HTTP $code). Este flujo **no ha publicado una página**." >> "$GITHUB_STEP_SUMMARY"
+            echo "Desde Safari, entra primero al repositorio con la cuenta administradora y luego en Settings → Pages → Source: GitHub Actions." >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Empaquetar web y atlas de 500 fotos para sitio de prueba
         run: |
@@ -56,3 +58,21 @@ jobs:
         id: publish
         if: steps.pages.outputs.enabled == 'true'
         uses: actions/deploy-pages@v4
+      - name: Comprobar el resultado real de la publicación
+        if: always()
+        env:
+          PAGES_ENABLED: ${{ steps.pages.outputs.enabled }}
+          PAGE_URL: ${{ steps.publish.outputs.page_url }}
+        run: |
+          if [ "$PAGES_ENABLED" != "true" ]; then
+            echo "::error::No hay URL pública: falta activar GitHub Pages desde la cuenta administradora."
+            exit 1
+          fi
+          if [ -z "$PAGE_URL" ]; then
+            echo "::error::No se confirmó un enlace de GitHub Pages publicado."
+            exit 1
+          fi
+          echo "Publicado en: $PAGE_URL"
+          echo "### Aplicación publicada" >> "$GITHUB_STEP_SUMMARY"
+          echo "$PAGE_URL" >> "$GITHUB_STEP_SUMMARY"
+
