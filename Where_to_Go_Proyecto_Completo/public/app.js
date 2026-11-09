@@ -327,7 +327,7 @@ async function loadApprovedFreeBusinesses(){
     if(b.approved!==true||b.registrationPaid!==true||!b.id||!b.name||!CATEGORIES.some(c=>c.id===b.cat)||!Number.isFinite(b.lat)||!Number.isFinite(b.lon)||!b.sourceUrl)continue;
     state.catalog.push({id:'business-'+b.id,name:b.name,cat:b.cat,lat:b.lat,lon:b.lon,
       address:b.address||'',phone:b.phone||'',website:b.website||'',photo:b.photoRightsConfirmed?b.photo||'':'',
-      photoSource:b.photoRightsConfirmed?b.photoSource||'':'',photoAttribution:b.photoAttribution||'',
+      photoSource:b.photoRightsConfirmed?b.photoSource||'':'',photoAttribution:b.photoAttribution||'',photos:b.photoRightsConfirmed&&Array.isArray(b.photos)?b.photos:[],
       province:b.province||'',municipality:b.municipality||'',source:'propietario',sourceUrl:b.sourceUrl,
       accuracy:b.accuracy||'Ubicación verificada al aprobar la ficha; confirma la entrada',description:b.description||'',tags:{}});
   }
@@ -341,7 +341,9 @@ function sponsorNearby(){return wtgSponsors.filter(sponsorInScope).map(s=>({
  id:'sponsor-'+s.id,name:s.name,cat:s.cat,lat:s.lat,lon:s.lon,province:s.province,
  municipality:s.municipality||'',address:s.address||'',phone:s.phone||'',website:s.website||'',
  description:s.description||'',source:'patrocinado',sourceUrl:s.sourceUrl||'',sponsored:true,plan:s.plan,
- photo:s.photo||'',distance:haversine(state.lat,state.lon,s.lat,s.lon),accuracy:'Punto proporcionado y revisado por el anunciante',tags:{}
+ photo:s.photo||'',photoSource:s.photoSource||'',photoAttribution:s.photoAttribution||'',
+ photos:s.photoRightsConfirmed===true&&Array.isArray(s.photos)?s.photos:[],
+ distance:haversine(state.lat,state.lon,s.lat,s.lon),accuracy:'Punto proporcionado y revisado por el anunciante',tags:{}
 }));}
 function promoSort(arr){const rank=p=>p.sponsored?(p.plan==='premium'?3:2):0;return arr.sort((a,b)=>rank(b)-rank(a)||a.distance-b.distance||a.name.localeCompare(b.name,'es'));}
 
