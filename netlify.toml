@@ -1,6 +1,8 @@
 [build]
-  publish = "public"
-  functions = "netlify/functions"
+  # El repositorio tiene la aplicación dentro de Where_to_Go_Proyecto_Completo.
+  # Cuando Netlify se conecta desde la raíz, "public" no existe en ese nivel.
+  publish = "Where_to_Go_Proyecto_Completo/public"
+  functions = "Where_to_Go_Proyecto_Completo/netlify/functions"
 
 [[headers]]
   for = "/*"
