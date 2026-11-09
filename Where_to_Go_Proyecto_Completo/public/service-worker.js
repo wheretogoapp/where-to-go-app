@@ -1,5 +1,5 @@
 /* Offline pilot: bundled public destinations/photos; no location or personal data cached. */
-const CACHE='where-to-go-pilot-v9-1';
+const CACHE='where-to-go-pilot-v9-2';
 const ASSETS=['/','/index.html','/styles.css','/premium.css','/experience.css','/visual-v7.css','/world-v8.css','/world-v8.js','/assets/wtg-brand.svg','/experience.js','/app.js','/language.js','/manifest.webmanifest','/data/municipios-rd.json','/data/province-heroes.json','/province-heroes.js','/auth.js','/config.js','/data/aventuras.json','/data/pilot-places.json','/pilot.js','/pilot.css','/privacidad.html','/terminos.html','/assets/favicon.svg','/assets/icon-192.png','/assets/icon-512.png'];
 self.addEventListener('install',event=>{
  event.waitUntil((async()=>{

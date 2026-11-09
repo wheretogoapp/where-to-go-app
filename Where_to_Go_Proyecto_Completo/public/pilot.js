@@ -4,7 +4,7 @@
   'use strict';
   const byId=id=>document.getElementById(id);
   const KEY='wtg_business_preview_v1';
-  let selectedProvince='', signature='', draft=null, photo='', installPrompt=null;
+  let selectedProvince='', selectedCategory='', searchText='', signature='', draft=null, photo='', installPrompt=null;
   const photoPlaces=()=> (window.WTG_PILOT_PLACES||[]).filter(p=>p.photo&&p.photoSource&&p.photoAttribution);
   const province=p=>p.province||'Otros destinos';
   function goPlace(id){
@@ -16,13 +16,15 @@
   }
   function render(){
     const all=photoPlaces(),list=byId('pilot-list');if(!list)return;
-    const next=all.map(p=>p.id).join('|')+'|'+selectedProvince;
+    const next=all.map(p=>p.id).join('|')+'|'+selectedProvince+'|'+selectedCategory+'|'+searchText;
     if(signature===next)return;signature=next;
     const provinces=[...new Set(all.map(province))].sort((a,b)=>a.localeCompare(b,'es'));
     byId('pilot-regions').innerHTML=['Todas',...provinces].map(v=>`<button class="filter-chip ${selectedProvince===v||(!selectedProvince&&v==='Todas')?'active':''}" data-pilot-region="${esc(v)}">${esc(v)}</button>`).join('');
-    const places=all.filter(p=>!selectedProvince||province(p)===selectedProvince);
+    const norm=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es');
+    const places=all.filter(p=>(!selectedProvince||province(p)===selectedProvince)&&(!selectedCategory||p.cat===selectedCategory)&&(!searchText||norm(p.name+' '+province(p)).includes(norm(searchText))));
+    byId('pilot-results').textContent=places.length+' resultados · '+provinces.length+' provincias con fichas disponibles';
     byId('pilot-total').textContent=String(all.length);
-    list.innerHTML=places.map(p=>`<article class="pilot-card"><button data-pilot-place="${esc(p.id)}"><img loading="lazy" decoding="async" src="${esc(safeUrl(p.photo))}" alt="${esc(p.name)}"><span>${esc(province(p))}</span><h3>${esc(p.name)}</h3><p>${esc(catInfo(p.cat).name)} · Explorar destino ↗</p></button><small>Foto: ${esc(p.photoAttribution)} · <a target="_blank" rel="noopener" href="${esc(safeUrl(p.photoSource))}">Fuente</a>${p.photoLicense?` · <a target="_blank" rel="noopener" href="${esc(safeUrl(p.photoLicense))}">Licencia</a>`:''}</small></article>`).join('');
+    list.innerHTML=places.length?places.map(p=>`<article class="pilot-card"><button data-pilot-place="${esc(p.id)}"><img loading="lazy" decoding="async" src="${esc(safeUrl(p.photo))}" alt="${esc(p.name)}"><span>${esc(province(p))}</span><h3>${esc(p.name)}</h3><p>${esc(catInfo(p.cat).name)} · Explorar destino ↗</p></button><small>Foto: ${esc(p.photoAttribution)} · <a target="_blank" rel="noopener" href="${esc(safeUrl(p.photoSource))}">Fuente</a>${p.photoLicense?` · <a target="_blank" rel="noopener" href="${esc(safeUrl(p.photoLicense))}">Licencia</a>`:''}</small></article>`).join(''):'<p class="pilot-empty">No hay fichas con foto que coincidan con esta búsqueda. Prueba otra categoría o provincia.</p>';
   }
   function showDraft(){
     const target=byId('business-demo-preview');
@@ -50,8 +52,11 @@
     toolbar.innerHTML='<div><b>Piloto con lugares reales</b><span>Explora y prepara tu visita a negocios</span></div><div><button data-view="piloto">Destinos con fotos</button><button data-view="negocioDemo">Mostrar a un negocio</button><button id="pilot-install">Instalar en mi celular</button></div>';
     main.prepend(toolbar);
     const browse=document.createElement('section');browse.id='view-piloto';browse.className='view pilot-view';
-    browse.innerHTML='<header class="pilot-heading"><span>EXPLORA ANTES DE VIAJAR</span><h2>Destinos con fotos reales.</h2><p><b id="pilot-total">0</b> fichas con fotos incluidas en la app. Esta selección es nacional; no representa lugares cerca de tu GPS.</p><button class="btn btn-primary" id="pilot-gps">Ver cerca de mí</button></header><div id="pilot-regions" class="pilot-regions"></div><div id="pilot-list" class="pilot-grid"></div>';
+    browse.innerHTML='<header class="pilot-heading"><span>EXPLORA ANTES DE VIAJAR</span><h2>Destinos con fotos reales.</h2><p><b id="pilot-total">0</b> fichas con fotos incluidas en la app. Esta selección es nacional; no representa lugares cerca de tu GPS.</p><button class="btn btn-primary" id="pilot-gps">Ver cerca de mí</button></header><div class="pilot-search"><label>Buscar lugar o provincia<input id="pilot-search" type="search" placeholder="Playa, museo, Puerto Plata…"></label><label>Categoría<select id="pilot-category"><option value="">Todas las categorías</option></select></label></div><p id="pilot-results" role="status" aria-live="polite"></p><div id="pilot-regions" class="pilot-regions"></div><div id="pilot-list" class="pilot-grid"></div>';
     main.append(browse);
+    byId('pilot-category').innerHTML+=CATEGORIES.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+    byId('pilot-search').addEventListener('input',e=>{searchText=e.target.value.trim();render()});
+    byId('pilot-category').addEventListener('change',e=>{selectedCategory=e.target.value;render()});
     const biz=document.createElement('section');biz.id='view-negocioDemo';biz.className='view pilot-view';
     biz.innerHTML=`<header class="pilot-heading"><span>PARA TUS VISITAS COMERCIALES</span><h2>Así puede verse tu negocio.</h2><p>Crea una ficha con una foto del establecimiento y muéstrasela a su propietario. Esta prueba es privada: no publica, no envía datos y no cobra.</p></header><div class="pilot-business-layout"><form id="pilot-business-form" class="pilot-form"><label>Nombre del negocio<input id="pilot-name" required maxlength="100"></label><label>Categoría<select id="pilot-cat">${CATEGORIES.filter(c=>!['escuelas','iglesias'].includes(c.id)).map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}</select></label><label>Municipio / provincia<input id="pilot-city" required maxlength="100" placeholder="San José de Ocoa"></label><label>Dirección<input id="pilot-address" required maxlength="180"></label><label>Teléfono<input id="pilot-phone" type="tel" maxlength="25"></label><label>Enlace del mapa (opcional)<input id="pilot-map" type="url" placeholder="https://…"></label><label>Descripción<textarea id="pilot-description" required maxlength="400" rows="3"></textarea></label><label>Foto real del negocio<input id="pilot-photo" type="file" accept="image/jpeg,image/png,image/webp"></label><label class="pilot-consent"><input type="checkbox" id="pilot-rights" required> Tengo permiso para usar esta foto y estos datos en la demostración.</label><p id="pilot-form-status" role="status"></p><button class="btn btn-primary" type="submit">Guardar y ver ficha</button></form><div><div id="business-demo-preview"></div><div class="pilot-actions"><button id="pilot-export" disabled>Descargar ficha y foto</button><button id="pilot-delete" disabled>Eliminar esta prueba</button></div><p class="pilot-local-note">La descarga incluye la foto y los datos en un archivo JSON para entregarlos al responsable del catálogo. Borrar los datos del navegador elimina esta copia.</p></div></div>`;
     main.append(biz);
