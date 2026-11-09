@@ -1,5 +1,5 @@
 /* Offline pilot: bundled public destinations/photos; no location or personal data cached. */
-const CACHE='where-to-go-shell-v9-5';
+const CACHE='where-to-go-shell-v9-6';
 const ASSETS=['/','/index.html','/styles.css','/premium.css','/experience.css','/visual-v7.css','/world-v8.css','/photo-atlas.css','/world-v8.js','/assets/wtg-brand.svg','/experience.js','/app.js','/pilot.js','/photo-atlas.js','/language.js','/manifest.webmanifest','/data/place-gallery.json','/data/pilot-places.json','/data/photo-atlas-rd.json','/data/municipios-rd.json','/data/province-heroes.json','/province-heroes.js','/auth.js','/config.js','/data/aventuras.json','/pilot.css','/privacidad.html','/terminos.html','/assets/favicon.svg','/assets/icon-192.png','/assets/icon-512.png'];
 self.addEventListener('install',event=>{
  event.waitUntil((async()=>{
@@ -18,11 +18,24 @@ self.addEventListener('fetch',event=>{
   const cache=await caches.open(CACHE);
   // Fingerprinted, bundled photos are immutable and fast, including after airplane mode.
   if(u.pathname.startsWith('/assets/places/')){const photo=await cache.match(u.pathname);if(photo)return photo;}
-  try{return await fetch(event.request)}catch{
-   const response=await cache.match(event.request,{ignoreSearch:true});
-   if(response)return response;
-   if(event.request.mode==='navigate')return await cache.match('/index.html');
-   return new Response('Sin conexión',{status:503,statusText:'Offline'});
-  }
+  // A 503 is an HTTP response, not a network exception. Previously the PWA
+  // returned that error without trying its already installed offline shell.
+  // Cache downloaded local geographic tiles so nearby lists stay readable during outages.
+  const isLocalData=/^\/data\/places\/(?:manifest|cell_[a-zA-Z0-9_]+)\.json$/.test(u.pathname);
+  const offline=async()=>{
+    const response=await cache.match(event.request,{ignoreSearch:true});
+    if(response)return response;
+    if(event.request.mode==='navigate')return await cache.match('/index.html')||new Response('Sin conexión',{status:503});
+    return new Response('Sin conexión',{status:503,statusText:'Offline'});
+  };
+  try{
+    const response=await fetch(event.request);
+    if(response.ok){
+      if(isLocalData){try{await cache.put(u.pathname,response.clone())}catch{/* Safari storage quota can vary */}}
+      return response;
+    }
+    if(response.status>=500)return await offline();
+    return response;
+  }catch{return await offline()}
  })());
 });
