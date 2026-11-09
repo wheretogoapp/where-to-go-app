@@ -217,15 +217,15 @@ function placeGalleryMarkup(p){
   const photos=placeGalleryPhotos(p);
   if(!photos.length)return '<div class="detail-cover">'+placePhotoMarkup(p,'detail')+'</div>';
   const first=photos[0],multiple=photos.length>1;
-  return \`<section class="wtg-gallery" data-gallery-place="\${esc(p.id)}" data-gallery-current="0" aria-label="Fotografías auténticas de \${esc(p.name)}">
+  return `<section class="wtg-gallery" data-gallery-place="${esc(p.id)}" data-gallery-current="0" aria-label="Fotografías auténticas de ${esc(p.name)}">
     <div class="wtg-gallery-stage">
-      <img class="actual-photo wtg-gallery-main" src="\${esc(first.url)}" alt="Fotografía 1 de \${photos.length} del lugar \${esc(p.name)}" decoding="async" referrerpolicy="no-referrer">
-      \${multiple?'<button type="button" class="wtg-gallery-prev" data-gallery-step="-1" aria-label="Fotografía anterior">‹</button><button type="button" class="wtg-gallery-next" data-gallery-step="1" aria-label="Siguiente fotografía">›</button>':''}
-      <span class="wtg-gallery-count">1 / \${photos.length} fotos reales</span>
+      <img class="actual-photo wtg-gallery-main" src="${esc(first.url)}" alt="Fotografía 1 de ${photos.length} del lugar ${esc(p.name)}" decoding="async" referrerpolicy="no-referrer">
+      ${multiple?'<button type="button" class="wtg-gallery-prev" data-gallery-step="-1" aria-label="Fotografía anterior">‹</button><button type="button" class="wtg-gallery-next" data-gallery-step="1" aria-label="Siguiente fotografía">›</button>':''}
+      <span class="wtg-gallery-count">1 / ${photos.length} fotos reales</span>
     </div>
-    \${multiple?'<div class="wtg-gallery-thumbnails" role="group" aria-label="Elegir fotografía">'+photos.map((photo,i)=>\`<button type="button" data-gallery-thumb="\${i}" aria-label="Ver foto \${i+1}" aria-pressed="\${i===0}" class="\${i===0?'active':''}"><img src="\${esc(photo.url)}" alt="" loading="lazy"></button>\`).join('')+'</div>':''}
-    <p class="wtg-gallery-credit">Foto: <span data-gallery-attribution>\${esc(first.attribution)}</span> · <a data-gallery-source href="\${esc(first.source)}" target="_blank" rel="noopener noreferrer">Ver original y derechos ↗</a><a data-gallery-license href="\${esc(first.license||first.source)}" target="_blank" rel="noopener noreferrer">Licencia</a></p>
-  </section>\`;
+    ${multiple?'<div class="wtg-gallery-thumbnails" role="group" aria-label="Elegir fotografía">'+photos.map((photo,i)=>`<button type="button" data-gallery-thumb="${i}" aria-label="Ver foto ${i+1}" aria-pressed="${i===0}" class="${i===0?'active':''}"><img src="${esc(photo.url)}" alt="" loading="lazy"></button>`).join('')+'</div>':''}
+    <p class="wtg-gallery-credit">Foto: <span data-gallery-attribution>${esc(first.attribution)}</span> · <a data-gallery-source href="${esc(first.source)}" target="_blank" rel="noopener noreferrer">Ver original y derechos ↗</a><a data-gallery-license href="${esc(first.license||first.source)}" target="_blank" rel="noopener noreferrer">Licencia</a></p>
+  </section>`;
 }
 function selectGalleryPhoto(container,index){
   if(!container)return;
