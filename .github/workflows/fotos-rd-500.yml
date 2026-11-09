@@ -1,4 +1,4 @@
-name: Where to Go - 500 fotografías abiertas de República Dominicana
+name: Where to Go - 5,000 fotografías abiertas de República Dominicana
 on:
   push:
     branches: [main]
@@ -14,7 +14,7 @@ concurrency:
 jobs:
   fotos_geolocalizadas:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v5
         with:
@@ -38,7 +38,7 @@ jobs:
           python Where_to_Go_Proyecto_Completo/tools/build_commons_photo_atlas.py \
             --countries /tmp/countries.geojson \
             --output Where_to_Go_Proyecto_Completo/public/data/photo-atlas-rd.json \
-            --target 500
+            --target 5000
       - name: Comprobar fotos, fuentes, coordenadas y recuento
         run: |
           python - <<'PY'
@@ -53,7 +53,7 @@ jobs:
             assert row['source'].startswith('https://commons.wikimedia.org/wiki/File:')
             assert 17.0<=row['lat']<=20.3 and -72.5<=row['lon']<=-68.0
             assert row['credit'] and row['license'] and row['province']
-          print('FOTOS COMPROBADAS:',len(rows),'DE 500 OBJETIVO')
+          print('FOTOS COMPROBADAS:',len(rows),'DE 5000 OBJETIVO')
           print('PROVINCIAS:',d['coverageByProvince'])
           PY
       - name: Publicar nuevo catálogo visual sin sobrescribir otros cambios
