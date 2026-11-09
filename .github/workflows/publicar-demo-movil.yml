@@ -17,7 +17,7 @@ concurrency:
 jobs:
   demo_movil:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 27
     environment:
       name: github-pages
       url: ${{ steps.publish.outputs.page_url }}
@@ -55,10 +55,14 @@ jobs:
         if: steps.pages.outputs.enabled == 'true'
         with:
           path: /tmp/where-to-go-pages
+          name: wtg-pages-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Publicar vista móvil independiente de Netlify
         id: publish
         if: steps.pages.outputs.enabled == 'true'
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: wtg-pages-${{ github.run_id }}-${{ github.run_attempt }}
+          timeout: '900000'
       - name: Comprobar el resultado real de la publicación
         if: always()
         env:
@@ -71,6 +75,10 @@ jobs:
           fi
           if [ -z "$PAGE_URL" ]; then
             echo "::error::No se confirmó un enlace de GitHub Pages publicado."
+            exit 1
+          fi
+          if [ "${{ steps.publish.conclusion }}" != "success" ]; then
+            echo "::error::GitHub Pages no confirmó la publicación; no indicar éxito."
             exit 1
           fi
           echo "Publicado en: $PAGE_URL"
