@@ -32,7 +32,7 @@ def build(source,destination,prefix):
     (destination/'.nojekyll').write_text('',encoding='utf-8')
     html=(destination/'index.html').read_text(encoding='utf-8')
     assert prefix+'/app.js' in html
-    assert prefix+'/photo-atlas.js' in html
+    assert prefix+'/photo-atlas.js' not in html, 'La galería fuera del tema no debe mostrarse'
     assert (destination/'data'/'photo-atlas-rd.json').exists()
     atlas=json.loads((destination/'data'/'photo-atlas-rd.json').read_text(encoding='utf-8'))
     assert atlas['count']>=500
