@@ -43,7 +43,14 @@ try {
   console.log('INITIAL MOBILE:',JSON.stringify(initial));
   const photoButton=page.locator('#home-list .wtg-open-photo').first();
   console.log('PHOTO BUTTON ID:',await photoButton.getAttribute('data-place'));
-  await photoButton.click({force:true});
+  const diagnostic=await photoButton.evaluate(el=>{
+    const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,top=document.elementFromPoint(cx,cy);
+    return {rect:{x:cx,y:cy,w:r.width,h:r.height},atPoint:top?.outerHTML?.slice(0,160),
+      authGateHidden:document.querySelector('#auth-gate')?.hidden,
+      overlayHidden:document.querySelector('#overlay')?.hidden};
+  });
+  console.log('CLICK DIAGNOSTIC:',JSON.stringify(diagnostic));
+  await photoButton.evaluate(el=>el.click());
   await page.waitForTimeout(500);
   console.log('AFTER PHOTO CLICK:',JSON.stringify(await page.evaluate(()=>({
     modal:state.modal,
