@@ -124,6 +124,8 @@ const CITIES = [
   {name:'Santiago de los Caballeros',region:'República Dominicana',country:'RD',lat:19.4517,lon:-70.6970,emoji:'🌇'},
   {name:'Sosúa',region:'República Dominicana',country:'RD',lat:19.7683,lon:-70.5199,emoji:'🏖️'},
   {name:'Cabarete',region:'Distrito municipal de Sosúa · Puerto Plata',country:'RD',lat:19.7496,lon:-70.4139,emoji:'🏄'},
+  {name:'Las Terrenas',region:'Samaná · República Dominicana',country:'RD',lat:19.311,lon:-69.543,emoji:'🏖️'},
+  {name:'El Limón',region:'Samaná · República Dominicana',country:'RD',lat:19.27,lon:-69.447,emoji:'🌿'},
   {name:'La Romana',region:'República Dominicana',country:'RD',lat:18.4273,lon:-68.9728,emoji:'🌴'},
   {name:'Punta Cana',region:'Higüey · La Altagracia · centro de zona',country:'RD',lat:18.5586,lon:-68.3694,emoji:'🌴'},
   {name:'Bávaro',region:'Verón–Punta Cana · La Altagracia · centro de zona',country:'RD',lat:18.6862,lon:-68.4198,emoji:'🏖️'},
@@ -721,7 +723,7 @@ function renderCities(){
   $('city-options').innerHTML=CITIES.map(c=>`<button class="city-btn" data-city="${esc(c.name)}"><span>${c.emoji}</span><div>${esc(c.name)}<small>${esc(c.region)}</small></div></button>`).join('');
   $('province-select').innerHTML='<option value="">Selecciona provincia o Distrito Nacional</option>'+PROVINCES.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
 }
-function selectCity(name){const c=CITIES.find(x=>x.name===name);if(!c)return;state.city=c.name;state.province=['Puerto Plata','Sosúa','Cabarete'].includes(c.name)?'Puerto Plata':c.name==='La Romana'?'La Romana':['Punta Cana','Bávaro','Verón–Punta Cana'].includes(c.name)?'La Altagracia':c.name==='Santiago de los Caballeros'?'Santiago':c.name==='Santo Domingo de Guzmán'?'Distrito Nacional':'';state.region=c.region;state.lat=c.lat;state.lon=c.lon;state.mode='city';state.category='todos';state.search='';if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();toast(`Explorando ${c.name} 🌎`);loadPlaces();}
+function selectCity(name){const c=CITIES.find(x=>x.name===name);if(!c)return;state.city=c.name;state.province=['Puerto Plata','Sosúa','Cabarete'].includes(c.name)?'Puerto Plata':c.name==='La Romana'?'La Romana':['Punta Cana','Bávaro','Verón–Punta Cana'].includes(c.name)?'La Altagracia':c.name==='Santiago de los Caballeros'?'Santiago':['Las Terrenas','El Limón'].includes(c.name)?'Samaná':c.name==='Santo Domingo de Guzmán'?'Distrito Nacional':'';state.region=c.region;state.lat=c.lat;state.lon=c.lon;state.mode='city';state.category='todos';state.search='';state.radius=12000;state.exploreLimit=80;if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();toast(`Explorando ${c.name} 🌎`);loadPlaces();}
 function loadCachedMunicipalities(){try{const v=JSON.parse(localStorage.getItem('wtg_municipalities_v2')||'null');return Array.isArray(v)&&v.length===158?v:[]}catch{return[]}}
 async function loadMunicipalities(){
   municipalities=loadCachedMunicipalities();if(municipalities.length){updateTaxiMunicipios();refreshMunicipalitySelect();return}
