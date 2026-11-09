@@ -1,38 +1,38 @@
 {
-  "updatedAt": "2026-11-09T16:31:01.055534+00:00",
+  "updatedAt": "2026-11-09T16:36:50.774Z",
   "placesInCatalogue": 44696,
   "placesWithNationalPhoto": 51,
   "curatedPlacesWithKnownPhoto": 116,
-  "galleryPlaceCount": 63,
-  "galleryImageCount": 295,
-  "newVerifiedGalleryPhotos": 283,
+  "galleryPlaceCount": 49,
+  "galleryImageCount": 214,
+  "newVerifiedGalleryPhotos": 202,
   "placesSearched": 116,
   "candidateTitlesMatched": 313,
   "apiRequests": 174,
   "http429Count": 0,
   "newPhotosByCategory": {
-    "atracciones": 223,
+    "atracciones": 168,
+    "parques": 4,
+    "playas": 1,
     "deportes": 17,
-    "entretenimiento": 2,
-    "iglesias": 30,
-    "parques": 9,
-    "playas": 2
+    "iglesias": 10,
+    "entretenimiento": 2
   },
   "newPhotosByProvince": {
-    "Distrito Nacional": 169,
-    "Duarte": 6,
-    "La Altagracia": 6,
-    "La Romana": 1,
-    "La Vega": 14,
-    "Pedernales": 2,
+    "Distrito Nacional": 133,
     "Peravia": 9,
+    "Santiago": 8,
+    "La Altagracia": 5,
+    "La Romana": 1,
+    "La Vega": 1,
+    "Pedernales": 1,
     "Puerto Plata": 10,
     "Samaná": 7,
-    "San Juan": 15,
-    "San Pedro de Macorís": 6,
-    "Santiago": 17,
+    "San Juan": 6,
     "Santo Domingo": 20,
-    "Sin provincia": 1
+    "San Pedro de Macorís": 1
   },
-  "description": "Fotos adicionales verificadas por título exacto del lugar y licencia libre Commons; negocios exigen confirmación de ubicación"
+  "description": "Fotos adicionales verificadas por título exacto del lugar y licencia libre Commons; negocios exigen confirmación de ubicación",
+  "imagesRejectedDuringPlaceAudit": 81,
+  "geographicAudit": "Excluidas fotos de otros países, obras de arte, animales y nombres compartidos sin contexto geográfico verificable"
 }
