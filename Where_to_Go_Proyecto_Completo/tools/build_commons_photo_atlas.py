@@ -129,10 +129,10 @@ def main(args):
     anchors=list(ANCHORS)
     # Explore geotagged file pages. The API does not establish a business identity.
     for city,province,lat,lon in anchors:
-        if len(selected)>=args.target:break
+        # Even after 500 photos, visit the remaining provinces before publishing.
         continuation={}
         new_here=0
-        for page_index in range(2):
+        for page_index in range(1):
             params={"action":"query","generator":"geosearch","ggscoord":f"{lat}|{lon}",
                 "ggsradius":10000,"ggslimit":50,"ggsnamespace":6,
                 "prop":"coordinates|imageinfo","colimit":50,"iiprop":"url|extmetadata",
@@ -170,15 +170,43 @@ def main(args):
                     "licenseUrl":license_url,"lat":clat,"lon":clon,"area":city,
                     "province":province,"sourceType":"Wikimedia Commons · geolocalización de archivo"}
                 new_here+=1
-                if len(selected)>=args.target:break
-            if len(selected)>=args.target:break
+            # One batched Commons query per anchor, then move to another province.
             token=(obj.get("continue") or {}).get("ggscontinue")
             if not token:break
             continuation={"ggscontinue":token,"continue":"-||"}
             time.sleep(.5)
         print(f"ATLAS {city} ({province}): +{new_here} fotos, total {len(selected)}",flush=True)
         time.sleep(.65)
-    images=list(selected.values())[:args.target]
+    # Balance the final 500 across ALL provinces with geotagged licensed photos.
+    # Keep a meaningful Las Terrenas sample for the on-site pilot.
+    import math
+    near=[]
+    for pic in selected.values():
+        if pic.get("province")!="Samaná":continue
+        lat2,lon2=pic["lat"],pic["lon"]
+        km=math.hypot((lat2-19.311)*111.1,(lon2+69.543)*105.0)
+        if km<=12:near.append(pic)
+    selected_sources=set()
+    images=[]
+    for pic in near[:40]:
+        if pic["source"] not in selected_sources:
+            images.append(pic);selected_sources.add(pic["source"])
+    buckets=collections.defaultdict(list)
+    for pic in selected.values():
+        if pic["source"] not in selected_sources:
+            buckets[pic["province"]].append(pic)
+    for group in buckets.values():
+        group.sort(key=lambda x:(x["title"].lower().startswith(("img","dsc","home","pict")),x["area"],x["title"]))
+    provinces=sorted(buckets)
+    while len(images)<args.target and provinces:
+        remaining=[]
+        for province in provinces:
+            group=buckets[province]
+            if group:
+                images.append(group.pop(0))
+                if len(images)>=args.target:break
+            if group:remaining.append(province)
+        provinces=remaining
     byprov=dict(sorted(collections.Counter(x["province"] for x in images).items()))
     result={"version":1,"updatedAt":datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "target":args.target,"count":len(images),"geotagged":True,
