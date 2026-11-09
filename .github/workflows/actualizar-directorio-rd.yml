@@ -65,20 +65,28 @@ jobs:
           print('POR CATEGORÍA:',x['categories'])
           PY
       - name: Instalar cliente Overture (opcional)
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.incluir_overture == true }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.incluir_overture == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[ampliar-rd]')) }}
         run: python -m pip install 'overturemaps>=0.13,<1'
       - name: Descargar puntos Overture de la zona RD (opcional)
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.incluir_overture == true }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.incluir_overture == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[ampliar-rd]')) }}
         run: |
           overturemaps download --type=place --bbox=-72.15,17.1,-68.0,20.25 -f geojsonseq -o /tmp/rd-overture.geojsonseq
           test -s /tmp/rd-overture.geojsonseq
       - name: Combinar Overture con OSM, filtrando frontera y duplicados (opcional)
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.incluir_overture == true }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.incluir_overture == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[ampliar-rd]')) }}
         run: |
           python Where_to_Go_Proyecto_Completo/tools/import_overture_rd.py \
             --input /tmp/rd-overture.geojsonseq \
             --countries /tmp/countries.geojson \
             --out Where_to_Go_Proyecto_Completo/public/data/places
+          python - <<'PYCHECK'
+          import json
+          p='Where_to_Go_Proyecto_Completo/public/data/places/manifest.json'
+          d=json.load(open(p,encoding='utf-8'))
+          n=d.get('overtureAdded',0)
+          print('OVERTURE AGREGÓ LUGARES:',n,'POR CATEGORÍA:',d.get('overtureAddedByCategory',{}))
+          assert n>0, 'Overture no agregó lugares; no publicar como ampliación'
+          PYCHECK
       - name: Añadir fotos auténticas y licencias de Wikimedia (si están enlazadas al sitio)
         run: |
           python Where_to_Go_Proyecto_Completo/tools/enrich_photos.py --out Where_to_Go_Proyecto_Completo/public/data/places --max-wikidata 1600 --max-photos 1600
