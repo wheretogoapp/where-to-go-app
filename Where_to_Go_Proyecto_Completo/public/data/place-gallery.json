@@ -56,5 +56,37 @@
       "attribution": "Caballero1967 · CC BY-SA 4.0 · Wikimedia Commons",
       "license": "https://creativecommons.org/licenses/by-sa/4.0/"
     }
+  ],
+  "osm-way-136395000": [
+    {
+      "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Playa_Dorada_-_Puerto_Plata.jpg?width=900",
+      "source": "https://commons.wikimedia.org/wiki/File:Playa_Dorada_-_Puerto_Plata.jpg",
+      "attribution": "Max Bosio · CC BY 2.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/2.0/"
+    }
+  ],
+  "osm-way-29072278": [
+    {
+      "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sosua_Beach_Dominican_Republic.jpg?width=900",
+      "source": "https://commons.wikimedia.org/wiki/File:Sosua_Beach_Dominican_Republic.jpg",
+      "attribution": "Stupid Dingo · CC BY 2.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/2.0/"
+    }
+  ],
+  "osm-way-191967205": [
+    {
+      "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Monumento_a_los_H%C3%A9roes_de_la_Restauraci%C3%B3n%2C_de_Santiago_de_los_caballeros.jpg?width=900",
+      "source": "https://commons.wikimedia.org/wiki/File:Monumento_a_los_H%C3%A9roes_de_la_Restauraci%C3%B3n%2C_de_Santiago_de_los_caballeros.jpg",
+      "attribution": "Diori de Jesús Lora Amaro · CC BY-SA 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by-sa/4.0/"
+    }
+  ],
+  "wd-Q24663964": [
+    {
+      "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Playa_Macao.jpg?width=900",
+      "source": "https://commons.wikimedia.org/wiki/File:Playa_Macao.jpg",
+      "attribution": "Carolinarondon · CC BY-SA 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by-sa/4.0/"
+    }
   ]
 }
