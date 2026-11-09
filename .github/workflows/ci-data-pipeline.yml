@@ -13,6 +13,11 @@ on:
       - 'Where_to_Go_Proyecto_Completo/public/data/place-gallery.json'
       - 'Where_to_Go_Proyecto_Completo/tools/import_osm_rd.py'
       - 'Where_to_Go_Proyecto_Completo/tools/import_overture_rd.py'
+      - 'Where_to_Go_Proyecto_Completo/tools/test_las_terrenas.py'
+      - 'Where_to_Go_Proyecto_Completo/tools/build_commons_photo_atlas.py'
+      - 'Where_to_Go_Proyecto_Completo/public/photo-atlas.js'
+      - 'Where_to_Go_Proyecto_Completo/public/photo-atlas.css'
+      - 'Where_to_Go_Proyecto_Completo/public/data/photo-atlas-rd.json'
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -31,7 +36,10 @@ jobs:
           node --check Where_to_Go_Proyecto_Completo/public/app.js
           node --check Where_to_Go_Proyecto_Completo/public/experience.js
           node --check Where_to_Go_Proyecto_Completo/public/pilot.js
+          node --check Where_to_Go_Proyecto_Completo/public/photo-atlas.js
           node --check Where_to_Go_Proyecto_Completo/public/service-worker.js
+      - name: Comprobar Las Terrenas 12 km, las categorías y las 500 imágenes
+        run: python Where_to_Go_Proyecto_Completo/tools/test_las_terrenas.py
       - name: Validar fotos múltiples del mismo destino y sus licencias
         run: |
           python - <<'PY'
@@ -56,6 +64,7 @@ jobs:
           PY
       - name: Comprobar sintaxis de scripts de datos
         run: |
+          python -m py_compile Where_to_Go_Proyecto_Completo/tools/build_commons_photo_atlas.py Where_to_Go_Proyecto_Completo/tools/test_las_terrenas.py
           python -m py_compile Where_to_Go_Proyecto_Completo/tools/import_osm_rd.py Where_to_Go_Proyecto_Completo/tools/import_overture_rd.py Where_to_Go_Proyecto_Completo/tools/enrich_photos.py Where_to_Go_Proyecto_Completo/tools/enrich_geo_photos.py Where_to_Go_Proyecto_Completo/tools/preserve_photos.py Where_to_Go_Proyecto_Completo/tools/probe_google_global.py
       - name: Verificar geoposición y preservación sin conexión
         run: |
