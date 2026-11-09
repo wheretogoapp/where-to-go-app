@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "updatedAt": "2026-11-09T12:23:28.003131+00:00",
+  "updatedAt": "2026-11-09T13:28:52.711577+00:00",
   "source": "© OpenStreetMap contributors · ODbL / Geofabrik",
   "recordCount": 27184,
   "categories": {
@@ -350,32 +350,34 @@
   "fineCellDegrees": 0.04,
   "license": "https://www.openstreetmap.org/copyright",
   "note": "Los puntos de áreas y ríos NO son entradas confirmadas. Algunos sitios públicos carecen de nombre en OSM y se indican como tales. Fotos y teléfonos no se inventan.",
-  "licensedPhotoCount": 25,
+  "licensedPhotoCount": 51,
   "photoCoverageByCategory": {
-    "atracciones": 11,
+    "atracciones": 24,
     "cascadas": 2,
-    "deportes": 3,
-    "entretenimiento": 1,
-    "iglesias": 3,
-    "parques": 1,
-    "playas": 3,
+    "deportes": 7,
+    "entretenimiento": 2,
+    "hospitales": 1,
+    "hoteles": 1,
+    "iglesias": 7,
+    "parques": 2,
+    "playas": 4,
     "rios": 1
   },
   "licensedPhotoEnrichment": {
-    "runAt": "2026-11-09T12:23:33.767240+00:00",
+    "runAt": "2026-11-09T13:29:03.960236+00:00",
     "linkedCandidates": 233,
     "wikidataIDsQueried": 227,
     "commonsFilesChecked": 53,
-    "withVerifiedLicense": 0,
+    "withVerifiedLicense": 44,
     "description": "Solo fotos vinculadas al lugar por OSM/Wikidata y con licencia libre verificable en Wikimedia Commons"
   },
   "geoPhotoEnrichment": {
-    "runAt": "2026-11-09T12:24:51.015731+00:00",
+    "runAt": "2026-11-09T13:30:22.734850+00:00",
     "candidatesQueried": 480,
     "exactNameGeoMatches": 0,
     "newPhotosVerified": 0,
-    "totalLicensedPhotos": 0,
+    "totalLicensedPhotos": 44,
     "rule": "Coincidencia de nombre exacto, distancia <=120 metros, P18 y licencia Commons confirmada"
   },
-  "photoPreservedAcrossImports": 25
+  "photoPreservedAcrossImports": 7
 }
