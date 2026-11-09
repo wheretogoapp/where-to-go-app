@@ -30,6 +30,12 @@ jobs:
             --output /tmp/where-to-go-pages --prefix /where-to-go-app
           test -s /tmp/where-to-go-pages/index.html
           test -s /tmp/where-to-go-pages/navy-gold-mobile.css
+          test -s /tmp/where-to-go-pages/tours.js
+          test -s /tmp/where-to-go-pages/tours.css
+          grep -q 'data-view="tours"' /tmp/where-to-go-pages/index.html
+          grep -q 'data-social="google"' /tmp/where-to-go-pages/index.html
+          grep -q 'data-social="apple"' /tmp/where-to-go-pages/index.html
+          grep -q 'data-social="facebook"' /tmp/where-to-go-pages/index.html
       - name: Activar o configurar GitHub Pages automáticamente
         uses: actions/configure-pages@v5
         with:
@@ -58,7 +64,7 @@ jobs:
               try:
                   with urllib.request.urlopen(urllib.request.Request(base,headers={'User-Agent':'WhereToGo-DeploymentCheck/1.0'}),timeout=20) as response:
                       body=response.read()
-                      if response.status==200 and b'navy-gold-mobile.css' in body:
+                      if response.status==200 and all(x in body for x in (b'navy-gold-mobile.css',b'data-view="tours"',b'tours.js')):
                           print('Aplicación publicada y verificada:',base)
                           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out:
                               out.write('### Aplicación publicada y comprobada\n'+base+'\n')
