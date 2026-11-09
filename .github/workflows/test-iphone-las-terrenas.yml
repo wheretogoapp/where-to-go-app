@@ -30,6 +30,11 @@ jobs:
           python -m http.server 8765 --bind 127.0.0.1 --directory Where_to_Go_Proyecto_Completo/public > /tmp/where-to-go-local.log 2>&1 &
           sleep 2
           node Where_to_Go_Proyecto_Completo/tools/test_mobile_v10.mjs
+      - name: Probar en Chrome móvil la página pública, no solo archivos locales
+        env:
+          TEST_SITE: https://wheretogoapp.github.io/where-to-go-app/
+        run: |
+          node Where_to_Go_Proyecto_Completo/tools/test_mobile_v10.mjs
       - name: Conservar captura de prueba si existe
         if: always()
         uses: actions/upload-artifact@v4
