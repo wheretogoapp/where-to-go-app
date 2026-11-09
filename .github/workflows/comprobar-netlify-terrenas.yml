@@ -25,8 +25,15 @@ jobs:
                           content=r.read()
                           print('HTTP',r.status,path,'bytes',len(content),flush=True)
                           return content
-                  except (urllib.error.HTTPError,urllib.error.URLError,TimeoutError) as err:
-                      print('ERROR al acceder a',path,str(err),'intento',attempt+1,flush=True)
+                  except urllib.error.HTTPError as err:
+                      body=err.read(512).decode('utf-8',errors='replace')
+                      print('HTTP',err.code,path,'request id',err.headers.get('X-Nf-Request-Id'),
+                            'cache-status',err.headers.get('Cache-Status'),
+                            'cuerpo:',body[:230],'intento',attempt+1,flush=True)
+                      if attempt==3:raise
+                      time.sleep(4*(attempt+1))
+                  except (urllib.error.URLError,TimeoutError) as err:
+                      print('ERROR de conexión a',path,str(err),'intento',attempt+1,flush=True)
                       if attempt==3:raise
                       time.sleep(4*(attempt+1))
           html=get('/').decode('utf-8',errors='replace')
