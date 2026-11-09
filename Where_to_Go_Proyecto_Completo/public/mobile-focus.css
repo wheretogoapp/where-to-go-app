@@ -93,3 +93,13 @@ body{background:var(--wtg-canvas)!important;color:var(--wtg-ink)}
   #view-inicio .location-alert{margin-top:13px}
 }
 @media(prefers-reduced-motion:reduce){.wtg-skeleton-card{animation:none!important}}
+
+/* Real place photography: display gallery count on the card, not fake imagery. */
+.place-photo .wtg-place-gallery-count{
+ position:absolute;z-index:5;left:9px;bottom:10px;display:inline-flex;align-items:center;
+ gap:4px;border-radius:99px;padding:6px 9px;font-size:10px;line-height:1;
+ font-weight:850;color:white;background:#063e4ddc;border:1px solid #ffffff70;
+ box-shadow:0 4px 13px #061b2940;pointer-events:none;
+}
+.place-card.wtg-has-photo .card-image-caption{display:none!important}
+@media(max-width:600px){.place-photo .wtg-place-gallery-count{font-size:9px;bottom:7px;left:6px;padding:5px 7px}}
