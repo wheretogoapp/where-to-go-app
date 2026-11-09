@@ -46,6 +46,18 @@
         '<a href="'+esc(lic||source)+'" target="_blank" rel="noopener noreferrer">Licencia ↗</a></div></div></article>';
     }).join('');
   }
+  function refreshNearbyStrip(){
+    const strip=$('wtg-nearby-photo-strip');
+    if(!strip||!loaded||!images.length||typeof state==='undefined')return;
+    const lat=Number(state.lat),lon=Number(state.lon);
+    if(!Number.isFinite(lat)||!Number.isFinite(lon)){strip.hidden=true;return}
+    const near=images.filter(p=>distance(lat,lon,p.lat,p.lon)<=12000);
+    strip.hidden=!near.length;
+    if(!near.length)return;
+    strip.innerHTML='<div class="wtg-nearby-photo-head"><div><small>FOTOGRAFÍAS REALES GEOGRAFICAMENTE CERCANAS</small><h3>'+near.length+' fotos geolocalizadas cerca de '+esc(state.city||'esta zona')+'</h3><p>Imágenes del entorno con autor y licencia; no son fotografías verificadas de estos negocios.</p></div><button type="button" data-view="atlas">Ver todas ↗</button></div><div class="wtg-nearby-photos">'+near.slice(0,6).map(p=>
+      '<button type="button" data-view="atlas" aria-label="Ver galería de '+esc(p.area)+'"><img src="'+esc(safe(p.image))+'" alt="Foto geolocalizada de '+esc(p.area)+'" loading="lazy" referrerpolicy="no-referrer"><span>'+esc(p.area)+'</span></button>'
+    ).join('')+'</div>';
+  }
   async function load(){
     if(loading)return loading;
     loading=(async()=>{
@@ -60,7 +72,7 @@
         $('wtg-atlas-province').innerHTML='<option value="">Todas las provincias</option>'+provinces.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join('');
       }catch(e){
         $('wtg-atlas-status').textContent='El atlas de fotografías está pendiente de publicación. El directorio nacional de lugares sigue funcionando por separado.';
-      }finally{loaded=true;render()}
+      }finally{loaded=true;render();refreshNearbyStrip()}
     })();
     return loading;
   }
@@ -83,6 +95,13 @@
       '<p id="wtg-atlas-status" class="wtg-atlas-status">Cargando colección…</p><h2 id="wtg-atlas-results" class="wtg-atlas-count"></h2>'+
       '<div id="wtg-atlas-photos" class="wtg-atlas-grid"></div><button id="wtg-atlas-more" class="wtg-atlas-more" type="button" hidden>Ver más fotografías ↓</button>';
     main.appendChild(section);
+    const explore=$('view-explorar'),results=$('explore-list');
+    if(explore&&results){
+      const strip=document.createElement('aside');
+      strip.id='wtg-nearby-photo-strip';strip.className='wtg-nearby-photo-strip';
+      strip.hidden=true;
+      explore.insertBefore(strip,results);
+    }
     $('wtg-atlas-near').onclick=()=>{nearTerrenas=!nearTerrenas;limit=48;render()};
     $('wtg-atlas-province').onchange=e=>{province=e.target.value;limit=48;render()};
     $('wtg-atlas-search').oninput=e=>{keyword=e.target.value.trim();limit=48;render()};
@@ -94,6 +113,7 @@
       if(typeof state!=='undefined'&&state.city==='Las Terrenas'){nearTerrenas=true;province='';}
       render();void load();
     });
+    window.WTG_PHOTO_ATLAS={refresh:refreshNearbyStrip};
     void load();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup,{once:true});else setup();
