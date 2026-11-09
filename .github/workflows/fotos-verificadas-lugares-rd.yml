@@ -9,6 +9,7 @@ on:
       - 'Where_to_Go_Proyecto_Completo/tools/audit_place_photo_galleries.py'
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: where-to-go-curated-place-gallery
   cancel-in-progress: false
@@ -88,3 +89,11 @@ jobs:
           done
           echo 'No se pudo publicar sin sobrescribir cambios; revisar GitHub' >&2
           exit 1
+      - name: Actualizar automáticamente las fotos de la aplicación móvil
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Commits made with GITHUB_TOKEN do NOT trigger new push workflows.
+          # workflow_dispatch is an allowed exception, so publish the new images explicitly.
+          gh workflow run publicar-demo-movil.yml --ref main
+          echo 'Publicación móvil solicitada después de actualizar las galerías'
