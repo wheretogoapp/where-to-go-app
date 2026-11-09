@@ -869,9 +869,13 @@ renderTaxis=function(){
  $('taxi-count').textContent=Number($('taxi-count').textContent||0)+extra.length;
 };
 function putNearbyResultsFirst(){
+  // On iPhone, people should SEE nearby establishments when they enter.
+  // The scenic hero remains further down, never above all the real results.
   const home=$('view-inicio'),heading=home?.querySelector('.results-heading');
   const list=$('home-list'),tools=home?.querySelector('.wtg-v8-home-tools');
-  if(!home||!heading||!list||!tools)return;
+  const welcome=home?.querySelector('.welcome-row');
+  if(!home||!heading||!list||!tools||!welcome)return;
+  welcome.insertAdjacentElement('afterend',tools);
   tools.insertAdjacentElement('afterend',heading);
   heading.insertAdjacentElement('afterend',list);
 }
