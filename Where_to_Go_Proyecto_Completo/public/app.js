@@ -40,7 +40,7 @@ function createProvinceControls(){
   const row=document.getElementById('province-explorer');if(!row)return;
   const sel=document.getElementById('hero-province');
   sel.replaceChildren(new Option('Elige una provincia…',''),...Object.keys(WTG_HERO_DATA).map(p=>new Option(p,p)));
-  sel.value=provinceFromCity()||'Puerto Plata';
+  sel.value=provinceFromCity()||'';
   sel.addEventListener('change',()=>{wtgProvincePreview=sel.value;updateProvinceHero(true);window.WTG_EXPERIENCE?.update?.()});
   document.getElementById('hero-choose-municipio').onclick=()=>{
     const p=sel.value;if(!p)return;
@@ -868,7 +868,14 @@ renderTaxis=function(){
  list.appendChild(wrap);
  $('taxi-count').textContent=Number($('taxi-count').textContent||0)+extra.length;
 };
-function startup(){createProvinceControls();ensureProviderBanner();renderCities();loadMunicipalities();renderCategories();const d=new Date();$('today-label').textContent=new Intl.DateTimeFormat('es',{day:'numeric',month:'long',year:'numeric'}).format(d);const startView=location.hash.slice(1);navigate($('view-'+startView)?startView:'inicio');
+function putNearbyResultsFirst(){
+  const home=$('view-inicio'),heading=home?.querySelector('.results-heading');
+  const list=$('home-list'),tools=home?.querySelector('.wtg-v8-home-tools');
+  if(!home||!heading||!list||!tools)return;
+  tools.insertAdjacentElement('afterend',heading);
+  heading.insertAdjacentElement('afterend',list);
+}
+function startup(){createProvinceControls();ensureProviderBanner();putNearbyResultsFirst();renderCities();loadMunicipalities();renderCategories();const d=new Date();$('today-label').textContent=new Intl.DateTimeFormat('es',{day:'numeric',month:'long',year:'numeric'}).format(d);const startView=location.hash.slice(1);navigate($('view-'+startView)?startView:'inicio');
   document.addEventListener('click',e=>{
     const v=e.target.closest('[data-view]');if(v){navigate(v.dataset.view);return}
     const c=e.target.closest('[data-cat]');if(c){if(c.dataset.cat==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=c.dataset.cat;state.search='';if(state.mode!=='gps'&&state.radius<30000)state.radius=30000;navigate('explorar');loadPlaces();return}
