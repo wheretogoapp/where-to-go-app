@@ -175,6 +175,9 @@ def work(root,max_places,max_images):
     existing={k:v for k,v in existing.items() if isinstance(v,list)}
     gallery={k:list(v) for k,v in existing.items()}
     before=set(x.get('source') for photos in existing.values() for x in photos)
+    # One Commons file must not be counted as a NEW photo for multiple place IDs.
+    # This also prevents using the same view to represent unrelated businesses.
+    used_sources=set(before)
     selected=sorted(places.values(),key=lambda p:(
         p.get('cat') not in ('playas','cascadas','atracciones','parques','rios','lagunas','resorts'),
         p.get('province') or '',p.get('name') or ''))
@@ -205,7 +208,7 @@ def work(root,max_places,max_images):
             originals.update(v.get('source') for v in gallery.get(pid,[]))
             for title in goodnames:
                 info=metadata.get(title)
-                if not info or info['source'] in originals:continue
+                if not info or info['source'] in originals or info['source'] in used_sources:continue
                 if not match_title(name,title,p.get('cat',''),p['lat'],p['lon'],
                        info.get('coordinates'),p.get('municipality') or p.get('province') or ''):
                     continue
@@ -213,6 +216,7 @@ def work(root,max_places,max_images):
                 if len(arr)>=9:break
                 arr.append({k:info[k] for k in ('url','source','attribution','license')})
                 originals.add(info['source'])
+                used_sources.add(info['source'])
                 fresh+=1;bycat[p.get('cat')]+=1
                 byprovince[p.get('province') or 'Sin provincia']+=1
         if tested%10==0:
