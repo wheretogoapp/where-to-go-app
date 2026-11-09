@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/publicar-demo-movil.yml'
       - 'Where_to_Go_Proyecto_Completo/tools/build_pages_preview.py'
+      - 'Where_to_Go_Proyecto_Completo/public/**'
 permissions:
   contents: read
   pages: write
