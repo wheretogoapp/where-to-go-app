@@ -1,0 +1,80 @@
+name: Where to Go - 500 fotografías abiertas de República Dominicana
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Where_to_Go_Proyecto_Completo/tools/build_commons_photo_atlas.py'
+      - '.github/workflows/fotos-rd-500.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: wtg-photo-atlas-rd
+  cancel-in-progress: false
+jobs:
+  fotos_geolocalizadas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Verificar script y dependencias
+        run: |
+          python -m py_compile Where_to_Go_Proyecto_Completo/tools/build_commons_photo_atlas.py
+          python -m pip install 'shapely>=2,<3'
+      - name: Descargar frontera oficial de referencia cartográfica
+        run: |
+          curl --fail --location --retry 3 --retry-delay 4 --connect-timeout 20 --max-time 180 \
+            --output /tmp/countries.geojson \
+            'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson'
+          test "$(stat -c%s /tmp/countries.geojson)" -gt 100000
+      - name: Buscar fotografías reales geolocalizadas y comprobar licencias
+        run: |
+          python Where_to_Go_Proyecto_Completo/tools/build_commons_photo_atlas.py \
+            --countries /tmp/countries.geojson \
+            --output Where_to_Go_Proyecto_Completo/public/data/photo-atlas-rd.json \
+            --target 500
+      - name: Comprobar fotos, fuentes, coordenadas y recuento
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          f=pathlib.Path('Where_to_Go_Proyecto_Completo/public/data/photo-atlas-rd.json')
+          d=json.loads(f.read_text(encoding='utf-8'))
+          rows=d['photos']
+          assert len(rows)==d['count']>0
+          assert len({r['source'] for r in rows})==len(rows)
+          for row in rows:
+            assert row['image'].startswith(('https://upload.wikimedia.org/','https://thumb.wikimedia.org/'))
+            assert row['source'].startswith('https://commons.wikimedia.org/wiki/File:')
+            assert 17.0<=row['lat']<=20.3 and -72.5<=row['lon']<=-68.0
+            assert row['credit'] and row['license'] and row['province']
+          print('FOTOS COMPROBADAS:',len(rows),'DE 500 OBJETIVO')
+          print('PROVINCIAS:',d['coverageByProvince'])
+          PY
+      - name: Publicar nuevo catálogo visual sin sobrescribir otros cambios
+        run: |
+          set -euo pipefail
+          git config user.name "Where to Go Photo Atlas"
+          git config user.email "actions@users.noreply.github.com"
+          git add Where_to_Go_Proyecto_Completo/public/data/photo-atlas-rd.json
+          if git diff --cached --quiet; then
+            echo 'Catálogo de fotos sin cambios'
+            exit 0
+          fi
+          git commit -m "Fotos RD: atlas geolocalizado y licencias Wikimedia verificadas"
+          for i in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main;then
+              echo 'ATLAS DE FOTOS PUBLICADO'
+              exit 0
+            fi
+            sleep 4
+          done
+          echo 'No se pudo publicar el catálogo' >&2
+          exit 1
