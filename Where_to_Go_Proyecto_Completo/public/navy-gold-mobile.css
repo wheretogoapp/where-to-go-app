@@ -61,3 +61,6 @@ html,body,#app,.main-shell,#main-content{background:#061d48!important;color:#fff
 #view-inicio .wtg-v8-home-tools:before{content:"DESCUBRE TU PRÓXIMA AVENTURA";display:block;color:#f7d17a;font-size:10px;font-weight:850;letter-spacing:.16em;margin:0 0 8px 3px}
 }
 @media(max-width:380px){#mobile-brand{font-size:19px!important}#mobile-brand .mobile-brand-icon{width:42px!important}#mobile-brand img{width:40px!important}.topbar .location-pill{max-width:85px!important}}
+
+/* Six equally accessible mobile destinations; preserve all approved tabs. */
+@media(max-width:769px){.mobile-bottom-nav{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:0!important;padding-left:3px!important;padding-right:3px!important}.mobile-tab{min-width:0!important;padding-left:1px!important;padding-right:1px!important}.mobile-tab span{font-size:clamp(18px,4.4vw,25px)!important}.mobile-tab small{font-size:clamp(9px,2.4vw,12px)!important;white-space:nowrap!important}}
