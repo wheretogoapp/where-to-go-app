@@ -36,8 +36,8 @@
     catch{return ''}
   }
   function provSlides(name){
-    const bundled=(window.WTG_PILOT_PLACES||[]).filter(p=>p.province===name&&['playas','cascadas','atracciones','restaurantes','parques','lagunas'].includes(p.cat)).slice(0,6);
-    if(bundled.length)return bundled.map(p=>({title:p.name,place:name+' · República Dominicana',image:p.photo,source:p.photoSource,credit:p.photoAttribution}));
+    // Never mix photos from a different city or a mislabeled pilot asset.
+    // The province cover is one verified, attributed photograph for that province.
     const entries = window.WTG_PROVINCE_HEROES || {};
     const d = entries[name];
     const additional=(name==='Puerto Plata' ? PP : []);
@@ -46,7 +46,9 @@
     return additional.length ? [...additional] : [first];
   }
   function slideSet(name){
-    if(name && provSlides(name).length)return provSlides(name);
+    if(name)return provSlides(name);
+    // No selected province: do not show Puerto Plata while detecting GPS.
+    return [];
     const candidates=nationalNames.flatMap(n=>provSlides(n).slice(0,n==='Puerto Plata'?1:1));
     return candidates.length?candidates:PP;
   }
@@ -57,7 +59,8 @@
     if(s.index>=items.length)s.index=0;
   }
   function applyHero(){
-    const s=stateSlider.hero,x=s.items[s.index]; if(!x)return;
+    const s=stateSlider.hero,x=s.items[s.index];
+    if(!x){const art=$('view-inicio')?.querySelector('.hero .hero-art');if(art)art.style.backgroundImage='';const title=document.querySelector('.hero h2');if(title)title.textContent='Descubre los lugares más cercanos';const note=document.querySelector('.hero .hero-coordinate span');if(note)note.textContent='ACTIVA TU UBICACIÓN';return;}
     const art=document.querySelector('.hero .hero-art');
     const title=document.querySelector('.hero h2');
     const note=document.querySelector('.hero .hero-coordinate span');
