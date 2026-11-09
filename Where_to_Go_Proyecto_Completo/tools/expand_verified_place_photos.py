@@ -93,6 +93,7 @@ def match_title(name,title,cat,lat,lon,coords,context):
     # Require at least two meaningful words, or one rare distinctive word of
     # length >=8 (e.g. Damajagua) AND matching geolocation or locality.
     if not all(re.search(r'\b'+re.escape(tok)+r'\b',filename) for tok in set(core)):return False
+    file_tokens=set(filename.split())
     # Many beaches have one short distinctive word (Playa Macao, Playa Cosón).
     # Accept them ONLY if the photo title also carries Dominican locality
     # context, or an actual Commons GPS coordinate confirms the same place.
@@ -102,7 +103,6 @@ def match_title(name,title,cat,lat,lon,coords,context):
         raw_place=[x for x in name_n.split() if x not in {'de','del','el','la','los','las','en','santo','san','santa'}]
         if len(raw_place)<2 or not all(t in file_tokens for t in raw_place):return False
         if not local_photo and geodist_placeholder_unavailable(coords,lat,lon):return False
-    file_tokens=set(filename.split())
     locality=normalize(context)
     locality_tokens=[t for t in locality.split() if t not in GENERIC and len(t)>=5]
     in_locality=bool(locality_tokens and any(t in file_tokens for t in locality_tokens))
@@ -115,7 +115,7 @@ def match_title(name,title,cat,lat,lon,coords,context):
         # Business photo: exact name alone may belong to an identically named
         # establishment in another country. Enforce location corroboration.
         if geodist>.18 and not in_locality:return False
-    elif len(set(core))==1 and geodist>1 and not in_locality:
+    elif len(set(core))==1 and geodist>1 and not in_locality and not local_photo:
         return False
     return True
 def search_files(name,cat):
