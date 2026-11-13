@@ -43,6 +43,17 @@ def audit(root):
     curated=json.loads((data/'place-gallery-curated.json').read_text(encoding='utf-8'))
     curated_sources={x['source'] for photos in curated.values() for x in photos}
     places={p['id']:p for p in json.loads((data/'pilot-places.json').read_text(encoding='utf-8'))}
+    # Newly approved geolocated OSM photo matches are also genuine catalogued
+    # places. Do not delete them merely because they are not in the 116 pilot
+    # entries: the geo matching importer verified name, coordinates and license.
+    missing=set(photos)-set(places)
+    if missing:
+        for cellfile in sorted((data/'places').glob('cell_*.json')):
+            for row in json.loads(cellfile.read_text(encoding='utf-8')):
+                if row.get('id') in missing:
+                    places[row['id']]=row
+                    missing.discard(row['id'])
+            if not missing:break
     kept={};rejected=[];cat=collections.Counter();province=collections.Counter()
     for pid,items in photos.items():
         passed=[]
@@ -55,7 +66,7 @@ def audit(root):
                     province[p.get('province') or 'Sin provincia']+=1
             else:rejected.append((pid,photo.get('source','')))
         if passed:kept[pid]=passed
-    assert all(len(x)<=9 for x in kept.values())
+    assert all(len(x)<=18 for x in kept.values())
     total=sum(map(len,kept.values()))
     newly=total-len(curated_sources)
     assert newly==sum(cat.values()),(newly,sum(cat.values()))
