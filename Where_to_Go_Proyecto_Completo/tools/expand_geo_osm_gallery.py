@@ -55,6 +55,46 @@ def commons_query(row,stats):
             if attempt==2:print("Query failed:",type(e).__name__,flush=True)
             time.sleep(2*(attempt+1))
     return []
+
+def commons_category_query(row,stats):
+    """Search a Commons category with the EXACT mapped landmark name.
+    Membership is independent evidence; still require camera GPS at the place.
+    """
+    if row.get("cat") in BUSINESS_CATS:return []
+    params={"action":"query","generator":"categorymembers",
+            "gcmtitle":"Category:"+row["name"],"gcmtype":"file","gcmlimit":35,
+            "prop":"coordinates|imageinfo","colimit":50,
+            "iiprop":"url|extmetadata","iiurlwidth":720,
+            "format":"json","formatversion":2}
+    req=urllib.request.Request(API+"?"+urllib.parse.urlencode(params),
+            headers={"User-Agent":AGENT,"Accept":"application/json"})
+    try:
+        with urllib.request.urlopen(req,timeout=30) as response:
+            stats["queries"]+=1
+            stats["categoryQueries"]+=1
+            return json.load(response).get("query",{}).get("pages",[])
+    except urllib.error.HTTPError as exc:
+        if exc.code==429:
+            stats["http429"]+=1
+            print("Commons category rate limited (429)",flush=True)
+            return None
+        return []
+    except (OSError,TimeoutError,ValueError):
+        return []
+
+def same_place_category_photo(row,page):
+    """Category title identifies the exact landmark AND camera GPS confirms it."""
+    title=page.get("title","")
+    if not title.startswith("File:") or not re.search(r"\.(jpe?g|png|webp)$",title,re.I):return False
+    if BAD_FILE.search(title):return False
+    coords=page.get("coordinates") or []
+    if not coords:return False
+    try:
+        a=float(coords[0]["lat"]);b=float(coords[0]["lon"])
+    except (TypeError,ValueError,KeyError):return False
+    radius=350 if row["cat"] in ("playas","lagunas","parques","rios","cascadas") else 100
+    return dist(row["lat"],row["lon"],a,b)<=radius
+
 def select_candidates(public,already,visited,limit):
     cells=public/"data"/"places"
     groups=collections.defaultdict(list)
@@ -144,7 +184,7 @@ def run(public,limit):
     candidates,inspected=select_candidates(public,set(gallery),visited,limit)
     stats={"matcher":"GPS <=160m/800m or exact distinctive name AND Wikimedia DR categories", "startedAt":datetime.datetime.now(datetime.timezone.utc).isoformat(),"catalogueRows":inspected,
            "candidates":len(candidates),"processed":0,"newPhotographs":0,
-           "newPlacesWithGallery":0,"queries":0,"http429":0,
+           "newPlacesWithGallery":0,"queries":0,"categoryQueries":0,"http429":0,
            "source":"Wikimedia Commons coordinates, exact subject-name match and CC license"}
     changes=[]
     for row in candidates:
@@ -158,6 +198,17 @@ def run(public,limit):
             x=photo(p)
             if not x or x["source"] in existing_sources:continue
             matches.append(x)
+        # If title-search fails, inspect an exact-named Commons category.
+        # The candidate photo MUST have camera coordinates at this landmark.
+        if not matches and row["cat"] not in BUSINESS_CATS:
+            category_pages=commons_category_query(row,stats)
+            if category_pages is None:break
+            for p in category_pages if isinstance(category_pages,list) else category_pages.values():
+                if not same_place_category_photo(row,p):continue
+                x=photo(p)
+                if not x or x["source"] in existing_sources:continue
+                matches.append(x)
+                if len(matches)>=3:break
         if matches:
             gallery[row["id"]]=matches[:7]
             existing_sources.update(x["source"] for x in matches[:7])
