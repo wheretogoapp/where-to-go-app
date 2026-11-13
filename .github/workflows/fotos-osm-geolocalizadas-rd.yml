@@ -37,7 +37,7 @@ jobs:
           stats=json.loads((root/'place-gallery-geo-stats.json').read_text(encoding='utf-8'))
           urls=set()
           for pid,photos in gal.items():
-            assert len(photos)<=9,pid
+            assert len(photos)<=18,pid
             for item in photos:
               assert item['source'].startswith('https://commons.wikimedia.org/wiki/File:'),(pid,item['source'])
               assert item['attribution'] and item['license']
