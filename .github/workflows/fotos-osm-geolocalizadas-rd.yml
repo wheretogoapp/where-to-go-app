@@ -27,7 +27,7 @@ jobs:
       - name: Buscar nuevas fotografías geolocalizadas del lugar exacto
         run: |
           python -u Where_to_Go_Proyecto_Completo/tools/expand_geo_osm_gallery.py \
-            --public Where_to_Go_Proyecto_Completo/public --limit 160
+            --public Where_to_Go_Proyecto_Completo/public --limit 240
       - name: Auditar coordenadas, fuentes y duplicados
         run: |
           python - <<'PY'
