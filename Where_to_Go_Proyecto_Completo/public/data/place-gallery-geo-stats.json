@@ -1,34 +1,24 @@
 {
   "matcher": "GPS <=160m/800m or exact distinctive name AND Wikimedia DR categories",
-  "startedAt": "2026-11-13T15:19:35.517706+00:00",
+  "startedAt": "2026-11-13T15:48:33.075663+00:00",
   "catalogueRows": 44696,
   "candidates": 450,
-  "processed": 450,
+  "processed": 107,
   "newPhotographs": 4,
-  "newPlacesWithGallery": 3,
-  "queries": 502,
-  "categoryQueries": 52,
-  "http429": 0,
+  "newPlacesWithGallery": 1,
+  "queries": 133,
+  "categoryQueries": 26,
+  "http429": 1,
   "source": "Wikimedia Commons coordinates, exact subject-name match and CC license",
-  "deduplicatedExistingPhotos": 1,
-  "finishedAt": "2026-11-13T15:24:03.170691+00:00",
+  "deduplicatedExistingPhotos": 0,
+  "finishedAt": "2026-11-13T15:49:51.402775+00:00",
   "newPlaces": [
     [
-      "Ramón Matías Mella",
-      "atracciones",
-      1
-    ],
-    [
-      "Hilton La Romana",
+      "Iberostar Selection Bavaro Suites",
       "hoteles",
-      2
-    ],
-    [
-      "Hotel Santa Cruz",
-      "hoteles",
-      1
+      4
     ]
   ],
-  "totalGalleryPhotos": 490,
-  "totalPlacesWithGallery": 79
+  "totalGalleryPhotos": 494,
+  "totalPlacesWithGallery": 80
 }
