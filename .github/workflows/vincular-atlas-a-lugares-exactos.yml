@@ -1,0 +1,77 @@
+name: Where to Go - Vincular fotos del atlas a lugares exactos
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vincular-atlas-a-lugares-exactos.yml'
+      - 'Where_to_Go_Proyecto_Completo/tools/attach_exact_atlas_photos.py'
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: where-to-go-atlas-exact-place-photo
+  cancel-in-progress: false
+jobs:
+  assign_verified:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Comprobar script
+        run: python -m py_compile Where_to_Go_Proyecto_Completo/tools/attach_exact_atlas_photos.py
+      - name: Vincular fotos SOLO si nombre exacto y GPS coinciden
+        run: python -u Where_to_Go_Proyecto_Completo/tools/attach_exact_atlas_photos.py --public Where_to_Go_Proyecto_Completo/public
+      - name: Medir fotos únicas y cantidad de fichas realmente fotografiadas
+        run: python -u Where_to_Go_Proyecto_Completo/tools/report_place_photo_coverage.py
+      - name: Verificar integridad nacional
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          root=pathlib.Path('Where_to_Go_Proyecto_Completo/public/data')
+          m=json.load(open(root/'places/manifest.json'))
+          r=json.load(open(root/'atlas-exact-match-stats.json'))
+          c=json.load(open(root/'place-photo-coverage-report.json'))
+          assert m['recordCount']>44000
+          assert c['cataloguePlaces']==m['recordCount']
+          assert c['mainNationalVerifiedPhotos']==m['licensedPhotoCount']
+          assert r['newPlaceCardsWithPhoto']>=0
+          print('FICHAS NUEVAS CON FOTO:',r['newPlaceCardsWithPhoto'])
+          print('FICHAS CON FOTO TOTAL:',c['placeIdsWithAnyVerifiedPhoto'])
+          print('FOTOS ÚNICAS TOTAL:',c['uniquePlaceSpecificPhotoFilesAcrossApp'])
+          PY
+      - name: Guardar resultados en repositorio sin perder datos existentes
+        run: |
+          set -euo pipefail
+          git config user.name 'Where to Go - fotos exactas'
+          git config user.email 'actions@users.noreply.github.com'
+          git add Where_to_Go_Proyecto_Completo/public/data/places/ \
+            Where_to_Go_Proyecto_Completo/public/data/atlas-exact-match-stats.json \
+            Where_to_Go_Proyecto_Completo/public/data/place-photo-coverage-report.json \
+            Where_to_Go_Proyecto_Completo/PHOTO_COVERAGE.md
+          if git diff --cached --quiet; then
+            echo 'Sin nuevas fotos verificables; no publicar imágenes erróneas'
+            exit 0
+          fi
+          git commit -m 'Atlas RD: nuevas fichas con foto del mismo lugar y auditoria actualizada'
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              echo 'Fichas fotografiadas publicadas'
+              exit 0
+            fi
+            sleep 5
+          done
+          echo 'Conflicto al publicar; no forzar'
+          exit 1
+      - name: Actualizar demo móvil
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run publicar-demo-movil.yml --ref main
