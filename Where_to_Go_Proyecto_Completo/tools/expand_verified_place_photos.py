@@ -121,10 +121,10 @@ def match_title(name,title,cat,lat,lon,coords,context):
 def search_files(name,cat):
     # Search returns titles, NOT verified images. Verification occurs afterwards.
     params={'action':'query','list':'search','srsearch':'"'+name+'"',
-            'srnamespace':6,'srlimit':40,'format':'json'}
+            'srnamespace':6,'srlimit':70,'format':'json'}
     result=get_json(params)
     pages=(result.get('query') or {}).get('search') or []
-    return [x['title'] for x in pages if IMAGE_EXT.search(x.get('title',''))][:30]
+    return [x['title'] for x in pages if IMAGE_EXT.search(x.get('title',''))][:60]
 def image_metadata(titles):
     out={}
     for group in batch(list(dict.fromkeys(titles)),9):
@@ -200,7 +200,7 @@ def work(root,max_places,max_images):
         goodnames=[t for t in items if match_title(name,t,p.get('cat',''),
             p['lat'],p['lon'],[],p.get('municipality') or p.get('province') or '')]
         # Do not hammer Commons extmetadata on hundreds of irrelevant images.
-        goodnames=goodnames[:min(14,max_images)]
+        goodnames=goodnames[:min(36,max_images+10)]
         match_before_metadata+=len(goodnames)
         if goodnames:
             metadata=image_metadata(goodnames)
@@ -213,7 +213,7 @@ def work(root,max_places,max_images):
                        info.get('coordinates'),p.get('municipality') or p.get('province') or ''):
                     continue
                 arr=gallery.setdefault(pid,[])
-                if len(arr)>=9:break
+                if len(arr)>=18:break
                 arr.append({k:info[k] for k in ('url','source','attribution','license')})
                 originals.add(info['source'])
                 used_sources.add(info['source'])
@@ -247,6 +247,6 @@ if __name__=='__main__':
     ap=argparse.ArgumentParser()
     ap.add_argument('--public',default='Where_to_Go_Proyecto_Completo/public')
     ap.add_argument('--max-places',type=int,default=165)
-    ap.add_argument('--max-images',type=int,default=9)
+    ap.add_argument('--max-images',type=int,default=18)
     a=ap.parse_args()
     work(Path(a.public),a.max_places,a.max_images)
