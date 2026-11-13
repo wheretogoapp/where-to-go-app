@@ -1,0 +1,92 @@
+name: Where to Go - Quitar fotos fuera de tema
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/limpiar-fotos-fuera-de-tema.yml'
+      - 'Where_to_Go_Proyecto_Completo/tools/clean_photo_quality.py'
+      - 'Where_to_Go_Proyecto_Completo/tools/photo_subject_filter.py'
+  schedule:
+    - cron: '30 10 * * *'  # 06:30, hora de República Dominicana
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: wtg-photo-content-moderation
+  cancel-in-progress: false
+jobs:
+  limpiar_con_calidad:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Comprobar scripts y archivos nacionales
+        run: |
+          python -m py_compile Where_to_Go_Proyecto_Completo/tools/photo_subject_filter.py \
+            Where_to_Go_Proyecto_Completo/tools/clean_photo_quality.py \
+            Where_to_Go_Proyecto_Completo/tools/build_commons_photo_atlas.py \
+            Where_to_Go_Proyecto_Completo/tools/expand_geo_osm_gallery.py \
+            Where_to_Go_Proyecto_Completo/tools/expand_verified_place_photos.py
+      - name: Retirar fotos de satélites, insectos, animales y contenido no turístico
+        run: |
+          python -u Where_to_Go_Proyecto_Completo/tools/clean_photo_quality.py \
+            --public Where_to_Go_Proyecto_Completo/public
+      - name: Auditar cobertura honesta y evitar publicaciones dañadas
+        run: |
+          python Where_to_Go_Proyecto_Completo/tools/report_place_photo_coverage.py
+          python - <<'PY'
+          import json,pathlib,sys
+          sys.path.insert(0,'Where_to_Go_Proyecto_Completo/tools')
+          from photo_subject_filter import rejection_reason
+          root=pathlib.Path('Where_to_Go_Proyecto_Completo/public/data')
+          atlas=json.loads((root/'photo-atlas-rd.json').read_text(encoding='utf-8'))
+          photos=atlas['photos']
+          assert atlas['count']==len(photos)>=400
+          assert not any(rejection_reason(p.get('title')) for p in photos),'Se filtró alguna foto basura'
+          gallery=json.loads((root/'place-gallery.json').read_text(encoding='utf-8'))
+          assert not any(rejection_reason(p.get('source')) for images in gallery.values() for p in images)
+          assert all(p.get('credit') and p.get('license') and p.get('source') for p in photos)
+          check=json.loads((root/'photo-quality-report.json').read_text(encoding='utf-8'))
+          print('FOTOS TURISTICAS CON GPS:',len(photos))
+          print('FOTOS DESCARTADAS:',check['rejectedAtlasPhotos'])
+          print('FOTOS FUERA DE TEMA EN GALERIAS:',check['removedGalleryPhotos'])
+          PY
+      - name: Guardar solamente datos limpios
+        run: |
+          set -euo pipefail
+          git config user.name "Where to Go - calidad de fotos"
+          git config user.email "actions@users.noreply.github.com"
+          git add Where_to_Go_Proyecto_Completo/public/data/photo-atlas-rd.json \
+            Where_to_Go_Proyecto_Completo/public/data/photo-quality-report.json \
+            Where_to_Go_Proyecto_Completo/public/data/place-gallery.json \
+            Where_to_Go_Proyecto_Completo/public/data/place-gallery-stats.json \
+            Where_to_Go_Proyecto_Completo/public/data/places/ \
+            Where_to_Go_Proyecto_Completo/public/data/place-photo-coverage-report.json \
+            Where_to_Go_Proyecto_Completo/PHOTO_COVERAGE.md
+          if git diff --cached --quiet; then
+            echo "Sin nuevas imágenes fuera de tema"
+            exit 0
+          fi
+          git commit -m "Foto calidad RD: retirar fauna, mosquitos, satélites y fotos sin destino"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              echo "Datos limpios publicados en GitHub"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+      - name: Publicar la versión móvil con la limpieza de imágenes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run publicar-demo-movil.yml --ref main
