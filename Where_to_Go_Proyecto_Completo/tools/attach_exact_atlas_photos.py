@@ -85,6 +85,7 @@ def run(public):
     existing_sources.update(unquote(photo.get("source","")) for items in gallery.values() for photo in items)
     proposed=[]
     for row in rows:
+        if row.get("id")=="overture-ff8a07f4-4857-4f06-8066-ebe42b3f2148":continue  # Generic Punta Cana image is not a named beach
         if row.get("photoSource") or row.get("id") in gallery or row.get("cat") not in CATEGORIES or row.get("nameKnown") is False:continue
         a,b=row.get("lat"),row.get("lon")
         if not isinstance(a,(int,float)) or not isinstance(b,(int,float)):continue
