@@ -85,7 +85,7 @@ try {
   assert(initial.categories.discotecas>=2,'Night clubs missing');
   assert(initial.categories.playas>=5,'Beaches missing');
   assert(initial.unknownPhotoPlaces>30,'Photo-only filter still hides places');
-  assert.equal(initial.photoAtlasShortcut,false,'Off-topic photo atlas still visible');
+  assert.equal(initial.photoAtlasShortcut,true,'The credited Dominican photo atlas must be accessible');
   await page.waitForFunction(()=>window.WTG_GALLERY_PHOTOS &&
     Object.keys(window.WTG_GALLERY_PHOTOS).length>=45,null,{timeout:20000});
   const destinationPhotos=await page.evaluate(()=>{
