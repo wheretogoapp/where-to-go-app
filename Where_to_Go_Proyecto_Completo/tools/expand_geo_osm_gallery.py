@@ -178,6 +178,23 @@ def run(public,limit):
     progress_path=public/"data"/"place-gallery-geo-progress.json"
     report_path=public/"data"/"place-gallery-geo-stats.json"
     gallery=json.loads(gallery_path.read_text(encoding="utf-8"))
+    # Clean pre-existing repeats before running strict publication checks.
+    # The old gallery contains a Fortaleza Ozama image assigned to two IDs;
+    # that otherwise causes every new photo import to fail before publishing.
+    deduplicated=0
+    clean_gallery={}
+    seen_sources=set()
+    for pid,images in gallery.items():
+        unique=[]
+        for item in images:
+            source=urllib.parse.unquote(str(item.get("source") or "")).casefold()
+            if not source or source in seen_sources:
+                deduplicated+=1
+                continue
+            seen_sources.add(source)
+            unique.append(item)
+        if unique:clean_gallery[pid]=unique
+    gallery=clean_gallery
     progress=json.loads(progress_path.read_text(encoding="utf-8")) if progress_path.exists() else {"visited":[]}
     visited=set(progress.get("visited",[]))
     existing_sources={p["source"] for images in gallery.values() for p in images}
@@ -219,7 +236,8 @@ def run(public,limit):
             print("OSM GEO GALLERY",stats["processed"],"/",len(candidates),
                   "fotos:",stats["newPhotographs"],"lugares:",stats["newPlacesWithGallery"],flush=True)
         time.sleep(.4)
-    if stats["newPhotographs"]:
+    stats["deduplicatedExistingPhotos"]=deduplicated
+    if stats["newPhotographs"] or deduplicated:
         gallery_path.write_text(json.dumps(gallery,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     progress["visited"]=sorted(visited)
     progress["lastRunAt"]=datetime.datetime.now(datetime.timezone.utc).isoformat()
