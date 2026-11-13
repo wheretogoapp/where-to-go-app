@@ -1,0 +1,66 @@
+{
+  "generatedAt": "2026-11-13T15:49:52.270976+00:00",
+  "cataloguePlaces": 44696,
+  "mainNationalVerifiedPhotos": 62,
+  "editorialPhotoEntries": 106,
+  "editorialRegionsWithPhotos": 19,
+  "editorialByProvince": {
+    "Distrito Nacional": 43,
+    "Duarte": 2,
+    "Hato Mayor": 1,
+    "Independencia": 2,
+    "La Altagracia": 9,
+    "La Romana": 2,
+    "La Vega": 6,
+    "María Trinidad Sánchez": 1,
+    "Monte Cristi": 1,
+    "Pedernales": 2,
+    "Peravia": 2,
+    "Puerto Plata": 11,
+    "Samaná": 9,
+    "San Cristóbal": 1,
+    "San José de Ocoa": 2,
+    "San Juan": 2,
+    "San Pedro de Macorís": 3,
+    "Santiago": 4,
+    "Santo Domingo": 3
+  },
+  "galleryPlaces": 78,
+  "galleryPhotoEntries": 487,
+  "galleryDistinctSourceFiles": 487,
+  "uniquePlaceSpecificPhotoFilesAcrossApp": 612,
+  "placeIdsWithAnyVerifiedPhoto": 144,
+  "nationalCataloguePlaceIdsWithPhoto": 81,
+  "crossPlacePhotoReuse": [
+    {
+      "source": "lago enriquillo.jpg",
+      "placeIds": [
+        "osm-node-3684543648",
+        "wd-Q1464758"
+      ]
+    },
+    {
+      "source": "salto de limon waterfall in samana, dominican republic.jpg",
+      "placeIds": [
+        "mitur-limon",
+        "osm-node-1645554843"
+      ]
+    },
+    {
+      "source": "damajagua waterfall.jpg",
+      "placeIds": [
+        "mitur-damajagua",
+        "osm-way-320449984"
+      ]
+    },
+    {
+      "source": "museo naval atarazanas reales ccsd 08 10 2018 800.jpg",
+      "placeIds": [
+        "osm-way-1561391674",
+        "wd-Q107041447"
+      ]
+    }
+  ],
+  "repeatedPhotoFilesWithinGalleries": [],
+  "excludes": "Geotagged landscape atlas, provincial hero backgrounds and unapproved business submissions"
+}

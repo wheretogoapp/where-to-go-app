@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Where to Go · A dónde ir</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#041b40" />
+  <meta name="description" content="Where to Go — A dónde ir. Descubre restaurantes, playas, hoteles y lugares increíbles cerca de ti." />
+  <meta property="og:title" content="Where to Go · A dónde ir" />
+  <meta property="og:description" content="Explora lo mejor de tu ciudad, estés donde estés." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/where-to-go-app/assets/og-cover.png" />
+  <link rel="icon" href="/where-to-go-app/assets/wtg-brand.svg?v=10" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/where-to-go-app/assets/icon-192.png" />
+  <link rel="manifest" href="/where-to-go-app/manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/where-to-go-app/styles.css" />
+  <link rel="stylesheet" href="/where-to-go-app/premium.css?v=6.0" /><link rel="stylesheet" href="/where-to-go-app/experience.css?v=6.0" /><link rel="stylesheet" href="/where-to-go-app/visual-v7.css?v=7.0" /><link rel="stylesheet" href="/where-to-go-app/world-v8.css?v=11.0" />
+  <link rel="stylesheet" href="/where-to-go-app/mobile-focus.css?v=11.0" />
+  <link rel="stylesheet" href="/where-to-go-app/navy-gold-mobile.css?v=3" />
+  <link rel="stylesheet" href="/where-to-go-app/photo-atlas.css?v=12.1" />
+  <link rel="stylesheet" href="/where-to-go-app/tours.css?v=1" />
+
+
+<meta name="robots" content="noindex" /></head>
+<body>
+  <section id="auth-gate" class="auth-gate" role="dialog" aria-modal="true" aria-labelledby="auth-title"><div class="wtg-auth-scenery"><div class="wtg-auth-kicker">WHERE TO GO · DESCUBRE EL MUNDO</div><h2 id="wtg-auth-scenery-title">Cada lugar tiene una historia.</h2><p id="wtg-auth-scenery-place">Paisajes auténticos de República Dominicana</p><div class="wtg-auth-attribution" id="wtg-auth-credit"></div><div class="wtg-auth-controls"><button type="button" id="wtg-auth-prev" aria-label="Paisaje anterior">‹</button><button type="button" id="wtg-auth-pause" aria-label="Pausar paisajes">Ⅱ</button><button type="button" id="wtg-auth-next" aria-label="Siguiente paisaje">›</button><span id="wtg-auth-count" aria-live="off">1 / 3</span></div></div><div class="auth-shell"><div class="auth-brand"><span class="auth-logo"><img src="/where-to-go-app/assets/wtg-brand.svg?v=10" alt="" width="54" height="54"></span><div><strong>Where to Go<span class="brand-dot">.</span></strong><small>A DÓNDE IR · EXPLORA EL MUNDO</small></div></div><span class="auth-overline">DESCUBRE TU PRÓXIMA AVENTURA</span><h1 id="auth-title">El mundo está esperando por ti.</h1><p>Entra para guardar tus lugares favoritos y descubrir nuevas experiencias cerca de donde estás.</p><div class="wtg-auth-language"><label for="wtg-auth-language-select">🌐 Idioma / Language</label> <select id="wtg-auth-language-select" aria-label="Idioma / Language"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option></select></div><div class="auth-options"><button type="button" data-social="google" class="auth-social"><span>G</span> Continuar con Google</button><button type="button" data-social="apple" class="auth-social"><span>●</span> Continuar con Apple</button><button type="button" data-social="facebook" class="auth-social"><span>f</span> Continuar con Facebook</button></div><div class="auth-divider">O UTILIZA TU CORREO</div><form id="auth-email-form"><label>Correo electrónico <input id="auth-email" type="email" autocomplete="email" required placeholder="correo@ejemplo.com"></label><label>Contraseña <input id="auth-password" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label><div class="auth-email-actions"><button type="submit" data-auth-action="login">Entrar</button><button type="button" id="auth-create">Crear cuenta</button></div></form><p class="auth-error" id="auth-error" role="alert" hidden></p><label class="auth-optin"><input type="checkbox" id="auth-consent"> Quiero guardar mi historial de lugares vistos para recibir recomendaciones personalizadas. Puedo desactivarlo.</label><button type="button" id="auth-demo">Explorar demostración sin cuenta →</button><small id="auth-config-note" class="auth-config-note">Google, Facebook, Apple y correo requieren conectar Supabase y habilitar cada proveedor.</small></div></section>
+  <div id="app">
+    <aside class="sidebar">
+      <a class="brand" href="#inicio" aria-label="Where to Go inicio">
+        <span class="brand-mark"><img src="/where-to-go-app/assets/wtg-brand.svg?v=10" alt="" width="48" height="48"></span>
+        <span class="brand-copy"><strong>Where to Go<span class="brand-dot">.</span></strong><small>DESCUBRE · EXPLORA · VIVE</small></span>
+      </a>
+      <div class="sidebar-label">EXPLORAR</div>
+      <nav class="nav-main" aria-label="Navegación principal">
+        <button class="nav-btn active" data-view="inicio"><span class="nav-ico">⌂</span> Inicio</button>
+        <button class="nav-btn" data-view="explorar"><span class="nav-ico">◈</span> Explorar lugares</button>
+        <button class="nav-btn" data-view="mapa"><span class="nav-ico">♧</span> Mapa interactivo</button>
+        <button class="nav-btn" data-view="tours"><span class="nav-ico">🧭</span> Tours y excursiones</button>
+        <button class="nav-btn" data-view="taxis"><span class="nav-ico">🚘</span> Taxis y transporte <span class="side-mini">NUEVO</span></button>
+        <button class="nav-btn" data-view="favoritos"><span class="nav-ico">♡</span> Mis favoritos</button>
+      </nav>
+      <div class="sidebar-label second-label">PARA NEGOCIOS</div>
+      <nav class="nav-main" aria-label="Negocios">
+        <button class="nav-btn" data-view="promocionar"><span class="nav-ico">✦</span> Promocionar negocio</button>
+        <button class="nav-btn" data-view="mis-negocios"><span class="nav-ico">▣</span> Mis negocios <span class="side-mini">LOCAL</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-promo"><span class="sidebar-promo-icon">✷</span><strong>¿Tienes un negocio?</strong><p>Haz que más personas te descubran.</p><button id="side-promote" class="tiny-white-btn">Quiero anunciarme →</button></div>
+        <p class="copyright">© 2026 Where to Go · Piloto V9</p>
+      </div>
+    </aside>
+
+    <div class="main-shell">
+      <header class="topbar">
+        <button id="mobile-brand" class="mobile-brand" aria-label="Volver al inicio"><span class="mobile-brand-icon"><img src="/where-to-go-app/assets/wtg-brand.svg?v=10" width="34" height="34" alt=""></span><span>Where to Go<span class="brand-dot">.</span></span></button>
+        <div class="topbar-left"><span class="breadcrumb">Descubre el mundo</span><span class="crumb-separator">/</span><strong id="current-page-label">Inicio</strong></div>
+        <div class="topbar-actions"><label class="wtg-language-control" for="wtg-language-select"><span aria-hidden="true">🌐</span> <span class="visually-hidden">Idioma / Language</span><select id="wtg-language-select" aria-label="Idioma / Language"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option></select></label>
+          <button class="location-pill" id="location-pill" title="Cambiar ubicación"><span class="pin-icon">⌖</span><span class="location-pill-text" id="location-label">Tu ubicación</span><span class="chevron">⌄</span></button>
+          <button class="top-icon-btn" id="top-refresh" title="Actualizar lugares" aria-label="Actualizar lugares">↻</button>
+          <button class="top-avatar" id="top-business" title="Mi cuenta" aria-label="Abrir mi cuenta">WT</button>
+        </div>
+      </header>
+
+      <div id="provider-banner" class="provider-banner" role="status" aria-live="polite" hidden>
+        <div><strong>Google Places está temporalmente fuera de servicio</strong><small id="provider-notice-desc">La búsqueda continúa con datos reales de OpenStreetMap.</small></div>
+        <button type="button" id="retry-google-provider">Reintentar Google ↻</button>
+      </div>
+      <main id="main-content" tabindex="-1">
+        <section class="view active" id="view-inicio" aria-labelledby="welcome-title">
+          <div class="welcome-row"><div><div class="eyebrow"><span class="eyebrow-dot"></span> WHERE TO GO · REPÚBLICA DOMINICANA</div><h1 id="welcome-title">¿Qué hay cerca de ti<span class="wtg-v8-gold-dot">?</span></h1><p>Restaurantes, playas, bares y planes para disfrutar.</p></div><div class="date-pill" id="today-label"></div></div>
+          <section class="hero" aria-label="Descubre lugares">
+            <div class="hero-art" aria-hidden="true"></div>
+            <div class="hero-content"><span class="hero-pill">✦ DESTINOS QUE INSPIRAN</span><h2>La República Dominicana<br>se vive <em>explorando.</em></h2><p>De playas escondidas a experiencias inolvidables. Explora lugares reales, descubre negocios locales y planea tu próxima salida.</p><button id="hero-explore" class="btn btn-light">Comenzar a explorar <span>↗</span></button></div>
+            <div class="hero-coordinate">✦ <span>EXPLORA TU ZONA</span></div>
+            <div class="wtg-hero-controls" aria-label="Fotografías de destinos"><button type="button" id="wtg-hero-prev" aria-label="Destino anterior">‹</button><button type="button" id="wtg-hero-pause" aria-label="Pausar carrusel">Ⅱ</button><button type="button" id="wtg-hero-next" aria-label="Siguiente destino">›</button><span id="wtg-hero-progress" aria-live="off">1 / 3</span></div>
+          </section>
+          <div class="wtg-v8-home-tools" aria-label="Encuentra tu próxima experiencia">
+            <form id="wtg-v8-search" class="wtg-v8-search" role="search">
+              <span aria-hidden="true">⌕</span><label class="visually-hidden" for="wtg-v8-query">Buscar destinos y establecimientos</label>
+              <input id="wtg-v8-query" type="search" placeholder="¿Qué lugar buscas?" autocomplete="off">
+              <button type="submit">Buscar <span aria-hidden="true">→</span></button>
+            </form>
+            <div class="wtg-v8-quick" aria-label="Accesos rápidos">
+              <button type="button" data-cat="playas"><span>🏝️</span> Playas</button>
+              <button type="button" data-cat="cascadas"><span>🌊</span> Cascadas</button>
+              <button type="button" data-cat="restaurantes"><span>🍽️</span> Restaurantes</button>
+              <button type="button" data-cat="hoteles"><span>🏨</span> Hoteles</button>
+              <button type="button" data-view="mapa"><span>🗺️</span> Mapa</button>
+            </div>
+          </div>
+          <p class="hero-credit">Elige una provincia para conocer la fotografía, su autor y su licencia.</p>
+          <section id="wtg-v8-destinations" class="wtg-v8-destinations" aria-label="Destinos emblemáticos">
+            <div class="wtg-v8-section-title"><div><span class="mini-eyebrow">✦ INSPIRACIÓN PARA TU PRÓXIMO VIAJE</span><h2>Un mundo por descubrir</h2></div><button type="button" data-view="explorar">Explorar lugares ↗</button></div>
+            <div id="wtg-v8-destination-rail" class="wtg-v8-destination-rail" aria-live="off"></div>
+          </section>
+          <section id="province-explorer" class="province-explorer" aria-label="Portadas por provincia"><div><span class="mini-eyebrow">32 DEMARCACIONES · 158 MUNICIPIOS</span><h3>Explora cada provincia</h3><p>Elige una provincia para explorar lugares reales alrededor de su ciudad de referencia. Si deseas otra zona, selecciona un municipio.</p></div><div class="province-control-row"><label for="hero-province" class="visually-hidden">Provincia</label><select id="hero-province" aria-label="Provincia"></select><button class="btn btn-primary" id="hero-choose-municipio">Elegir municipio ↗</button></div><small id="hero-preview-note" hidden>Al elegir una provincia se mostrarán lugares alrededor de una ciudad de referencia. No equivale a toda la provincia.</small></section>
+          <div class="location-alert" id="location-alert"><span class="alert-icon">◎</span><div><strong id="location-alert-title">Detectando tu ubicación</strong><small id="location-alert-desc">Permite la ubicación para descubrir restaurantes, bares, playas y servicios cercanos.</small></div><button id="alert-locate">Usar mi ubicación <span>→</span></button></div>
+          <div class="section-heading"><div><span class="mini-eyebrow">TU PRÓXIMA EXPERIENCIA</span><h2>¿Qué te gustaría descubrir?</h2></div><button class="text-action" id="show-all-categories">Todas las categorías ↓</button></div>
+          <div class="wtg-v8-category-shortcuts" aria-label="Categorías para viajar">
+            <button type="button" data-cat="playas"><span>🏖️</span><strong>Playas</strong></button>
+            <button type="button" data-cat="rios"><span>🌿</span><strong>Ríos</strong></button>
+            <button type="button" data-cat="cascadas"><span>💦</span><strong>Cascadas</strong></button>
+            <button type="button" data-cat="atracciones"><span>🏛️</span><strong>Atractivos</strong></button>
+            <button type="button" data-cat="restaurantes"><span>🍽️</span><strong>Restaurantes</strong></button>
+            <button type="button" data-cat="discotecas"><span>🎧</span><strong>Discotecas</strong></button>
+            <button type="button" data-cat="bares"><span>🍹</span><strong>Bares</strong></button>
+            <button type="button" data-city="Las Terrenas"><span>🌴</span><strong>Las Terrenas</strong></button>
+            
+            <button type="button" data-cat="hoteles"><span>🏨</span><strong>Hoteles</strong></button>
+            <button type="button" data-cat="cafes"><span>☕</span><strong>Cafeterías</strong></button>
+            <button type="button" data-cat="taxis"><span>🚘</span><strong>Transporte</strong></button>
+          </div>
+          <div class="category-grid" id="home-categories" aria-label="Directorio completo de categorías"></div>
+          <section class="taxi-teaser" aria-label="Transporte VIP en Puerto Plata"><div class="taxi-teaser-symbol">CT</div><div><span class="mini-eyebrow">SERVICIO DESTACADO · PUERTO PLATA</span><h3>Tu próximo trayecto, en manos expertas.</h3><p>Clemente Transport VIP · Aeropuertos, hoteles y traslados privados.</p></div><div class="taxi-teaser-actions"><button class="btn btn-primary" id="home-see-taxis">Explorar transporte ↗</button></div></section>
+          <div class="section-heading results-heading"><div><span class="mini-eyebrow">SELECCIÓN CERCA DE TI</span><h2>Lugares cerca de ti <span class="result-count" id="home-count"></span></h2></div><button class="text-action" id="home-see-all">Ver más lugares →</button></div>
+          <aside id="province-anchor-sponsor" class="wtg-owner-sponsor" hidden aria-label="Anunciante de transporte en Puerto Plata">
+ <div class="wtg-owner-mark">CT <small>VIP</small></div><div><small>TRANSPORTE · SOCIO FUNDADOR · PUERTO PLATA</small>
+ <strong>Clemente Transport VIP</strong><p>Traslados privados y turísticos. Reserva por WhatsApp.</p></div>
+ <a href="https://wa.me/18295869111?text=Hola%2C%20quiero%20un%20traslado%20desde%20Where%20to%20Go" target="_blank" rel="noopener">Reservar ↗</a>
+ </aside>
+          <section id="wtg-discovery-spotlight" class="wtg-spotlight" aria-label="Destinos en rotación" hidden><div class="wtg-spotlight-heading"><span>✦ DESTINOS PARA DESCUBRIR</span><div><button type="button" id="wtg-spotlight-prev" aria-label="Lugar anterior">‹</button><button type="button" id="wtg-spotlight-pause" aria-label="Pausar recomendaciones">Ⅱ</button><button type="button" id="wtg-spotlight-next" aria-label="Siguiente lugar">›</button></div></div><div id="wtg-spotlight-body"></div></section>
+          <div id="home-list" class="place-grid"></div>
+          <section id="province-premium-container" class="wtg-premium-province" hidden aria-label="Anunciantes premium de la provincia"><div class="section-heading"><div><span class="mini-eyebrow">PUBLICIDAD · ESPACIOS PREMIUM</span><h2>Negocios destacados de tu provincia</h2></div></div><div id="province-premium-list"></div><div class="wtg-ad-controls"><button type="button" id="wtg-premium-prev" aria-label="Anuncio anterior">‹</button><button type="button" id="wtg-premium-pause" aria-label="Pausar anuncios">Ⅱ</button><button type="button" id="wtg-premium-next" aria-label="Siguiente anuncio">›</button><span id="wtg-premium-progress" aria-live="off"></span></div></section>
+          <section class="promo-banner"><div class="promo-banner-graphic">✦</div><div><span class="promo-badge">PARA EMPRENDEDORES</span><h2>Tu negocio merece ser descubierto.</h2><p>Aparece frente a personas que están buscando exactamente lo que ofreces.</p></div><button id="promo-banner-btn" class="btn btn-dark">Promocionar negocio ↗</button></section>
+          <div class="data-credit">Fuentes: Ministerio de Turismo RD y © colaboradores de OpenStreetMap · Lugares registrados en el mapa, ordenados por cercanía; fotos del local solo cuando están verificadas</div>
+        </section>
+
+        <section class="view" id="view-explorar" aria-labelledby="explore-title">
+          <div class="page-intro"><div class="mini-eyebrow">TU PRÓXIMO DESCUBRIMIENTO</div><h1 id="explore-title">Explorar lugares <span class="gradient-star">✳</span></h1><p>Encuentra experiencias increíbles cerca de ti o en cualquier ciudad.</p></div>
+          <div class="filter-panel"><div class="searchbar"><span class="search-icon">⌕</span><input id="search-input" type="search" placeholder="Buscar restaurantes, playas, hoteles, nombres..." autocomplete="off" aria-label="Buscar lugares"><button id="clear-search" class="clear-search" title="Borrar búsqueda">×</button></div><div class="filter-row"><div class="filter-chips" id="filter-categories"></div><select id="distance-select" aria-label="Radio de búsqueda"><option value="2000">A 2 km</option><option value="5000">A 5 km</option><option value="12000" selected>A 12 km</option><option value="20000">A 20 km</option><option value="30000">A 30 km</option><option value="60000">A 60 km</option><option value="100000">A 100 km</option></select></div></div>
+          <div class="section-heading explorer-result-heading"><div><h2>Resultados <span class="result-count" id="explore-count"></span></h2><p id="explore-context">Buscando lugares cercanos...</p></div><button id="explore-map" class="outline-btn">▤ Ver en mapa</button></div>
+          <div id="explore-list" class="place-grid explore-grid"></div>
+          <p class="data-credit">Catálogo local de OpenStreetMap (si la importación de GitHub se completó). La cobertura local está en ampliación; no inventamos establecimientos. Sin fotografía comprobable no mostramos otra foto.</p>
+        </section>
+
+
+        <section class="view" id="view-tours" aria-labelledby="tours-title">
+          <div class="wtg-tours-hero"><span class="wtg-tours-kicker">WHERE TO GO · EXPERIENCIAS</span><h1 id="tours-title">Tours y excursiones</h1><p>Las mejores aventuras empiezan aquí.</p></div>
+          <div class="wtg-tours-empty" role="status"><div class="wtg-tours-symbol" aria-hidden="true">🧭</div><h2>Promociona tu gira, tour o excursión aquí</h2><p>Este espacio está disponible para organizadores de experiencias y excursiones. Sé de los primeros en publicar tu actividad.</p><div class="wtg-tours-price"><strong>US$10</strong><span>por mes · por anuncio</span></div><button type="button" class="btn btn-primary" id="wtg-tours-apply">Publicar mi tour o excursión →</button><small>La publicación requiere revisión y confirmación del pago. No se cobra automáticamente en esta versión.</small></div>
+        </section>
+        <section class="view" id="view-taxis" aria-labelledby="taxi-title">
+          <div class="taxi-hero"><span class="hero-pill">✦ WHERE TO GO · TRANSPORTE</span><h1 id="taxi-title">Muévete con <em>confianza.</em></h1><p>Explora operadores de taxis y transporte por provincia y municipio. Reservaciones directas con cada empresa.</p></div>
+          <div class="taxi-location-box">
+            <div><span class="mini-eyebrow">DIRECTORIO DE TRANSPORTE</span><h2>Encuentra transporte en tu zona</h2></div>
+            <div class="taxi-selectors"><label>Provincia o Distrito Nacional<select id="taxi-province"><option value="">Elegir provincia</option></select></label><label>Municipio<select id="taxi-municipality"><option value="">Toda la provincia</option></select></label></div>
+          </div>
+          <div class="section-heading"><div><span class="mini-eyebrow">CONTACTO DIRECTO CON EL NEGOCIO</span><h2>Operadores de transporte <span id="taxi-count" class="result-count">0</span></h2></div></div>
+          <div id="taxi-list" class="taxi-list"></div>
+          <div class="business-note"><span>ⓘ</span><p>Los operadores destacados incluidos manualmente aparecen con sus datos comerciales conocidos. No inventamos direcciones ni puntos de recogida. Los demás proveedores se agregarán después de verificar su registro.</p></div>
+          <div class="taxi-promo-foot"><h3>¿Tu empresa presta servicios de transporte?</h3><p>Prepara tu perfil para aparecer en el directorio de Where to Go.</p><button class="btn btn-primary" id="taxi-register">Registrar mi servicio ↗</button></div>
+        </section>
+
+        <section class="view" id="view-mapa" aria-labelledby="map-title"><div class="page-intro map-intro"><div><div class="mini-eyebrow">VISUALIZA TU CIUDAD</div><h1 id="map-title">Mapa interactivo <span>🗺️</span></h1><p>Explora puntos de interés y abre las direcciones en tu mapa favorito.</p></div><button class="outline-btn" id="recenter-map">⌖ Centrar en mí</button></div><div class="map-layout"><div id="world-map" role="application" aria-label="Mapa de lugares"></div><div class="map-list"><div class="map-list-head"><strong>Lugares cercanos</strong><span id="map-count">0</span></div><div id="map-places"></div></div></div><p id="map-help" class="data-credit">Mapa: © OpenStreetMap contributors · Leaflet</p></section>
+
+        <section class="view" id="view-favoritos" aria-labelledby="fav-title"><div class="page-intro"><div class="mini-eyebrow">TU COLECCIÓN PERSONAL</div><h1 id="fav-title">Mis favoritos <span>♡</span></h1><p>Guarda los lugares que quieres visitar y vuelve a encontrarlos fácilmente.</p></div><div class="place-grid" id="favorite-list"></div></section>
+
+        <section class="view" id="view-promocionar" aria-labelledby="promo-title"><div class="business-hero"><div><span class="hero-pill">✦ WHERE TO GO BUSINESS</span><h1 id="promo-title">Haz que el mundo<br>descubra <em>tu negocio.</em></h1><p>Conecta con personas que están buscando un lugar como el tuyo. Lanza tu perfil con transparencia y una propuesta medible.</p><button class="btn btn-light" id="business-cta">Registrar mi negocio ↗</button></div><div class="business-hero-ornament" aria-hidden="true">✹</div></div><div class="section-heading"><div><span class="mini-eyebrow">CRECE CON NOSOTROS</span><h2>Elige cómo destacar</h2></div></div><div class="plans-grid"><article class="plan"><div class="plan-symbol">✓</div><h3>Registro Básico</h3><p>Para tener una ficha normal verificada dentro de tu categoría.</p><div class="plan-price"><strong>$10</strong><span>USD · pago único</span></div><ul><li>Ficha en tu provincia y categoría</li><li>Contacto y enlace al mapa verificado</li><li>Sin prioridad de publicidad</li><li>Se publica después del pago y aprobación</li></ul><button class="btn btn-outline choose-plan" data-plan="basico">Solicitar registro →</button></article><article class="plan"><div class="plan-symbol">✧</div><h3>Plan Destacado</h3><p>Para que más personas de tu ciudad te encuentren.</p><div class="plan-price"><strong>$30</strong><span>USD / mes</span></div><ul><li>Ficha del negocio con tus datos</li><li>Prioridad en tu categoría dentro de la provincia</li><li>Enlace directo a WhatsApp y sitio web</li><li>Solicitud y seguimiento del negocio</li></ul><button class="btn btn-outline choose-plan" data-plan="destacado">Elegir Destacado →</button></article><article class="plan premium"><div class="popular-ribbon">MÁS VISIBILIDAD</div><div class="plan-symbol">★</div><h3>Plan Premium</h3><p>Para negocios que quieren dar el siguiente paso.</p><div class="plan-price"><strong>$50</strong><span>USD / mes</span></div><ul><li>Incluye publicación del negocio</li><li>Prioridad en su categoría</li><li>Espacio publicitario en la portada provincial</li><li>Espacio para ofertas destacadas</li></ul><button class="btn btn-primary choose-plan" data-plan="premium">Elegir Premium →</button></article></div><div class="business-note"><span>ⓘ</span><p><strong>Importante:</strong> Registro Básico US$10 una sola vez; Destacado US$30/mes; Premium US$50/mes. Los planes mensuales incluyen el registro (no se añaden otros US$10). <strong>La solicitud no es un pago: solo activaremos fichas y anuncios después de confirmar el pago y aprobar el negocio.</strong></p></div></section>
+
+        <section class="view" id="view-mis-negocios" aria-labelledby="mybiz-title"><div class="page-intro"><div class="mini-eyebrow">TU ESPACIO COMO EMPRENDEDOR</div><h1 id="mybiz-title">Mis negocios <span>▣</span></h1><p>Gestiona los registros guardados en este dispositivo, antes de publicarlos.</p></div><div class="business-note"><span>ⓘ</span><p>Las solicitudes se envían a Netlify Forms para revisión humana y coordinación del pago, si el formulario está activado en Netlify. Este panel conserva una copia local; las solicitudes no se publican ni se cobran automáticamente.</p></div><div id="my-businesses"></div><button class="btn btn-primary" id="add-another-business">+ Registrar otro negocio</button></section>
+      </main>
+      <footer class="site-footer"><span>Where to Go <span class="brand-dot">.</span> A dónde ir</span><span>Hecho para descubrir el mundo 🌎 · <a href="/where-to-go-app/privacidad.html">Privacidad</a> · <a href="/where-to-go-app/terminos.html">Términos</a></span></footer>
+    </div>
+
+    <nav class="mobile-tabbar" aria-label="Navegación móvil"><button class="mobile-tab active" data-view="inicio"><span>⌂</span><small>Inicio</small></button><button class="mobile-tab" data-view="explorar"><span>◈</span><small>Explorar</small></button><button class="mobile-tab" data-view="mapa"><span>♧</span><small>Mapa</small></button><button class="mobile-tab" data-view="favoritos"><span>♡</span><small>Favoritos</small></button><button class="mobile-tab" data-view="tours"><span>🧭</span><small>Tours</small></button><button class="mobile-tab" data-view="promocionar"><span>✦</span><small>Negocios</small></button></nav>
+
+    <div id="overlay" class="overlay" hidden></div>
+    <section id="place-modal" class="sheet place-sheet" role="dialog" aria-modal="true" aria-labelledby="place-modal-title" hidden><button class="modal-close" data-close aria-label="Cerrar">×</button><div id="place-modal-body"></div></section>
+    <section id="location-modal" class="sheet location-sheet" role="dialog" aria-modal="true" aria-labelledby="loc-modal-title" hidden><button class="modal-close" data-close aria-label="Cerrar">×</button><div class="sheet-icon">🌍</div><h2 id="loc-modal-title">¿Dónde quieres explorar?</h2><p>Usa tu ubicación actual o descubre cualquier destino.</p><button id="use-live-location" class="btn btn-primary full-width">⌖ Usar mi ubicación actual</button><div class="modal-divider">O EXPLORA REPÚBLICA DOMINICANA</div>
+      <div class="location-selector"><label for="province-select">Provincia o Distrito Nacional</label><select id="province-select"></select><label for="municipality-select">Municipio</label><select id="municipality-select" disabled><option>Primero elige una provincia</option></select><p id="municipal-status" class="territory-status">Cargando municipios...</p><button id="municipality-go" class="btn btn-primary full-width" disabled>Explorar este municipio →</button><button id="municipal-retry" class="text-action" hidden>Reintentar carga de municipios ↻</button></div>
+      <div class="modal-divider">ACCESOS RÁPIDOS</div><div id="city-options" class="city-options"></div><small class="privacy-note">Permiso de ubicación solo al usar el botón o si ya lo concediste antes. Requiere HTTPS. La búsqueda y geocodificación pueden enviar coordenadas a proveedores de mapas; no guardamos tu GPS en una cuenta.</small></section>
+    <section id="report-modal" class="sheet register-sheet" role="dialog" aria-modal="true" aria-labelledby="report-title" hidden>
+      <button class="modal-close" data-close aria-label="Cerrar">×</button><div class="sheet-icon">📍</div>
+      <h2 id="report-title">Ayúdanos a completar Where to Go</h2><p id="report-caption">Proporciona información verificable. Nunca publicamos lugares ni imágenes sin revisar.</p>
+      <form id="report-form"><input type="hidden" id="report-id"/><div class="form-grid">
+        <label class="form-field">Tipo de aporte<select id="report-kind"><option value="lugar">Falta un lugar</option><option value="foto">Fotografía real del lugar</option></select></label>
+        <label class="form-field">Categoría<select id="report-category"><option value="">No lo sé</option></select></label>
+        <label class="form-field full">Nombre del lugar *<input id="report-name" required maxlength="120" placeholder="Nombre como aparece en el local o letrero"/></label>
+        <label class="form-field">Provincia *<input id="report-province" required maxlength="70"/></label>
+        <label class="form-field">Municipio o localidad *<input id="report-city" required maxlength="90"/></label>
+        <label class="form-field full">Enlace a ubicación precisa (OSM, Waze o Maps)<input id="report-map" type="url" placeholder="https://..."/></label>
+        <label class="form-field full">Subir una fotografía propia o autorizada (máximo 6 MB)<input id="report-upload" type="file" accept="image/jpeg,image/png,image/webp"/></label>
+        <label class="form-field full">O enlace a una fotografía autorizada<input id="report-image" type="url" placeholder="https://..."/></label>
+        <label class="form-field full">Detalles para verificar<textarea id="report-notes" rows="2" maxlength="500" placeholder="Dirección, letrero, horario u otro dato"></textarea></label>
+        <label class="form-field full">Contacto para aclaraciones (opcional)<input id="report-contact" maxlength="100" placeholder="Correo o teléfono si quieres que te contactemos"/></label>
+      </div><label class="form-field full"><input type="checkbox" id="report-consent" required/> Confirmo que mis datos son correctos y que tengo permiso para compartir la foto, si adjunto una.</label>
+      <p class="privacy-note">Se enviará a Netlify Forms para revisión; no se publica automáticamente. No subas fotos de niños ni información privada de terceros.</p>
+      <button type="submit" class="btn btn-primary full-width">Enviar para revisión →</button></form>
+    </section>
+    <section id="tours-modal" class="sheet register-sheet" role="dialog" aria-modal="true" aria-labelledby="tours-modal-title" hidden>
+<button type="button" class="modal-close" id="wtg-tours-close" aria-label="Cerrar">×</button>
+<h2 id="tours-modal-title">Publica tu tour o excursión</h2>
+<p>US$10 mensuales por anuncio. Se publica únicamente tras verificación del organizador, revisión del contenido y pago confirmado.</p>
+<form name="wtg-tours-request" id="wtg-tours-form" method="POST" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="bot-field">
+<input type="hidden" name="form-name" value="wtg-tours-request"><p hidden><label>No llenar <input name="bot-field"></label></p>
+<div class="form-grid">
+<label class="form-field full">Nombre de la excursión *<input name="tour_name" required maxlength="120"></label>
+<label class="form-field">Nombre legal del organizador *<input name="organizer" required maxlength="100"></label>
+<label class="form-field">Teléfono / WhatsApp verificable *<input name="contact" type="tel" required maxlength="40"></label>
+<label class="form-field">Correo de contacto *<input name="email" type="email" required maxlength="150"></label>
+<label class="form-field">País donde se realiza *<input name="country" required maxlength="90" value="República Dominicana"></label>
+<label class="form-field">Provincia / región donde se realiza *<input name="province" required maxlength="100" placeholder="Ej. Puerto Plata"></label>
+<label class="form-field">Ciudad / municipio *<input name="city" required maxlength="100"></label>
+<label class="form-field">Lugar exacto de salida *<input name="departure_place" required maxlength="180" placeholder="Dirección, terminal o punto de encuentro"></label>
+<label class="form-field">Hora de salida *<input name="departure_time" type="time" required></label>
+<label class="form-field">Fecha de salida *<input name="departure_date" type="date" required></label>
+<label class="form-field">Destino o paradas *<input name="destinations" required maxlength="250"></label>
+<label class="form-field">Hora aproximada de regreso *<input name="return_time" type="time" required></label>
+<label class="form-field">Precio por persona *<input name="price" required maxlength="70" placeholder="Ej. RD$ 2,500"></label>
+<label class="form-field">Cupos disponibles *<input name="capacity" type="number" min="1" max="10000" required></label>
+<label class="form-field full">Qué incluye *<textarea name="includes" required maxlength="1000" rows="2" placeholder="Transporte, comida, entradas, alojamiento..."></textarea></label>
+<label class="form-field full">Qué NO incluye *<textarea name="excludes" required maxlength="1000" rows="2"></textarea></label>
+<label class="form-field full">Descripción e itinerario *<textarea name="description" required maxlength="1500" rows="3"></textarea></label>
+<label class="form-field full">Política de cancelación y reembolso *<textarea name="cancellation" required maxlength="800" rows="2"></textarea></label>
+<label class="form-field full">Información de seguridad, responsable y contacto de emergencia *<textarea name="safety" required maxlength="800" rows="2"></textarea></label>
+<label class="form-field full">Hasta 5 fotografías propias o autorizadas *<input id="wtg-tours-photos" name="tour_photos" type="file" accept="image/jpeg,image/png,image/webp" multiple required><small id="wtg-tours-photo-count">Selecciona de 1 a 5 fotos, máximo 5 MB por foto. Las imágenes se revisan antes de publicar.</small></label>
+</div>
+<label class="form-field full"><input name="terms" type="checkbox" required> Confirmo que tengo autorización para ofrecer la actividad, que la información es correcta y que tengo derechos de uso sobre las fotografías.</label>
+<p class="privacy-note">La solicitud no implica cobro ni publicación automática. Los anuncios solo se mostrarán en el país y provincia correspondientes, una vez exista la infraestructura de publicación y filtrado.</p>
+<button class="btn btn-primary full-width" type="submit">Enviar solicitud para revisión →</button><p id="wtg-tours-feedback" role="status"></p>
+</form></section>
+    <section id="register-modal" class="sheet register-sheet" role="dialog" aria-modal="true" aria-labelledby="register-title" hidden><button class="modal-close" data-close aria-label="Cerrar">×</button><div class="sheet-icon">🏪</div><h2 id="register-title">Solicita tu registro empresarial</h2><p>Elige un plan. Solo se publicará la ficha tras revisión y confirmación del pago.</p><form id="register-form"><div class="form-grid"><label class="form-field full">Nombre del negocio *<input id="business-name" maxlength="100" required placeholder="Ej. Mi Restaurante" /></label><label class="form-field">Categoría *<select id="business-category" required></select></label><label class="form-field">Provincia *<select id="business-province" required><option value="">Selecciona provincia</option></select></label><label class="form-field">Municipio o localidad *<input id="business-city" maxlength="80" required placeholder="Ej. Puerto Plata" /></label><label class="form-field full">Dirección *<input id="business-address" maxlength="180" required placeholder="Calle, sector, referencia" /></label><label class="form-field">WhatsApp / teléfono *<input type="tel" id="business-phone" maxlength="30" required placeholder="+1 809 000 0000" /></label><label class="form-field full">Enlace de Google Maps, Waze u OSM (opcional)<input id="business-map-url" type="url" placeholder="https://..." /></label><label class="form-field full">Enlace a una foto propia autorizada (opcional)<input id="business-photo-url" type="url" placeholder="https://..." /></label><label class="form-field full">Hasta cuatro enlaces a fotos adicionales autorizadas (uno por línea)<textarea id="business-photo-links" rows="3" maxlength="1800" placeholder="https://..."></textarea></label><label class="form-field">Plan deseado<select id="business-plan"><option value="basico">Registro Básico · US$10 una vez</option><option value="destacado">Destacado · US$30/mes</option><option value="premium">Premium · US$50/mes</option></select></label><label class="form-field full">Descripción<textarea id="business-description" rows="3" maxlength="500" placeholder="Cuéntanos por qué tu negocio es especial..."></textarea></label></div><label class="form-field full"><input type="checkbox" id="business-consent" required /> Confirmo que soy propietario o representante autorizado y que puedo compartir estos datos para revisión.</label><div class="privacy-note">Al enviar, el negocio se remite para revisión humana mediante Netlify Forms, si está activo. La solicitud no es un cobro: después de revisar el negocio, confirmaremos el precio y el pago. No se publica automáticamente; se guarda una copia local.</div><button type="submit" class="btn btn-primary full-width">Enviar solicitud de registro →</button></form></section>
+<section id="wtg-account" class="wtg-account" role="dialog" aria-modal="true" aria-labelledby="wtg-account-title" hidden>
+<div class="wtg-account-card"><div class="wtg-account-head"><h2 id="wtg-account-title">Mi cuenta</h2><button type="button" id="wtg-account-close" aria-label="Cerrar cuenta">✕</button></div>
+<p id="wtg-account-status">Comprobando sesión…</p><p id="wtg-account-email"></p>
+<div class="wtg-account-actions"><button type="button" id="wtg-account-favorites">♡ Mis lugares favoritos</button><button type="button" id="wtg-account-resend">✉ Reenviar confirmación de correo</button><button type="button" id="wtg-account-reset">🔐 Cambiar contraseña por correo</button><button type="button" id="wtg-account-privacy">Privacidad y condiciones</button><button type="button" id="wtg-account-signout">Cerrar sesión</button></div>
+<p id="wtg-account-message" role="status"></p></div></section>
+<section id="wtg-legal" class="wtg-account" role="dialog" aria-modal="true" aria-labelledby="wtg-legal-title" hidden><div class="wtg-account-card"><div class="wtg-account-head"><h2 id="wtg-legal-title">Privacidad y condiciones — versión de prueba</h2><button type="button" id="wtg-legal-close" aria-label="Cerrar">✕</button></div>
+<h3>Información que tratamos</h3><p>Supabase gestiona tu correo y autenticación. Si aceptas la personalización, podemos guardar tus lugares vistos y favoritos vinculados a tu cuenta. Los proveedores de mapas pueden procesar búsquedas o ubicación cuando los utilizas.</p>
+<h3>Control de tus datos</h3><p>Puedes cerrar sesión y desactivar la personalización. Para solicitar acceso, corrección o eliminación de datos, necesitamos habilitar un canal de atención verificado antes del lanzamiento público.</p>
+<h3>Condiciones de uso</h3><p>Where to Go está en fase de prueba. Las fichas, fotos, horarios, precios y excursiones deben comprobarse con el proveedor. Ninguna excursión está certificada como segura por aparecer aquí. Los anuncios requieren revisión y pago confirmado antes de publicarse.</p>
+<p><strong>Aviso:</strong> este resumen provisional no sustituye una política legal definitiva ni constituye consentimiento automático para nuevos tratamientos.</p></div></section>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <link rel="stylesheet" href="/where-to-go-app/account.css?v=1" />
+  <script defer src="/where-to-go-app/language.js?v=6.0"></script>
+  <script defer src="/where-to-go-app/province-heroes.js?v=10.0"></script>
+  <script defer src="/where-to-go-app/config.js?v=6"></script>
+  <script defer src="/where-to-go-app/app.js?v=12.1"></script>
+  <script defer src="/where-to-go-app/experience.js?v=11.0"></script>
+  <script defer src="/where-to-go-app/world-v8.js?v=11.0"></script>
+  <script defer src="/where-to-go-app/photo-atlas.js?v=12.1"></script>
+  <script defer src="/where-to-go-app/tours.js?v=1"></script>
+  <script type="module" src="/where-to-go-app/auth.js?v=12"></script>
+</body>
+</html>

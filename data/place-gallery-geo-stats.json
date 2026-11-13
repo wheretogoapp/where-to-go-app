@@ -1,0 +1,24 @@
+{
+  "matcher": "GPS <=160m/800m or exact distinctive name AND Wikimedia DR categories",
+  "startedAt": "2026-11-13T15:48:33.075663+00:00",
+  "catalogueRows": 44696,
+  "candidates": 450,
+  "processed": 107,
+  "newPhotographs": 4,
+  "newPlacesWithGallery": 1,
+  "queries": 133,
+  "categoryQueries": 26,
+  "http429": 1,
+  "source": "Wikimedia Commons coordinates, exact subject-name match and CC license",
+  "deduplicatedExistingPhotos": 0,
+  "finishedAt": "2026-11-13T15:49:51.402775+00:00",
+  "newPlaces": [
+    [
+      "Iberostar Selection Bavaro Suites",
+      "hoteles",
+      4
+    ]
+  ],
+  "totalGalleryPhotos": 494,
+  "totalPlacesWithGallery": 80
+}

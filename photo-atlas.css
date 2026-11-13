@@ -1,0 +1,43 @@
+
+.wtg-atlas-view{padding:14px 0 55px}
+.wtg-atlas-hero{background:linear-gradient(120deg,#073559 5%,#0b698e 67%,#0ba8a1);border-radius:22px;padding:clamp(25px,5vw,55px);color:#fff;box-shadow:0 16px 44px #073d6635}
+.wtg-atlas-hero>span{font-size:10px;font-weight:900;letter-spacing:.2em;color:#bceff0}
+.wtg-atlas-hero h1{font-size:clamp(30px,5vw,55px);line-height:1.08;letter-spacing:-.045em;margin:13px 0 12px}
+.wtg-atlas-hero p{font-size:14px;line-height:1.7;max-width:790px;color:#e7f5fa}
+.wtg-atlas-hero b{font-weight:900;color:#e6ffb4}
+.wtg-atlas-controls{display:flex;gap:11px;flex-wrap:wrap;margin:22px 0}
+.wtg-atlas-controls button,.wtg-atlas-controls select,.wtg-atlas-controls input{padding:12px 14px;border-radius:12px;border:1px solid #c8dfec;background:#fff;color:#153b58;font-size:13px;font-weight:700}
+.wtg-atlas-controls button{cursor:pointer}
+.wtg-atlas-controls button.active{background:#0a668c;color:#fff;border-color:#0a668c}
+.wtg-atlas-controls input{flex:1;min-width:180px}
+.wtg-atlas-count{font-size:20px;margin:15px 0}
+.wtg-atlas-status{font-size:12px;color:#597688;line-height:1.6}
+.wtg-atlas-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+.wtg-atlas-card{overflow:hidden;border-radius:17px;background:#fff;border:1px solid #d6e7ed;box-shadow:0 9px 25px #003e6313}
+.wtg-atlas-image{display:block;position:relative;aspect-ratio:4/3;background:#153953;overflow:hidden}
+.wtg-atlas-image img{height:100%;width:100%;object-fit:cover;transition:transform .25s}
+.wtg-atlas-image:hover img{transform:scale(1.04)}
+.wtg-atlas-image span{position:absolute;bottom:8px;left:8px;right:8px;z-index:2;background:#001b31c9;color:#fff;font-size:10px;font-weight:800;border-radius:7px;padding:7px 10px;text-align:center}
+.wtg-atlas-info{padding:13px}
+.wtg-atlas-info small{display:block;font-size:11px;color:#087a8e;font-weight:800;margin-bottom:7px}
+.wtg-atlas-info strong{display:block;font-size:15px;line-height:1.35;max-height:3.9em;overflow:hidden;overflow-wrap:anywhere}
+.wtg-atlas-info p{font-size:11px;color:#697f8c;line-height:1.5;margin:9px 0}
+.wtg-atlas-links{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;border-top:1px solid #e8f0f4;margin-top:11px;padding-top:11px}
+.wtg-atlas-links a{font-size:11px;color:#076b95;font-weight:800;text-decoration:underline}
+.wtg-atlas-more{display:block;margin:28px auto 10px;background:#087e86;border:none;color:#fff;border-radius:12px;padding:15px 25px;font-size:14px;font-weight:900;cursor:pointer}
+.wtg-atlas-empty{padding:35px;color:#58798b;background:#e9f4f8;border-radius:16px;grid-column:1/-1}
+@media(max-width:1220px){.wtg-atlas-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:880px){.wtg-atlas-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){.wtg-atlas-grid{grid-template-columns:1fr 1fr;gap:9px}.wtg-atlas-info{padding:10px}.wtg-atlas-info strong{font-size:13px}.wtg-atlas-info p{font-size:10px}.wtg-atlas-controls{gap:8px}.wtg-atlas-controls>*{width:100%;box-sizing:border-box}.wtg-atlas-hero{padding:22px}.wtg-atlas-hero p{font-size:12px}}
+
+.wtg-nearby-photo-strip{padding:17px 18px;border:1px solid #cfe5ef;background:linear-gradient(115deg,#e7f7fa,#f7fbfc);border-radius:18px;margin:15px 0 22px}
+.wtg-nearby-photo-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:12px}
+.wtg-nearby-photo-head small{font-size:9px;font-weight:900;letter-spacing:.14em;color:#087f91}
+.wtg-nearby-photo-head h3{font-size:20px;margin:4px 0;color:#164563;letter-spacing:-.02em}
+.wtg-nearby-photo-head p{font-size:11px;line-height:1.45;color:#58798a;margin:5px 0}
+.wtg-nearby-photo-head button{flex-shrink:0;background:#07789c;color:white;font-size:11px;font-weight:900;border:0;border-radius:11px;padding:12px}
+.wtg-nearby-photos{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+.wtg-nearby-photos button{position:relative;aspect-ratio:1.3;overflow:hidden;border-radius:10px;border:0;padding:0;background:#244b62;cursor:pointer}
+.wtg-nearby-photos img{height:100%;width:100%;object-fit:cover}
+.wtg-nearby-photos span{position:absolute;bottom:0;left:0;right:0;color:white;background:#03253ad4;font-size:9px;padding:5px 2px;text-align:center}
+@media(max-width:760px){.wtg-nearby-photos{grid-template-columns:repeat(3,minmax(0,1fr))}.wtg-nearby-photo-head h3{font-size:16px}.wtg-nearby-photo-head{align-items:flex-start}}

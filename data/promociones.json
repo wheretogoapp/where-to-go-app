@@ -1,0 +1,23 @@
+[
+  {
+    "id": "clemente-transport-vip",
+    "name": "Clemente Transport VIP",
+    "cat": "taxis",
+    "province": "Puerto Plata",
+    "municipality": "toda-la-provincia",
+    "active": true,
+    "approved": true,
+    "lat": null,
+    "lon": null,
+    "phone": "829-586-9111",
+    "website": "https://clementetransportvip.com/",
+    "description": "Traslados privados y turísticos; servicio sujeto a reservación.",
+    "sourceUrl": "https://clementetransportvip.com/",
+    "photo": "",
+    "plan": "premium",
+    "paymentVerified": false,
+    "paidUntil": null,
+    "ownerEditorial": true,
+    "note": "Empresa propia: bloque editorial fijo de Puerto Plata; no se trata como anuncio de pago sin coordenadas verificadas."
+  }
+]

@@ -1,0 +1,536 @@
+{
+  "date": "2026-11-13T15:49:51.797925+00:00",
+  "originalAtlasPhotos": 3279,
+  "rejectedAtlasPhotos": 2045,
+  "acceptedTouristAtlasPhotos": 1234,
+  "rejectedAtlasByReason": {
+    "insect_wildlife": 147,
+    "non_destination": 18,
+    "space_satellite": 803,
+    "unidentified_non_tourism_subject": 1077
+  },
+  "removedGalleryPhotos": 3,
+  "removedMainCovers": 0,
+  "galleryPhotosRemaining": 487,
+  "rejectedAtlasExamples": [
+    {
+      "title": "El Portillo Strand - panoramio",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Home - panoramio (9)",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Mirador Boulevard Turístico del Atlántico - panoramio",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Clínica Especializada Internacional 1",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Clínica Especializada Internacional 2",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Clínica Especializada Internacional 3",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Mirador de cosón 1",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Mirador de cosó3",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Mirador de cosón 2",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Mirador de cosón 4",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Mirador de cosón 5",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Pseudobombax ellipticum floral scale model",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Wired sky - Flickr - rey perezoso",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Drops - Flickr - rey perezoso (1)",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Banco de arena - Flickr - rey perezoso",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "ISS047-E-58225 - View of Earth",
+      "province": "Samaná",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS047-E-58226 - View of Earth",
+      "province": "Samaná",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS049-E-38588 - View of Earth",
+      "province": "Samaná",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS049-E-38589 - View of Earth",
+      "province": "Samaná",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS049-E-38591 - View of Earth",
+      "province": "Samaná",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS049-E-38590 - View of Earth",
+      "province": "Samaná",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Welcome to reality - use more plastics! - 40379425690",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "ISS054-E-23765 - View of Earth",
+      "province": "Samaná",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS021-E-34460 - View of Earth",
+      "province": "Samaná",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS021-E-35841 - View of Earth",
+      "province": "Samaná",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Anolis cybotes 49453081",
+      "province": "Samaná",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "Anolis cybotes 49453078",
+      "province": "Samaná",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "ISS065-E-343952 - View of Earth",
+      "province": "Samaná",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Dominican balance beam (olympics 2016) (27767602345)",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "A. fragilis",
+      "province": "Samaná",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Portunus sayi 466040887",
+      "province": "Samaná",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "Portunus sayi 466040955",
+      "province": "Samaná",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "Melanerpes striatus 206539179",
+      "province": "Samaná",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "ISS009-E-21466 - View of The Bahamas",
+      "province": "Azua",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS022-E-52781 - View of Earth",
+      "province": "Baoruco",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Anolis aridius",
+      "province": "Barahona",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "At the Border of Haiti and the Dominican Republic (8057179936)",
+      "province": "Dajabón",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "411 wall",
+      "province": "Distrito Nacional",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Bornite (33892140788)",
+      "province": "Duarte",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "52-ETAPA-2-MIBUC-JR-7",
+      "province": "El Seibo",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "ISS054-E-59611 - View of Earth",
+      "province": "Elías Piña",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Artocarpus altilis 348660108",
+      "province": "Espaillat",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Carlos veras",
+      "province": "Hermanas Mirabal",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Arbol de Leuenbergeria portulacifolia",
+      "province": "Independencia",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "... - panoramio (7)",
+      "province": "La Romana",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Arucillus armasi",
+      "province": "La Vega",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "Flickr - ronsaunders47 - DOMINICAN REPUBLIC. Best in the shade",
+      "province": "María Trinidad Sánchez",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Ashy-faced Owl (Tyto glaucops), Hatillo, Maimón, Dominican Republic 1",
+      "province": "Monseñor Nouel",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "Ameiva lineolata",
+      "province": "Monte Cristi",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "A diatrypa",
+      "province": "Pedernales",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "(En Construcción) - panoramio",
+      "province": "San Cristóbal",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Antrostomus ekmani - Esteban Pelaez - 390241090",
+      "province": "San José de Ocoa",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "ISS019-E-6194 - View of Haiti",
+      "province": "San Juan",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "04.05.2011MiniBasket",
+      "province": "Santiago",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Crescentia cujete 448856777",
+      "province": "Santiago Rodríguez",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Amina, Dominican Republic - panoramio",
+      "province": "Valverde",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "ISS018-E-43083 - View of Earth",
+      "province": "Azua",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS022-E-58477 - View of Earth",
+      "province": "Baoruco",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Anolis bahorucoensis",
+      "province": "Barahona",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "CURNE UASD",
+      "province": "Duarte",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "ISS002-E-7346 - View of the Turks and Caicos Islands",
+      "province": "El Seibo",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS054-E-59612 - View of Earth",
+      "province": "Elías Piña",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Artocarpus altilis 349486366",
+      "province": "Espaillat",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "ISS022-E-68948 - View of Earth",
+      "province": "Hato Mayor",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Carlosveras2",
+      "province": "Hermanas Mirabal",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Flooding in Dominican Republic (ASTER)",
+      "province": "Independencia",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Aerial view featuring Lincoln Financial Field",
+      "province": "La Romana",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Flickr - ronsaunders47 - Dominican Republic. Pleasure boats waiting to rip you off.",
+      "province": "María Trinidad Sánchez",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "BOMBA DE LINO - panoramio",
+      "province": "Monseñor Nouel",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Anolis brevirostris",
+      "province": "Pedernales",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "ISS044-E-92266 - View of Earth",
+      "province": "Peravia",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "656 - panoramio",
+      "province": "San Cristóbal",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Bsinieto del Presidente Wenceslao Figuereo",
+      "province": "San José de Ocoa",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "ISS019-E-6481 - View of Earth",
+      "province": "San Juan",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Aluminum kitchenware under Puente Hermanos Petiño 252",
+      "province": "Santiago",
+      "reason": "non_destination"
+    },
+    {
+      "title": "ISS009-E-21463 - View of The Bahamas",
+      "province": "Santiago Rodríguez",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Capilla Santa Lucia. Mejia Abajo, Navarrete - panoramio",
+      "province": "Valverde",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "ISS018-E-43085 - View of Earth",
+      "province": "Azua",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS034-E-44184 - View of Earth",
+      "province": "Baoruco",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Ashy-faced Owl (Tyto glaucops), Santa Cruz de Barahona, Dominican Republic 1",
+      "province": "Barahona",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "Colourful Headgear (8032627221)",
+      "province": "Dajabón",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "9 - panoramio (12)",
+      "province": "Distrito Nacional",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "ISS018-E-43089 - View of Earth",
+      "province": "Duarte",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS014-E-5161 - View of Dominican Republic",
+      "province": "El Seibo",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS065-E-430238 - View of Earth",
+      "province": "Elías Piña",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS023-E-34830 - View of Dominican Republic",
+      "province": "Hato Mayor",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS014-E-19744 - View of Dominican Republic",
+      "province": "Independencia",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Cyrtopholis agilis 615565023",
+      "province": "La Vega",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "Flickr - ronsaunders47 - FOOTPATH TO BEACH",
+      "province": "María Trinidad Sánchez",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Flickr - ronsaunders47 - GET READY TO TAKE UP THE SLACK..",
+      "province": "Monte Cristi",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "Anolis brevirostris (cropped)",
+      "province": "Pedernales",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "ISS046-E-9135 - View of Earth",
+      "province": "Peravia",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Consolea moniliformis 4",
+      "province": "Puerto Plata",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "Anolis chlorocyanus 120533179",
+      "province": "San Cristóbal",
+      "reason": "insect_wildlife"
+    },
+    {
+      "title": "Busto de Wenceslao Figuereo",
+      "province": "San José de Ocoa",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "ISS020-E-32895 - View of Earth",
+      "province": "San Juan",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS019-E-17563 - View of Earth",
+      "province": "Santiago Rodríguez",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "ISS020-E-41374 - View of Earth",
+      "province": "Sánchez Ramírez",
+      "reason": "space_satellite"
+    },
+    {
+      "title": "Casa Ecologica SprintHouse - panoramio",
+      "province": "Valverde",
+      "reason": "unidentified_non_tourism_subject"
+    },
+    {
+      "title": "ISS022-E-61028 - View of Earth",
+      "province": "Azua",
+      "reason": "space_satellite"
+    }
+  ],
+  "removedGalleryDetails": [
+    {
+      "placeId": "wd-Q1464758",
+      "title": "Lake Enriquillo, Dominican Republic (ASTER).jpg",
+      "reason": "space_satellite"
+    },
+    {
+      "placeId": "wd-Q9055961",
+      "title": "Consolea picardae, Parque Nacional Jaragua, DO-PN, DO-PN-PE, DO imported from iNaturalist photo 376780423.jpg",
+      "reason": "insect_wildlife"
+    },
+    {
+      "placeId": "wd-Q9055961",
+      "title": "Consolea picardae, Parque Nacional Jaragua, DO-PN, DO-PN-PE, DO imported from iNaturalist photo 376780486.jpg",
+      "reason": "insect_wildlife"
+    }
+  ],
+  "removedCoverDetails": [],
+  "rule": "No ISS/satellites, insects, fauna, logos or non-tourist subjects; no replacing photos with surroundings"
+}
