@@ -97,6 +97,9 @@ def run(public):
     stats["removedOffTopicPhotoSubjects"]=len(gallery_removed)
     stats["qualityCheckedAt"]=atlas["qualityCheckedAt"]
     if gallery_removed:write(stats_path,stats)
+    if not (atlas_removed or gallery_removed or cover_removed) and (data/"photo-quality-report.json").exists():
+        print("Sin nuevas fotos fuera de tema; no alterar archivos ni métricas",flush=True)
+        return jsonfile(data/"photo-quality-report.json")
     report={"date":atlas["qualityCheckedAt"],"originalAtlasPhotos":len(old_photos),
         "rejectedAtlasPhotos":len(atlas_removed),"acceptedTouristAtlasPhotos":len(kept),
         "rejectedAtlasByReason":dict(sorted(reasons.items())),
