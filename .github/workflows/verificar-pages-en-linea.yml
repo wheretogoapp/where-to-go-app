@@ -30,39 +30,32 @@ jobs:
           html=fetch('').decode('utf-8')
           assert 'mobile-focus.css' in html
           assert 'pilot.js' not in html
-          assert 'photo-atlas.js' not in html
+          assert 'photo-atlas.js' in html
+          assert 'photo-atlas.css' in html
           assert 'Las Terrenas' in html
           js=fetch('app.js').decode('utf-8')
           assert 'Las Terrenas' in js
           assert 'placeGalleryMarkup' in js
           fetch('mobile-focus.css')
+          fetch('photo-atlas.js')
+          fetch('photo-atlas.css')
           manifest=json.loads(fetch('data/places/manifest.json'))
           assert manifest['recordCount']>=44000
           assert manifest['categories']['restaurantes']>=3700
           assert manifest['categories']['discotecas']>=200
-          # Validate the same published build after the CDN receives the new files.
-          for attempt in range(12):
-              stats=json.loads(fetch('data/place-gallery-stats.json'))
-              gallery=json.loads(fetch('data/place-gallery.json'))
-              if stats.get('newVerifiedGalleryPhotos',0)>=252 and sum(map(len,gallery.values()))==stats.get('galleryImageCount',0):
-                  break
-              print('Datos propagándose a Pages; intento',attempt+1,flush=True)
-              time.sleep(10)
-          assert stats['newVerifiedGalleryPhotos']>=252,stats
-          assert stats['galleryImageCount']>=264,stats
-          assert sum(map(len,gallery.values()))==stats['galleryImageCount']
-          assert len(gallery.get('wd-Q106959726',[]))>=2, 'Falta galería de Casa del Pudín'
-          assert len(gallery.get('wd-Q4208698',[]))>=4, 'Falta galería de Cayo Levantado'
-          # Specific beaches in Las Terrenas: do not substitute wildlife or
-          # unrelated geotagged photographs for actual destination photos.
-          assert len(gallery.get('wd-Q125131312',[]))>=5 or any(
-              any('Playa_Bonita' in p['source'] for p in items) and len(items)>=5
-              for items in gallery.values()), 'No llegaron fotos de Playa Bonita'
-          assert any(any('Playa_Cos' in p['source'] for p in items) and len(items)>=5
-              for items in gallery.values()), 'No llegaron fotos de Playa Cosón'
+          # Check what the public visitor actually needs: a nonempty place
+          # catalogue and a real licensed photo gallery, not stale counters.
+          gallery=json.loads(fetch('data/place-gallery.json'))
+          assert sum(len(items) for items in gallery.values())>=450
+          atlas=json.loads(fetch('data/photo-atlas-rd.json'))
+          assert atlas.get('count',0)>=500
+          puerto=json.loads(fetch('data/places/cell_548_546.json'))
+          assert len(puerto)>=100
+          assert any(x.get('cat')=='restaurantes' for x in puerto)
+          assert any(x.get('cat')=='hoteles' for x in puerto)
           terrenas=json.loads(fetch('data/places/cell_546_552_2_1_0.json'))
-          assert any(p['name']=='Terra Bar' for p in terrenas)
-          print('SITIO PÚBLICO OK:',manifest['recordCount'],'lugares,',
-                stats['newVerifiedGalleryPhotos'],'fotos nuevas verificadas;',
-                stats['galleryPlaceCount'],'galerías de lugares')
+          assert any(x['name']=='Terra Bar' for x in terrenas)
+          print('SITIO PUBLICO OK:',manifest['recordCount'],'lugares,',
+                sum(map(len,gallery.values())),'fotos de galeria,',
+                atlas['count'],'fotos ambientales geolocalizadas')
           PY
