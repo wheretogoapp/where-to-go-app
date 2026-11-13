@@ -181,4 +181,4 @@ if __name__=="__main__":
     parser.add_argument("--public",default="Where_to_Go_Proyecto_Completo/public")
     parser.add_argument("--limit",type=int,default=160)
     args=parser.parse_args()
-    run(args.public,min(350,max(1,args.limit)))
+    run(args.public,min(600,max(1,args.limit)))
