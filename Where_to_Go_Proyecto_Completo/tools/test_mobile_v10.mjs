@@ -51,6 +51,10 @@ try {
   assert(design.noPilot,'The obsolete "Piloto con lugares reales" toolbar is still visible');
   assert(design.premiumStyle,'Mobile premium layout stylesheet was not loaded');
   assert(design.leafletNotLoaded,'Leaflet map loads before someone opens the map');
+  console.log('FIRST SCREEN LAYOUT MEASUREMENTS:',JSON.stringify(design));
+  if(!(design.firstCardTop>design.searchTop&&design.heroTop>design.firstCardTop)){
+    await page.screenshot({path:'/tmp/where-to-go-iphone-layout-debug.png',fullPage:true}).catch(()=>{});
+  }
   assert(design.firstCardTop>design.searchTop&&design.heroTop>design.firstCardTop,
     'Search and nearby places must appear before the large cover');
   assert(design.searchBackground==='rgb(255, 255, 255)',
