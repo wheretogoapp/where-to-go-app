@@ -1,32 +1,33 @@
 {
-  "updatedAt": "2026-11-13T14:38:18.619488+00:00",
+  "updatedAt": "2026-11-13T15:52:51.589706+00:00",
   "placesInCatalogue": 44696,
-  "placesWithNationalPhoto": 51,
-  "curatedPlacesWithKnownPhoto": 116,
-  "galleryPlaceCount": 78,
-  "galleryImageCount": 487,
-  "newVerifiedGalleryPhotos": 475,
-  "placesSearched": 116,
-  "candidateTitlesMatched": 859,
-  "apiRequests": 262,
+  "placesWithNationalPhoto": 62,
+  "curatedPlacesWithKnownPhoto": 127,
+  "galleryPlaceCount": 84,
+  "galleryImageCount": 532,
+  "newVerifiedGalleryPhotos": 520,
+  "placesSearched": 127,
+  "candidateTitlesMatched": 930,
+  "apiRequests": 286,
   "http429Count": 0,
   "newPhotosByCategory": {
-    "atracciones": 318,
+    "atracciones": 346,
     "cascadas": 28,
     "deportes": 18,
     "entretenimiento": 2,
-    "iglesias": 27,
-    "lagunas": 3,
+    "hoteles": 7,
+    "iglesias": 30,
+    "lagunas": 2,
     "parques": 26,
-    "playas": 42
+    "playas": 61
   },
   "newPhotosByProvince": {
     "Distrito Nacional": 269,
-    "Independencia": 3,
+    "Independencia": 2,
     "La Altagracia": 5,
     "La Romana": 2,
     "La Vega": 1,
-    "Pedernales": 3,
+    "Pedernales": 1,
     "Peravia": 12,
     "Puerto Plata": 17,
     "Samaná": 61,
@@ -34,11 +35,9 @@
     "San Pedro de Macorís": 1,
     "Santiago": 9,
     "Santo Domingo": 39,
-    "Sin provincia": 36
+    "Sin provincia": 95
   },
   "description": "Fotos adicionales verificadas por título exacto del lugar y licencia libre Commons; negocios exigen confirmación de ubicación",
-  "imagesRejectedDuringPlaceAudit": 158,
-  "geographicAudit": "Excluidas fotos de otros países, obras de arte, animales y nombres compartidos sin contexto geográfico verificable",
-  "removedOffTopicPhotoSubjects": 3,
-  "qualityCheckedAt": "2026-11-13T15:49:51.797925+00:00"
+  "imagesRejectedDuringPlaceAudit": 159,
+  "geographicAudit": "Excluidas fotos de otros países, obras de arte, animales y nombres compartidos sin contexto geográfico verificable"
 }
