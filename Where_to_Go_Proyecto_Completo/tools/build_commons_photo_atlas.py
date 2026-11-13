@@ -8,6 +8,7 @@ No Google scraping, credentials or paid APIs.
 """
 import argparse, collections, datetime, html, json, re, time, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
+from photo_subject_filter import rejection_reason, is_tourism_subject
 
 API="https://commons.wikimedia.org/w/api.php"
 AGENT="WhereToGoRDPhotoAtlas/1.0 (open licensed geotagged photos; https://github.com/wheretogoapp/where-to-go-app)"
@@ -123,7 +124,8 @@ def main(args):
             previous=json.loads(output.read_text(encoding="utf-8"))
             old={x["source"]:x for x in previous.get("photos",[]) if x.get("source")}
         except (ValueError,KeyError,TypeError):pass
-    selected=dict(old)
+    names=[city for city,province,lat,lon in ANCHORS]+[province for city,province,lat,lon in ANCHORS]
+    selected={url:p for url,p in old.items() if is_tourism_subject(p.get('title',''),names)}
     rejects=collections.Counter()
     searches=0
     anchors=list(ANCHORS)
@@ -147,6 +149,8 @@ def main(args):
             if isinstance(pages,dict):pages=list(pages.values())
             for page in pages:
                 title=page.get("title","")
+                if not is_tourism_subject(title,names):
+                    rejects["notATouristDestination"]+=1;continue
                 if not title.startswith("File:") or not re.search(r"\.(?:jpe?g|png|webp)$",title,re.I):
                     rejects["filetype"]+=1;continue
                 coords=page.get("coordinates") or []
