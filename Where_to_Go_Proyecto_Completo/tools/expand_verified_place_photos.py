@@ -19,6 +19,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
+from photo_subject_filter import rejection_reason
 
 API='https://commons.wikimedia.org/w/api.php'
 AGENT='WhereToGoRDPlacePhotoMatcher/1.0 (contact: https://github.com/wheretogoapp/where-to-go-app)'
@@ -84,7 +85,7 @@ def geodist_placeholder_unavailable(coords,lat,lon):
 
 def match_title(name,title,cat,lat,lon,coords,context):
     bare=title.removeprefix('File:').rsplit('.',1)[0]
-    if BAD_PHOTO.search(bare):return False
+    if BAD_PHOTO.search(bare) or rejection_reason(bare):return False
     name_n=normalize(name)
     filename=normalize(bare)
     # Every meaningful landmark or business name token must be present.
