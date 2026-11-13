@@ -32,8 +32,8 @@ def allowed(meta):
     return bool(l.startswith(("cc by","cc0","pd","public domain"))),name
 def commons_query(row,stats):
     params={"action":"query","generator":"search","gsrsearch":'"'+row["name"]+'"',
-        "gsrnamespace":6,"gsrlimit":35,"prop":"coordinates|imageinfo",
-        "colimit":50,"iiprop":"url|extmetadata","iiurlwidth":720,
+        "gsrnamespace":6,"gsrlimit":35,"prop":"coordinates|imageinfo|categories",
+        "colimit":50,"cllimit":50,"iiprop":"url|extmetadata","iiurlwidth":720,
         "format":"json","formatversion":2}
     url=API+"?"+urllib.parse.urlencode(params)
     req=urllib.request.Request(url,headers={"User-Agent":AGENT,"Accept":"application/json"})
@@ -96,12 +96,24 @@ def exact_match(row,page):
     # All distinctive name terms must be in the image filename.
     if not tokens or not all(t in file_tokens for t in set(tokens)):return False
     geos=page.get("coordinates") or []
-    if not geos:return False
-    try:
-        latitude=float(geos[0]["lat"]);longitude=float(geos[0]["lon"])
-    except (TypeError,ValueError,KeyError):return False
-    radius=800 if row["cat"] in ("playas","lagunas","parques","rios") else 160
-    if dist(row["lat"],row["lon"],latitude,longitude)>radius:return False
+    if geos:
+        try:
+            latitude=float(geos[0]["lat"]);longitude=float(geos[0]["lon"])
+        except (TypeError,ValueError,KeyError):return False
+        radius=800 if row["cat"] in ("playas","lagunas","parques","rios") else 160
+        return dist(row["lat"],row["lon"],latitude,longitude)<=radius
+    # Some Wikimedia Commons photographs have no camera coordinates. They
+    # are accepted only when BOTH the exact distinctive place name appears in
+    # the filename AND the Commons categories independently identify DR.
+    # No generic-name or business photos are allowed without camera GPS.
+    if len(set(tokens))<2:return False
+    where=norm(" ".join(c.get("title","") for c in page.get("categories") or []))
+    title_norm=norm(title)
+    dominican=(("dominican republic" in where or "republica dominicana" in where)
+              or ("dominican republic" in title_norm or "republica dominicana" in title_norm))
+    if not dominican:return False
+    if norm(row["name"]) in ("parque central","plaza independencia","parque independencia",
+                             "monumento independencia","playa bonita","playa dorada"):return False
     return True
 def photo(page):
     info=(page.get("imageinfo") or [{}])[0]
@@ -126,7 +138,7 @@ def run(public,limit):
     visited=set(progress.get("visited",[]))
     existing_sources={p["source"] for images in gallery.values() for p in images}
     candidates,inspected=select_candidates(public,set(gallery),visited,limit)
-    stats={"startedAt":datetime.datetime.now(datetime.timezone.utc).isoformat(),"catalogueRows":inspected,
+    stats={"matcher":"GPS <=160m/800m or exact distinctive name AND Wikimedia DR categories", "startedAt":datetime.datetime.now(datetime.timezone.utc).isoformat(),"catalogueRows":inspected,
            "candidates":len(candidates),"processed":0,"newPhotographs":0,
            "newPlacesWithGallery":0,"queries":0,"http429":0,
            "source":"Wikimedia Commons coordinates, exact subject-name match and CC license"}
