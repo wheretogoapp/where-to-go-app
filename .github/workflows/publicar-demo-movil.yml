@@ -146,8 +146,7 @@ jobs:
                   time.sleep(10)
           # Verify national data files are genuinely published at the URL, not
           # merely bundled in the artifact.
-          python - <<'PY'
-          import json,os,urllib.request
+          import json
           base=os.environ['PAGE_URL'].rstrip('/')+'/'
           for path in ('data/places/manifest.json','data/places/cell_548_546.json','data/pages-catalog-check.json'):
               req=urllib.request.Request(base+path,headers={'User-Agent':'WhereToGo-Catalog-Smoke/1.0'})
