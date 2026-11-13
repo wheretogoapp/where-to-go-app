@@ -38,6 +38,11 @@ jobs:
           grep -q 'data-social="google"' /tmp/where-to-go-pages/index.html
           grep -q 'data-social="apple"' /tmp/where-to-go-pages/index.html
           grep -q 'data-social="facebook"' /tmp/where-to-go-pages/index.html
+      - name: Comprobar que 32 zonas tienen directorio real y JavaScript válido
+        run: |
+          node --check /tmp/where-to-go-pages/app.js
+          python Where_to_Go_Proyecto_Completo/tools/test_pages_region_catalog.py /tmp/where-to-go-pages
+          test -s /tmp/where-to-go-pages/data/pages-catalog-check.json
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
       - name: Subir sitio web
@@ -139,4 +144,18 @@ jobs:
                   print('Esperando propagación:',attempt+1,str(exc))
                   if attempt==11:raise
                   time.sleep(10)
+          # Verify national data files are genuinely published at the URL, not
+          # merely bundled in the artifact.
+          python - <<'PY'
+          import json,os,urllib.request
+          base=os.environ['PAGE_URL'].rstrip('/')+'/'
+          for path in ('data/places/manifest.json','data/places/cell_548_546.json','data/pages-catalog-check.json'):
+              req=urllib.request.Request(base+path,headers={'User-Agent':'WhereToGo-Catalog-Smoke/1.0'})
+              with urllib.request.urlopen(req,timeout=25) as res:
+                  raw=res.read()
+                  assert res.status==200 and len(raw)>50,(path,res.status,len(raw))
+                  data=json.loads(raw)
+                  if path.endswith('manifest.json'):assert data['recordCount']>=44000,data
+                  if path.endswith('cell_548_546.json'):assert isinstance(data,list) and len(data)>100,(path,len(data))
+                  print('PUBLICADO Y COMPROBADO:',path,len(raw),'bytes')
           PY
