@@ -1,0 +1,50 @@
+name: Where to Go - Respaldo web desde rama gh-pages
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/respaldo-gh-pages-rama.yml'
+      - 'Where_to_Go_Proyecto_Completo/tools/build_pages_preview.py'
+      - 'Where_to_Go_Proyecto_Completo/public/data/place-gallery.json'
+      - 'Where_to_Go_Proyecto_Completo/public/data/places/manifest.json'
+      - 'Where_to_Go_Proyecto_Completo/public/app.js'
+      - 'Where_to_Go_Proyecto_Completo/public/index.html'
+permissions:
+  contents: write
+concurrency:
+  group: wtg-gh-pages-branch-static-backup
+  cancel-in-progress: false
+jobs:
+  publicar_rama:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - name: Construir versión móvil independiente de Netlify
+        run: |
+          python Where_to_Go_Proyecto_Completo/tools/build_pages_preview.py \
+            --source Where_to_Go_Proyecto_Completo/public \
+            --output /tmp/where-to-go-gh-pages --prefix /where-to-go-app
+          test -s /tmp/where-to-go-gh-pages/index.html
+          test -s /tmp/where-to-go-gh-pages/data/place-gallery.json
+          test -s /tmp/where-to-go-gh-pages/data/places/manifest.json
+      - name: Publicar archivos estáticos en rama gh-pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cd /tmp/where-to-go-gh-pages
+          git init -b gh-pages
+          git config user.name 'Where to Go - web móvil'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          git commit -m 'Where to Go: versión móvil actualizada con fotos de lugares'
+          # La rama gh-pages no existía y está reservada exclusivamente para
+          # esta compilación; no sobrescribir ni borrar contenido de main.
+          GIT_TERMINAL_PROMPT=0 git push --force \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            HEAD:refs/heads/gh-pages
+          echo 'Rama gh-pages actualizada. Los archivos del proyecto main siguen intactos.'
