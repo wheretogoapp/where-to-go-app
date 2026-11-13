@@ -1,47 +1,47 @@
 {
   "matcher": "GPS <=160m/800m or exact distinctive name AND Wikimedia DR categories",
-  "startedAt": "2026-11-13T14:24:16.940357+00:00",
+  "startedAt": "2026-11-13T14:33:18.578605+00:00",
   "catalogueRows": 44696,
   "candidates": 240,
   "processed": 240,
-  "newPhotographs": 14,
+  "newPhotographs": 11,
   "newPlacesWithGallery": 6,
   "queries": 240,
   "http429": 0,
   "source": "Wikimedia Commons coordinates, exact subject-name match and CC license",
-  "finishedAt": "2026-11-13T14:27:43.265062+00:00",
+  "finishedAt": "2026-11-13T14:36:16.626063+00:00",
   "newPlaces": [
     [
-      "Pico Isabel de Torres",
+      "Virgen de la Altagracia",
       "atracciones",
       1
     ],
     [
-      "Parque Amado Franco Bidó",
+      "Fortaleza Ozama",
+      "atracciones",
+      5
+    ],
+    [
+      "Julia de Burgos",
+      "atracciones",
+      1
+    ],
+    [
+      "Parque Central de Vicente Noble",
       "parques",
       1
     ],
     [
-      "Templo de Las Americas",
+      "Iglesia San Estanislao",
       "iglesias",
-      3
-    ],
-    [
-      "Salomé Ureña",
-      "atracciones",
       2
     ],
     [
-      "Mauricio Báez",
-      "atracciones",
+      "Nuestra Señora de la Altagracia",
+      "iglesias",
       1
-    ],
-    [
-      "Parque Eugenio María de Hostos",
-      "parques",
-      6
     ]
   ],
-  "totalGalleryPhotos": 280,
-  "totalPlacesWithGallery": 65
+  "totalGalleryPhotos": 302,
+  "totalPlacesWithGallery": 73
 }
