@@ -1,47 +1,34 @@
 {
   "matcher": "GPS <=160m/800m or exact distinctive name AND Wikimedia DR categories",
-  "startedAt": "2026-11-13T14:33:18.578605+00:00",
+  "startedAt": "2026-11-13T15:19:35.517706+00:00",
   "catalogueRows": 44696,
-  "candidates": 240,
-  "processed": 240,
-  "newPhotographs": 11,
-  "newPlacesWithGallery": 6,
-  "queries": 240,
+  "candidates": 450,
+  "processed": 450,
+  "newPhotographs": 4,
+  "newPlacesWithGallery": 3,
+  "queries": 502,
+  "categoryQueries": 52,
   "http429": 0,
   "source": "Wikimedia Commons coordinates, exact subject-name match and CC license",
-  "finishedAt": "2026-11-13T14:36:16.626063+00:00",
+  "deduplicatedExistingPhotos": 1,
+  "finishedAt": "2026-11-13T15:24:03.170691+00:00",
   "newPlaces": [
     [
-      "Virgen de la Altagracia",
+      "Ramón Matías Mella",
       "atracciones",
       1
     ],
     [
-      "Fortaleza Ozama",
-      "atracciones",
-      5
-    ],
-    [
-      "Julia de Burgos",
-      "atracciones",
-      1
-    ],
-    [
-      "Parque Central de Vicente Noble",
-      "parques",
-      1
-    ],
-    [
-      "Iglesia San Estanislao",
-      "iglesias",
+      "Hilton La Romana",
+      "hoteles",
       2
     ],
     [
-      "Nuestra Señora de la Altagracia",
-      "iglesias",
+      "Hotel Santa Cruz",
+      "hoteles",
       1
     ]
   ],
-  "totalGalleryPhotos": 302,
-  "totalPlacesWithGallery": 73
+  "totalGalleryPhotos": 490,
+  "totalPlacesWithGallery": 79
 }

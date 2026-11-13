@@ -3011,12 +3011,6 @@
       "license": "https://creativecommons.org/licenses/by-sa/4.0"
     },
     {
-      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/Scale_Model_Fortaleza_Ozama_MDCCLXXXV_CCSD_11_2018_4328.jpg/960px-Scale_Model_Fortaleza_Ozama_MDCCLXXXV_CCSD_11_2018_4328.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-      "source": "https://commons.wikimedia.org/wiki/File:Scale_Model_Fortaleza_Ozama_MDCCLXXXV_CCSD_11_2018_4328.jpg",
-      "attribution": "Mariordo (Mario Roberto Durán Ortiz) · CC BY-SA 4.0 · Wikimedia Commons",
-      "license": "https://creativecommons.org/licenses/by-sa/4.0"
-    },
-    {
       "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8c/Scale_Model_Fortaleza_Ozama_MDCCLXXXV_CCSD_11_2018_4329.jpg/960px-Scale_Model_Fortaleza_Ozama_MDCCLXXXV_CCSD_11_2018_4329.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
       "source": "https://commons.wikimedia.org/wiki/File:Scale_Model_Fortaleza_Ozama_MDCCLXXXV_CCSD_11_2018_4329.jpg",
       "attribution": "Mariordo (Mario Roberto Durán Ortiz) · CC BY-SA 4.0 · Wikimedia Commons",
@@ -3071,6 +3065,36 @@
       "source": "https://commons.wikimedia.org/wiki/File:Rep_Dominicana_-_Diocesi_di_Nuestra_Se%C3%B1ora_de_la_Altagracia_en_Hig%C3%BCey.png",
       "attribution": "Croberto68 · Public domain · Wikimedia Commons",
       "license": "https://commons.wikimedia.org/wiki/File:Rep_Dominicana_-_Diocesi_di_Nuestra_Se%C3%B1ora_de_la_Altagracia_en_Hig%C3%BCey.png"
+    }
+  ],
+  "osm-node-5294216727": [
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/Santo_Domingo_-_Puente_Mat%C3%ADas_Ram%C3%B3n_Mella_0907.JPG/960px-Santo_Domingo_-_Puente_Mat%C3%ADas_Ram%C3%B3n_Mella_0907.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:Santo_Domingo_-_Puente_Mat%C3%ADas_Ram%C3%B3n_Mella_0907.JPG",
+      "attribution": "Phyrexian · CC BY-SA 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by-sa/4.0"
+    }
+  ],
+  "osm-way-253125050": [
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Hilton_La_Romana_-_02.jpg/960px-Hilton_La_Romana_-_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:Hilton_La_Romana_-_02.jpg",
+      "attribution": "Oleg Yunakov · CC BY-SA 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Hilton_La_Romana_-_01.jpg/960px-Hilton_La_Romana_-_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:Hilton_La_Romana_-_01.jpg",
+      "attribution": "Oleg Yunakov · CC BY-SA 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by-sa/4.0"
+    }
+  ],
+  "osm-way-493317106": [
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Vista_desde_el_hotel_santa_cruz_parte_atras_8_-_panoramio.jpg/960px-Vista_desde_el_hotel_santa_cruz_parte_atras_8_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:Vista_desde_el_hotel_santa_cruz_parte_atras_8_-_panoramio.jpg",
+      "attribution": "elinmortal 005 · CC BY 3.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/3.0"
     }
   ]
 }
