@@ -6,8 +6,8 @@
   const esc=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
   const safe=u=>{try{const x=new URL(u);return x.protocol==='https:'?x.href:''}catch{return''}};
   // Defense in depth: do not show off-topic images even if an old JSON is cached.
-  const unrelated=/\\b(?:iss\\d{2,3}[-_ ]*e[-_ ]*\\d+|earth from|view of earth|satellite|satelite|aster|landsat|sentinel|nasa|mosquito|insect|inaturalist|iguana|lizard|owl|bird|snake|coral|crab|anolis|cyrtopholis|consolea|poecilia|arucillus|pelican|vulture|flamingo|logo|painting|poster|diagram|water treatment plant)\\b/i;
-  const validSubject=p=>!unrelated.test(String(p.title||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,''));
+  const unrelated=/\b(?:iss\d{2,3}[-_ ]*e[-_ ]*\d+|earth from|view of earth|satellite|satelite|aster|landsat|sentinel|nasa|mosquito|insect|inaturalist|iguana|lizard|owl|bird|snake|coral|crab|anolis|cyrtopholis|consolea|poecilia|arucillus|pelican|vulture|flamingo|logo|painting|poster|diagram|water treatment plant)\b/i;
+  const validSubject=p=>!unrelated.test(String(p.title||'').normalize('NFD').replace(/[\u0300-\u036f]/g,''));
   const radians=Math.PI/180;
   const distance=(a,b,c,d)=>{
     const x=Math.sin((c-a)*radians/2)**2+Math.cos(a*radians)*Math.cos(c*radians)*Math.sin((d-b)*radians/2)**2;
