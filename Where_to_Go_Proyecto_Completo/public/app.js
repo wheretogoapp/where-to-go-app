@@ -41,7 +41,7 @@ function createProvinceControls(){
   const sel=document.getElementById('hero-province');
   sel.replaceChildren(new Option('Elige una provincia…',''),...Object.keys(WTG_HERO_DATA).map(p=>new Option(p,p)));
   sel.value=provinceFromCity()||'';
-  sel.addEventListener('change',()=>{wtgProvincePreview=sel.value;updateProvinceHero(true);window.WTG_EXPERIENCE?.update?.()});
+  sel.addEventListener('change',()=>{if(sel.value)selectProvinceHub(sel.value);else{wtgProvincePreview='';updateProvinceHero();window.WTG_EXPERIENCE?.update?.()}});
   document.getElementById('hero-choose-municipio').onclick=()=>{
     const p=sel.value;if(!p)return;
     openModal('location-modal');const provinceSelect=document.getElementById('province-select');provinceSelect.value=p;refreshMunicipalitySelect();
@@ -132,6 +132,10 @@ const CITIES = [
   {name:'Verón–Punta Cana',region:'Distrito municipal de Higüey · La Altagracia',country:'RD',lat:18.58182,lon:-68.40431,emoji:'☀️'}
 ];
 const PROVINCES = ['Azua','Baoruco','Barahona','Dajabón','Distrito Nacional','Duarte','El Seibo','Elías Piña','Espaillat','Hato Mayor','Hermanas Mirabal','Independencia','La Altagracia','La Romana','La Vega','María Trinidad Sánchez','Monseñor Nouel','Monte Cristi','Monte Plata','Pedernales','Peravia','Puerto Plata','Samaná','San Cristóbal','San José de Ocoa','San Juan','San Pedro de Macorís','Sánchez Ramírez','Santiago','Santiago Rodríguez','Santo Domingo','Valverde'];
+
+// Published city-centre reference coordinates from the existing RD photo-atlas anchors.
+// A provincial selection previews places NEAR this hub, not every municipality.
+const WTG_PROVINCE_HUBS={"Azua":{"city":"Azua de Compostela","lat":18.455,"lon":-70.73},"Baoruco":{"city":"Neyba","lat":18.482,"lon":-71.417},"Barahona":{"city":"Barahona","lat":18.211,"lon":-71.101},"Dajabón":{"city":"Dajabón","lat":19.547,"lon":-71.704},"Distrito Nacional":{"city":"Santo Domingo","lat":18.4861,"lon":-69.9312},"Duarte":{"city":"San Francisco de Macorís","lat":19.301,"lon":-70.253},"El Seibo":{"city":"Santa Cruz de El Seibo","lat":18.771,"lon":-69.04},"Elías Piña":{"city":"Comendador","lat":18.877,"lon":-71.702},"Espaillat":{"city":"Moca","lat":19.395,"lon":-70.523},"Hato Mayor":{"city":"Hato Mayor del Rey","lat":18.767,"lon":-69.257},"Hermanas Mirabal":{"city":"Salcedo","lat":19.378,"lon":-70.415},"Independencia":{"city":"Jimaní","lat":18.49,"lon":-71.851},"La Altagracia":{"city":"Punta Cana","lat":18.5586,"lon":-68.3694},"La Romana":{"city":"La Romana","lat":18.4273,"lon":-68.9728},"La Vega":{"city":"La Vega","lat":19.224,"lon":-70.531},"María Trinidad Sánchez":{"city":"Nagua","lat":19.383,"lon":-69.847},"Monseñor Nouel":{"city":"Bonao","lat":18.943,"lon":-70.409},"Monte Cristi":{"city":"Monte Cristi","lat":19.845,"lon":-71.647},"Monte Plata":{"city":"Monte Plata","lat":18.807,"lon":-69.784},"Pedernales":{"city":"Pedernales","lat":18.036,"lon":-71.743},"Peravia":{"city":"Baní","lat":18.279,"lon":-70.331},"Puerto Plata":{"city":"Puerto Plata","lat":19.7934,"lon":-70.6884},"Samaná":{"city":"Samaná","lat":19.204,"lon":-69.337},"San Cristóbal":{"city":"San Cristóbal","lat":18.417,"lon":-70.11},"San José de Ocoa":{"city":"San José de Ocoa","lat":18.548,"lon":-70.507},"San Juan":{"city":"San Juan de la Maguana","lat":18.808,"lon":-71.227},"San Pedro de Macorís":{"city":"San Pedro de Macorís","lat":18.454,"lon":-69.307},"Sánchez Ramírez":{"city":"Cotuí","lat":19.052,"lon":-70.151},"Santiago":{"city":"Santiago","lat":19.4517,"lon":-70.697},"Santiago Rodríguez":{"city":"San Ignacio de Sabaneta","lat":19.476,"lon":-71.343},"Santo Domingo":{"city":"Santo Domingo Este","lat":18.486,"lon":-69.852},"Valverde":{"city":"Mao","lat":19.552,"lon":-71.078}};
 // Territorial catalog from ONE's published 158-municipality index. Bundled for reliable offline selector.
 // 'local-*' codes are UI-only keys, never shown as official municipality identifiers.
 // A hosted ONE index can refresh real administrative codes when its public endpoint is reachable.
@@ -157,11 +161,11 @@ function rememberManualLocation(){
 }
 const wtgSavedArea=savedManualLocation();
 const state = {
-  view:'inicio', lat:wtgSavedArea?.lat??0, lon:wtgSavedArea?.lon??0,
-  city:wtgSavedArea?.city||'Tu ubicación',region:wtgSavedArea?.region||'República Dominicana',
-  mode:wtgSavedArea?.mode||'pending', gpsAccuracy:null, places:[], catalog:[], remotePlaces:[],
+  view:'inicio', lat:wtgSavedArea?.lat??19.7934, lon:wtgSavedArea?.lon??-70.6884,
+  city:wtgSavedArea?.city||'Puerto Plata',region:wtgSavedArea?.region||'República Dominicana',
+  mode:wtgSavedArea?.mode||'demo', gpsAccuracy:null, places:[], catalog:[], remotePlaces:[],
   dataMode:'loading', dataError:'', category:'todos', radius:12000, search:'', googleEnabled:false, googleIssue:'',
-  province:wtgSavedArea?.province||'', placesProvider:'osm',
+  province:wtgSavedArea?.province||'Puerto Plata', placesProvider:'osm',
   favorites:loadJSON('wtg_favorites',[]), favoritePlaces:loadJSON('wtg_favorite_places',[]), businesses:loadJSON('wtg_businesses',[]),
   map:null, markers:[], loadingId:0, modal:null, toastTimeout:null, exploreLimit:80
 };
@@ -613,7 +617,8 @@ async function loadPlaces(force=false){
   const manifest=await wtgManifest(force);
   if(token!==state.loadingId)return;
   if(!manifest||!Array.isArray(manifest.cells)||!manifest.cells.length){
-    state.dataError='Importación pendiente: 0 negocios nacionales cargados. El administrador debe ejecutar GitHub → Actions → Cargar directorio real de RD.';
+    state.dataMode='error';
+    state.dataError='No se pudo descargar el índice nacional. Reintenta con Actualizar: no significa que esta provincia no tenga negocios.';
     renderAll();return;
   }
   const keys=wtgCellsNearby(state.lat,state.lon,state.radius,manifest);
@@ -737,7 +742,7 @@ function renderHome(){renderProvincePremium();const teaser=document.querySelecto
   const alert=$('location-alert'),title=$('location-alert-title'),desc=$('location-alert-desc'),btn=$('alert-locate');
   if(state.dataMode==='error'){alert.style.background='#fff6e9';alert.style.borderColor='#f1e0c7';title.textContent='Catálogo temporalmente no disponible';desc.textContent='No se cargaron fichas de muestra ni coordenadas estimadas. Reintenta la consulta.';btn.innerHTML='Reintentar ↻';btn.dataset.action='retry';}
   else if(state.mode==='gps'){alert.style.background='#e9f7f4';alert.style.borderColor='#d8efea';title.textContent='Ubicación actual activada';desc.textContent=`${state.places.length} lugares · distancia en línea recta · precisión GPS aproximada ${Number.isFinite(state.gpsAccuracy)?'±'+distance(state.gpsAccuracy):'no informada'}. ${state.gpsAccuracy>1000?'La señal es imprecisa: activa GPS y Wi-Fi e inténtalo otra vez.':''}`;btn.innerHTML='Cambiar zona →';btn.dataset.action='change';}
-  else{alert.style.background='#e9f7f4';alert.style.borderColor='#d8efea';title.textContent=`Explorando ${state.city}`;desc.textContent='Esto es una ciudad seleccionada, NO tu ubicación. Activa el GPS para ver solo lugares cerca de ti.';btn.innerHTML='Usar mi ubicación →';btn.dataset.action='locate';}
+  else{alert.style.background='#e9f7f4';alert.style.borderColor='#d8efea';title.textContent=state.mode==='demo'?'Vista de ejemplo: Puerto Plata':`Explorando ${state.city}`;desc.textContent=state.mode==='demo'?'Se muestra Puerto Plata como zona de ejemplo, no tu ubicación real. Elige una provincia o activa tu GPS.':'Esto es una ciudad seleccionada, NO tu ubicación. Activa el GPS para ver solo lugares cerca de ti.';btn.innerHTML='Usar mi ubicación →';btn.dataset.action='locate';}
 }
 function matches(p){return placeMatchesCategory(p,state.category)&&(!state.search||`${p.name} ${p.address} ${catInfo(p.cat).name}`.toLocaleLowerCase('es').includes(state.search.toLocaleLowerCase('es')))&&p.distance<=state.radius+100}
 function renderExplore(){const arr=state.category==='todos'&&!state.search ? tourismSort(state.places.filter(p=>matches(p)&&isTouristDiscovery(p))) : sortByDistance(state.places.filter(matches));$('explore-count').textContent=state.dataMode==='loading'?'...':arr.length;
@@ -787,7 +792,18 @@ function renderCities(){
   $('city-options').innerHTML=CITIES.map(c=>`<button class="city-btn" data-city="${esc(c.name)}"><span>${c.emoji}</span><div>${esc(c.name)}<small>${esc(c.region)}</small></div></button>`).join('');
   $('province-select').innerHTML='<option value="">Selecciona provincia o Distrito Nacional</option>'+PROVINCES.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
 }
-function selectCity(name){const c=CITIES.find(x=>x.name===name);if(!c)return;state.city=c.name;state.province=['Puerto Plata','Sosúa','Cabarete'].includes(c.name)?'Puerto Plata':c.name==='La Romana'?'La Romana':['Punta Cana','Bávaro','Verón–Punta Cana'].includes(c.name)?'La Altagracia':c.name==='Santiago de los Caballeros'?'Santiago':['Las Terrenas','El Limón'].includes(c.name)?'Samaná':c.name==='Santo Domingo de Guzmán'?'Distrito Nacional':'';state.region=c.region;state.lat=c.lat;state.lon=c.lon;state.mode='city';state.category='todos';state.search='';state.radius=12000;state.exploreLimit=80;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();if(c.name==='Las Terrenas')navigate('explorar');toast(`Explorando ${c.name} 🌎`);loadPlaces();}
+function selectProvinceHub(province){
+  const hub=WTG_PROVINCE_HUBS[province];if(!hub)return;
+  state.city=hub.city;state.province=province;state.region=province+' · República Dominicana';
+  state.lat=hub.lat;state.lon=hub.lon;state.mode='city';
+  state.category='todos';state.search='';state.radius=30000;state.exploreLimit=80;
+  wtgProvincePreview='';rememberManualLocation();closeModals();
+  if($('taxi-province')){$('taxi-province').value=province;updateTaxiMunicipios();}
+  // Display places from this province's reference city without an external geocoder.
+  toast('Mostrando lugares alrededor de '+hub.city+', '+province+'. Puedes elegir otro municipio.');
+  navigate('explorar');void loadPlaces();
+}
+function selectCity(name){const c=CITIES.find(x=>x.name===name);if(!c)return;state.city=c.name;state.province=['Puerto Plata','Sosúa','Cabarete'].includes(c.name)?'Puerto Plata':c.name==='La Romana'?'La Romana':['Punta Cana','Bávaro','Verón–Punta Cana'].includes(c.name)?'La Altagracia':c.name==='Santiago de los Caballeros'?'Santiago':['Las Terrenas','El Limón'].includes(c.name)?'Samaná':c.name==='Santo Domingo de Guzmán'?'Distrito Nacional':'';state.region=c.region;state.lat=c.lat;state.lon=c.lon;state.mode='city';state.category='todos';state.search='';state.radius=30000;state.exploreLimit=80;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();if(c.name==='Las Terrenas')navigate('explorar');toast(`Explorando ${c.name} 🌎`);loadPlaces();}
 function loadCachedMunicipalities(){try{const v=JSON.parse(localStorage.getItem('wtg_municipalities_v2')||'null');return Array.isArray(v)&&v.length===158?v:[]}catch{return[]}}
 async function loadMunicipalities(){
   municipalities=loadCachedMunicipalities();if(municipalities.length){updateTaxiMunicipios();refreshMunicipalitySelect();return}
@@ -934,8 +950,8 @@ function putNearbyResultsFirst(){
 function startup(){createProvinceControls();ensureProviderBanner();putNearbyResultsFirst();renderCities();loadMunicipalities();renderCategories();const d=new Date();$('today-label').textContent=new Intl.DateTimeFormat('es',{day:'numeric',month:'long',year:'numeric'}).format(d);const startView=location.hash.slice(1);navigate($('view-'+startView)?startView:'inicio');
   document.addEventListener('click',e=>{
     const v=e.target.closest('[data-view]');if(v){navigate(v.dataset.view);return}
-    const c=e.target.closest('[data-cat]');if(c){if(c.dataset.cat==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=c.dataset.cat;state.search='';if(state.mode!=='gps'&&state.radius<30000)state.radius=30000;navigate('explorar');loadPlaces();return}
-    const f=e.target.closest('[data-filter]');if(f){if(f.dataset.filter==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=f.dataset.filter;if(state.mode!=='gps'&&state.category!=='todos'&&state.radius<30000)state.radius=30000;loadPlaces();return}
+    const c=e.target.closest('[data-cat]');if(c){if(c.dataset.cat==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=c.dataset.cat;state.search='';const expand=state.mode!=='gps'&&state.radius<30000;if(expand)state.radius=30000;navigate('explorar');if(expand||state.dataMode!=='live')loadPlaces();else renderExplore();return}
+    const f=e.target.closest('[data-filter]');if(f){if(f.dataset.filter==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=f.dataset.filter;const expand=state.mode!=='gps'&&state.category!=='todos'&&state.radius<30000;if(expand)state.radius=30000;if(expand||state.dataMode!=='live')loadPlaces();else renderExplore();return}
     const more=e.target.closest('[data-more-explore]');if(more){state.exploreLimit=(state.exploreLimit||80)+80;renderExplore();return}
     const photo=e.target.closest('[data-photo-place]');if(photo){openReport(photo.dataset.photoPlace);return}
     const missing=e.target.closest('[data-report-missing]');if(missing){openReport();return}
