@@ -9,6 +9,7 @@ needs identifiable Dominican geographic context or a distinctive place name.
 """
 import argparse,collections,datetime,json,re,unicodedata,urllib.parse
 from pathlib import Path
+from photo_subject_filter import rejection_reason
 FOREIGN=re.compile(r'\b(paris|madrid|burgos|potosi|atienza|calatayud|aragon|cartagena|murcia|fontibon|chitre|chile|colombia|panama|espana|spain|segovia|puerto rico|argentina|nicaragua|honduras|guatemala|barcelona|valencia|italia|peru|bolivia|brasil|gipuzkoa|mexico|costa rica|uruguay|germany|london)\b')
 NOT_PLACE=re.compile(r'\b(ilustracion|dibujo|painting|oleo|reina|proclamacion|historia general|siglo xix|grabado|retrato|portada|pelicano|amazona ventralis|pinus occidentalis|bird|flora|fauna|independiente del valle|satelite|satellite|iss0|view of earth|bandera en la plaza|bandera en|fines del siglo|fontibon)\b')
 LOCAL=re.compile(r'\b(santo domingo|ccsd|sd rd|dom santo|dominican republic|republica dominicana|dom rd|dominicano|dominicana|puerto plata|santiago de los caballeros|san pedro de macoris|la romana|higuey|samana|bani|constanza|jarabacoa|pedernales|san juan de la maguana|de la vega|peravia|sosua|cabarete|las terrenas|santiago rd|do museo)\b')
@@ -19,6 +20,7 @@ def norm(value):
     return re.sub(r'[^a-z0-9]+',' ',s).strip()
 def accepted(pid,photo,places,trusted):
     source=photo.get('source') or ''
+    if rejection_reason(source):return False
     if source in trusted:return True
     p=places.get(pid)
     if not p:return False
