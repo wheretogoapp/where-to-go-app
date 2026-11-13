@@ -5,6 +5,9 @@
   const $=id=>document.getElementById(id);
   const esc=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
   const safe=u=>{try{const x=new URL(u);return x.protocol==='https:'?x.href:''}catch{return''}};
+  // Defense in depth: do not show off-topic images even if an old JSON is cached.
+  const unrelated=/\\b(?:iss\\d{2,3}[-_ ]*e[-_ ]*\\d+|earth from|view of earth|satellite|satelite|aster|landsat|sentinel|nasa|mosquito|insect|inaturalist|iguana|lizard|owl|bird|snake|coral|crab|anolis|cyrtopholis|consolea|poecilia|arucillus|pelican|vulture|flamingo|logo|painting|poster|diagram|water treatment plant)\\b/i;
+  const validSubject=p=>!unrelated.test(String(p.title||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,''));
   const radians=Math.PI/180;
   const distance=(a,b,c,d)=>{
     const x=Math.sin((c-a)*radians/2)**2+Math.cos(a*radians)*Math.cos(c*radians)*Math.sin((d-b)*radians/2)**2;
@@ -47,26 +50,9 @@
     }).join('');
   }
   function refreshNearbyStrip(){
-    const strips=[$('wtg-nearby-photo-strip'),$('wtg-home-photo-strip')].filter(Boolean);
-    if(!strips.length)return;
-    if(!loaded||!images.length||typeof state==='undefined'){
-      for(const strip of strips)strip.hidden=true;
-      return;
-    }
-    const lat=Number(state.lat),lon=Number(state.lon);
-    if(!Number.isFinite(lat)||!Number.isFinite(lon)){
-      for(const strip of strips)strip.hidden=true;
-      return;
-    }
-    const radius=state.mode==='gps'?12000:30000;
-    const near=images.filter(p=>distance(lat,lon,p.lat,p.lon)<=radius)
-      .sort((a,b)=>distance(lat,lon,a.lat,a.lon)-distance(lat,lon,b.lat,b.lon));
-    for(const strip of strips){
-      strip.hidden=!near.length;
-      if(!near.length)continue;
-      strip.innerHTML='<div class="wtg-nearby-photo-head"><div><small>GALERÍA DE ESTA ZONA · FOTOS CON GPS Y AUTOR</small><h3>'+near.length+' fotografías del entorno de '+esc(state.city||'esta zona')+'</h3><p>Imágenes tomadas en esta área, no fotografías verificadas de los negocios mostrados abajo.</p></div><button type="button" data-view="atlas">Explorar fotos ↗</button></div><div class="wtg-nearby-photos">'+near.slice(0,6).map(p=>
-        '<button type="button" data-view="atlas" aria-label="Ver fotografías de '+esc(p.area)+'"><img src="'+esc(safe(p.image))+'" alt="Foto geolocalizada de '+esc(p.area)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer"><span>'+esc(p.area)+'</span></button>'
-      ).join('')+'</div>';
+    // Never present surrounding scenery as an attraction or business card.
+    for(const id of ['wtg-nearby-photo-strip','wtg-home-photo-strip']){
+      const strip=$(id);if(strip)strip.hidden=true;
     }
   }
   async function load(){
@@ -77,7 +63,7 @@
         if(!r.ok)throw new Error('Archivo aún no publicado');
         const data=await r.json();
         if(!Array.isArray(data.photos))throw new Error('Catálogo sin formato válido');
-        images=data.photos.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&safe(p.image)&&safe(p.source)&&p.credit&&p.license&&p.area&&p.province);
+        images=data.photos.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&safe(p.image)&&safe(p.source)&&p.credit&&p.license&&p.area&&p.province&&validSubject(p));
         $('wtg-atlas-status').textContent='Imágenes: Wikimedia Commons · licencias acreditadas · puntos GPS de las fotos. No son fotografías verificadas de negocios.';
         const provinces=[...new Set(images.map(p=>p.province))].sort((a,b)=>a.localeCompare(b,'es'));
         $('wtg-atlas-province').innerHTML='<option value="">Todas las provincias</option>'+provinces.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join('');
@@ -106,20 +92,6 @@
       '<p id="wtg-atlas-status" class="wtg-atlas-status">Cargando colección…</p><h2 id="wtg-atlas-results" class="wtg-atlas-count"></h2>'+
       '<div id="wtg-atlas-photos" class="wtg-atlas-grid"></div><button id="wtg-atlas-more" class="wtg-atlas-more" type="button" hidden>Ver más fotografías ↓</button>';
     main.appendChild(section);
-    const explore=$('view-explorar'),results=$('explore-list');
-    if(explore&&results){
-      const strip=document.createElement('aside');
-      strip.id='wtg-nearby-photo-strip';strip.className='wtg-nearby-photo-strip';
-      strip.hidden=true;
-      explore.insertBefore(strip,results);
-    }
-    const home=$('view-inicio'),homeList=$('home-list');
-    if(home&&homeList&&!$('wtg-home-photo-strip')){
-      const strip=document.createElement('aside');
-      strip.id='wtg-home-photo-strip';strip.className='wtg-nearby-photo-strip';
-      strip.hidden=true;
-      homeList.parentNode.insertBefore(strip,homeList);
-    }
     $('wtg-atlas-near').onclick=()=>{nearTerrenas=!nearTerrenas;limit=48;render()};
     $('wtg-atlas-province').onchange=e=>{province=e.target.value;limit=48;render()};
     $('wtg-atlas-search').oninput=e=>{keyword=e.target.value.trim();limit=48;render()};
