@@ -176,7 +176,7 @@ function haversine(lat1,lon1,lat2,lon2){const r=Math.PI/180, a=Math.sin((lat2-la
 function distance(m){return Number.isFinite(m)?m<1000?`${Math.round(m)} m`:`${(m/1000).toFixed(1).replace('.0','')} km`:'—'}
 function catInfo(id){const c=CATEGORY_BY_ID[id]||CATEGORY_BY_ID.atracciones;return {...c,name:window.WTG_I18N?.category(c.id,c.name)||c.name}}
 function normalizedPhone(s){return String(s||'').replace(/[^+\d]/g,'')}
-function safeUrl(s){if(typeof s==='string'&&/^\/assets\/places\/[a-z0-9-]+\.(jpg|webp|png)$/.test(s))return s;try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return''}}
+function safeUrl(s){if(typeof s==='string'&&/^\/(?:where-to-go-app\/)?assets\/places\/[a-z0-9-]+\.(?:jpg|jpeg|webp|png)(?:\?[^#]*)?$/.test(s))return s;try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return''}}
 // Remote images sometimes fail on mobile. Recover with a compact, honest visual.
 document.addEventListener('error', event => {
   const el=event.target;
