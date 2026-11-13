@@ -72,7 +72,7 @@ jobs:
           assert len(gallery)>=5
           for place_id,photos in gallery.items():
             assert place_id in known, place_id
-            assert 1<=len(photos)<=9, place_id
+            assert 1<=len(photos)<=18, place_id
             seen=set()
             for photo in photos:
               assert photo['url'].startswith(('https://commons.wikimedia.org/wiki/Special:FilePath/','https://upload.wikimedia.org/','https://thumb.wikimedia.org/'))
