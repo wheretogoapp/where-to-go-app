@@ -47,16 +47,27 @@
     }).join('');
   }
   function refreshNearbyStrip(){
-    const strip=$('wtg-nearby-photo-strip');
-    if(!strip||!loaded||!images.length||typeof state==='undefined')return;
+    const strips=[$('wtg-nearby-photo-strip'),$('wtg-home-photo-strip')].filter(Boolean);
+    if(!strips.length)return;
+    if(!loaded||!images.length||typeof state==='undefined'){
+      for(const strip of strips)strip.hidden=true;
+      return;
+    }
     const lat=Number(state.lat),lon=Number(state.lon);
-    if(!Number.isFinite(lat)||!Number.isFinite(lon)){strip.hidden=true;return}
-    const near=images.filter(p=>distance(lat,lon,p.lat,p.lon)<=12000);
-    strip.hidden=!near.length;
-    if(!near.length)return;
-    strip.innerHTML='<div class="wtg-nearby-photo-head"><div><small>FOTOGRAFÍAS REALES GEOGRAFICAMENTE CERCANAS</small><h3>'+near.length+' fotos geolocalizadas cerca de '+esc(state.city||'esta zona')+'</h3><p>Imágenes del entorno con autor y licencia; no son fotografías verificadas de estos negocios.</p></div><button type="button" data-view="atlas">Ver todas ↗</button></div><div class="wtg-nearby-photos">'+near.slice(0,6).map(p=>
-      '<button type="button" data-view="atlas" aria-label="Ver galería de '+esc(p.area)+'"><img src="'+esc(safe(p.image))+'" alt="Foto geolocalizada de '+esc(p.area)+'" loading="lazy" referrerpolicy="no-referrer"><span>'+esc(p.area)+'</span></button>'
-    ).join('')+'</div>';
+    if(!Number.isFinite(lat)||!Number.isFinite(lon)){
+      for(const strip of strips)strip.hidden=true;
+      return;
+    }
+    const radius=state.mode==='gps'?12000:30000;
+    const near=images.filter(p=>distance(lat,lon,p.lat,p.lon)<=radius)
+      .sort((a,b)=>distance(lat,lon,a.lat,a.lon)-distance(lat,lon,b.lat,b.lon));
+    for(const strip of strips){
+      strip.hidden=!near.length;
+      if(!near.length)continue;
+      strip.innerHTML='<div class="wtg-nearby-photo-head"><div><small>GALERÍA DE ESTA ZONA · FOTOS CON GPS Y AUTOR</small><h3>'+near.length+' fotografías del entorno de '+esc(state.city||'esta zona')+'</h3><p>Imágenes tomadas en esta área, no fotografías verificadas de los negocios mostrados abajo.</p></div><button type="button" data-view="atlas">Explorar fotos ↗</button></div><div class="wtg-nearby-photos">'+near.slice(0,6).map(p=>
+        '<button type="button" data-view="atlas" aria-label="Ver fotografías de '+esc(p.area)+'"><img src="'+esc(safe(p.image))+'" alt="Foto geolocalizada de '+esc(p.area)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer"><span>'+esc(p.area)+'</span></button>'
+      ).join('')+'</div>';
+    }
   }
   async function load(){
     if(loading)return loading;
@@ -101,6 +112,13 @@
       strip.id='wtg-nearby-photo-strip';strip.className='wtg-nearby-photo-strip';
       strip.hidden=true;
       explore.insertBefore(strip,results);
+    }
+    const home=$('view-inicio'),homeList=$('home-list');
+    if(home&&homeList&&!$('wtg-home-photo-strip')){
+      const strip=document.createElement('aside');
+      strip.id='wtg-home-photo-strip';strip.className='wtg-nearby-photo-strip';
+      strip.hidden=true;
+      homeList.parentNode.insertBefore(strip,homeList);
     }
     $('wtg-atlas-near').onclick=()=>{nearTerrenas=!nearTerrenas;limit=48;render()};
     $('wtg-atlas-province').onchange=e=>{province=e.target.value;limit=48;render()};
