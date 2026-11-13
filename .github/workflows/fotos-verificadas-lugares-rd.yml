@@ -31,7 +31,7 @@ jobs:
         run: |
           python -u Where_to_Go_Proyecto_Completo/tools/expand_verified_place_photos.py \
             --public Where_to_Go_Proyecto_Completo/public \
-            --max-places 165 --max-images 9
+            --max-places 165 --max-images 18
       - name: "Revisar concordancia geográfica: eliminar fotos de otros países"
         run: |
           python Where_to_Go_Proyecto_Completo/tools/audit_place_photo_galleries.py --public Where_to_Go_Proyecto_Completo/public
@@ -52,7 +52,7 @@ jobs:
           stats=json.loads((root/'place-gallery-stats.json').read_text(encoding='utf-8'))
           assert stats['galleryImageCount']==sum(map(len,galleries.values()))
           for pid,images in galleries.items():
-            assert len(images)<=9,pid
+            assert len(images)<=18,pid
             sources=set()
             for p in images:
               assert p['url'].startswith(('https://upload.wikimedia.org/','https://thumb.wikimedia.org/','https://commons.wikimedia.org/wiki/Special:FilePath/')),pid
