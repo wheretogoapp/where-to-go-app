@@ -1,0 +1,53 @@
+name: Where to Go - Auditoría de fotos únicas por lugar
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'Where_to_Go_Proyecto_Completo/tools/report_place_photo_coverage.py'
+      - '.github/workflows/auditar-fotos-unicas.yml'
+permissions:
+  contents: write
+concurrency:
+  group: wtg-place-photo-audit-report
+  cancel-in-progress: false
+jobs:
+  reporte:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Calcular fotos únicas y lugares con imágenes reales
+        run: |
+          python -u Where_to_Go_Proyecto_Completo/tools/report_place_photo_coverage.py
+      - name: Comprobar que los números no incluyen el atlas del entorno
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('Where_to_Go_Proyecto_Completo/public/data/place-photo-coverage-report.json',encoding='utf-8'))
+          assert r['cataloguePlaces']>=44000
+          assert r['mainNationalVerifiedPhotos']>=51
+          assert r['uniquePlaceSpecificPhotoFilesAcrossApp']>=300
+          assert r['uniquePlaceSpecificPhotoFilesAcrossApp']<=r['galleryPhotoEntries']+r['editorialPhotoEntries']+r['mainNationalVerifiedPhotos']
+          print('RECUENTO REAL:',r['uniquePlaceSpecificPhotoFilesAcrossApp'],'fotos distintas de lugares identificados')
+          PY
+      - name: Guardar reporte de cobertura nacional
+        run: |
+          set -euo pipefail
+          git config user.name "Where to Go - auditoría de fotos"
+          git config user.email "actions@users.noreply.github.com"
+          git add Where_to_Go_Proyecto_Completo/PHOTO_COVERAGE.md Where_to_Go_Proyecto_Completo/public/data/place-photo-coverage-report.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Auditoría: fotos únicas acreditadas y vinculadas a lugares reales de RD'
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 4
+          done
+          exit 1
