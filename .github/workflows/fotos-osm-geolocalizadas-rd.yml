@@ -14,7 +14,7 @@ concurrency:
 jobs:
   enriquecer_galerias:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 80
     steps:
       - uses: actions/checkout@v5
         with:
@@ -27,7 +27,7 @@ jobs:
       - name: Buscar nuevas fotografías geolocalizadas del lugar exacto
         run: |
           python -u Where_to_Go_Proyecto_Completo/tools/expand_geo_osm_gallery.py \
-            --public Where_to_Go_Proyecto_Completo/public --limit 240
+            --public Where_to_Go_Proyecto_Completo/public --limit 450
       - name: Auditar coordenadas, fuentes y duplicados
         run: |
           python - <<'PY'
