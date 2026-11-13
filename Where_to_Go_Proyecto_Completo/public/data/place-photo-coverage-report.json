@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-13T15:18:21.375567+00:00",
+  "generatedAt": "2026-11-13T15:21:36.441967+00:00",
   "cataloguePlaces": 44696,
-  "mainNationalVerifiedPhotos": 63,
+  "mainNationalVerifiedPhotos": 62,
   "editorialPhotoEntries": 106,
   "editorialRegionsWithPhotos": 19,
   "editorialByProvince": {
@@ -28,9 +28,9 @@
   "galleryPlaces": 76,
   "galleryPhotoEntries": 487,
   "galleryDistinctSourceFiles": 486,
-  "uniquePlaceSpecificPhotoFilesAcrossApp": 612,
-  "placeIdsWithAnyVerifiedPhoto": 142,
-  "nationalCataloguePlaceIdsWithPhoto": 79,
+  "uniquePlaceSpecificPhotoFilesAcrossApp": 611,
+  "placeIdsWithAnyVerifiedPhoto": 141,
+  "nationalCataloguePlaceIdsWithPhoto": 78,
   "crossPlacePhotoReuse": [
     {
       "source": "lago enriquillo.jpg",
