@@ -1,6 +1,8 @@
 name: Where to Go - Fotos exactas de nuevos lugares OSM
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '10 7 * * *' # 03:10 in Dominican Republic, daily
   push:
     branches: [main]
     paths:
