@@ -3,6 +3,7 @@
 Does not change the Netlify production files or publish private files.
 """
 import argparse, json, pathlib, re, shutil
+from photo_subject_filter import rejection_reason
 def build(source,destination,prefix):
     source=pathlib.Path(source).resolve()
     destination=pathlib.Path(destination).resolve()
@@ -44,6 +45,7 @@ def build(source,destination,prefix):
     assert (destination/'data'/'photo-atlas-rd.json').exists()
     atlas=json.loads((destination/'data'/'photo-atlas-rd.json').read_text(encoding='utf-8'))
     assert atlas['count']>=500
+    assert not any(rejection_reason(p.get('title','')) for p in atlas['photos']), 'FATAL: fotos de satélites, mosquitos o fauna siguen en el atlas publicado'
     print('PREVIEW GitHub Pages preparado:',processed,'archivos de referencias; fotos=',atlas['count'])
 if __name__=='__main__':
     p=argparse.ArgumentParser()
