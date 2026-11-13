@@ -1,27 +1,27 @@
 {
-  "updatedAt": "2026-11-09T16:52:22.582791+00:00",
+  "updatedAt": "2026-11-13T14:31:24.063688+00:00",
   "placesInCatalogue": 44696,
   "placesWithNationalPhoto": 51,
   "curatedPlacesWithKnownPhoto": 116,
-  "galleryPlaceCount": 57,
-  "galleryImageCount": 264,
-  "newVerifiedGalleryPhotos": 252,
+  "galleryPlaceCount": 67,
+  "galleryImageCount": 291,
+  "newVerifiedGalleryPhotos": 279,
   "placesSearched": 116,
   "candidateTitlesMatched": 387,
   "apiRequests": 186,
   "http429Count": 0,
   "newPhotosByCategory": {
-    "atracciones": 179,
-    "cascadas": 1,
+    "atracciones": 184,
+    "cascadas": 10,
     "deportes": 17,
     "entretenimiento": 2,
-    "iglesias": 15,
+    "iglesias": 19,
     "lagunas": 2,
-    "parques": 13,
-    "playas": 23
+    "parques": 21,
+    "playas": 24
   },
   "newPhotosByProvince": {
-    "Distrito Nacional": 155,
+    "Distrito Nacional": 156,
     "Independencia": 2,
     "La Altagracia": 5,
     "La Romana": 1,
@@ -33,9 +33,10 @@
     "San Juan": 6,
     "San Pedro de Macorís": 1,
     "Santiago": 8,
-    "Santo Domingo": 20
+    "Santo Domingo": 20,
+    "Sin provincia": 26
   },
   "description": "Fotos adicionales verificadas por título exacto del lugar y licencia libre Commons; negocios exigen confirmación de ubicación",
-  "imagesRejectedDuringPlaceAudit": 94,
+  "imagesRejectedDuringPlaceAudit": 84,
   "geographicAudit": "Excluidas fotos de otros países, obras de arte, animales y nombres compartidos sin contexto geográfico verificable"
 }

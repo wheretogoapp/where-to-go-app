@@ -1695,6 +1695,12 @@
       "source": "https://commons.wikimedia.org/wiki/File:Cochabamba_-_Templo_de_Santo_Domingo_-_20190824181221.jpg",
       "attribution": "Lord Tuatara · CC BY-SA 4.0 · Wikimedia Commons",
       "license": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/03/Fachada_del_Templo_de_Santo_Domingo.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "source": "https://commons.wikimedia.org/wiki/File:Fachada_del_Templo_de_Santo_Domingo.JPG",
+      "attribution": "Marioli925 · CC BY-SA 3.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by-sa/3.0"
     }
   ],
   "osm-way-27579781": [
@@ -1805,6 +1811,70 @@
     {
       "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/DOM_Santo_Domingo%2C_Parque_Eugenio_Mar%C3%ADa_de_Hostos_0005.jpg/960px-DOM_Santo_Domingo%2C_Parque_Eugenio_Mar%C3%ADa_de_Hostos_0005.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
       "source": "https://commons.wikimedia.org/wiki/File:DOM_Santo_Domingo%2C_Parque_Eugenio_Mar%C3%ADa_de_Hostos_0005.jpg",
+      "attribution": "-wuppertaler · CC BY 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/4.0"
+    }
+  ],
+  "osm-way-329792669": [
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/Arco_de_Triunfo-Paris122.jpg/960px-Arco_de_Triunfo-Paris122.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:Arco_de_Triunfo-Paris122.jpg",
+      "attribution": "Diego Delso · CC BY 3.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/3.0"
+    }
+  ],
+  "osm-node-1645554843": [
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0043.jpg/960px-DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0043.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0043.jpg",
+      "attribution": "-wuppertaler · CC BY 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/4.0"
+    },
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0038.jpg/960px-DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0038.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0038.jpg",
+      "attribution": "-wuppertaler · CC BY 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/4.0"
+    },
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0004.jpg/960px-DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0004.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0004.jpg",
+      "attribution": "-wuppertaler · CC BY 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/4.0"
+    },
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0039.jpg/960px-DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0039.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0039.jpg",
+      "attribution": "-wuppertaler · CC BY 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/4.0"
+    },
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0048.jpg/960px-DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0048.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0048.jpg",
+      "attribution": "-wuppertaler · CC BY 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/4.0"
+    },
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0008.jpg/960px-DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0008.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0008.jpg",
+      "attribution": "-wuppertaler · CC BY 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/4.0"
+    },
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0047.jpg/960px-DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0047.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0047.jpg",
+      "attribution": "-wuppertaler · CC BY 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/4.0"
+    },
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0017.jpg/960px-DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0017.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0017.jpg",
+      "attribution": "-wuppertaler · CC BY 4.0 · Wikimedia Commons",
+      "license": "https://creativecommons.org/licenses/by/4.0"
+    },
+    {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0026.jpg/960px-DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0026.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "https://commons.wikimedia.org/wiki/File:DOM_Santa_B%C3%A1rbara_de_Saman%C3%A1%2C_El_Lim%C3%B3n%2C_Monumento_Natural_Salto_El_Lim%C3%B3n_0026.jpg",
       "attribution": "-wuppertaler · CC BY 4.0 · Wikimedia Commons",
       "license": "https://creativecommons.org/licenses/by/4.0"
     }
