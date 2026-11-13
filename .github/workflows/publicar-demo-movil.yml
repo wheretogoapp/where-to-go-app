@@ -10,6 +10,7 @@ on:
 permissions:
   contents: read
   pages: write
+  deployments: write
   id-token: write
 concurrency:
   group: wtg-pages-mobile-backup
@@ -78,6 +79,35 @@ jobs:
             else:
               print('No se pudo liberar la publicación: HTTP '+str(error.code)+' '+details)
               raise
+          PY
+      - name: Desbloquear estados de despliegue obsoletos sin tocar el sitio actual
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import datetime,json,os,urllib.request,urllib.error
+          base="https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]
+          headers={"Accept":"application/vnd.github+json","Authorization":"Bearer "+os.environ["GH_TOKEN"],"User-Agent":"WhereToGo-ReleaseRecovery"}
+          def request(method,url,payload=None):
+              data=json.dumps(payload).encode() if payload is not None else None
+              req=urllib.request.Request(url,method=method,headers=headers,data=data)
+              with urllib.request.urlopen(req,timeout=25) as resp:return json.load(resp) if resp.status!=204 else {}
+          try:
+              deployments=request("GET",base+"/deployments?environment=github-pages&per_page=40")
+              now=datetime.datetime.now(datetime.timezone.utc)
+              for item in deployments:
+                  created=datetime.datetime.fromisoformat(item["created_at"].replace("Z","+00:00"))
+                  if (now-created).total_seconds()<7200:continue
+                  statuses=request("GET",base+"/deployments/"+str(item["id"])+"/statuses?per_page=1")
+                  current=statuses[0].get("state") if statuses else "unknown"
+                  if current not in ("pending","in_progress","queued"):continue
+                  request("POST",base+"/deployments/"+str(item["id"])+"/statuses",{
+                      "state":"inactive","description":"Despliegue antiguo atascado; liberar solo después de dos horas"
+                  })
+                  print("Despliegue obsoleto inactivado:",item["id"],"sha",item["sha"][:8])
+          except urllib.error.HTTPError as exc:
+              print("Aviso: permisos insuficientes para limpiar despliegue:",exc.code)
+              # Do not claim a fix or destroy anything: continue normal deploy.
           PY
       - name: Publicar aplicación
         id: publish
