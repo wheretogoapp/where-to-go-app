@@ -1,0 +1,21 @@
+{
+  "startedAt": "2026-11-13T14:17:30.663960+00:00",
+  "catalogueRows": 44696,
+  "candidates": 160,
+  "processed": 160,
+  "newPhotographs": 1,
+  "newPlacesWithGallery": 1,
+  "queries": 160,
+  "http429": 0,
+  "source": "Wikimedia Commons coordinates, exact subject-name match and CC license",
+  "finishedAt": "2026-11-13T14:19:45.513388+00:00",
+  "newPlaces": [
+    [
+      "Playa Cabeza de Toro",
+      "playas",
+      1
+    ]
+  ],
+  "totalGalleryPhotos": 265,
+  "totalPlacesWithGallery": 58
+}
