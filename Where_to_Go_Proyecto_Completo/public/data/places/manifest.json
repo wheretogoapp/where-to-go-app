@@ -524,18 +524,18 @@
     "unas": 43
   },
   "maxCellBytes": 219996,
-  "licensedPhotoCount": 51,
+  "licensedPhotoCount": 64,
   "photoCoverageByCategory": {
-    "atracciones": 24,
-    "cascadas": 2,
+    "atracciones": 27,
+    "cascadas": 3,
     "deportes": 7,
     "entretenimiento": 2,
     "hospitales": 1,
     "hoteles": 1,
     "iglesias": 7,
-    "parques": 2,
-    "playas": 4,
-    "rios": 1
+    "parques": 4,
+    "playas": 10,
+    "rios": 2
   },
   "licensedPhotoEnrichment": {
     "runAt": "2026-11-09T13:34:04.254802+00:00",

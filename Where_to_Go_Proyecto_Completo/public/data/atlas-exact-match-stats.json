@@ -1,0 +1,95 @@
+{
+  "updatedAt": "2026-11-13T15:13:29.768685+00:00",
+  "atlasPhotosChecked": 3279,
+  "cataloguePlaces": 44696,
+  "candidatesWithTitleAndGPS": 24,
+  "newPlaceCardsWithPhoto": 13,
+  "byCategory": {
+    "atracciones": 3,
+    "cascadas": 1,
+    "parques": 2,
+    "playas": 6,
+    "rios": 1
+  },
+  "accepted": [
+    {
+      "id": "overture-58318055-419c-4d20-a190-3ca374412b8f",
+      "name": "La Isabela",
+      "photo": "La Isabela SDQ 10 2019 9257",
+      "distanceMeters": 23.2
+    },
+    {
+      "id": "overture-cf3bfa9a-0e35-4bde-b34c-c1238cbe0cd9",
+      "name": "Casa Museo Hermanas Mirabal",
+      "photo": "Casa Museo Hermanas Mirabal placa biblioteca",
+      "distanceMeters": 34.5
+    },
+    {
+      "id": "osm-node-9694060225",
+      "name": "Saltadero",
+      "photo": "El Saltadero, Cabrera, República Dominicana - panoramio",
+      "distanceMeters": 39.6
+    },
+    {
+      "id": "overture-c3456873-1fc2-490f-9078-57bdb1b93e86",
+      "name": "Arco del Triunfo",
+      "photo": "Triumphbogen (Arco del triunfo)",
+      "distanceMeters": 55.4
+    },
+    {
+      "id": "osm-way-320553195",
+      "name": "Casa Museo Hermanas Mirabal",
+      "photo": "Casa Museo Hermanas Mirabal bustos",
+      "distanceMeters": 70.0
+    },
+    {
+      "id": "overture-2cb12a9e-80c4-4546-9b40-0bca1fc56a1a",
+      "name": "Playa Dorada",
+      "photo": "Playa Dorada Golf - hole 6 - panoramio",
+      "distanceMeters": 76.6
+    },
+    {
+      "id": "overture-22579c79-0958-467f-850a-a7b58424a167",
+      "name": "Altos de Chavón",
+      "photo": "Dominikanische Republik - La Romana – Altos de Chavon – Casa Del Rio - panoramio",
+      "distanceMeters": 81.6
+    },
+    {
+      "id": "overture-b4f2d9cc-d92e-4949-bdec-9ed78ae1d080",
+      "name": "La Confluencia",
+      "photo": "La Confluencia 163",
+      "distanceMeters": 85.0
+    },
+    {
+      "id": "overture-9cdcc19f-11b1-48a1-b481-e5e508539edc",
+      "name": "Playa Cosón",
+      "photo": "Beach fence * playa coson (41922899811)",
+      "distanceMeters": 159.3
+    },
+    {
+      "id": "overture-4c4288f8-d197-4bd4-8792-26b263afbb82",
+      "name": "Cabeza de Toro - Punta Cana",
+      "photo": "CABEZA DE TORO-PUNTA CANA. - panoramio",
+      "distanceMeters": 183.6
+    },
+    {
+      "id": "overture-ff8a07f4-4857-4f06-8066-ebe42b3f2148",
+      "name": "Punta Cana, República Dominicana",
+      "photo": "PUNTA CANA-REPUBLICA DOMINICANA - panoramio",
+      "distanceMeters": 228.1
+    },
+    {
+      "id": "osm-way-29072327",
+      "name": "Cabarete Beach",
+      "photo": "Cabarete beach - panoramio",
+      "distanceMeters": 250.2
+    },
+    {
+      "id": "overture-70a4e283-c3a4-4f8d-918e-2a6db7123595",
+      "name": "Cortecito, Punta Cana",
+      "photo": "El Cortecito, Punta Cana 23000, Dominican Republic - panoramio",
+      "distanceMeters": 348.8
+    }
+  ],
+  "rule": "Same exact name phrase in file title and camera GPS within 90m (built) or 350m (natural); non-business categories only"
+}
