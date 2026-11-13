@@ -70,6 +70,17 @@ jobs:
           known={p['id'] for p in places}
           gallery=json.loads((root/'place-gallery.json').read_text(encoding='utf-8'))
           assert len(gallery)>=5
+          # New galleries also belong to OSM places in the national grid,
+          # not just the initial editorial pilot list.
+          not_yet_found=set(gallery)-known
+          if not_yet_found:
+            for tile in (root/'places').glob('cell_*.json'):
+              for row in json.loads(tile.read_text(encoding='utf-8')):
+                if row.get('id') in not_yet_found:
+                  known.add(row['id'])
+                  not_yet_found.discard(row['id'])
+              if not not_yet_found:break
+          assert not not_yet_found, 'Fotos de lugar no registrado: '+str(sorted(not_yet_found)[:10])
           for place_id,photos in gallery.items():
             assert place_id in known, place_id
             assert 1<=len(photos)<=18, place_id
