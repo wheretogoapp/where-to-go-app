@@ -524,7 +524,7 @@
     "unas": 43
   },
   "maxCellBytes": 219996,
-  "licensedPhotoCount": 64,
+  "licensedPhotoCount": 63,
   "photoCoverageByCategory": {
     "atracciones": 27,
     "cascadas": 3,
@@ -534,7 +534,7 @@
     "hoteles": 1,
     "iglesias": 7,
     "parques": 4,
-    "playas": 10,
+    "playas": 9,
     "rios": 2
   },
   "licensedPhotoEnrichment": {
