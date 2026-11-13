@@ -3,9 +3,9 @@
   "placesInCatalogue": 44696,
   "placesWithNationalPhoto": 51,
   "curatedPlacesWithKnownPhoto": 116,
-  "galleryPlaceCount": 70,
-  "galleryImageCount": 476,
-  "newVerifiedGalleryPhotos": 464,
+  "galleryPlaceCount": 78,
+  "galleryImageCount": 487,
+  "newVerifiedGalleryPhotos": 475,
   "placesSearched": 116,
   "candidateTitlesMatched": 859,
   "apiRequests": 262,
@@ -38,5 +38,7 @@
   },
   "description": "Fotos adicionales verificadas por título exacto del lugar y licencia libre Commons; negocios exigen confirmación de ubicación",
   "imagesRejectedDuringPlaceAudit": 158,
-  "geographicAudit": "Excluidas fotos de otros países, obras de arte, animales y nombres compartidos sin contexto geográfico verificable"
+  "geographicAudit": "Excluidas fotos de otros países, obras de arte, animales y nombres compartidos sin contexto geográfico verificable",
+  "removedOffTopicPhotoSubjects": 3,
+  "qualityCheckedAt": "2026-11-13T15:49:51.797925+00:00"
 }

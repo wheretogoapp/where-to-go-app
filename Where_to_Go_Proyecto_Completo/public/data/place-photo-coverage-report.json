@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T15:21:36.441967+00:00",
+  "generatedAt": "2026-11-13T15:49:52.270976+00:00",
   "cataloguePlaces": 44696,
   "mainNationalVerifiedPhotos": 62,
   "editorialPhotoEntries": 106,
@@ -25,12 +25,12 @@
     "Santiago": 4,
     "Santo Domingo": 3
   },
-  "galleryPlaces": 76,
+  "galleryPlaces": 78,
   "galleryPhotoEntries": 487,
-  "galleryDistinctSourceFiles": 486,
-  "uniquePlaceSpecificPhotoFilesAcrossApp": 611,
-  "placeIdsWithAnyVerifiedPhoto": 141,
-  "nationalCataloguePlaceIdsWithPhoto": 78,
+  "galleryDistinctSourceFiles": 487,
+  "uniquePlaceSpecificPhotoFilesAcrossApp": 612,
+  "placeIdsWithAnyVerifiedPhoto": 144,
+  "nationalCataloguePlaceIdsWithPhoto": 81,
   "crossPlacePhotoReuse": [
     {
       "source": "lago enriquillo.jpg",
@@ -59,17 +59,8 @@
         "osm-way-1561391674",
         "wd-Q107041447"
       ]
-    },
-    {
-      "source": "scale model fortaleza ozama mdcclxxxv ccsd 11 2018 4328.jpg",
-      "placeIds": [
-        "osm-way-178352482",
-        "osm-way-323835263"
-      ]
     }
   ],
-  "repeatedPhotoFilesWithinGalleries": [
-    "scale model fortaleza ozama mdcclxxxv ccsd 11 2018 4328.jpg"
-  ],
+  "repeatedPhotoFilesWithinGalleries": [],
   "excludes": "Geotagged landscape atlas, provincial hero backgrounds and unapproved business submissions"
 }
