@@ -1,0 +1,70 @@
+name: Where to Go - Fotos exactas de nuevos lugares OSM
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'Where_to_Go_Proyecto_Completo/tools/expand_geo_osm_gallery.py'
+      - '.github/workflows/fotos-osm-geolocalizadas-rd.yml'
+permissions:
+  contents: write
+concurrency:
+  group: wtg-osm-exact-geotagged-gallery
+  cancel-in-progress: false
+jobs:
+  enriquecer_galerias:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Verificar script antes de ejecutar búsquedas
+        run: python -m py_compile Where_to_Go_Proyecto_Completo/tools/expand_geo_osm_gallery.py
+      - name: Buscar nuevas fotografías geolocalizadas del lugar exacto
+        run: |
+          python -u Where_to_Go_Proyecto_Completo/tools/expand_geo_osm_gallery.py \
+            --public Where_to_Go_Proyecto_Completo/public --limit 160
+      - name: Auditar coordenadas, fuentes y duplicados
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          root=pathlib.Path('Where_to_Go_Proyecto_Completo/public/data')
+          gal=json.loads((root/'place-gallery.json').read_text(encoding='utf-8'))
+          stats=json.loads((root/'place-gallery-geo-stats.json').read_text(encoding='utf-8'))
+          urls=set()
+          for pid,photos in gal.items():
+            assert len(photos)<=9,pid
+            for item in photos:
+              assert item['source'].startswith('https://commons.wikimedia.org/wiki/File:'),(pid,item['source'])
+              assert item['attribution'] and item['license']
+              assert item['source'] not in urls,('Foto duplicada entre lugares',pid,item['source'])
+              urls.add(item['source'])
+          assert len(urls)==stats['totalGalleryPhotos']
+          assert stats['totalGalleryPhotos']==sum(map(len,gal.values()))
+          assert stats['totalPlacesWithGallery']==len(gal)
+          print('FOTOS NUEVAS COMPROBADAS:',stats['newPhotographs'])
+          print('LUGARES NUEVOS CON GALERÍA:',stats['newPlacesWithGallery'])
+          print('GALERÍA TOTAL:',stats['totalGalleryPhotos'],'fotos,',len(gal),'lugares')
+          PY
+      - name: Publicar sin sobrescribir otros cambios
+        run: |
+          set -euo pipefail
+          git config user.name "Where to Go - fotografias con GPS"
+          git config user.email "actions@users.noreply.github.com"
+          git add Where_to_Go_Proyecto_Completo/public/data/place-gallery.json \
+                  Where_to_Go_Proyecto_Completo/public/data/place-gallery-geo-progress.json \
+                  Where_to_Go_Proyecto_Completo/public/data/place-gallery-geo-stats.json
+          if git diff --cached --quiet; then echo "Sin nuevas fotografías ni cambios"; exit 0; fi
+          git commit -m "Galería RD: fotos de lugares exactos con coordenadas y licencia verificada"
+          for n in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then echo 'Galerías publicadas en GitHub'; exit 0; fi
+            sleep 4
+          done
+          echo 'No se pudieron guardar nuevos datos en GitHub' >&2
+          exit 1
