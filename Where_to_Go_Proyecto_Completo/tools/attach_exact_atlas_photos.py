@@ -30,6 +30,9 @@ def title_match(name, photo):
     target=norm(name)
     title=norm(photo.get("title",""))
     if not target or not title or BAD.search(title):return False
+    # Do not misrepresent a golf course or a city panorama as a beach photo.
+    if ("playa" in target or "beach" in target) and re.search(r"\b(golf|hole|course|campo de golf)\b",title):
+        return False
     # Exact phrase, not just a shared locality or generic category keyword.
     if not re.search(r"\b"+re.escape(target)+r"\b",title):return False
     distinctive=[w for w in target.split() if w not in GENERIC and len(w)>=4]
@@ -66,6 +69,17 @@ def run(public):
         cells[path]=items
         rows.extend(items)
     assert len(rows)==manifest["recordCount"], "Conteo nacional inconsistente"
+    # Revoke earlier false-positive atlas matches using exact photographed titles.
+    unsafe_atlas={"overture-2cb12a9e-80c4-4546-9b40-0bca1fc56a1a":"playa dorada golf",
+                  "overture-ff8a07f4-4857-4f06-8066-ebe42b3f2148":"punta cana republica dominicana"}
+    revoked=set()
+    for row in rows:
+        expected=unsafe_atlas.get(row.get("id"))
+        source=norm(unquote(row.get("photoSource") or ""))
+        if expected and expected in source:
+            for field in ("image","photoSource","photoAttribution","photoLicense"):
+                row.pop(field,None)
+            revoked.add(row["id"])
     existing_sources={unquote(str(r.get("photoSource",""))) for r in rows if r.get("photoSource")}
     gallery=json.loads((root/"place-gallery.json").read_text(encoding="utf-8"))
     existing_sources.update(unquote(photo.get("source","")) for items in gallery.values() for photo in items)
@@ -95,9 +109,9 @@ def run(public):
         used_sources.add(sid)
         by_category[row["cat"]]+=1
         matched.append({"id":row["id"],"name":row["name"],"photo":photo["title"],"distanceMeters":round(d,1)})
-    if matched:
+    if matched or revoked:
         for path, items in cells.items():
-            if any(row["id"] in used_ids for row in items):
+            if any(row["id"] in used_ids or row["id"] in revoked for row in items):
                 path.write_text(json.dumps(items,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
         verified=[r for r in rows if r.get("photoSource") and r.get("photoAttribution")]
         manifest["licensedPhotoCount"]=len(verified)
