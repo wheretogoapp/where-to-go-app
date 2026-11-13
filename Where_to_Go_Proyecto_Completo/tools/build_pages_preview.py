@@ -28,7 +28,7 @@ def build(source,destination,prefix):
             updated=json.dumps(data,ensure_ascii=False,indent=2)
         if file.name=='app.js':
             # No Netlify Forms backend and no SW at this GitHub project subpath.
-            updated=updated.replace("navigator.serviceWorker.register('"+prefix+"/service-worker.js').catch(()=>{})","Promise.resolve()")
+            updated=updated.replace("navigator.serviceWorker.register('"+prefix+"/service-worker.js').catch(()=>{})","navigator.serviceWorker.getRegistrations().then(rs=>rs.filter(r=>r.scope.includes('"+prefix+"/')).forEach(r=>r.unregister())).catch(()=>{})")
         if file.name=='index.html':
             updated=updated.replace('</head>','<meta name="robots" content="noindex" /></head>')
         if updated!=content:
