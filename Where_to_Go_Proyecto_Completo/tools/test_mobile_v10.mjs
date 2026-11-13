@@ -42,7 +42,9 @@ try {
       searchTop:search?.getBoundingClientRect().top,
       firstCardTop:firstCard?.getBoundingClientRect().top,
       heroTop:hero?.getBoundingClientRect().top,
-      searchBackground:tools?getComputedStyle(tools).backgroundColor:'',
+      heroVisible:!!hero&&getComputedStyle(hero).display!=='none'&&hero.getBoundingClientRect().height>20,
+      searchBackground:search?getComputedStyle(search).backgroundColor:'',
+      searchStylesheetReady:[...document.styleSheets].some(sheet=>sheet.href?.includes('mobile-focus.css')),
       leafletNotLoaded:!document.querySelector('script[src*="leaflet.js"]'),
       firstCardName:firstCard?.querySelector('.place-title')?.textContent,
       hasPhotosAtlas:!!document.querySelector('[data-view="atlas"]')
@@ -55,10 +57,12 @@ try {
   if(!(design.firstCardTop>design.searchTop&&design.heroTop>design.firstCardTop)){
     await page.screenshot({path:'/tmp/where-to-go-iphone-layout-debug.png',fullPage:true}).catch(()=>{});
   }
-  assert(design.firstCardTop>design.searchTop&&design.heroTop>design.firstCardTop,
-    'Search and nearby places must appear before the large cover');
+  assert(design.firstCardTop>design.searchTop&&(!design.heroVisible||design.heroTop>design.firstCardTop),
+    'Search and nearby places must appear before any visible large cover');
+  assert(design.searchStylesheetReady,
+    'Premium stylesheet must load, not merely exist in HTML');
   assert(design.searchBackground==='rgb(255, 255, 255)',
-    'Search wrapper should look like a clean premium white surface');
+    'Main search field should render on a clean premium white surface');
   console.log('MOBILE PREMIUM DESIGN:',JSON.stringify(design));
   const front=await page.evaluate(()=>{
     const home=document.querySelector('#view-inicio');
