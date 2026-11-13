@@ -8,6 +8,7 @@ generic surrounding scenery for restaurants or an unrelated business.
 """
 import argparse, collections, datetime, html, json, math, pathlib, re, time
 import urllib.parse, urllib.request, urllib.error, unicodedata
+from photo_subject_filter import rejection_reason
 
 API="https://commons.wikimedia.org/w/api.php"
 AGENT="WhereToGoRDExactGeoGallery/1.0 (https://github.com/wheretogoapp/where-to-go-app)"
@@ -86,7 +87,7 @@ def same_place_category_photo(row,page):
     """Category title identifies the exact landmark AND camera GPS confirms it."""
     title=page.get("title","")
     if not title.startswith("File:") or not re.search(r"\.(jpe?g|png|webp)$",title,re.I):return False
-    if BAD_FILE.search(title):return False
+    if BAD_FILE.search(title) or rejection_reason(title):return False
     coords=page.get("coordinates") or []
     if not coords:return False
     try:
@@ -131,7 +132,7 @@ def select_candidates(public,already,visited,limit):
 def exact_match(row,page):
     title=page.get("title","")
     if not title.startswith("File:") or not re.search(r"\.(jpe?g|png|webp)$",title,re.I):return False
-    if BAD_FILE.search(title):return False
+    if BAD_FILE.search(title) or rejection_reason(title):return False
     tokens=words(row["name"])
     file_tokens=set(norm(title).split())
     # All distinctive name terms must be in the image filename.
