@@ -11,7 +11,8 @@ import urllib.parse, urllib.request, urllib.error, unicodedata
 
 API="https://commons.wikimedia.org/w/api.php"
 AGENT="WhereToGoRDExactGeoGallery/1.0 (https://github.com/wheretogoapp/where-to-go-app)"
-CATS={"atracciones":1,"playas":0,"cascadas":0,"parques":2,"lagunas":2,"entretenimiento":3,"iglesias":4,"rios":5}
+CATS={"atracciones":1,"playas":0,"cascadas":0,"parques":2,"lagunas":2,"entretenimiento":3,"iglesias":4,"rios":5,"resorts":2,"hoteles":3,"restaurantes":4,"bares":5}
+BUSINESS_CATS={"resorts","hoteles","restaurantes","bares"}
 STOP=set("el la los las de del y en al para por con un una san santa santo playa playas beach cascada salto parque natural nacional monumento rio rio museo lugar turistico church dominican republic republica dominicana dominicana dominicano plaza mirador rio".split())
 SUSPICIOUS=re.compile(r"\b(arroyos?|canadas?|canal|residencial|apartamentos?|building|condominio|residence|urbanizacion|gasolinera|pizzeria|colegio|escuela|ferreteria|vivero)\b",re.I)
 BAD_FILE=re.compile(r"(astronaut|earth from|iss0|satellite|space station|orbital|melanerpes|portumnus|crab|bird|pajaro|anolis|insect|frog|butterfly|maps? of|flag|coat of arms|portrait|cartoon|drawing|painting|illustra|sign|logo|poster|icon|stamp)",re.I)
@@ -96,11 +97,14 @@ def exact_match(row,page):
     # All distinctive name terms must be in the image filename.
     if not tokens or not all(t in file_tokens for t in set(tokens)):return False
     geos=page.get("coordinates") or []
+    # A business requires a camera GPS near its actual mapped location.
+    # A matching name and Dominican category alone cannot identify a business.
+    if row["cat"] in BUSINESS_CATS and not geos:return False
     if geos:
         try:
             latitude=float(geos[0]["lat"]);longitude=float(geos[0]["lon"])
         except (TypeError,ValueError,KeyError):return False
-        radius=800 if row["cat"] in ("playas","lagunas","parques","rios") else 160
+        radius=80 if row["cat"] in BUSINESS_CATS else (800 if row["cat"] in ("playas","lagunas","parques","rios") else 160)
         return dist(row["lat"],row["lon"],latitude,longitude)<=radius
     # Some Wikimedia Commons photographs have no camera coordinates. They
     # are accepted only when BOTH the exact distinctive place name appears in
