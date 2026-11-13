@@ -226,7 +226,7 @@ function placeGalleryPhotos(p){
     if(!url||!source||!attribution||seen.has(source))continue;
     seen.add(source);
     list.push({url,source,attribution,license:safeUrl(item.license||item.photoLicense||'')});
-    if(list.length>=10)break;
+    if(list.length>=19)break;
   }
   return list;
 }
