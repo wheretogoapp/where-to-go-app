@@ -1,24 +1,44 @@
 {
   "matcher": "GPS <=160m/800m or exact distinctive name AND Wikimedia DR categories",
-  "startedAt": "2026-11-13T15:48:33.075663+00:00",
+  "startedAt": "2026-11-14T08:06:24.171732+00:00",
   "catalogueRows": 44696,
   "candidates": 450,
-  "processed": 107,
-  "newPhotographs": 4,
-  "newPlacesWithGallery": 1,
-  "queries": 133,
-  "categoryQueries": 26,
-  "http429": 1,
+  "processed": 450,
+  "newPhotographs": 10,
+  "newPlacesWithGallery": 5,
+  "queries": 558,
+  "categoryQueries": 108,
+  "http429": 0,
   "source": "Wikimedia Commons coordinates, exact subject-name match and CC license",
-  "deduplicatedExistingPhotos": 0,
-  "finishedAt": "2026-11-13T15:49:51.402775+00:00",
+  "deduplicatedExistingPhotos": 1,
+  "finishedAt": "2026-11-14T08:12:32.816945+00:00",
   "newPlaces": [
     [
-      "Iberostar Selection Bavaro Suites",
-      "hoteles",
+      "Pedro Henríquez Ureña",
+      "atracciones",
+      1
+    ],
+    [
+      "Plaza Maria de Toledo",
+      "atracciones",
       4
+    ],
+    [
+      "María Trinidad Sanchez",
+      "atracciones",
+      1
+    ],
+    [
+      "Hospital San Nicolás de Bari",
+      "atracciones",
+      3
+    ],
+    [
+      "Parroquia Maria Auxiliadora",
+      "iglesias",
+      1
     ]
   ],
-  "totalGalleryPhotos": 494,
-  "totalPlacesWithGallery": 80
+  "totalGalleryPhotos": 541,
+  "totalPlacesWithGallery": 89
 }
