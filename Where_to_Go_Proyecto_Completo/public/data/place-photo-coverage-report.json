@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T15:49:52.270976+00:00",
+  "generatedAt": "2026-11-14T11:10:31.387625+00:00",
   "cataloguePlaces": 44696,
   "mainNationalVerifiedPhotos": 62,
   "editorialPhotoEntries": 106,
@@ -25,18 +25,39 @@
     "Santiago": 4,
     "Santo Domingo": 3
   },
-  "galleryPlaces": 78,
-  "galleryPhotoEntries": 487,
-  "galleryDistinctSourceFiles": 487,
-  "uniquePlaceSpecificPhotoFilesAcrossApp": 612,
-  "placeIdsWithAnyVerifiedPhoto": 144,
-  "nationalCataloguePlaceIdsWithPhoto": 81,
+  "galleryPlaces": 89,
+  "galleryPhotoEntries": 541,
+  "galleryDistinctSourceFiles": 541,
+  "uniquePlaceSpecificPhotoFilesAcrossApp": 663,
+  "placeIdsWithAnyVerifiedPhoto": 149,
+  "nationalCataloguePlaceIdsWithPhoto": 86,
   "crossPlacePhotoReuse": [
     {
       "source": "lago enriquillo.jpg",
       "placeIds": [
         "osm-node-3684543648",
         "wd-Q1464758"
+      ]
+    },
+    {
+      "source": "altos de chavon amphitheater.jpg",
+      "placeIds": [
+        "osm-way-140159249",
+        "overture-22579c79-0958-467f-850a-a7b58424a167"
+      ]
+    },
+    {
+      "source": "casa museo hermanas mirabal placa biblioteca.jpg",
+      "placeIds": [
+        "osm-way-320553195",
+        "overture-cf3bfa9a-0e35-4bde-b34c-c1238cbe0cd9"
+      ]
+    },
+    {
+      "source": "casa museo hermanas mirabal bustos.jpg",
+      "placeIds": [
+        "osm-way-320553195",
+        "overture-cf3bfa9a-0e35-4bde-b34c-c1238cbe0cd9"
       ]
     },
     {
