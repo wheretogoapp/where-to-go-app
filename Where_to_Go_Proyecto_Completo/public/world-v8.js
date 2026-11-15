@@ -33,7 +33,21 @@
       const credit=document.createElement('span');credit.className='wtg-v8-credit';credit.textContent='Foto: '+item.credit;
       card.title='Fotografía documentada. Fuente: '+(item.source||'no especificada');
       card.append(photo,small,title,action,credit);card.addEventListener('click',()=>{
-        try{state.search='';state.category='todos';navigate('explorar');renderExplore()}catch{document.querySelector('[data-view="explorar"]')?.click()}
+        // A province cover is editorial, not a geolocated place result.
+        // Do not silently reuse the previous region (e.g. Puerto Plata for Samaná).
+        const provinceSelect=$('province-select');
+        const current=typeof provinceFromCity==='function' ? provinceFromCity() : '';
+        if(r!==current && provinceSelect && typeof openModal==='function'){
+          openModal('location-modal');
+          provinceSelect.value=r;
+          if(typeof refreshMunicipalitySelect==='function')refreshMunicipalitySelect();
+          $('municipality-select')?.focus();
+          return;
+        }
+        if(typeof state!=='undefined'){
+          state.search='';state.category='todos';
+          if(typeof navigate==='function')navigate('explorar');
+        }
       });
       rail.append(card);
     }
