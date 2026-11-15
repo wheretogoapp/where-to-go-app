@@ -1,44 +1,24 @@
 {
   "matcher": "GPS <=160m/800m or exact distinctive name AND Wikimedia DR categories",
-  "startedAt": "2026-11-14T08:06:24.171732+00:00",
+  "startedAt": "2026-11-15T08:12:19.178232+00:00",
   "catalogueRows": 44696,
   "candidates": 450,
   "processed": 450,
-  "newPhotographs": 10,
-  "newPlacesWithGallery": 5,
-  "queries": 558,
-  "categoryQueries": 108,
+  "newPhotographs": 6,
+  "newPlacesWithGallery": 1,
+  "queries": 636,
+  "categoryQueries": 186,
   "http429": 0,
   "source": "Wikimedia Commons coordinates, exact subject-name match and CC license",
-  "deduplicatedExistingPhotos": 1,
-  "finishedAt": "2026-11-14T08:12:32.816945+00:00",
+  "deduplicatedExistingPhotos": 0,
+  "finishedAt": "2026-11-15T08:19:29.187091+00:00",
   "newPlaces": [
     [
-      "Pedro Henríquez Ureña",
-      "atracciones",
-      1
-    ],
-    [
-      "Plaza Maria de Toledo",
-      "atracciones",
-      4
-    ],
-    [
-      "María Trinidad Sanchez",
-      "atracciones",
-      1
-    ],
-    [
-      "Hospital San Nicolás de Bari",
-      "atracciones",
-      3
-    ],
-    [
-      "Parroquia Maria Auxiliadora",
+      "Iglesia Evangelica Dominicana",
       "iglesias",
-      1
+      6
     ]
   ],
-  "totalGalleryPhotos": 541,
-  "totalPlacesWithGallery": 89
+  "totalGalleryPhotos": 547,
+  "totalPlacesWithGallery": 90
 }
