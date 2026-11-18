@@ -37,6 +37,9 @@ jobs:
           test -s /tmp/where-to-go-pages/world-explorer.js
           test -s /tmp/where-to-go-pages/world-explorer.css
           test -s /tmp/where-to-go-pages/city-covers.js
+          test -s /tmp/where-to-go-pages/world-geography.js
+          grep -q 'id="wtg-world-region"' /tmp/where-to-go-pages/index.html
+          grep -q 'id="wtg-world-city"' /tmp/where-to-go-pages/index.html
           grep -q 'id="wtg-world-open"' /tmp/where-to-go-pages/index.html
           grep -q 'id="wtg-world-dialog"' /tmp/where-to-go-pages/index.html
           test -s /tmp/where-to-go-pages/assets/wtg-brand.svg
@@ -53,6 +56,7 @@ jobs:
           grep -q 'WTG_ACTIVE_COUNTRY' /tmp/where-to-go-pages/app.js
           grep -q 'wtg_world_selection' /tmp/where-to-go-pages/world-explorer.js
           node --check /tmp/where-to-go-pages/city-covers.js
+          node --check /tmp/where-to-go-pages/world-geography.js
           node --test Where_to_Go_Proyecto_Completo/tests/world-location.test.cjs
           python Where_to_Go_Proyecto_Completo/tools/test_pages_region_catalog.py /tmp/where-to-go-pages
           test -s /tmp/where-to-go-pages/data/pages-catalog-check.json
@@ -157,7 +161,7 @@ jobs:
                   print('Esperando propagación:',attempt+1,str(exc))
                   if attempt==11:raise
                   time.sleep(10)
-          for asset in ('world-location.js','world-explorer.js','world-explorer.css','city-covers.js'):
+          for asset in ('world-location.js','world-explorer.js','world-explorer.css','city-covers.js','world-geography.js'):
               with urllib.request.urlopen(base+asset,timeout=20) as response:
                   assert response.status==200 and len(response.read())>100,asset
                   print('ASSET MUNDIAL PUBLICADO:',asset)
