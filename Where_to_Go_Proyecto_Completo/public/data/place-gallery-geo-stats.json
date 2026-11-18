@@ -1,18 +1,24 @@
 {
   "matcher": "GPS <=160m/800m or exact distinctive name AND Wikimedia DR categories",
-  "startedAt": "2026-11-17T08:24:59.064944+00:00",
+  "startedAt": "2026-11-18T08:23:28.624088+00:00",
   "catalogueRows": 44696,
-  "candidates": 450,
-  "processed": 450,
-  "newPhotographs": 0,
-  "newPlacesWithGallery": 0,
-  "queries": 601,
-  "categoryQueries": 151,
+  "candidates": 300,
+  "processed": 300,
+  "newPhotographs": 5,
+  "newPlacesWithGallery": 1,
+  "queries": 481,
+  "categoryQueries": 181,
   "http429": 0,
   "source": "Wikimedia Commons coordinates, exact subject-name match and CC license",
   "deduplicatedExistingPhotos": 0,
-  "finishedAt": "2026-11-17T08:32:04.646858+00:00",
-  "newPlaces": [],
-  "totalGalleryPhotos": 555,
-  "totalPlacesWithGallery": 92
+  "finishedAt": "2026-11-18T08:28:08.588946+00:00",
+  "newPlaces": [
+    [
+      "Primera Iglesia Evangélica Dominicana",
+      "iglesias",
+      5
+    ]
+  ],
+  "totalGalleryPhotos": 560,
+  "totalPlacesWithGallery": 93
 }
