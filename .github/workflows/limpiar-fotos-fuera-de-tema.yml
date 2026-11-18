@@ -45,13 +45,18 @@ jobs:
           import json,pathlib,sys
           sys.path.insert(0,'Where_to_Go_Proyecto_Completo/tools')
           from photo_subject_filter import rejection_reason
+          from clean_photo_quality import file_title
           root=pathlib.Path('Where_to_Go_Proyecto_Completo/public/data')
           atlas=json.loads((root/'photo-atlas-rd.json').read_text(encoding='utf-8'))
           photos=atlas['photos']
           assert atlas['count']==len(photos)>=400
           assert not any(rejection_reason(p.get('title')) for p in photos),'Se filtró alguna foto basura'
           gallery=json.loads((root/'place-gallery.json').read_text(encoding='utf-8'))
-          assert not any(rejection_reason(p.get('source')) for images in gallery.values() for p in images)
+          assert not any(rejection_reason(file_title(p.get('source') or p.get('url'))) for images in gallery.values() for p in images),'Galería con foto fuera de tema'
+          for cell in sorted((root/'places').glob('cell_*.json')):
+            for place in json.loads(cell.read_text(encoding='utf-8')):
+              if place.get('photoSource'):
+                assert not rejection_reason(file_title(place['photoSource'])),f"Portada fuera de tema: {place.get('id')}"
           assert all(p.get('credit') and p.get('license') and p.get('source') for p in photos)
           check=json.loads((root/'photo-quality-report.json').read_text(encoding='utf-8'))
           print('FOTOS TURISTICAS CON GPS:',len(photos))
