@@ -76,6 +76,7 @@ window.WTG_auth={
     try{await client.from('activity_events').insert({user_id:currentUser.id,event_type:'view',place_id,category:String(category||'atracciones').slice(0,80)});}
     catch{/* Analytics must never block discovery. */}
   },
+  showLogin(){demoMode=false;openGate();},
   async signOut(){
     if(client){await client.auth.signOut();currentUser=null;}
     demoMode=false;openGate();
@@ -95,6 +96,7 @@ document.getElementById('wtg-account-close').addEventListener('click',()=>accoun
 document.getElementById('wtg-legal-close').addEventListener('click',()=>legal.hidden=true);
 document.getElementById('wtg-account-privacy').addEventListener('click',()=>{account.hidden=true;legal.hidden=false});
 document.getElementById('wtg-account-favorites').addEventListener('click',()=>{account.hidden=true;document.querySelector('[data-view="favoritos"].mobile-tab')?.click()||document.querySelector('[data-view="favoritos"].nav-btn')?.click()});
+document.getElementById('wtg-account-login')?.addEventListener('click',()=>{account.hidden=true;demoMode=false;openGate()});
 document.getElementById('wtg-account-signout').addEventListener('click',async()=>{try{await window.WTG_auth.signOut();account.hidden=true;accountMessage('')}catch(e){accountMessage('No se pudo cerrar sesión: '+e.message)}});
 document.getElementById('wtg-account-resend').addEventListener('click',async()=>{if(!client||!currentUser?.email)return accountMessage('Inicia sesión primero.');try{const {error:e}=await client.auth.resend({type:'signup',email:currentUser.email,options:{emailRedirectTo:location.origin+location.pathname}});if(e)throw e;accountMessage('Si la cuenta necesita confirmación, recibirás un correo.')}catch(e){accountMessage('No se pudo reenviar: '+e.message)}});
 document.getElementById('wtg-account-reset').addEventListener('click',async()=>{if(!client||!currentUser?.email)return accountMessage('Inicia sesión primero.');try{const {error:e}=await client.auth.resetPasswordForEmail(currentUser.email,{redirectTo:location.origin+location.pathname});if(e)throw e;accountMessage('Si la cuenta existe, recibirás instrucciones por correo. Para establecer una contraseña nueva se necesita completar el flujo de recuperación.')}catch(e){accountMessage('No se pudo solicitar: '+e.message)}});
