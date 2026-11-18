@@ -30,8 +30,10 @@ function init(){
    const selection=world.location({country:country.value,city:city.value,language:lang(),source:'manual'});
    try{sessionStorage.setItem('wtg_world_selection',JSON.stringify(selection))}catch{}
    dialog.hidden=true;
+   selection.countryName=names().of(selection.country);
+   window.dispatchEvent(new CustomEvent('wtg-world-selected',{detail:selection}));
    if(selection.country==='DO'){
-     setPilotVisible(true);button.textContent='🌍 Explorar el mundo';
+     window.WTG_ACTIVE_COUNTRY='DO';setPilotVisible(true);button.textContent='🌍 Explorar el mundo';
      document.getElementById('location-pill')?.click();
    }else{
      const label=names().of(selection.country)+(selection.city?' · '+selection.city:'');
