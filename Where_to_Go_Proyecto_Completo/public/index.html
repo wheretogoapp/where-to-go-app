@@ -58,8 +58,8 @@
       <header class="topbar">
         <button id="mobile-brand" class="mobile-brand" aria-label="Volver al inicio"><span class="mobile-brand-icon"><img src="/assets/wtg-brand.svg?v=10" width="34" height="34" alt=""></span><span>Where to Go<span class="brand-dot">.</span></span></button>
         <div class="topbar-left"><span class="breadcrumb">Descubre el mundo</span><span class="crumb-separator">/</span><strong id="current-page-label">Inicio</strong></div>
-        <div class="topbar-actions"><button type="button" id="wtg-world-open" aria-haspopup="dialog" aria-controls="wtg-world-dialog">🌍 Explorar el mundo</button><label class="wtg-language-control" for="wtg-language-select"><span aria-hidden="true">🌐</span> <span class="visually-hidden">Idioma / Language</span><select id="wtg-language-select" aria-label="Idioma / Language"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option></select></label>
-          <button class="location-pill" id="location-pill" title="Cambiar ubicación"><span class="pin-icon">⌖</span><span class="location-pill-text" id="location-label">Tu ubicación</span><span class="chevron">⌄</span></button>
+        <div class="topbar-actions"><label class="wtg-language-control" for="wtg-language-select"><span aria-hidden="true">🌐</span> <span class="visually-hidden">Idioma / Language</span><select id="wtg-language-select" aria-label="Idioma / Language"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option></select></label>
+          <button class="location-pill" id="location-pill" title="Detectar o cambiar país, región y ciudad" aria-haspopup="dialog" aria-controls="wtg-world-dialog"><span class="pin-icon">⌖</span><span class="location-pill-text" id="location-label">Tu ubicación</span><span class="chevron">⌄</span></button>
           <button class="top-icon-btn" id="top-refresh" title="Actualizar lugares" aria-label="Actualizar lugares">↻</button>
           <button class="top-avatar" id="top-business" title="Mi cuenta" aria-label="Abrir mi cuenta">WT</button>
         </div>
@@ -235,7 +235,7 @@
 <h3>Control de tus datos</h3><p>Puedes cerrar sesión y desactivar la personalización. Para solicitar acceso, corrección o eliminación de datos, necesitamos habilitar un canal de atención verificado antes del lanzamiento público.</p>
 <h3>Condiciones de uso</h3><p>Where to Go está en fase de prueba. Las fichas, fotos, horarios, precios y excursiones deben comprobarse con el proveedor. Ninguna excursión está certificada como segura por aparecer aquí. Los anuncios requieren revisión y pago confirmado antes de publicarse.</p>
 <p><strong>Aviso:</strong> este resumen provisional no sustituye una política legal definitiva ni constituye consentimiento automático para nuevos tratamientos.</p></div></section>
-    <section id="wtg-world-dialog" role="dialog" aria-modal="true" aria-labelledby="wtg-world-title" hidden><div id="wtg-world-panel"><h2 id="wtg-world-title">🌍 Explora el mundo</h2><p>Selecciona un país y una ciudad. República Dominicana es el piloto con catálogo propio; los demás países se habilitarán con datos y fotografías verificadas.</p><label for="wtg-world-country">País<select id="wtg-world-country"></select></label><label for="wtg-world-region">Provincia / estado / región<select id="wtg-world-region"><option value="">Todas las regiones</option></select></label><label for="wtg-world-city">Ciudad<select id="wtg-world-city"><option value="">Selecciona una ciudad</option></select></label><p id="wtg-world-geography-note">Selecciona un país para consultar sus ciudades disponibles.</p><p id="wtg-world-status" role="status"></p><div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" id="wtg-world-apply">Continuar</button><button type="button" id="wtg-world-close">Cerrar</button></div></div></section>
+    <section id="wtg-world-dialog" role="dialog" aria-modal="true" aria-labelledby="wtg-world-title" hidden><div id="wtg-world-panel"><h2 id="wtg-world-title">📍 Tu ubicación</h2><p>Tu ubicación se detecta automáticamente si das permiso. También puedes elegir otro país, región o ciudad desde aquí.</p><label for="wtg-world-country">País<select id="wtg-world-country"></select></label><label for="wtg-world-region">Provincia / estado / región<select id="wtg-world-region"><option value="">Todas las regiones</option></select></label><label for="wtg-world-city">Ciudad<select id="wtg-world-city"><option value="">Selecciona una ciudad</option></select></label><p id="wtg-world-geography-note">Selecciona un país para consultar sus ciudades disponibles.</p><p id="wtg-world-status" role="status"></p><div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" id="wtg-world-apply">Continuar</button><button type="button" id="wtg-world-close">Cerrar</button><button type="button" id="wtg-world-gps">📍 Usar mi ubicación actual</button></div></div></section>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
 
@@ -247,7 +247,7 @@
   <script defer src="/city-covers.js?v=1"></script>
   <script defer src="/world-geography.js?v=1"></script>
   <script defer src="/app.js?v=12.1"></script>
-  <script defer src="/world-explorer.js?v=1"></script>
+  <script defer src="/world-explorer.js?v=2"></script>
   <script defer src="/experience.js?v=11.0"></script>
   <script defer src="/world-v8.js?v=11.0"></script>
   <script defer src="/photo-atlas.js?v=12.1"></script>
