@@ -7,6 +7,8 @@ on:
       - '.github/workflows/limpiar-fotos-fuera-de-tema.yml'
       - 'Where_to_Go_Proyecto_Completo/tools/clean_photo_quality.py'
       - 'Where_to_Go_Proyecto_Completo/tools/photo_subject_filter.py'
+      - 'Where_to_Go_Proyecto_Completo/public/world-location.js'
+      - 'Where_to_Go_Proyecto_Completo/tests/world-location.test.cjs'
   schedule:
     - cron: '30 10 * * *'  # 06:30, hora de República Dominicana
 permissions:
@@ -34,6 +36,8 @@ jobs:
             Where_to_Go_Proyecto_Completo/tools/build_commons_photo_atlas.py \
             Where_to_Go_Proyecto_Completo/tools/expand_geo_osm_gallery.py \
             Where_to_Go_Proyecto_Completo/tools/expand_verified_place_photos.py
+      - name: Probar arquitectura internacional sin inventar cobertura
+        run: node --test Where_to_Go_Proyecto_Completo/tests/world-location.test.cjs
       - name: Pruebas de regresión de fotos fuera de tema
         run: |
           python - <<'PY'
