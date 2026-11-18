@@ -1,15 +1,15 @@
 # Where to Go — Cobertura de fotos auténticas por lugar
 
-**Actualizado:** 2026-11-17T11:21:46.506782+00:00
+**Actualizado:** 2026-11-18T10:17:19.410026+00:00
 
 - Lugares registrados en el catálogo nacional: **44,696**
 - Fotos principales acreditadas en el directorio nacional: **62**
 - Destinos editoriales con fotos propias: **106**
-- Fotos adicionales guardadas en galerías de lugares: **555**
-- Lugares con galerías de varias imágenes: **92**
-- **Archivos fotográficos únicos acreditados y vinculados a lugares concretos (sin duplicados entre categorías): 677**
-- Fichas identificadas con al menos una foto acreditada: **152**
-- Fichas dentro del catálogo nacional con foto, incluida su galería: **89**
+- Fotos adicionales guardadas en galerías de lugares: **560**
+- Lugares con galerías de varias imágenes: **93**
+- **Archivos fotográficos únicos acreditados y vinculados a lugares concretos (sin duplicados entre categorías): 682**
+- Fichas identificadas con al menos una foto acreditada: **153**
+- Fichas dentro del catálogo nacional con foto, incluida su galería: **90**
 - Demarcaciones con fotos de destinos editoriales: **19**
 - Archivos compartidos entre varias fichas (posibles duplicados de una misma ubicación): **7**
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-17T11:21:46.506782+00:00",
+  "generatedAt": "2026-11-18T10:17:19.410026+00:00",
   "cataloguePlaces": 44696,
   "mainNationalVerifiedPhotos": 62,
   "editorialPhotoEntries": 106,
@@ -25,12 +25,12 @@
     "Santiago": 4,
     "Santo Domingo": 3
   },
-  "galleryPlaces": 92,
-  "galleryPhotoEntries": 555,
-  "galleryDistinctSourceFiles": 555,
-  "uniquePlaceSpecificPhotoFilesAcrossApp": 677,
-  "placeIdsWithAnyVerifiedPhoto": 152,
-  "nationalCataloguePlaceIdsWithPhoto": 89,
+  "galleryPlaces": 93,
+  "galleryPhotoEntries": 560,
+  "galleryDistinctSourceFiles": 560,
+  "uniquePlaceSpecificPhotoFilesAcrossApp": 682,
+  "placeIdsWithAnyVerifiedPhoto": 153,
+  "nationalCataloguePlaceIdsWithPhoto": 90,
   "crossPlacePhotoReuse": [
     {
       "source": "lago enriquillo.jpg",
