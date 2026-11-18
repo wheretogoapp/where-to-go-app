@@ -44,6 +44,19 @@ function init(){
    }
  });
  document.getElementById('wtg-world-change')?.addEventListener('click',()=>button.click());
+ try{
+   const saved=JSON.parse(sessionStorage.getItem('wtg_world_selection')||'null');
+   if(saved?.country && /^[A-Z]{2}$/.test(saved.country) && saved.country!=='DO'){
+     saved.countryName=names().of(saved.country);
+     country.value=saved.country;city.value=saved.city||'';
+     const label=[saved.countryName,saved.city].filter(Boolean).join(' · ');
+     button.textContent='🌍 '+label;
+     setPilotVisible(false);
+     if(notice){notice.textContent='Destino seleccionado: '+label+'. El catálogo internacional todavía no está conectado.';notice.hidden=false}
+     const selected=document.getElementById('wtg-world-selected');if(selected)selected.textContent=label;
+     window.dispatchEvent(new CustomEvent('wtg-world-selected',{detail:saved}));
+   }
+ }catch{}
  dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.hidden=true});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')dialog.hidden=true});
 }
