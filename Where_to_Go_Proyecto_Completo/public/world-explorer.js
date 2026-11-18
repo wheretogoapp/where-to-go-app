@@ -7,6 +7,8 @@ function init(){
  const button=document.getElementById('wtg-world-open'),dialog=document.getElementById('wtg-world-dialog');
  const country=document.getElementById('wtg-world-country'),city=document.getElementById('wtg-world-city');
  const status=document.getElementById('wtg-world-status'),apply=document.getElementById('wtg-world-apply');
+ const region=document.getElementById('wtg-world-region'),geoNote=document.getElementById('wtg-world-geography-note');
+ const geo=window.WTG_GEOGRAPHY;
  if(!button||!dialog||!country||!city||!status||!apply)return;
  const lang=()=>document.documentElement.lang||navigator.language||'es';
  const names=()=>new Intl.DisplayNames([lang()],{type:'region'});
@@ -15,7 +17,18 @@ function init(){
  function setPilotVisible(show){if(main)main.hidden=!show;if(empty)empty.hidden=show;if(notice)notice.hidden=show;}
  country.replaceChildren(...countries.map(({code,name})=>new Option(name,code)));
  country.value='DO';
+ function updateCities(){
+   const list=geo?.cities(country.value)||[];
+   const previousRegion=region.value,previousCity=city.value;
+   region.replaceChildren(new Option('Todas las regiones',''),...([...new Set(list.map(p=>p.region))].sort()).map(x=>new Option(x,x)));
+   if(list.some(p=>p.region===previousRegion))region.value=previousRegion;
+   const filtered=list.filter(p=>!region.value||p.region===region.value);
+   city.replaceChildren(new Option('Selecciona una ciudad',''),...filtered.map(p=>new Option(p.city,p.city)));
+   if(filtered.some(p=>p.city===previousCity))city.value=previousCity;
+   if(geoNote)geoNote.textContent=list.length?list.length+' ciudades de referencia disponibles sin API. No es todavía un directorio completo de municipios.':'Este país aún no tiene ciudades precargadas. Se necesita ampliar el directorio geográfico.';
+ }
  function update(){
+   updateCities();
    const code=country.value;
    const available=world.dataStatus({country:code})==='catalogue-available';
    status.textContent=available
@@ -25,9 +38,11 @@ function init(){
  }
  button.addEventListener('click',()=>{dialog.hidden=false;update();country.focus()});
  document.getElementById('wtg-world-close').addEventListener('click',()=>dialog.hidden=true);
- country.addEventListener('change',update);
+ country.addEventListener('change',()=>{region.value='';city.value='';update()});
+ region.addEventListener('change',updateCities);
  apply.addEventListener('click',()=>{
-   const selection=world.location({country:country.value,city:city.value,language:lang(),source:'manual'});
+   const place=(geo?.cities(country.value)||[]).find(p=>p.city===city.value&&(!region.value||p.region===region.value));
+   const selection=world.location({country:country.value,region:place?.region||region.value,city:place?.city||'',lat:place?.lat??null,lon:place?.lon??null,language:lang(),source:'manual'});
    try{sessionStorage.setItem('wtg_world_selection',JSON.stringify(selection))}catch{}
    dialog.hidden=true;
    selection.countryName=names().of(selection.country);
@@ -48,7 +63,7 @@ function init(){
    const saved=JSON.parse(sessionStorage.getItem('wtg_world_selection')||'null');
    if(saved?.country && /^[A-Z]{2}$/.test(saved.country) && saved.country!=='DO'){
      saved.countryName=names().of(saved.country);
-     country.value=saved.country;city.value=saved.city||'';
+     country.value=saved.country;updateCities();region.value=saved.region||'';updateCities();city.value=saved.city||'';
      const label=[saved.countryName,saved.city].filter(Boolean).join(' · ');
      button.textContent='🌍 '+label;
      setPilotVisible(false);
