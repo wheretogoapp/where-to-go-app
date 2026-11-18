@@ -40,8 +40,9 @@ jobs:
           test -s /tmp/where-to-go-pages/world-geography.js
           grep -q 'id="wtg-world-region"' /tmp/where-to-go-pages/index.html
           grep -q 'id="wtg-world-city"' /tmp/where-to-go-pages/index.html
-          grep -q 'id="wtg-world-open"' /tmp/where-to-go-pages/index.html
+          grep -q 'id="location-pill"' /tmp/where-to-go-pages/index.html
           grep -q 'id="wtg-world-dialog"' /tmp/where-to-go-pages/index.html
+          ! grep -q 'id="wtg-world-open"' /tmp/where-to-go-pages/index.html
           test -s /tmp/where-to-go-pages/assets/wtg-brand.svg
           grep -q 'data-view="tours"' /tmp/where-to-go-pages/index.html
           grep -q 'data-social="google"' /tmp/where-to-go-pages/index.html
@@ -151,7 +152,7 @@ jobs:
               try:
                   with urllib.request.urlopen(urllib.request.Request(base,headers={'User-Agent':'WhereToGo-DeploymentCheck/1.0'}),timeout=20) as response:
                       body=response.read()
-                      if response.status==200 and all(x in body for x in (b'navy-gold-mobile.css',b'data-view="tours"',b'tours.js',b'id="wtg-world-open"',b'world-explorer.js')):
+                      if response.status==200 and all(x in body for x in (b'navy-gold-mobile.css',b'data-view="tours"',b'tours.js',b'id="location-pill"',b'world-explorer.js')):
                           print('Aplicación publicada y verificada:',base)
                           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out:
                               out.write('### Aplicación publicada y comprobada\n'+base+'\n')
