@@ -609,6 +609,12 @@ function wtgImportedPlace(row){
   };
 }
 async function loadPlaces(force=false){
+  // Never request or render Dominican tiles while another country is selected.
+  if(window.WTG_ACTIVE_COUNTRY && window.WTG_ACTIVE_COUNTRY!=='DO'){
+    ++state.loadingId;state.remotePlaces=[];state.places=[];state.catalog=[];
+    state.dataMode='live';state.dataError='Catálogo internacional pendiente de conexión';
+    renderAll();return;
+  }
   const token=++state.loadingId;
   state.googleEnabled=false;state.googleIssue='';state.placesProvider='osm';
   // Do not flash a misleading 0 while downloading the regional catalogue.
@@ -753,7 +759,7 @@ function renderExplore(){const arr=state.category==='todos'&&!state.search ? tou
 }
 function renderFavorites(){const arr=state.favoritePlaces.map(p=>({...p,distance:haversine(state.lat,state.lon,p.lat,p.lon)}));$('favorite-list').innerHTML=arr.length?arr.map(placeCard).join(''):`<div class="empty-state"><span class="empty-emoji">💚</span><h3>¡Aquí comienza tu lista!</h3><p>Cuando encuentres un lugar especial, toca el corazón para guardarlo. Los favoritos se guardan en este dispositivo.</p><button data-empty="explore">Explorar lugares →</button></div>`}
 function toggleFavorite(id){const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);if(!p)return;const has=state.favorites.includes(id);state.favorites=has?state.favorites.filter(x=>x!==id):[...state.favorites,id];state.favoritePlaces=has?state.favoritePlaces.filter(x=>x.id!==id):[...state.favoritePlaces,p];saveJSON('wtg_favorites',state.favorites);saveJSON('wtg_favorite_places',state.favoritePlaces);toast(has?'Eliminado de favoritos':'Guardado en tus favoritos ♥');renderAll();}
-function renderAll(){if(!wtgProvincePreview)updateProvinceHero();updateProviderNotice();renderCategories();renderHome();renderExplore();renderFavorites();if(state.view==='mapa')renderMap();renderTaxis();$('location-label').textContent=state.mode==='gps'?`📍 ${state.city==='Cerca de mí'?'Mi GPS':state.city}`:state.mode==='pending'?'📍 Activar ubicación':`📍 ${state.city}`;window.WTG_EXPERIENCE?.update?.();window.WTG_PILOT?.refresh?.();window.WTG_PHOTO_ATLAS?.refresh?.();}
+function renderAll(){if(!wtgProvincePreview)updateProvinceHero();updateProviderNotice();renderCategories();renderHome();renderExplore();renderFavorites();if(state.view==='mapa')renderMap();renderTaxis();$('location-label').textContent=(window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')?('📍 '+(window.WTG_ACTIVE_DESTINATION||window.WTG_ACTIVE_COUNTRY)):state.mode==='gps'?`📍 ${state.city==='Cerca de mí'?'Mi GPS':state.city}`:state.mode==='pending'?'📍 Activar ubicación':`📍 ${state.city}`;window.WTG_EXPERIENCE?.update?.();window.WTG_PILOT?.refresh?.();window.WTG_PHOTO_ATLAS?.refresh?.();}
 function openPlace(id){window.WTG_auth?.recordView?.(id, state.places.find(p=>p.id===id)?.cat||"atracciones");const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);if(!p)return;
   const c=catInfo(p.cat),fav=state.favorites.includes(id),website=safeUrl(p.website),phone=normalizedPhone(p.phone);
   const osmMap=`https://www.openstreetmap.org/?mlat=${encodeURIComponent(p.lat)}&mlon=${encodeURIComponent(p.lon)}#map=18/${p.lat}/${p.lon}`;
@@ -1047,6 +1053,7 @@ function startup(){createProvinceControls();ensureProviderBanner();putNearbyResu
   if(state.mode!=='pending')void loadPlaces();
   // El visitante entra a ver negocios cercanos. Pide ubicación HTTPS
   // automáticamente; si el navegador la rechaza, ofrece selección manual.
+  if(window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO'){renderAll();return;}
   if(window.isSecureContext&&navigator.geolocation){
     if(navigator.permissions?.query){
       navigator.permissions.query({name:'geolocation'})
@@ -1064,4 +1071,16 @@ function startup(){createProvinceControls();ensureProviderBanner();putNearbyResu
 }
 document.addEventListener('DOMContentLoaded',startup);
 
+window.addEventListener('wtg-world-selected',event=>{
+  const selection=event.detail||{},country=selection.country;
+  if(!/^[A-Z]{2}$/.test(country||''))return;
+  window.WTG_ACTIVE_COUNTRY=country;
+  window.WTG_ACTIVE_DESTINATION=[selection.city,selection.region,selection.countryName].filter(Boolean).join(' · ')||country;
+  ++state.loadingId;
+  state.mode='city';state.city=selection.city||selection.countryName||country;
+  state.region=selection.countryName||country;state.province='';
+  state.category='todos';state.search='';state.places=[];state.remotePlaces=[];state.catalog=[];
+  state.dataMode='live';state.dataError='Catálogo internacional pendiente de conexión';
+  renderAll();
+});
 window.addEventListener('wtg-language-changed',()=>{if(typeof renderAll==='function'&&document.getElementById('home-list'))renderAll();});
