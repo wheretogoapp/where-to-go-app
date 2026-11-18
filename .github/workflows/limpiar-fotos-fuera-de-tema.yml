@@ -34,6 +34,33 @@ jobs:
             Where_to_Go_Proyecto_Completo/tools/build_commons_photo_atlas.py \
             Where_to_Go_Proyecto_Completo/tools/expand_geo_osm_gallery.py \
             Where_to_Go_Proyecto_Completo/tools/expand_verified_place_photos.py
+      - name: Pruebas de regresión de fotos fuera de tema
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0,'Where_to_Go_Proyecto_Completo/tools')
+          from photo_subject_filter import rejection_reason, is_tourism_subject
+          from clean_photo_quality import file_title
+          rejected={
+            'ISS047-E-58225 - View of Earth':'space_satellite',
+            'Mosquito en la playa':'insect_wildlife',
+            'Anolis cybotes 49453081':'insect_wildlife',
+            'Satellite image of Samaná':'space_satellite',
+            'Logo de hotel':'non_destination',
+          }
+          for title,reason in rejected.items():
+            assert rejection_reason(title)==reason,(title,rejection_reason(title))
+          for url,reason in [
+            ('https://commons.wikimedia.org/wiki/File:ISS047-E-58225_-_View_of_Earth.jpg','space_satellite'),
+            ('https://commons.wikimedia.org/wiki/File:Anolis_cybotes_49453081.jpg','insect_wildlife'),
+          ]:
+            assert rejection_reason(file_title(url))==reason,url
+          for title in ('Playa Dorada Puerto Plata','Fortaleza San Felipe','Parque Nacional Los Haitises'):
+            assert not rejection_reason(title),title
+            assert is_tourism_subject(title),title
+          assert not is_tourism_subject('IMG_0042'), 'Una foto genérica no es un destino'
+          print('Pruebas de regresión de fotografías: correctas')
+          PY
       - name: Retirar fotos de satélites, insectos, animales y contenido no turístico
         run: |
           python -u Where_to_Go_Proyecto_Completo/tools/clean_photo_quality.py \
