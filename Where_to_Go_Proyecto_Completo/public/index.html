@@ -235,7 +235,7 @@
 <h3>Control de tus datos</h3><p>Puedes cerrar sesión y desactivar la personalización. Para solicitar acceso, corrección o eliminación de datos, necesitamos habilitar un canal de atención verificado antes del lanzamiento público.</p>
 <h3>Condiciones de uso</h3><p>Where to Go está en fase de prueba. Las fichas, fotos, horarios, precios y excursiones deben comprobarse con el proveedor. Ninguna excursión está certificada como segura por aparecer aquí. Los anuncios requieren revisión y pago confirmado antes de publicarse.</p>
 <p><strong>Aviso:</strong> este resumen provisional no sustituye una política legal definitiva ni constituye consentimiento automático para nuevos tratamientos.</p></div></section>
-    <section id="wtg-world-dialog" role="dialog" aria-modal="true" aria-labelledby="wtg-world-title" hidden><div id="wtg-world-panel"><h2 id="wtg-world-title">🌍 Explora el mundo</h2><p>Selecciona un país y una ciudad. República Dominicana es el piloto con catálogo propio; los demás países se habilitarán con datos y fotografías verificadas.</p><label for="wtg-world-country">País<select id="wtg-world-country"></select></label><label for="wtg-world-city">Ciudad (opcional)<input id="wtg-world-city" type="text" maxlength="120" placeholder="Escribe una ciudad"></label><p id="wtg-world-status" role="status"></p><div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" id="wtg-world-apply">Continuar</button><button type="button" id="wtg-world-close">Cerrar</button></div></div></section>
+    <section id="wtg-world-dialog" role="dialog" aria-modal="true" aria-labelledby="wtg-world-title" hidden><div id="wtg-world-panel"><h2 id="wtg-world-title">🌍 Explora el mundo</h2><p>Selecciona un país y una ciudad. República Dominicana es el piloto con catálogo propio; los demás países se habilitarán con datos y fotografías verificadas.</p><label for="wtg-world-country">País<select id="wtg-world-country"></select></label><label for="wtg-world-region">Provincia / estado / región<select id="wtg-world-region"><option value="">Todas las regiones</option></select></label><label for="wtg-world-city">Ciudad<select id="wtg-world-city"><option value="">Selecciona una ciudad</option></select></label><p id="wtg-world-geography-note">Selecciona un país para consultar sus ciudades disponibles.</p><p id="wtg-world-status" role="status"></p><div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" id="wtg-world-apply">Continuar</button><button type="button" id="wtg-world-close">Cerrar</button></div></div></section>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
 
@@ -245,6 +245,7 @@
   <script defer src="/config.js?v=6"></script>
   <script defer src="/world-location.js?v=1"></script>
   <script defer src="/city-covers.js?v=1"></script>
+  <script defer src="/world-geography.js?v=1"></script>
   <script defer src="/app.js?v=12.1"></script>
   <script defer src="/world-explorer.js?v=1"></script>
   <script defer src="/experience.js?v=11.0"></script>
