@@ -49,6 +49,9 @@ jobs:
           node --check /tmp/where-to-go-pages/app.js
           node --check /tmp/where-to-go-pages/world-location.js
           node --check /tmp/where-to-go-pages/world-explorer.js
+          grep -q 'wtg-world-selected' /tmp/where-to-go-pages/app.js
+          grep -q 'WTG_ACTIVE_COUNTRY' /tmp/where-to-go-pages/app.js
+          grep -q 'wtg_world_selection' /tmp/where-to-go-pages/world-explorer.js
           node --check /tmp/where-to-go-pages/city-covers.js
           node --test Where_to_Go_Proyecto_Completo/tests/world-location.test.cjs
           python Where_to_Go_Proyecto_Completo/tools/test_pages_region_catalog.py /tmp/where-to-go-pages
