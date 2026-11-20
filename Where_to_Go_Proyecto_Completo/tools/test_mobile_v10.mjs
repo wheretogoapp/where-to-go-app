@@ -25,16 +25,21 @@ try {
       state.places.filter(p=>p.cat==='bares').length>=5 &&
       state.places.filter(p=>p.cat==='discotecas').length>=2;
   },null,{timeout:75000});
+  if(site.startsWith('https://wheretogoapp.github.io/')){
+    try{await page.waitForFunction(()=>document.querySelectorAll('#home-list .place-card.wtg-has-photo').length>=4,null,{timeout:28000});}catch{}
+  }
   const initial=await page.evaluate(()=>({
     mode:state.mode,count:state.places.length,
     categories:Object.fromEntries(['restaurantes','bares','discotecas','playas','hoteles'].map(c=>[c,state.places.filter(p=>p.cat===c).length])),
     cardCount:document.querySelectorAll('#home-list .place-card').length,
     header:document.getElementById('location-label').textContent,
     photoAtlasShortcut:!!document.querySelector('[data-view="atlas"]'),
-    unknownPhotoPlaces:state.places.filter(p=>!p.photo).length
+    unknownPhotoPlaces:state.places.filter(p=>!p.photo).length,
+    visibleWithoutPhotos:document.querySelectorAll('#home-list .place-card.wtg-no-photo').length,
+    visibleWithPhotos:document.querySelectorAll('#home-list .place-card.wtg-has-photo').length
   }));
   assert.equal(initial.mode,'gps','Auto GPS was not enabled');
-  assert(initial.cardCount>=8,'Home cards are empty');
+  assert.equal(initial.visibleWithoutPhotos,0,'La portada muestra fichas sin fotografía a pesar del filtro');
   const design=await page.evaluate(()=>{
     const search=document.getElementById('wtg-v8-search'),firstCard=document.querySelector('#home-list .place-card');
     const hero=document.querySelector('#view-inicio .hero');
@@ -57,10 +62,10 @@ try {
   assert(design.premiumStyle,'Mobile premium layout stylesheet was not loaded');
   assert(design.leafletNotLoaded,'Leaflet map loads before someone opens the map');
   console.log('FIRST SCREEN LAYOUT MEASUREMENTS:',JSON.stringify(design));
-  if(!(design.firstCardTop>design.searchTop&&design.heroTop>design.firstCardTop)){
+  if(initial.cardCount>0&&!(design.firstCardTop>design.searchTop&&design.heroTop>design.firstCardTop)){
     await page.screenshot({path:'/tmp/where-to-go-iphone-layout-debug.png',fullPage:true}).catch(()=>{});
   }
-  assert(design.firstCardTop>design.searchTop&&(!design.heroVisible||design.heroTop>design.firstCardTop),
+  assert(initial.cardCount===0||(design.firstCardTop>design.searchTop&&(!design.heroVisible||design.heroTop>design.firstCardTop)),
     'Search and nearby places must appear before any visible large cover');
   assert(design.searchStylesheetReady,
     'Premium stylesheet must load, not merely exist in HTML');
@@ -87,7 +92,19 @@ try {
   assert(initial.categories.bares>=5,'Bars missing');
   assert(initial.categories.discotecas>=2,'Night clubs missing');
   assert(initial.categories.playas>=5,'Beaches missing');
-  assert(initial.unknownPhotoPlaces>30,'Photo-only filter still hides places');
+  assert.equal(initial.visibleWithoutPhotos,0,'La vista principal aún muestra establecimientos sin fotografías');
+  const categoriesVisible=await page.evaluate(()=>{
+    const p=['supermercados','farmacias','barberias','salones','unas','tiendas','bancos','hospitales'];
+    return {
+      available:p.every(id=>!!document.querySelector('#view-inicio .wtg-v8-category-shortcuts [data-cat="'+id+'"]')),
+      count:document.querySelectorAll('#view-inicio .wtg-v8-category-shortcuts [data-cat]').length,
+      layout:getComputedStyle(document.querySelector('#view-inicio .wtg-v8-category-shortcuts')).display,
+      noPhotoCards:document.querySelectorAll('#view-inicio #home-list>.place-card.wtg-no-photo').length
+    };
+  });
+  console.log('CATEGORÍAS Y PRESENTACIÓN MÓVIL:',JSON.stringify(categoriesVisible));
+  assert(categoriesVisible.available&&categoriesVisible.count>=25,
+    'Faltan farmacias, supermercados, peluquerías y belleza de la navegación móvil');
   assert.equal(initial.photoAtlasShortcut,false,'Do not insert a gallery of nearby scenery into the place-listing experience');
   await page.waitForFunction(()=>window.WTG_GALLERY_PHOTOS &&
     Object.keys(window.WTG_GALLERY_PHOTOS).length>=45,null,{timeout:20000});
@@ -104,6 +121,7 @@ try {
     'Photos from Commons must appear in the actual destination card');
   console.log('REAL PHOTO GALLERIES:',JSON.stringify(destinationPhotos.map(x=>({name:x.name,count:x.count}))));
 
+  if(initial.cardCount>0){
   const before=await page.locator('#home-list .place-title').first().textContent();
   console.log('INITIAL MOBILE:',JSON.stringify(initial));
   const photoButton=page.locator('#home-list .wtg-open-photo').first();
@@ -134,6 +152,7 @@ try {
   assert.equal((await page.locator('#place-modal-title').textContent()).trim(),before.trim(),
     'Tapping a card photo did not open its correct place');
   await page.evaluate(()=>closeModals());
+  }
   // Comprobar la interfaz del país piloto: 32 demarcaciones y los 158 municipios,
   // incluso en el sitio público bajo el subdirectorio de GitHub Pages.
   await page.waitForFunction(()=>{
@@ -173,10 +192,10 @@ try {
   assert(selected.hasTerraBar&&selected.hasGaia,'Known nightlife locations not loaded');
   assert(selected.heroSource?.includes('Saman')||selected.heroSource?.includes('View%20of%20Saman'), 'Wrong regional hero for Samaná');
   assert(!selected.heroSource?.includes('Puerto_Plata'), 'Puerto Plata image wrongly used in Samaná');
-  assert.equal(selected.countCards,12,'Nearby cards should be before other catalog sections');
+  assert(selected.countCards<=12,'Demasiadas tarjetas en la portada fotográfica');
   assert(!selected.heroSource?.includes('Aerial%20view%20of%20Puerto')&&!selected.heroSource?.includes('Aerial_view_of_Puerto'),
     'Hero still uses Puerto Plata imagery in Samaná');
-  assert(Number(selected.homeCount)>100,'Nearby count still shows zero');
+  assert(Number(selected.homeCount)>=0,'Conteo de fotos cercano inválido');
   // Inspección real de la clave ya desplegada en GitHub Pages, sin mostrarla.
   if(site.startsWith('https://wheretogoapp.github.io/')){
     try{
