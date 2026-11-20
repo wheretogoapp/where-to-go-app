@@ -11,6 +11,16 @@
 @media(min-width:770px){
   #view-explorar .wtg-google-search-submit{width:auto;min-width:275px}
 }
+.wtg-category-bar-title{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin:8px 0 12px;color:#f5d890;font-family:Outfit,"DM Sans",sans-serif;
+}
+.wtg-category-bar-title strong{font-size:13px;font-weight:850;letter-spacing:.04em}
+.wtg-category-bar-title button{
+  border:1px solid #e6ba68;background:#112c52;color:#ffe1a0;
+  font:700 12px "DM Sans",sans-serif;border-radius:99px;padding:9px 11px;
+  cursor:pointer;white-space:nowrap
+}
 @media(max-width:769px){
   #view-inicio .wtg-v8-category-shortcuts{
     display:grid!important;grid-auto-flow:column!important;
