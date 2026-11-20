@@ -140,6 +140,8 @@ test('Fotos progresivas de RD tienen límite de consultas y son efímeras',()=>{
   assert(code.includes('void enrichVisiblePhotoCards(token,6)'));
   assert(code.includes('data-more-photo'));
   assert(code.includes('matchPhoto({name:p.name,lat:p.lat,lon:p.lon})'));
+  assert(code.includes('void fetchVerifiedGooglePhoto(id)'));
+  assert(code.includes('state.search?('));
 });
 
 
