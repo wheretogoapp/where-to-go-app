@@ -220,9 +220,14 @@ try {
       }catch{}
       const displayed=await page.evaluate(()=>{
         const imgs=[...document.querySelectorAll('#home-list img.actual-photo')];
+        const cards=[...document.querySelectorAll('#home-list .place-card')];
         return {withImage:imgs.length,loaded:imgs.filter(i=>i.complete&&i.naturalWidth>0).length,
           failed:imgs.filter(i=>i.complete&&i.naturalWidth===0).length,
-          pending:imgs.filter(i=>!i.complete).length};
+          pending:imgs.filter(i=>!i.complete).length,
+          cards:cards.length,placeholders:document.querySelectorAll('#home-list .wtg-photo-placeholder').length,
+          firstNames:cards.slice(0,5).map(p=>p.querySelector('.place-title')?.textContent),
+          stateGoogle:state.places.filter(p=>p.source==='google'&&p.photo).length,
+          stateCount:state.places.length,currentView:state.view};
       });
       console.log('FOTOS VISIBLES PUERTO PLATA:',JSON.stringify(displayed));
       assert(displayed.loaded>0,'Puerto Plata: hay enlaces de Google pero ninguna foto carga en la interfaz');
