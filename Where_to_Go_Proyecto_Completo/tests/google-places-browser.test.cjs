@@ -204,9 +204,13 @@ test('Búsqueda por nombre devuelve exclusivamente fichas con fotos reales',asyn
     photos:[{getURI:()=> 'https://example.com/wing-waffle.jpg',
       authorAttributions:[{displayName:'Autor verificado',uri:'https://maps.google.com/author'}]}]
   };
+  const Place={searchByText:async args=>{
+    request.push(args);
+    return {places:[place,{...place,id:'sin-foto',photos:[]}]};
+  }};
   const window={
     WTG_GOOGLE_MAPS_KEY:'AIzaTestKeyForBrowserOnly1234567890',
-    google:{maps:{importLibrary:async()=>({Place:{searchByText:async args=>{request.push(args);return {places:[place,{...place,id:'sin-foto',photos:[]}]}}})}}
+    google:{maps:{importLibrary:async()=>({Place})}}
   };
   vm.runInNewContext(adapter,{window,console});
   const res=await window.WTG_GOOGLE_PLACES.searchText({query:'Wing and Waffle',lat:19.7934,lon:-70.6884});
