@@ -4,7 +4,7 @@
 (function(root){
 'use strict';
 const categories={
- restaurantes:['restaurant'],cafes:['cafe'],bares:['bar'],hoteles:['lodging'],
+ restaurantes:['restaurant'],cafes:['cafe'],bares:['bar'],hoteles:['hotel'],
  atracciones:['tourist_attraction','museum'],parques:['park'],supermercados:['supermarket'],
  farmacias:['pharmacy'],bancos:['bank'],gasolineras:['gas_station'],
  entretenimiento:['amusement_park','movie_theater'],taxis:['taxi_stand']
@@ -30,9 +30,11 @@ async function nearby({lat,lon,radius=12000,category='todos'}){
  if(!await load())return {status:'unconfigured',places:[]};
  try{
   const {Place}=await root.google.maps.importLibrary('places');
-  const types=categories[category]||['tourist_attraction','restaurant','cafe','lodging','museum','park'];
-  const results=await Promise.allSettled(types.slice(0,4).map(async type=>{
-   const response=await Place.searchNearby({fields:['id','displayName','location','formattedAddress','types','googleMapsURI','nationalPhoneNumber','rating','photos'],locationRestriction:{center:{lat,lng:lon},radius:Math.min(50000,Math.max(100,radius))},includedPrimaryTypes:[type],maxResultCount:20,rankPreference:'DISTANCE'});
+  // Consultas limitadas: no descargar catálogos masivos ni multiplicar llamadas pagadas.
+  const types=category==='todos'?['tourist_attraction','restaurant','hotel']:(categories[category]||[]);
+  if(!types.length)return {status:'unsupported',places:[]};
+  const results=await Promise.allSettled(types.slice(0,3).map(async type=>{
+   const response=await Place.searchNearby({fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],locationRestriction:{center:{lat,lng:lon},radius:Math.min(50000,Math.max(100,radius))},includedPrimaryTypes:[type],maxResultCount:20,rankPreference:'DISTANCE'});
    return response.places||[];
   }));
   const map=new Map();let failures=0;
@@ -40,7 +42,15 @@ async function nearby({lat,lon,radius=12000,category='todos'}){
    if(result.status!=='fulfilled'){failures++;continue}
    for(const p of result.value){
     if(!p.id||!p.location||!p.displayName)continue;
-    map.set(p.id,{id:'google:'+p.id,googlePlaceId:p.id,name:p.displayName,lat:p.location.lat(),lon:p.location.lng(),address:p.formattedAddress||'',phone:p.nationalPhoneNumber||'',mapUrl:p.googleMapsURI||'',types:p.types||[],rating:p.rating??null,source:'google'});
+    const firstPhoto=Array.isArray(p.photos)?p.photos[0]:null;
+    let photo='';
+    try{if(typeof firstPhoto?.getURI==='function')photo=firstPhoto.getURI({maxWidth:720})||'';}catch{}
+    const photoAttributions=Array.isArray(firstPhoto?.authorAttributions)?firstPhoto.authorAttributions.map(a=>({displayName:a.displayName||'',uri:a.uri||''})).filter(a=>a.displayName):[];
+    map.set(p.id,{
+      id:'google:'+p.id,googlePlaceId:p.id,name:p.displayName,
+      lat:p.location.lat(),lon:p.location.lng(),address:p.formattedAddress||'',
+      mapUrl:p.googleMapsURI||'',types:p.types||[],photo,photoAttributions,source:'google'
+    });
    }
   }
   return {status:map.size?'ok':failures===results.length?'error':'empty',places:[...map.values()],failures};
