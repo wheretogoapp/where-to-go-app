@@ -42,7 +42,7 @@
     const form=$('wtg-v8-search'),field=$('wtg-v8-query');if(!form||!field)return;
     form.addEventListener('submit',e=>{
       e.preventDefault();const query=field.value.trim();
-      try{state.category='todos';state.search=query;navigate('explorar');renderExplore();$('search-input')?.focus({preventScroll:true});}
+      try{state.category='todos';state.search=query;navigate('explorar');renderExplore();$('search-input')?.focus({preventScroll:true});if(query.length>=3)void window.WTG_GOOGLE_TEXT_SEARCH?.();}
       catch{document.querySelector('[data-view="explorar"]')?.click();if($('search-input')){$('search-input').value=query;$('search-input').dispatchEvent(new Event('input',{bubbles:true}));}}
     });
   }
