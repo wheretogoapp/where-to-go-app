@@ -611,8 +611,18 @@ function wtgImportedPlace(row){
 async function loadPlaces(force=false){
   // Never request or render Dominican tiles while another country is selected.
   if(window.WTG_ACTIVE_COUNTRY && window.WTG_ACTIVE_COUNTRY!=='DO'){
-    ++state.loadingId;state.remotePlaces=[];state.places=[];state.catalog=[];
-    state.dataMode='live';state.dataError='Catálogo internacional pendiente de conexión';
+    const token=++state.loadingId;
+    state.remotePlaces=[];state.places=[];state.catalog=[];state.dataMode='loading';
+    state.dataError='Buscando lugares en el destino seleccionado…';renderAll();
+    if(!window.WTG_GOOGLE_PLACES?.configured()){
+      state.dataMode='live';state.dataError='Lugares disponibles al activar Google Places. La selección de país y ciudad funciona sin la API.';renderAll();return;
+    }
+    const response=await window.WTG_GOOGLE_PLACES.nearby({lat:state.lat,lon:state.lon,radius:state.radius,category:state.category});
+    if(token!==state.loadingId)return;
+    const typeToCategory={restaurant:'restaurantes',cafe:'cafes',bar:'bares',lodging:'hoteles',tourist_attraction:'atracciones',museum:'atracciones',park:'parques',supermarket:'supermercados',pharmacy:'farmacias',bank:'bancos',gas_station:'gasolineras',amusement_park:'entretenimiento',movie_theater:'entretenimiento',taxi_stand:'taxis'};
+    const places=response.places.map(p=>({...p,cat:p.types.map(t=>typeToCategory[t]).find(Boolean)||'atracciones',distance:haversine(state.lat,state.lon,p.lat,p.lon),nameKnown:true,photo:'',googleDirections:p.mapUrl}));
+    state.places=places;state.remotePlaces=places;state.placesProvider='google';state.dataMode='live';
+    state.dataError=response.status==='error'?'Google Places no respondió. Comprueba API, restricciones y facturación.':places.length?'Resultados de Google Places para el destino seleccionado.':'No hay resultados disponibles para esta zona.';
     renderAll();return;
   }
   const token=++state.loadingId;
@@ -1084,5 +1094,6 @@ window.addEventListener('wtg-world-selected',event=>{
   state.category='todos';state.search='';state.places=[];state.remotePlaces=[];state.catalog=[];
   state.dataMode='live';state.dataError='Catálogo internacional pendiente de conexión';
   renderAll();
+  if(country!=='DO' && selection.coordinates)void loadPlaces();
 });
 window.addEventListener('wtg-language-changed',()=>{if(typeof renderAll==='function'&&document.getElementById('home-list'))renderAll();});
