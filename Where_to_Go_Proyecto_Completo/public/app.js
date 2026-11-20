@@ -224,15 +224,15 @@ function placeGalleryPhotos(p){
   if(!p)return [];
   const first=p.photo&&p.photoSource&&p.photoAttribution?
     [{url:p.photo,source:p.photoSource,attribution:p.photoAttribution,license:p.photoLicense||''}]:[];
-  const extras=[...(Array.isArray(p.photos)?p.photos:[]),...((window.WTG_GALLERY_PHOTOS||{})[p.id]||[])];
+  const extras=[...(Array.isArray(p.googlePhotos)?p.googlePhotos:[]),...(Array.isArray(p.photos)?p.photos:[]),...((window.WTG_GALLERY_PHOTOS||{})[p.id]||[])];
   const seen=new Set(),list=[];
   for(const item of [...first,...extras]){
     if(!item||typeof item!=='object')continue;
     const url=safeUrl(item.url||item.photo),source=safeUrl(item.source||item.photoSource);
     const attribution=String(item.attribution||item.photoAttribution||'').trim();
-    if(!url||!source||!attribution||seen.has(source))continue;
-    seen.add(source);
-    list.push({url,source,attribution,license:safeUrl(item.license||item.photoLicense||'')});
+    if(!url||!source||!attribution||seen.has(url))continue;
+    seen.add(url);
+    list.push({url,source,attribution,provider:item.provider||'',license:safeUrl(item.license||item.photoLicense||'')});
     if(list.length>=19)break;
   }
   return list;
@@ -243,11 +243,11 @@ function placeGalleryMarkup(p){
   const first=photos[0],multiple=photos.length>1;
   return `<section class="wtg-gallery" data-gallery-place="${esc(p.id)}" data-gallery-current="0" aria-label="Fotografías auténticas de ${esc(p.name)}">
     <div class="wtg-gallery-stage">
-      <img class="actual-photo wtg-gallery-main" src="${esc(first.url)}" alt="Fotografía 1 de ${photos.length} del lugar ${esc(p.name)}" decoding="async" referrerpolicy="no-referrer">
+      <img class="actual-photo wtg-gallery-main" src="${esc(first.url)}" alt="Fotografía 1 de ${photos.length} del lugar ${esc(p.name)}" decoding="async" referrerpolicy="${first.provider==='google'?'strict-origin-when-cross-origin':'no-referrer'}">
       ${multiple?'<button type="button" class="wtg-gallery-prev" data-gallery-step="-1" aria-label="Fotografía anterior">‹</button><button type="button" class="wtg-gallery-next" data-gallery-step="1" aria-label="Siguiente fotografía">›</button>':''}
       <span class="wtg-gallery-count">1 / ${photos.length} fotos reales</span>
     </div>
-    ${multiple?'<div class="wtg-gallery-thumbnails" role="group" aria-label="Elegir fotografía">'+photos.map((photo,i)=>`<button type="button" data-gallery-thumb="${i}" aria-label="Ver foto ${i+1}" aria-pressed="${i===0}" class="${i===0?'active':''}"><img src="${esc(photo.url)}" alt="" loading="lazy"></button>`).join('')+'</div>':''}
+    ${multiple?'<div class="wtg-gallery-thumbnails" role="group" aria-label="Elegir fotografía">'+photos.map((photo,i)=>`<button type="button" data-gallery-thumb="${i}" aria-label="Ver foto ${i+1}" aria-pressed="${i===0}" class="${i===0?'active':''}"><img src="${esc(photo.url)}" alt="" loading="lazy" referrerpolicy="${photo.provider==='google'?'strict-origin-when-cross-origin':'no-referrer'}"></button>`).join('')+'</div>':''}
     <p class="wtg-gallery-credit">Foto: <span data-gallery-attribution>${esc(first.attribution)}</span> · <a data-gallery-source href="${esc(first.source)}" target="_blank" rel="noopener noreferrer">Ver original y derechos ↗</a><a data-gallery-license href="${esc(first.license||first.source)}" target="_blank" rel="noopener noreferrer">Licencia</a></p>
   </section>`;
 }
@@ -260,7 +260,7 @@ function selectGalleryPhoto(container,index){
   const at=(index%photos.length+photos.length)%photos.length,entry=photos[at];
   container.dataset.galleryCurrent=String(at);
   const img=container.querySelector('.wtg-gallery-main');
-  if(img){img.src=entry.url;img.alt='Fotografía '+(at+1)+' de '+photos.length+' del lugar '+p.name}
+  if(img){img.referrerPolicy=entry.provider==='google'?'strict-origin-when-cross-origin':'no-referrer';img.src=entry.url;img.alt='Fotografía '+(at+1)+' de '+photos.length+' del lugar '+p.name}
   const label=container.querySelector('.wtg-gallery-count');
   if(label)label.textContent=(at+1)+' / '+photos.length+' fotos reales';
   const credit=container.querySelector('[data-gallery-attribution]');if(credit)credit.textContent=entry.attribution;
@@ -713,7 +713,7 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
     return {...p,cat,googleId:p.googlePlaceId,googleUri:p.mapUrl,googleDirections:p.mapUrl,source:'google',
       distance:haversine(state.lat,state.lon,p.lat,p.lon),nameKnown:true,detailsLoaded:true,
       description:'Información y fotografía del establecimiento en Google Maps.',
-      photo:p.photo||'',photoAttributions:p.photoAttributions||[],photoSource:'',photoAttribution:'',photos:[]};
+      photo:p.photo||'',googlePhotos:p.photos||[],photoAttributions:p.photoAttributions||[],photoSource:'',photoAttribution:'',photos:[]};
   });
   // Relacionar fotografías solo con el negocio correspondiente.
   // Sin llamadas adicionales ni suposiciones sobre negocios vecinos.
@@ -728,18 +728,19 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
         existing.photo=google.photo;
         existing.googlePhotoMapUrl=google.mapUrl||google.googleUri;
         existing.googlePhotoAttributions=google.photoAttributions||[];
+        existing.googlePhotos=google.googlePhotos||[];
         photosLinked++;
       }
     }else unmatched.push(google);
   }
   wtgGoogleNearby=unmatched;
   applyNearby(localPlaces,`Catálogo local y ${unmatched.length} fichas adicionales de Google Maps · ${photosLinked} fotos relacionadas · ${state.city}`);
-  void enrichVisiblePhotoCards(token,4);
+  void enrichVisiblePhotoCards(token,6);
 }
 
 // Búsqueda adicional en pantalla: máximo 24 consultas puntuales por sesión.
 // No guardamos ni descargamos fotografías de Google al catálogo permanente.
-let wtgPhotoBudget=24;
+let wtgPhotoBudget=48;
 let wtgPhotoMatching=false;
 const wtgPhotoAttempted=new Set();
 function candidatesForGooglePhoto(){
@@ -765,6 +766,7 @@ async function enrichVisiblePhotoCards(token,maxRequests=4){
       if(info?.status==='ok'&&safeUrl(info.photo)){
         p.photo=info.photo;p.googlePhotoMapUrl=info.mapUrl||'';
         p.googlePhotoAttributions=info.photoAttributions||[];
+        p.googlePhotos=info.photos||[];
         photos++;
         // Actualizar las tarjetas una sola vez al final del lote para no
         // cancelar imágenes que aún se descargan en el navegador.
@@ -786,6 +788,7 @@ async function fetchVerifiedGooglePhoto(id){
   if(result.status==='ok'&&safeUrl(result.photo)){
     p.photo=result.photo;p.googlePhotoMapUrl=result.mapUrl;
     p.googlePhotoAttributions=result.photoAttributions||[];
+    p.googlePhotos=result.photos||[];
     renderAll();
     if(state.modal==='place-modal'&&$('place-modal-title')?.textContent===p.name)openPlace(id);
     toast('Fotografía del establecimiento encontrada.');
@@ -868,7 +871,7 @@ function renderProvincePremium(){
     return `<article class="wtg-provincial-premium" data-premium-slide="${i}" ${i?'hidden':''}><div class="premium-marker">PUBLICIDAD · PREMIUM · ${esc(prov)}</div><div><strong>${esc(x.name)}</strong><small>${esc(cat.name)} · ${esc(x.province)}</small></div>${source?`<a target="_blank" rel="noopener noreferrer" href="${esc(source)}">Ver negocio ↗</a>`:''}</article>`;
   }).join('');
 }
-function renderHome(){renderProvincePremium();const teaser=document.querySelector('.taxi-teaser');if(teaser)teaser.hidden=!(state.province==='Puerto Plata'||['Puerto Plata','Sosúa','Cabarete'].includes(state.city));const list=$('home-list');$('home-count').textContent=state.dataMode==='loading'?'...':state.places.filter(p=>p.distance<=state.radius+100&&isTouristDiscovery(p)).length;const candidates=state.places.filter(p=>p.distance<=state.radius+100&&isTouristDiscovery(p));const googleWithPhotos=sortByDistance(candidates.filter(p=>p.source==='google'&&p.photo)).slice(0,4);const selected=new Set(googleWithPhotos.map(p=>p.id));const sorted=[...googleWithPhotos,...tourismSort(candidates.filter(p=>!selected.has(p.id)))].slice(0,12);
+function renderHome(){renderProvincePremium();const teaser=document.querySelector('.taxi-teaser');if(teaser)teaser.hidden=!(state.province==='Puerto Plata'||['Puerto Plata','Sosúa','Cabarete'].includes(state.city));const list=$('home-list');$('home-count').textContent=state.dataMode==='loading'?'...':state.places.filter(p=>p.distance<=state.radius+100&&isTouristDiscovery(p)).length;const candidates=state.places.filter(p=>p.distance<=state.radius+100&&isTouristDiscovery(p));const googleWithPhotos=sortByDistance(candidates.filter(p=>p.photo||placeGalleryPhotos(p).length)).slice(0,9);const selected=new Set(googleWithPhotos.map(p=>p.id));const sorted=[...googleWithPhotos,...tourismSort(candidates.filter(p=>!selected.has(p.id)))].slice(0,12);
   list.innerHTML=state.dataMode==='loading'&&!sorted.length?'<div class="wtg-loading-cards" aria-label="Buscando lugares cerca de ti"><div class="wtg-skeleton-card"></div><div class="wtg-skeleton-card"></div><div class="wtg-skeleton-card"></div></div>':sorted.length?sorted.map(placeCard).join(''):emptyBlock('No hay lugares cartografiados en este radio; amplía la distancia o cambia de zona');
   const mainPromo=document.getElementById('province-anchor-sponsor');
   if(mainPromo){mainPromo.hidden=provinceFromCity()!=='Puerto Plata';}
@@ -883,7 +886,7 @@ function renderExplore(){const arr=state.category==='todos'&&!state.search ? tou
   const featured=arr.filter(p=>p.source==='google'&&p.photo);const featuredIds=new Set(featured.map(p=>p.id));const sortedVisible=featured.length?[...featured,...arr.filter(p=>!featuredIds.has(p.id))]:arr;const shown=sortedVisible.slice(0,state.exploreLimit||80);
   const fetchPhotoButton=window.WTG_GOOGLE_PLACES?.configured()&&wtgPhotoBudget>0&&
      candidatesForGooglePhoto().length&&!wtgPhotoMatching
-     ?`<div class="wtg-more-explore"><button type="button" data-more-photo="yes">📷 Buscar fotos de otros negocios cercanos (hasta 8 consultas)</button></div>`:'';
+     ?`<div class="wtg-more-explore"><button type="button" data-more-photo="yes">📷 Ampliar fotos de negocios cercanos (hasta 12 consultas)</button></div>`:'';
   $('explore-list').innerHTML=state.dataMode==='loading'?'<div class="loading-state"><span class="spinner"></span><div>Consultando lugares cercanos...</div></div>':arr.length?shown.map(placeCard).join('')+(arr.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${arr.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+fetchPhotoButton:emptyBlock('No se encontraron lugares con estos filtros', 'Ampliar búsqueda','radius');
   $('filter-categories').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.category));$('distance-select').value=String(state.radius);if($('search-input').value!==state.search)$('search-input').value=state.search;
 }
@@ -1089,7 +1092,7 @@ function startup(){createProvinceControls();ensureProviderBanner();putNearbyResu
     const c=e.target.closest('[data-cat]');if(c){if(c.dataset.cat==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=c.dataset.cat;state.search='';const expand=state.mode!=='gps'&&state.radius<30000;if(expand)state.radius=30000;navigate('explorar');void loadPlaces();return}
     const f=e.target.closest('[data-filter]');if(f){if(f.dataset.filter==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=f.dataset.filter;const expand=state.mode!=='gps'&&state.category!=='todos'&&state.radius<30000;if(expand)state.radius=30000;void loadPlaces();return}
     const more=e.target.closest('[data-more-explore]');if(more){state.exploreLimit=(state.exploreLimit||80)+80;renderExplore();return}
-    const morePhotos=e.target.closest('[data-more-photo]');if(morePhotos){void enrichVisiblePhotoCards(state.loadingId,8);return}
+    const morePhotos=e.target.closest('[data-more-photo]');if(morePhotos){void enrichVisiblePhotoCards(state.loadingId,12);return}
     const googlePhoto=e.target.closest('[data-fetch-google-photo]');if(googlePhoto){void fetchVerifiedGooglePhoto(googlePhoto.dataset.fetchGooglePhoto);return}
     const photo=e.target.closest('[data-photo-place]');if(photo){openReport(photo.dataset.photoPlace);return}
     const missing=e.target.closest('[data-report-missing]');if(missing){openReport();return}
@@ -1116,7 +1119,7 @@ function startup(){createProvinceControls();ensureProviderBanner();putNearbyResu
   $('use-live-location').onclick=requestLocation;$('province-select').onchange=refreshMunicipalitySelect;$('municipality-select').onchange=()=>{$('municipality-go').disabled=!$('municipality-select').value};$('municipality-go').onclick=selectMunicipality;$('municipal-retry').onclick=()=>{ $('municipal-retry').hidden=true;loadMunicipalities()};$('business-cta').onclick=()=>openRegister('basico');$('home-see-taxis').onclick=()=>navigate('taxis');$('taxi-register').onclick=()=>{openRegister('basico');$('business-category').value='taxis'};$('add-another-business').onclick=()=>openRegister('basico');$('explore-map').onclick=()=>navigate('mapa');
   $('recenter-map').onclick=()=>{if(state.map)state.map.setView([state.lat,state.lon],13)};
   if($('retry-google-provider'))$('retry-google-provider').onclick=()=>toast('Esta versión funciona sin Google Places.');
-  $('search-input').addEventListener('input',e=>{state.search=e.target.value.trim();renderExplore()});$('search-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&state.googleEnabled)loadPlaces()});$('clear-search').onclick=()=>{state.search='';$('search-input').value='';renderExplore()};
+  $('search-input').addEventListener('input',e=>{state.search=e.target.value.trim();renderExplore()});$('search-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&state.search.length>=3&&state.dataMode==='live'&&window.WTG_GOOGLE_PLACES?.configured()){e.preventDefault();void enrichVisiblePhotoCards(state.loadingId,6)}});$('clear-search').onclick=()=>{state.search='';$('search-input').value='';renderExplore()};
   $('distance-select').addEventListener('change',e=>{state.radius=Number(e.target.value);loadPlaces()});
   $('report-form').onsubmit=async e=>{
     e.preventDefault();
