@@ -179,11 +179,11 @@ function catInfo(id){const c=CATEGORY_BY_ID[id]||CATEGORY_BY_ID.atracciones;retu
 function hasCatalogPhoto(p){return !!safeUrl(p?.photo||placeGalleryPhotos(p)?.[0]?.url||'')}
 function isVisibleBusiness(p){return !!p&&p.nameKnown!==false&&
   !['escuelas','iglesias'].includes(p.cat)&&hasCatalogPhoto(p)}
-const WTG_QUICK_CATEGORIES=['restaurantes','cafes','bares','discotecas','playas','hoteles',
-  'supermercados','colmados','farmacias','barberias','salones','unas','spas','gimnasios',
-  'tiendas','ferreterias','tecnologia','bancos','cajeros','hospitales','odontologia',
-  'gasolineras','talleres','lavaderos','heladerias','panaderias','entretenimiento',
-  'infantil','piscinas','resorts','villas','taxis'];
+const WTG_QUICK_CATEGORIES=['restaurantes','supermercados','farmacias','barberias',
+  'salones','tiendas','hoteles','bares','cafes','discotecas','playas','colmados',
+  'unas','spas','gimnasios','ferreterias','tecnologia','bancos','cajeros',
+  'hospitales','odontologia','gasolineras','talleres','lavaderos','heladerias',
+  'panaderias','entretenimiento','infantil','piscinas','resorts','villas','taxis'];
 function normalizedPhone(s){return String(s||'').replace(/[^+\d]/g,'')}
 function safeUrl(s){if(typeof s==='string'&&/^\/(?:where-to-go-app\/)?assets\/places\/[a-z0-9-]+\.(?:jpg|jpeg|webp|png)(?:\?[^#]*)?$/.test(s))return s;try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return''}}
 // Remote images sometimes fail on mobile. Recover with a compact, honest visual.
@@ -916,6 +916,9 @@ function renderCategories(){const counts={};state.places.filter(hasCatalogPhoto)
     shortcuts.innerHTML=WTG_QUICK_CATEGORIES.map(id=>CATEGORY_BY_ID[id]).filter(Boolean)
       .map(cat=>`<button type="button" data-cat="${esc(cat.id)}" aria-label="Explorar ${esc(cat.name)}"><span aria-hidden="true">${cat.emoji}</span><strong>${esc(cat.name)}</strong></button>`).join('')+
       '<button type="button" class="wtg-all-categories" data-show-all-cats="yes"><span>⊞</span><strong>Ver todas</strong></button>';
+    if(!document.querySelector('#wtg-category-bar-title')){
+      shortcuts.insertAdjacentHTML('beforebegin','<div class="wtg-category-bar-title" id="wtg-category-bar-title"><strong>Todo cerca de ti</strong><button type="button" data-show-all-cats="yes">Ver las '+CATEGORIES.length+' categorías ↗</button></div>');
+    }
     shortcuts.dataset.wtgLoaded='yes';
   }
   const blocks=[
