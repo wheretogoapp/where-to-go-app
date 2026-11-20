@@ -206,10 +206,17 @@ try {
       console.log('GOOGLE PLACES PUERTO PLATA REAL:',JSON.stringify(puerto));
       assert(puerto.total>0&&puerto.withPhoto>0,'Puerto Plata: Google Places no devolvió lugares con fotografías');
       await page.evaluate(()=>navigate('inicio'));
-      const firstImage=page.locator('#home-list img.actual-photo').first();
-      await firstImage.scrollIntoViewIfNeeded({timeout:12000});
+      // La búsqueda de fotos puede volver a pintar tarjetas; evitar referencias
+      // a nodos que se sustituyen durante el renderizado.
+      await page.waitForTimeout(1200);
+      await page.evaluate(()=>document.querySelector('#home-list img.actual-photo')?.scrollIntoView({block:'center'}));
       try{
-        await page.waitForFunction(()=>[...document.querySelectorAll('#home-list img.actual-photo')].some(i=>i.complete&&i.naturalWidth>0),null,{timeout:12000});
+        await page.waitForFunction(()=>{
+          const imgs=[...document.querySelectorAll('#home-list img.actual-photo')];
+          if(!imgs.length)return false;
+          imgs[0]?.scrollIntoView({block:'center'});
+          return imgs.some(i=>i.complete&&i.naturalWidth>0);
+        },null,{timeout:16000});
       }catch{}
       const displayed=await page.evaluate(()=>{
         const imgs=[...document.querySelectorAll('#home-list img.actual-photo')];
