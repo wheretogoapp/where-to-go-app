@@ -51,19 +51,20 @@ test('Google devuelve fotografía y atribución del lugar exacto', async () => {
   assert.equal(queries[0].includedPrimaryTypes[0], 'restaurant');
 });
 
-test('Exploración general limita a tres consultas de Places', async () => {
+test('Exploración general amplía hasta seis grupos de lugares de Places', async () => {
   const {api, queries} = configuredBrowser();
   const result = await api.nearby({lat: 19.7934, lon: -70.6884, category: 'todos'});
-  assert.equal(queries.length, 3);
+  assert.equal(queries.length, 6);
   assert.equal(result.places.length, 1);
   assert.ok(queries.every(x => x.maxResultCount <= 20));
 });
 
-test('Categorías sin equivalencia Google no generan solicitudes facturables', async () => {
+test('Categorías de playa se consultan como lugares reales', async () => {
   const {api, queries} = configuredBrowser();
   const result = await api.nearby({lat: 19.7934, lon: -70.6884, category: 'playas'});
-  assert.equal(result.status, 'unsupported');
-  assert.equal(queries.length, 0);
+  assert.equal(result.status, 'ok');
+  assert.equal(queries.length, 1);
+  assert.equal(queries[0].includedPrimaryTypes[0], 'beach');
 });
 
 test('Sin clave la API no inicia consultas', async () => {
@@ -129,4 +130,13 @@ test('Ficha local con foto Google exige atribución y búsqueda puntual manual',
   assert(code.includes('window.WTG_GOOGLE_PLACES.sameEstablishment'));
   assert(code.includes('window.WTG_GOOGLE_PLACES.meters'));
   assert(code.includes('Foto: <a href='));
+});
+
+
+test('Fotos progresivas de RD tienen límite de consultas y son efímeras',()=>{
+  const code=fs.readFileSync(path.join(root,'app.js'),'utf8');
+  assert(code.includes('wtgPhotoBudget=24'));
+  assert(code.includes('void enrichVisiblePhotoCards(token,4)'));
+  assert(code.includes('data-more-photo'));
+  assert(code.includes('matchPhoto({name:p.name,lat:p.lat,lon:p.lon})'));
 });
