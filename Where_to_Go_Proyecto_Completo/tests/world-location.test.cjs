@@ -20,3 +20,13 @@ test('locale and location are independent from the RD pilot',()=>{
   assert.equal(p.city,'Tokyo');
   assert.equal(world.dataStatus(p),'catalogue-not-yet-available');
 });
+
+const geo=require('../public/world-geography.js');
+test('Selector geográfico de RD incluye 32 demarcaciones y ciudades de referencia',()=>{
+  const towns=geo.cities('DO');
+  assert.equal(new Set(towns.map(p=>p.region)).size,32);
+  assert(towns.some(p=>p.region==='Puerto Plata'&&p.city==='Puerto Plata'));
+  assert(towns.some(p=>p.region==='Puerto Plata'&&p.city==='Cabarete'));
+  assert(towns.some(p=>p.region==='Samaná'&&p.city==='Las Terrenas'));
+  assert(towns.every(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)));
+});
