@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/publicar-demo-movil.yml'
       - 'Where_to_Go_Proyecto_Completo/tools/build_pages_preview.py'
+      - 'Where_to_Go_Proyecto_Completo/tests/google-places-browser.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/public/**'
 permissions:
   contents: read
@@ -51,6 +52,8 @@ jobs:
       - name: Comprobar que 32 zonas tienen directorio real y JavaScript válido
         run: |
           node --check /tmp/where-to-go-pages/app.js
+          node --check /tmp/where-to-go-pages/google-places-adapter.js
+          node --test Where_to_Go_Proyecto_Completo/tests/google-places-browser.test.cjs
           node --check /tmp/where-to-go-pages/world-location.js
           node --check /tmp/where-to-go-pages/world-explorer.js
           grep -q 'wtg-world-selected' /tmp/where-to-go-pages/app.js
@@ -184,6 +187,16 @@ jobs:
                   print('Esperando propagación:',attempt+1,str(exc))
                   if attempt==11:raise
                   time.sleep(10)
+          # Verificar el archivo REAL de la publicación, sin imprimir ni revelar la clave.
+          import re
+          with urllib.request.urlopen(base+'google-places-key.js',timeout=20) as res:
+              js=res.read().decode('utf-8')
+              assert res.status==200 and re.search(r"WTG_GOOGLE_MAPS_KEY\s*=\s*['\"]AIza[A-Za-z0-9_-]{20,100}['\"];",js),'Clave web no configurada en el despliegue'
+              print('Google Places: clave del navegador configurada en sitio público (valor oculto)')
+          with urllib.request.urlopen(base+'app.js',timeout=20) as res:
+              js=res.read().decode('utf-8')
+              assert 'enrichDominicanGooglePlaces' in js,'Falta conexión Google con catálogo dominicano'
+              print('Google Places: integración RD publicada')
           for asset in ('world-location.js','world-explorer.js','world-explorer.css','city-covers.js','world-geography.js'):
               with urllib.request.urlopen(base+asset,timeout=20) as response:
                   assert response.status==200 and len(response.read())>100,asset
