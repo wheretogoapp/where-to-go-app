@@ -205,6 +205,14 @@ try {
       }));
       console.log('GOOGLE PLACES PUERTO PLATA REAL:',JSON.stringify(puerto));
       assert(puerto.total>0&&puerto.withPhoto>0,'Puerto Plata: Google Places no devolvió lugares con fotografías');
+      await page.waitForTimeout(1600);
+      const displayed=await page.evaluate(()=>{
+        const imgs=[...document.querySelectorAll('#home-list img.actual-photo')];
+        return {withImage:imgs.length,loaded:imgs.filter(i=>i.complete&&i.naturalWidth>0).length,
+          failed:imgs.filter(i=>i.complete&&i.naturalWidth===0).length};
+      });
+      console.log('FOTOS VISIBLES PUERTO PLATA:',JSON.stringify(displayed));
+      assert(displayed.loaded>0,'Puerto Plata: hay enlaces de Google pero ninguna foto carga en la interfaz');
     }
   }
   await page.screenshot({path:'/tmp/where-to-go-iphone-results.png',fullPage:false});
