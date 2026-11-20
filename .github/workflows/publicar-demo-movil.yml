@@ -76,8 +76,8 @@ jobs:
               if not re.fullmatch(r'AIza[A-Za-z0-9_-]{20,100}', key):
                   raise SystemExit('GOOGLE_MAPS_BROWSER_KEY no tiene el formato esperado.')
               dest.write_text(
-                  '/* Clave pública restringida por dominio y API; generada durante la publicación. */\\n'
-                  'window.WTG_GOOGLE_MAPS_KEY=' + json.dumps(key) + ';\\n',
+                  '/* Clave pública restringida por dominio y API; generada durante la publicación. */\n'
+                  'window.WTG_GOOGLE_MAPS_KEY=' + json.dumps(key) + ';\n',
                   encoding='utf-8'
               )
               print('Google Places: clave de navegador incorporada al despliegue (valor oculto).')
