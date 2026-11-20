@@ -377,9 +377,11 @@ function combineNearby(remote=[]){
   }
   return promoSort([...output.values()]);
 }
+// Google Places se mezcla solo en las listas, nunca como puntos sobre el mapa OSM.
+let wtgGoogleNearby=[];
 function applyNearby(remote=[],message=''){
   state.remotePlaces=remote.filter(insideNearbyRadius);
-  state.places=combineNearby(state.remotePlaces);
+  state.places=combineNearby([...state.remotePlaces,...wtgGoogleNearby]);
   state.dataMode='live';state.dataError=message;
   renderAll();
 }
@@ -621,12 +623,13 @@ async function loadPlaces(force=false){
     const response=await window.WTG_GOOGLE_PLACES.nearby({lat:state.lat,lon:state.lon,radius:state.radius,category:state.category});
     if(token!==state.loadingId)return;
     const typeToCategory={restaurant:'restaurantes',cafe:'cafes',bar:'bares',lodging:'hoteles',tourist_attraction:'atracciones',museum:'atracciones',park:'parques',supermarket:'supermercados',pharmacy:'farmacias',bank:'bancos',gas_station:'gasolineras',amusement_park:'entretenimiento',movie_theater:'entretenimiento',taxi_stand:'taxis'};
-    const places=response.places.map(p=>({...p,cat:p.types.map(t=>typeToCategory[t]).find(Boolean)||'atracciones',distance:haversine(state.lat,state.lon,p.lat,p.lon),nameKnown:true,photo:'',googleDirections:p.mapUrl}));
+    const places=response.places.map(p=>({...p,cat:p.types.map(t=>typeToCategory[t]).find(Boolean)||'atracciones',distance:haversine(state.lat,state.lon,p.lat,p.lon),nameKnown:true,photo:p.photo||'',photoAttributions:p.photoAttributions||[],googleUri:p.mapUrl,googleDirections:p.mapUrl,detailsLoaded:true}));
     state.places=places;state.remotePlaces=places;state.placesProvider='google';state.dataMode='live';
     state.dataError=response.status==='error'?'Google Places no respondió. Comprueba API, restricciones y facturación.':places.length?'Resultados de Google Places para el destino seleccionado.':'No hay resultados disponibles para esta zona.';
     renderAll();return;
   }
   const token=++state.loadingId;
+  wtgGoogleNearby=[];
   state.googleEnabled=false;state.googleIssue='';state.placesProvider='osm';
   // Do not flash a misleading 0 while downloading the regional catalogue.
   state.remotePlaces=[];state.places=[];state.dataMode='loading';state.dataError='Cargando establecimientos cercanos…';renderAll();
@@ -677,6 +680,34 @@ async function loadPlaces(force=false){
   }));
   if(token!==state.loadingId)return;
   publish(true);
+  // La versión de GitHub Pages no ejecuta funciones de Netlify. Consultar
+  // directamente con la clave pública restringida que inyecta GitHub Actions.
+  void enrichDominicanGooglePlaces(token,[...unique.values()]);
+}
+
+// Complementar RD sin sustituir las fichas cartográficas ni bloquear su carga.
+// La búsqueda de Google es opcional; si falla, el directorio OSM sigue visible.
+async function enrichDominicanGooglePlaces(token,localPlaces){
+  if(!window.WTG_GOOGLE_PLACES?.configured())return;
+  let result;
+  try{
+    result=await window.WTG_GOOGLE_PLACES.nearby({lat:state.lat,lon:state.lon,radius:state.radius,category:state.category});
+  }catch(error){console.warn('Where to Go: búsqueda complementaria Google no disponible',String(error));return;}
+  if(token!==state.loadingId||window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')return;
+  if(!Array.isArray(result?.places)||!result.places.length){
+    if(result?.status==='error')console.warn('Where to Go: Google Places no devolvió lugares; OpenStreetMap sigue funcionando');
+    return;
+  }
+  const types={restaurant:'restaurantes',cafe:'cafes',bar:'bares',hotel:'hoteles',lodging:'hoteles',tourist_attraction:'atracciones',museum:'atracciones',park:'parques',supermarket:'supermercados',pharmacy:'farmacias',bank:'bancos',gas_station:'gasolineras',amusement_park:'entretenimiento',movie_theater:'entretenimiento',taxi_stand:'taxis'};
+  const places=result.places.map(p=>{
+    const cat=state.category==='todos'?(p.types||[]).map(t=>types[t]).find(Boolean)||'atracciones':state.category;
+    return {...p,cat,googleId:p.googlePlaceId,googleUri:p.mapUrl,googleDirections:p.mapUrl,source:'google',
+      distance:haversine(state.lat,state.lon,p.lat,p.lon),nameKnown:true,detailsLoaded:true,
+      description:'Información y fotografía del establecimiento en Google Maps.',
+      photo:p.photo||'',photoAttributions:p.photoAttributions||[],photoSource:'',photoAttribution:'',photos:[]};
+  });
+  wtgGoogleNearby=places.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&insideNearbyRadius(p));
+  applyNearby(localPlaces,`Catálogo local y ${wtgGoogleNearby.length} resultados adicionales de Google Maps · ${state.city}`);
 }
 
 function ensureProviderBanner(){
@@ -752,7 +783,7 @@ function renderProvincePremium(){
     return `<article class="wtg-provincial-premium" data-premium-slide="${i}" ${i?'hidden':''}><div class="premium-marker">PUBLICIDAD · PREMIUM · ${esc(prov)}</div><div><strong>${esc(x.name)}</strong><small>${esc(cat.name)} · ${esc(x.province)}</small></div>${source?`<a target="_blank" rel="noopener noreferrer" href="${esc(source)}">Ver negocio ↗</a>`:''}</article>`;
   }).join('');
 }
-function renderHome(){renderProvincePremium();const teaser=document.querySelector('.taxi-teaser');if(teaser)teaser.hidden=!(state.province==='Puerto Plata'||['Puerto Plata','Sosúa','Cabarete'].includes(state.city));const list=$('home-list');$('home-count').textContent=state.dataMode==='loading'?'...':state.places.filter(p=>p.distance<=state.radius+100&&isTouristDiscovery(p)).length;const sorted=tourismSort(state.places.filter(p=>p.distance<=state.radius+100&&isTouristDiscovery(p))).slice(0,12);
+function renderHome(){renderProvincePremium();const teaser=document.querySelector('.taxi-teaser');if(teaser)teaser.hidden=!(state.province==='Puerto Plata'||['Puerto Plata','Sosúa','Cabarete'].includes(state.city));const list=$('home-list');$('home-count').textContent=state.dataMode==='loading'?'...':state.places.filter(p=>p.distance<=state.radius+100&&isTouristDiscovery(p)).length;const candidates=state.places.filter(p=>p.distance<=state.radius+100&&isTouristDiscovery(p));const googleWithPhotos=sortByDistance(candidates.filter(p=>p.source==='google'&&p.photo)).slice(0,4);const selected=new Set(googleWithPhotos.map(p=>p.id));const sorted=[...googleWithPhotos,...tourismSort(candidates.filter(p=>!selected.has(p.id)))].slice(0,12);
   list.innerHTML=state.dataMode==='loading'&&!sorted.length?'<div class="wtg-loading-cards" aria-label="Buscando lugares cerca de ti"><div class="wtg-skeleton-card"></div><div class="wtg-skeleton-card"></div><div class="wtg-skeleton-card"></div></div>':sorted.length?sorted.map(placeCard).join(''):emptyBlock('No hay lugares cartografiados en este radio; amplía la distancia o cambia de zona');
   const mainPromo=document.getElementById('province-anchor-sponsor');
   if(mainPromo){mainPromo.hidden=provinceFromCity()!=='Puerto Plata';}
@@ -764,7 +795,7 @@ function renderHome(){renderProvincePremium();const teaser=document.querySelecto
 function matches(p){return placeMatchesCategory(p,state.category)&&(!state.search||`${p.name} ${p.address} ${catInfo(p.cat).name}`.toLocaleLowerCase('es').includes(state.search.toLocaleLowerCase('es')))&&p.distance<=state.radius+100}
 function renderExplore(){const arr=state.category==='todos'&&!state.search ? tourismSort(state.places.filter(p=>matches(p)&&isTouristDiscovery(p))) : sortByDistance(state.places.filter(matches));$('explore-count').textContent=state.dataMode==='loading'?'...':arr.length;
   $('explore-context').textContent=`${state.dataError||'Catálogo local'} · ${state.city} · hasta ${distance(state.radius)}`;
-  const shown=arr.slice(0,state.exploreLimit||80);
+  const featured=arr.filter(p=>p.source==='google'&&p.photo);const featuredIds=new Set(featured.map(p=>p.id));const sortedVisible=featured.length?[...featured,...arr.filter(p=>!featuredIds.has(p.id))]:arr;const shown=sortedVisible.slice(0,state.exploreLimit||80);
   $('explore-list').innerHTML=state.dataMode==='loading'?'<div class="loading-state"><span class="spinner"></span><div>Consultando lugares cercanos...</div></div>':arr.length?shown.map(placeCard).join('')+(arr.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${arr.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:''):emptyBlock('No se encontraron lugares con estos filtros', 'Ampliar búsqueda','radius');
   $('filter-categories').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.category));$('distance-select').value=String(state.radius);if($('search-input').value!==state.search)$('search-input').value=state.search;
 }
