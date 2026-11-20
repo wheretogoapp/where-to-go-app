@@ -56,5 +56,52 @@ async function nearby({lat,lon,radius=12000,category='todos'}){
   return {status:map.size?'ok':failures===results.length?'error':'empty',places:[...map.values()],failures};
  }catch(error){return {status:'error',places:[],message:String(error?.message||'Places no disponible')}}
 }
-root.WTG_GOOGLE_PLACES=Object.freeze({configured,nearby});
+// Coincidencia conservadora para evitar fotos de negocios distintos.
+// La búsqueda específica se ejecuta únicamente cuando el visitante la solicita.
+function normalizedName(value){
+ return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+  .toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
+}
+function sameEstablishment(a,b){
+ const left=normalizedName(a),right=normalizedName(b);
+ if(!left||!right)return false;
+ if(left===right)return true;
+ const short=left.length<right.length?left:right;
+ const long=left.length>=right.length?left:right;
+ // "Kabuki" y "Kabuki Sushi": solo si el nombre abre con una palabra entera.
+ // La distancia geográfica se comprueba adicionalmente por separado.
+ return short.length>=5&&long.startsWith(short+' ')&&short.length/long.length>=0.33;
+}
+function meters(a,b,c,d){
+ const x=(c-a)*111195, y=(d-b)*111195*Math.cos((a+c)*Math.PI/360);
+ return Math.hypot(x,y);
+}
+async function matchPhoto({name,lat,lon}){
+ if(!configured()||!name||!Number.isFinite(lat)||!Number.isFinite(lon))return {status:'unconfigured'};
+ if(!await load())return {status:'unconfigured'};
+ try{
+  const {Place}=await root.google.maps.importLibrary('places');
+  if(typeof Place.searchByText!=='function')return {status:'unavailable'};
+  const result=await Place.searchByText({
+   textQuery:String(name).slice(0,110),
+   fields:['id','displayName','location','photos','googleMapsURI'],
+   locationBias:{center:{lat,lng:lon},radius:500},
+   maxResultCount:5
+  });
+  const found=(result.places||[]).filter(p=>p?.location&&sameEstablishment(name,p.displayName))
+    .map(p=>({place:p,distance:meters(lat,lon,p.location.lat(),p.location.lng())}))
+    .filter(row=>row.distance<=160).sort((a,b)=>a.distance-b.distance);
+  for(const row of found){
+   const p=row.place, photo=p.photos?.[0];
+   if(typeof photo?.getURI!=='function')continue;
+   let url='';
+   try{url=photo.getURI({maxWidth:720})||'';}catch{}
+   if(!/^https:\/\//.test(url))continue;
+   const authors=Array.isArray(photo.authorAttributions)?photo.authorAttributions.map(a=>({displayName:a.displayName||'',uri:a.uri||''})).filter(a=>a.displayName):[];
+   return {status:'ok',id:p.id,photo:url,photoAttributions:authors,mapUrl:p.googleMapsURI||'',name:p.displayName,distanceMeters:row.distance};
+  }
+  return {status:'not-found'};
+ }catch(e){return {status:'error',message:String(e?.message||'No fue posible consultar Google Places').slice(0,160)}}
+}
+root.WTG_GOOGLE_PLACES=Object.freeze({configured,nearby,matchPhoto,sameEstablishment,meters});
 })(window);
