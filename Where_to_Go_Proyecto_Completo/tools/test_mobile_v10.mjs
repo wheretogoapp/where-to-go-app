@@ -20,7 +20,10 @@ let outcome=null;
 try {
   await page.goto(site,{waitUntil:'domcontentloaded',timeout:45000});
   await page.waitForFunction(()=>{
-    return typeof state!=='undefined' && state.mode==='gps' && state.dataMode==='live' && state.places.length>100;
+    return typeof state!=='undefined' && state.mode==='gps' && state.dataMode==='live' && state.places.length>100 &&
+      state.places.filter(p=>p.cat==='restaurantes').length>=20 &&
+      state.places.filter(p=>p.cat==='bares').length>=5 &&
+      state.places.filter(p=>p.cat==='discotecas').length>=2;
   },null,{timeout:75000});
   const initial=await page.evaluate(()=>({
     mode:state.mode,count:state.places.length,
@@ -151,6 +154,24 @@ try {
   assert(!selected.heroSource?.includes('Aerial%20view%20of%20Puerto')&&!selected.heroSource?.includes('Aerial_view_of_Puerto'),
     'Hero still uses Puerto Plata imagery in Samaná');
   assert(Number(selected.homeCount)>100,'Nearby count still shows zero');
+  // Inspección real de la clave ya desplegada en GitHub Pages, sin mostrarla.
+  if(site.startsWith('https://wheretogoapp.github.io/')){
+    try{
+      await page.waitForFunction(()=>state.places.some(p=>p.source==='google'),null,{timeout:25000});
+    }catch{}
+    const google=await page.evaluate(()=>({
+      configured:!!window.WTG_GOOGLE_PLACES?.configured(),
+      total:state.places.filter(p=>p.source==='google').length,
+      withPhoto:state.places.filter(p=>p.source==='google'&&!!p.photo).length,
+      withAuthor:state.places.filter(p=>p.source==='google'&&p.photoAttributions?.length).length,
+      selectedCity:state.city
+    }));
+    console.log('GOOGLE PLACES EN WEB REAL:',JSON.stringify(google));
+    if(google.configured){
+      assert(google.total>0,'Clave configurada, pero no llegaron fichas reales de Google Places');
+      assert(google.withPhoto>0,'Google Places no proporcionó fotos para los lugares consultados');
+    }
+  }
   await page.screenshot({path:'/tmp/where-to-go-iphone-results.png',fullPage:false});
   outcome={initial,selected,pageErrors:errors};
   console.log('MOBILE E2E OK:',JSON.stringify(outcome));
