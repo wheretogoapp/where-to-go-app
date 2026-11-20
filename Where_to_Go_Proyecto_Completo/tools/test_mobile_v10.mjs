@@ -170,6 +170,18 @@ try {
     if(google.configured){
       assert(google.total>0,'Clave configurada, pero no llegaron fichas reales de Google Places');
       assert(google.withPhoto>0,'Google Places no proporcionó fotos para los lugares consultados');
+      await page.evaluate(()=>selectCity('Puerto Plata'));
+      await page.waitForFunction(()=>state.city==='Puerto Plata'&&state.dataMode==='live'&&state.places.length>=60,null,{timeout:60000});
+      try{await page.waitForFunction(()=>state.city==='Puerto Plata'&&state.places.some(p=>p.source==='google'),null,{timeout:25000});}catch{}
+      const puerto=await page.evaluate(()=>({
+        city:state.city,
+        total:state.places.filter(p=>p.source==='google').length,
+        withPhoto:state.places.filter(p=>p.source==='google'&&p.photo).length,
+        withAuthor:state.places.filter(p=>p.source==='google'&&p.photoAttributions?.length).length,
+        sample:state.places.filter(p=>p.source==='google').slice(0,3).map(p=>p.name)
+      }));
+      console.log('GOOGLE PLACES PUERTO PLATA REAL:',JSON.stringify(puerto));
+      assert(puerto.total>0&&puerto.withPhoto>0,'Puerto Plata: Google Places no devolvió lugares con fotografías');
     }
   }
   await page.screenshot({path:'/tmp/where-to-go-iphone-results.png',fullPage:false});
