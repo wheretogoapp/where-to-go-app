@@ -47,8 +47,9 @@ test('Google devuelve fotografía y atribución del lugar exacto', async () => {
   assert.equal(result.places[0].photo, 'https://example.com/google-photo.jpg');
   assert.equal(result.places[0].photoAttributions[0].displayName, 'Fotógrafo del lugar');
   assert.equal(result.places[0].googlePlaceId, 'ChIJtest1234567');
-  assert.equal(queries.length, 1);
+  assert.equal(queries.length, 2);
   assert.equal(queries[0].includedPrimaryTypes[0], 'restaurant');
+  assert.equal(queries[1].includedPrimaryTypes[0], 'fast_food_restaurant');
 });
 
 test('Exploración general amplía hasta seis grupos de lugares de Places', async () => {
