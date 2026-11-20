@@ -136,8 +136,35 @@ test('Ficha local con foto Google exige atribución y búsqueda puntual manual',
 
 test('Fotos progresivas de RD tienen límite de consultas y son efímeras',()=>{
   const code=fs.readFileSync(path.join(root,'app.js'),'utf8');
-  assert(code.includes('wtgPhotoBudget=24'));
-  assert(code.includes('void enrichVisiblePhotoCards(token,4)'));
+  assert(code.includes('wtgPhotoBudget=48'));
+  assert(code.includes('void enrichVisiblePhotoCards(token,6)'));
   assert(code.includes('data-more-photo'));
   assert(code.includes('matchPhoto({name:p.name,lat:p.lat,lon:p.lon})'));
+});
+
+
+test('Galerías de Google incluyen varias fotos del mismo negocio y créditos',async()=>{
+ const {api}=configuredBrowser();
+ const result=await api.nearby({lat:19.7934,lon:-70.6884,category:'restaurantes'});
+ assert.equal(result.status,'ok');
+ const place=result.places[0];
+ assert.equal(place.photos.length,1);
+ assert.equal(place.photos[0].source,'https://maps.google.com/?q=test');
+ assert.equal(place.photos[0].provider,'google');
+ assert.equal(place.photos[0].attribution,'Fotógrafo del lugar');
+ assert.equal(place.photo,place.photos[0].url);
+ const code=fs.readFileSync(path.join(root,'app.js'),'utf8');
+ assert(code.includes('p.googlePhotos'));
+ assert(code.includes('googlePhotos:p.photos||[]'));
+ assert(code.includes("if(!url||!source||!attribution||seen.has(url))continue"));
+});
+
+test('Nombres con un pequeño error ortográfico se revisan con control geográfico',()=>{
+ const {api}=configuredBrowser();
+ assert.equal(api.sameEstablishment('Wing and Waffle','Wings and Waffle'),true);
+ assert.equal(api.sameEstablishment('Mirian Billar','Miriam Billar'),true);
+ assert.equal(api.sameEstablishment('Ocean Disco','Ocean Disco Cabarete'),true);
+ assert.equal(api.sameEstablishment('Ocean Disco','Ocean Beach Resort'),false);
+ assert.equal(api.sameEstablishment('El Negro','El Negocio'),false);
+ assert(api.meters(19.79,-70.69,19.791,-70.69)>85);
 });
