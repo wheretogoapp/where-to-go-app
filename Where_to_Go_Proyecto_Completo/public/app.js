@@ -213,7 +213,10 @@ function placePhotoMarkup(p, kind='card'){
   const src=safeUrl(p.photo||placeGalleryPhotos(p)[0]?.url||'');
   const icon=catInfo(p.cat).emoji;
   const placeholder=`<div class="photo-empty wtg-photo-placeholder" role="img" aria-label="Sin fotografía del lugar"><span class="wtg-photo-icon" aria-hidden="true">${icon}</span><span class="wtg-photo-label">${esc(catInfo(p.cat).name)}</span></div>`;
-  if(src)return `<img class="photo-illustration actual-photo" loading="lazy" decoding="async" src="${esc(src)}" alt="Fotografía vinculada a ${esc(p.name)}" referrerpolicy="no-referrer" />`;
+  // Las fotos de Google utilizan una clave restringida por sitio: envía solo
+  // el ORIGEN como Referer; para las fuentes abiertas, conservar no-referrer.
+  const referrerPolicy=p.source==='google'||p.googlePhotoMapUrl?'strict-origin-when-cross-origin':'no-referrer';
+  if(src)return `<img class="photo-illustration actual-photo" loading="lazy" decoding="async" src="${esc(src)}" alt="Fotografía vinculada a ${esc(p.name)}" referrerpolicy="${referrerPolicy}" />`;
   return placeholder;
 }
 // Galería de fotos del MISMO lugar: solo fotos con fuente y autor/licencia.
@@ -763,7 +766,8 @@ async function enrichVisiblePhotoCards(token,maxRequests=4){
         p.photo=info.photo;p.googlePhotoMapUrl=info.mapUrl||'';
         p.googlePhotoAttributions=info.photoAttributions||[];
         photos++;
-        if(photos===1||photos%2===0)renderAll();
+        // Actualizar las tarjetas una sola vez al final del lote para no
+        // cancelar imágenes que aún se descargan en el navegador.
       }
     }
     if(token===state.loadingId&&photos)renderAll();
