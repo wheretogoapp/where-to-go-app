@@ -132,8 +132,8 @@ function init(){
      country.value=saved.country;updateCities();region.value=saved.region||'';updateCities();city.value=saved.city||'';
      const label=[saved.countryName,saved.city].filter(Boolean).join(' · ');
      const pillLabel=document.getElementById('location-label');if(pillLabel)pillLabel.textContent='📍 '+label;
-     setPilotVisible(false);
-     if(notice){notice.textContent='Destino seleccionado: '+label+'. El catálogo internacional todavía no está conectado.';notice.hidden=false}
+     setPilotVisible(!!saved.coordinates&&!!window.WTG_GOOGLE_PLACES?.configured());
+     if(notice){notice.textContent='Destino seleccionado: '+label+'. '+(saved.coordinates?'Buscando lugares reales disponibles mediante Google Places.':'Selecciona una ciudad para empezar.');notice.hidden=false}
      const selected=document.getElementById('wtg-world-selected');if(selected)selected.textContent=label;
      window.dispatchEvent(new CustomEvent('wtg-world-selected',{detail:saved}));
    }
