@@ -1157,7 +1157,22 @@ function startup(){createProvinceControls();ensureProviderBanner();putNearbyResu
 document.addEventListener('DOMContentLoaded',startup);
 
 window.addEventListener('wtg-world-request-gps',()=>{window.WTG_ACTIVE_HAS_COORDINATES=false;window.WTG_ACTIVE_COUNTRY=null;window.WTG_ACTIVE_DESTINATION='';try{sessionStorage.removeItem('wtg_world_selection')}catch{};document.getElementById('main-content').hidden=false;document.getElementById('wtg-world-empty').hidden=true;requestLocation()});
-window.addEventListener('wtg-world-return-pilot',event=>{window.WTG_ACTIVE_COUNTRY='DO';window.WTG_ACTIVE_DESTINATION='';const place=event.detail||{};if(place.coordinates){state.lat=place.coordinates.lat;state.lon=place.coordinates.lon;state.city=place.city||'Puerto Plata';state.region=place.region||'República Dominicana'}else{state.lat=19.7934;state.lon=-70.6884;state.city='Puerto Plata';state.region='República Dominicana'}state.mode='city';renderAll();void loadPlaces()});
+window.addEventListener('wtg-world-return-pilot',event=>{
+  window.WTG_ACTIVE_COUNTRY='DO';window.WTG_ACTIVE_DESTINATION='';
+  const place=event.detail||{};
+  if(place.coordinates){
+    state.lat=place.coordinates.lat;state.lon=place.coordinates.lon;
+    state.city=place.city||'Puerto Plata';state.region=place.region||'República Dominicana';
+    state.province=canonicalProvince(place.region)||state.province||'';
+  }else{
+    state.lat=19.7934;state.lon=-70.6884;state.city='Puerto Plata';
+    state.region='Puerto Plata';state.province='Puerto Plata';
+  }
+  state.mode='municipio';state.category='todos';state.search='';state.radius=12000;
+  state.exploreLimit=80;rememberManualLocation();
+  if($('taxi-province')&&state.province){$('taxi-province').value=state.province;updateTaxiMunicipios();}
+  renderAll();void loadPlaces();
+});
 window.addEventListener('wtg-world-selected',event=>{
   const selection=event.detail||{},country=selection.country;
   if(!/^[A-Z]{2}$/.test(country||''))return;
