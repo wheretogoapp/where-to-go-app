@@ -134,6 +134,29 @@ try {
   assert.equal((await page.locator('#place-modal-title').textContent()).trim(),before.trim(),
     'Tapping a card photo did not open its correct place');
   await page.evaluate(()=>closeModals());
+  // Comprobar la interfaz del país piloto: 32 demarcaciones y los 158 municipios,
+  // incluso en el sitio público bajo el subdirectorio de GitHub Pages.
+  await page.waitForFunction(()=>{
+    const region=document.getElementById('wtg-world-region');
+    const city=document.getElementById('wtg-world-city');
+    return document.getElementById('wtg-world-country')?.value==='DO' &&
+      region?.options.length===33 && city?.options.length>=159 &&
+      [...city.options].some(o=>o.value==='Imbert');
+  },null,{timeout:16000});
+  const dropdowns=await page.evaluate(()=>{
+    const prov=document.getElementById('wtg-world-region'),city=document.getElementById('wtg-world-city');
+    const provinces=[...prov.options].map(o=>o.value).filter(Boolean);
+    prov.value='Puerto Plata';prov.dispatchEvent(new Event('change',{bubbles:true}));
+    const cities=[...city.options].map(o=>o.value).filter(Boolean);
+    prov.value='';prov.dispatchEvent(new Event('change',{bubbles:true}));
+    return {countProvinces:provinces.length,countCitiesPuertoPlata:cities.length,
+      hasPuertoPlata:cities.includes('Puerto Plata'),hasImbert:cities.includes('Imbert'),
+      hasSosua:cities.includes('Sosúa'),hasCabarete:cities.includes('Cabarete')};
+  });
+  assert.equal(dropdowns.countProvinces,32,'El selector mundial no muestra las 32 demarcaciones de RD');
+  assert(dropdowns.hasPuertoPlata&&dropdowns.hasImbert&&dropdowns.hasSosua&&dropdowns.hasCabarete,
+    'Faltan municipios y localidades de Puerto Plata en el selector');
+  console.log('SELECTOR MUNDIAL RD VERIFICADO:',JSON.stringify(dropdowns));
   await page.evaluate(()=>selectCity('Las Terrenas'));
   await page.waitForFunction(()=>state.mode==='city'&&state.dataMode==='live'&&state.places.length>100,null,{timeout:75000});
   const selected=await page.evaluate(()=>({
