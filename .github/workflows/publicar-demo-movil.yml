@@ -61,6 +61,28 @@ jobs:
           node --test Where_to_Go_Proyecto_Completo/tests/world-location.test.cjs
           python Where_to_Go_Proyecto_Completo/tools/test_pages_region_catalog.py /tmp/where-to-go-pages
           test -s /tmp/where-to-go-pages/data/pages-catalog-check.json
+      - name: Conectar clave pública restringida de Google Places en la web publicada
+        env:
+          GOOGLE_MAPS_BROWSER_KEY: ${{ secrets.GOOGLE_MAPS_BROWSER_KEY }}
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, re
+          dest = pathlib.Path('/tmp/where-to-go-pages/google-places-key.js')
+          assert dest.is_file(), 'Falta el archivo Google Places para el navegador'
+          key = os.getenv('GOOGLE_MAPS_BROWSER_KEY', '').strip()
+          if not key:
+              print('Google Places: no se configuró GOOGLE_MAPS_BROWSER_KEY; permanece desactivado.')
+          else:
+              if not re.fullmatch(r'AIza[A-Za-z0-9_-]{20,100}', key):
+                  raise SystemExit('GOOGLE_MAPS_BROWSER_KEY no tiene el formato esperado.')
+              dest.write_text(
+                  '/* Clave pública restringida por dominio y API; generada durante la publicación. */\\n'
+                  'window.WTG_GOOGLE_MAPS_KEY=' + json.dumps(key) + ';\\n',
+                  encoding='utf-8'
+              )
+              print('Google Places: clave de navegador incorporada al despliegue (valor oculto).')
+          PY
+          node --check /tmp/where-to-go-pages/google-places-key.js
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
       - name: Subir sitio web
