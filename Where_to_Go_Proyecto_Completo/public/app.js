@@ -1189,6 +1189,11 @@ function startup(){createProvinceControls();ensureProviderBanner();putNearbyResu
     const f=e.target.closest('[data-filter]');if(f){if(f.dataset.filter==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=f.dataset.filter;const expand=state.mode!=='gps'&&state.category!=='todos'&&state.radius<30000;if(expand)state.radius=30000;void loadPlaces();return}
     const more=e.target.closest('[data-more-explore]');if(more){state.exploreLimit=(state.exploreLimit||80)+80;renderExplore();return}
     const morePhotos=e.target.closest('[data-more-photo]');if(morePhotos){void enrichVisiblePhotoCards(state.loadingId,12);return}
+    const googleMore=e.target.closest('[data-google-more]');if(googleMore){void loadMoreGoogleBusinesses();return}
+    const allCategories=e.target.closest('[data-show-all-cats]');if(allCategories){
+      $('home-categories').classList.add('wtg-v8-expanded');
+      $('home-categories').scrollIntoView({behavior:'smooth',block:'start'});return
+    }
     const googlePhoto=e.target.closest('[data-fetch-google-photo]');if(googlePhoto){void fetchVerifiedGooglePhoto(googlePhoto.dataset.fetchGooglePhoto);return}
     const photo=e.target.closest('[data-photo-place]');if(photo){openReport(photo.dataset.photoPlace);return}
     const missing=e.target.closest('[data-report-missing]');if(missing){openReport();return}
@@ -1215,7 +1220,7 @@ function startup(){createProvinceControls();ensureProviderBanner();putNearbyResu
   $('use-live-location').onclick=requestLocation;$('province-select').onchange=refreshMunicipalitySelect;$('municipality-select').onchange=()=>{$('municipality-go').disabled=!$('municipality-select').value};$('municipality-go').onclick=selectMunicipality;$('municipal-retry').onclick=()=>{ $('municipal-retry').hidden=true;loadMunicipalities()};$('business-cta').onclick=()=>openRegister('basico');$('home-see-taxis').onclick=()=>navigate('taxis');$('taxi-register').onclick=()=>{openRegister('basico');$('business-category').value='taxis'};$('add-another-business').onclick=()=>openRegister('basico');$('explore-map').onclick=()=>navigate('mapa');
   $('recenter-map').onclick=()=>{if(state.map)state.map.setView([state.lat,state.lon],13)};
   if($('retry-google-provider'))$('retry-google-provider').onclick=()=>toast('Esta versión funciona sin Google Places.');
-  $('search-input').addEventListener('input',e=>{state.search=e.target.value.trim();renderExplore()});$('search-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&state.search.length>=3&&state.dataMode==='live'&&window.WTG_GOOGLE_PLACES?.configured()){e.preventDefault();void enrichVisiblePhotoCards(state.loadingId,6)}});$('clear-search').onclick=()=>{state.search='';$('search-input').value='';renderExplore()};
+  $('search-input').addEventListener('input',e=>{state.search=e.target.value.trim();renderExplore()});$('search-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&state.search.length>=3){e.preventDefault();void runGoogleBusinessSearch()}});$('clear-search').onclick=()=>{state.search='';$('search-input').value='';renderExplore()};if($('google-search-submit'))$('google-search-submit').onclick=()=>{state.search=$('search-input').value.trim();void runGoogleBusinessSearch()};
   $('distance-select').addEventListener('change',e=>{state.radius=Number(e.target.value);loadPlaces()});
   $('report-form').onsubmit=async e=>{
     e.preventDefault();
