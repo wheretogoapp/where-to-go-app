@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="/photo-atlas.css?v=12.1" />
   <link rel="stylesheet" href="/tours.css?v=1" />
   <link rel="stylesheet" href="/world-explorer.css?v=1" />
+  <link rel="stylesheet" href="/discovery-mobile.css?v=1" />
 
 
 </head>
@@ -118,7 +119,7 @@
           </div>
           <div class="category-grid" id="home-categories" aria-label="Directorio completo de categorías"></div>
           <section class="taxi-teaser" aria-label="Transporte VIP en Puerto Plata"><div class="taxi-teaser-symbol">CT</div><div><span class="mini-eyebrow">SERVICIO DESTACADO · PUERTO PLATA</span><h3>Tu próximo trayecto, en manos expertas.</h3><p>Clemente Transport VIP · Aeropuertos, hoteles y traslados privados.</p></div><div class="taxi-teaser-actions"><button class="btn btn-primary" id="home-see-taxis">Explorar transporte ↗</button></div></section>
-          <div class="section-heading results-heading"><div><span class="mini-eyebrow">SELECCIÓN CERCA DE TI</span><h2>Lugares cerca de ti <span class="result-count" id="home-count"></span></h2></div><button class="text-action" id="home-see-all">Ver más lugares →</button></div>
+          <div class="section-heading results-heading"><div><span class="mini-eyebrow">SELECCIÓN CERCA DE TI</span><h2>Lugares con fotos cerca de ti <span class="result-count" id="home-count"></span></h2></div><button class="text-action" id="home-see-all">Ver más lugares →</button></div>
           <aside id="province-anchor-sponsor" class="wtg-owner-sponsor" hidden aria-label="Anunciante de transporte en Puerto Plata">
  <div class="wtg-owner-mark">CT <small>VIP</small></div><div><small>TRANSPORTE · SOCIO FUNDADOR · PUERTO PLATA</small>
  <strong>Clemente Transport VIP</strong><p>Traslados privados y turísticos. Reserva por WhatsApp.</p></div>
@@ -128,15 +129,17 @@
           <div id="home-list" class="place-grid"></div>
           <section id="province-premium-container" class="wtg-premium-province" hidden aria-label="Anunciantes premium de la provincia"><div class="section-heading"><div><span class="mini-eyebrow">PUBLICIDAD · ESPACIOS PREMIUM</span><h2>Negocios destacados de tu provincia</h2></div></div><div id="province-premium-list"></div><div class="wtg-ad-controls"><button type="button" id="wtg-premium-prev" aria-label="Anuncio anterior">‹</button><button type="button" id="wtg-premium-pause" aria-label="Pausar anuncios">Ⅱ</button><button type="button" id="wtg-premium-next" aria-label="Siguiente anuncio">›</button><span id="wtg-premium-progress" aria-live="off"></span></div></section>
           <section class="promo-banner"><div class="promo-banner-graphic">✦</div><div><span class="promo-badge">PARA EMPRENDEDORES</span><h2>Tu negocio merece ser descubierto.</h2><p>Aparece frente a personas que están buscando exactamente lo que ofreces.</p></div><button id="promo-banner-btn" class="btn btn-dark">Promocionar negocio ↗</button></section>
-          <div class="data-credit">Fuentes: Ministerio de Turismo RD y © colaboradores de OpenStreetMap · Lugares registrados en el mapa, ordenados por cercanía; fotos del local solo cuando están verificadas</div>
+          <div class="data-credit">Lugares con fotos reales vinculadas a su ficha · Google Maps, fuentes abiertas y fotografías autorizadas · Las búsquedas de Google se consultan por zona.</div>
         </section>
 
         <section class="view" id="view-explorar" aria-labelledby="explore-title">
           <div class="page-intro"><div class="mini-eyebrow">TU PRÓXIMO DESCUBRIMIENTO</div><h1 id="explore-title">Explorar lugares <span class="gradient-star">✳</span></h1><p>Encuentra experiencias increíbles cerca de ti o en cualquier ciudad.</p></div>
-          <div class="filter-panel"><div class="searchbar"><span class="search-icon">⌕</span><input id="search-input" type="search" placeholder="Buscar restaurantes, playas, hoteles, nombres..." autocomplete="off" aria-label="Buscar lugares"><button id="clear-search" class="clear-search" title="Borrar búsqueda">×</button></div><div class="filter-row"><div class="filter-chips" id="filter-categories"></div><select id="distance-select" aria-label="Radio de búsqueda"><option value="2000">A 2 km</option><option value="5000">A 5 km</option><option value="12000" selected>A 12 km</option><option value="20000">A 20 km</option><option value="30000">A 30 km</option><option value="60000">A 60 km</option><option value="100000">A 100 km</option></select></div></div>
+          <div class="filter-panel"><div class="searchbar"><span class="search-icon">⌕</span><input id="search-input" type="search" placeholder="Buscar restaurantes, playas, hoteles, nombres..." autocomplete="off" aria-label="Buscar lugares"><button id="clear-search" class="clear-search" title="Borrar búsqueda">×</button></div>
+          <button type="button" id="google-search-submit" class="wtg-google-search-submit">⌕ Buscar este negocio con Google Maps</button>
+          <div class="filter-row"><div class="filter-chips" id="filter-categories"></div><select id="distance-select" aria-label="Radio de búsqueda"><option value="2000">A 2 km</option><option value="5000">A 5 km</option><option value="12000" selected>A 12 km</option><option value="20000">A 20 km</option><option value="30000">A 30 km</option><option value="60000">A 60 km</option><option value="100000">A 100 km</option></select></div></div>
           <div class="section-heading explorer-result-heading"><div><h2>Resultados <span class="result-count" id="explore-count"></span></h2><p id="explore-context">Buscando lugares cercanos...</p></div><button id="explore-map" class="outline-btn">▤ Ver en mapa</button></div>
           <div id="explore-list" class="place-grid explore-grid"></div>
-          <p class="data-credit">Catálogo local de OpenStreetMap (si la importación de GitHub se completó). La cobertura local está en ampliación; no inventamos establecimientos. Sin fotografía comprobable no mostramos otra foto.</p>
+          <p class="data-credit">Resultados con foto del establecimiento. Google Maps y fuentes verificadas · No se muestran fotos genéricas como si pertenecieran al negocio.</p>
         </section>
 
 
@@ -244,11 +247,11 @@
   <script defer src="/province-heroes.js?v=10.0"></script>
   <script defer src="/config.js?v=6"></script>
   <script defer src="/google-places-key.js?v=2"></script>
-  <script defer src="/google-places-adapter.js?v=5"></script>
+  <script defer src="/google-places-adapter.js?v=6"></script>
   <script defer src="/world-location.js?v=1"></script>
   <script defer src="/city-covers.js?v=1"></script>
   <script defer src="/world-geography.js?v=2"></script>
-  <script defer src="/app.js?v=13.3"></script>
+  <script defer src="/app.js?v=14.0"></script>
   <script defer src="/world-explorer.js?v=3"></script>
   <script defer src="/experience.js?v=11.0"></script>
   <script defer src="/world-v8.js?v=11.0"></script>
