@@ -7,14 +7,32 @@
 // evita búsquedas ajenas y permite consultar cada municipio bajo demanda.
 const categories={
  restaurantes:['restaurant','fast_food_restaurant'],cafes:['cafe','coffee_shop'],
- bares:['bar','pub'],hoteles:['hotel','hostel'],resorts:['resort_hotel'],
- villas:['lodging','cottage'],playas:['beach'],piscinas:['swimming_pool'],
- discotecas:['night_club'],heladerias:['ice_cream_shop'],panaderias:['bakery'],
- comidarapida:['fast_food_restaurant'],atracciones:['tourist_attraction','museum','historical_landmark'],
- parques:['park'],cascadas:['scenic_spot'],senderismo:['hiking_area'],
- entretenimiento:['amusement_park','movie_theater','bowling_alley'],
- supermercados:['supermarket'],tiendas:['store'],farmacias:['pharmacy'],
- bancos:['bank'],gasolineras:['gas_station'],taxis:['taxi_stand','taxi_service']
+ bares:['bar','pub'],discotecas:['night_club'],hoteles:['hotel','hostel'],
+ resorts:['resort_hotel'],villas:['lodging','cottage'],playas:['beach'],
+ piscinas:['swimming_pool'],rios:['river'],cascadas:['scenic_spot'],
+ senderismo:['hiking_area'],balnearios:['swimming_pool'],
+ atracciones:['tourist_attraction','museum','historical_landmark'],
+ parques:['park'],entretenimiento:['amusement_park','movie_theater','bowling_alley'],
+ infantil:['indoor_playground','amusement_center'],
+ supermercados:['supermarket','grocery_store','hypermarket'],
+ colmados:['convenience_store','grocery_store'],mercados:['market','farmers_market'],
+ tiendas:['shopping_mall','clothing_store','department_store'],
+ ferreterias:['hardware_store'],electrodomesticos:['electronics_store'],
+ tecnologia:['cell_phone_store','electronics_store'],
+ barberias:['barber_shop'],salones:['beauty_salon','hair_salon'],
+ unas:['nail_salon'],spas:['spa','massage'],gimnasios:['gym'],
+ heladerias:['ice_cream_shop'],panaderias:['bakery'],
+ pescaderias:['seafood_restaurant','fish_store'],comidarapida:['fast_food_restaurant'],
+ farmacias:['pharmacy'],hospitales:['hospital','medical_clinic'],
+ odontologia:['dentist'],veterinarias:['veterinary_care'],
+ mascotas:['pet_store'],bancos:['bank'],cajeros:['atm'],
+ gasolineras:['gas_station'],talleres:['car_repair'],
+ lavaderos:['car_wash'],lavanderias:['laundry'],taxis:['taxi_stand'],
+ servicios:['lawyer','accounting'],deportes:['gym','sports_complex']
+};
+const ALL_GROUPS={
+ main:['restaurant','hotel','supermarket','pharmacy','barber_shop','beauty_salon','bar','cafe','tourist_attraction','night_club'],
+ extra:['hair_salon','grocery_store','shopping_mall','convenience_store','fast_food_restaurant','gas_station','car_wash','gym','beach','bank']
 };
 let promise=null;
 function configured(){return typeof root.WTG_GOOGLE_MAPS_KEY==='string'&&root.WTG_GOOGLE_MAPS_KEY.trim().length>15}
@@ -49,15 +67,15 @@ function photoSet(place,max=5){
  }
  return images;
 }
-async function nearby({lat,lon,radius=12000,category='todos'}){
+async function nearby({lat,lon,radius=12000,category='todos',batch='main'}){
  if(!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)throw Error('Coordenadas inválidas');
  if(!await load())return {status:'unconfigured',places:[]};
  try{
   const {Place}=await root.google.maps.importLibrary('places');
   // Consultas limitadas: no descargar catálogos masivos ni multiplicar llamadas pagadas.
-  const types=category==='todos'?['restaurant','hotel','tourist_attraction','bar','cafe','beach']:(categories[category]||[]);
+  const types=category==='todos'?(ALL_GROUPS[batch]||ALL_GROUPS.main):(categories[category]||[]);
   if(!types.length)return {status:'unsupported',places:[]};
-  const results=await Promise.allSettled(types.slice(0,6).map(async type=>{
+  const results=await Promise.allSettled(types.slice(0,10).map(async type=>{
    const response=await Place.searchNearby({fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],locationRestriction:{center:{lat,lng:lon},radius:Math.min(50000,Math.max(100,radius))},includedPrimaryTypes:[type],maxResultCount:20,rankPreference:'DISTANCE'});
    return response.places||[];
   }));
@@ -75,7 +93,7 @@ async function nearby({lat,lon,radius=12000,category='todos'}){
     });
    }
   }
-  return {status:map.size?'ok':failures===results.length?'error':'empty',places:[...map.values()],failures};
+  return {status:map.size?'ok':failures===results.length?'error':'empty',places:[...map.values()],failures,requestedTypes:types.length};
  }catch(error){return {status:'error',places:[],message:String(error?.message||'Places no disponible')}}
 }
 // Coincidencia conservadora para evitar fotos de negocios distintos.
