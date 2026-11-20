@@ -3,11 +3,18 @@
  */
 (function(root){
 'use strict';
+// Tipos vigentes de Google Places (New): un conjunto corto por categoría
+// evita búsquedas ajenas y permite consultar cada municipio bajo demanda.
 const categories={
- restaurantes:['restaurant'],cafes:['cafe'],bares:['bar'],hoteles:['hotel'],
- atracciones:['tourist_attraction','museum'],parques:['park'],supermercados:['supermarket'],
- farmacias:['pharmacy'],bancos:['bank'],gasolineras:['gas_station'],
- entretenimiento:['amusement_park','movie_theater'],taxis:['taxi_stand']
+ restaurantes:['restaurant','fast_food_restaurant'],cafes:['cafe','coffee_shop'],
+ bares:['bar','pub'],hoteles:['hotel','hostel'],resorts:['resort_hotel'],
+ villas:['lodging','cottage'],playas:['beach'],piscinas:['swimming_pool'],
+ discotecas:['night_club'],heladerias:['ice_cream_shop'],panaderias:['bakery'],
+ comidarapida:['fast_food_restaurant'],atracciones:['tourist_attraction','museum','historical_landmark'],
+ parques:['park'],cascadas:['scenic_spot'],senderismo:['hiking_area'],
+ entretenimiento:['amusement_park','movie_theater','bowling_alley'],
+ supermercados:['supermarket'],tiendas:['store'],farmacias:['pharmacy'],
+ bancos:['bank'],gasolineras:['gas_station'],taxis:['taxi_stand','taxi_service']
 };
 let promise=null;
 function configured(){return typeof root.WTG_GOOGLE_MAPS_KEY==='string'&&root.WTG_GOOGLE_MAPS_KEY.trim().length>15}
@@ -31,9 +38,9 @@ async function nearby({lat,lon,radius=12000,category='todos'}){
  try{
   const {Place}=await root.google.maps.importLibrary('places');
   // Consultas limitadas: no descargar catálogos masivos ni multiplicar llamadas pagadas.
-  const types=category==='todos'?['tourist_attraction','restaurant','hotel']:(categories[category]||[]);
+  const types=category==='todos'?['restaurant','hotel','tourist_attraction','bar','cafe','beach']:(categories[category]||[]);
   if(!types.length)return {status:'unsupported',places:[]};
-  const results=await Promise.allSettled(types.slice(0,3).map(async type=>{
+  const results=await Promise.allSettled(types.slice(0,6).map(async type=>{
    const response=await Place.searchNearby({fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],locationRestriction:{center:{lat,lng:lon},radius:Math.min(50000,Math.max(100,radius))},includedPrimaryTypes:[type],maxResultCount:20,rankPreference:'DISTANCE'});
    return response.places||[];
   }));
