@@ -52,10 +52,10 @@ test('Google devuelve fotografía y atribución del lugar exacto', async () => {
   assert.equal(queries[1].includedPrimaryTypes[0], 'fast_food_restaurant');
 });
 
-test('Exploración general amplía hasta seis grupos de lugares de Places', async () => {
+test('Exploración general consulta diez sectores comerciales de Google Places', async () => {
   const {api, queries} = configuredBrowser();
   const result = await api.nearby({lat: 19.7934, lon: -70.6884, category: 'todos'});
-  assert.equal(queries.length, 6);
+  assert.equal(queries.length, 10);
   assert.equal(result.places.length, 1);
   assert.ok(queries.every(x => x.maxResultCount <= 20));
 });
@@ -169,4 +169,62 @@ test('Nombres con un pequeño error ortográfico se revisan con control geográf
  assert.equal(api.sameEstablishment('Ocean Disco','Ocean Beach Resort'),false);
  assert.equal(api.sameEstablishment('El Negro','El Negocio'),false);
  assert(api.meters(19.79,-70.69,19.791,-70.69)>85);
+});
+
+
+test('Compras, belleza, farmacias y gimnasios son categorías consultables',async()=>{
+  const {api,queries}=configuredBrowser();
+  for(const [category,type] of [
+    ['supermercados','supermarket'],['barberias','barber_shop'],
+    ['salones','beauty_salon'],['farmacias','pharmacy'],
+    ['unas','nail_salon'],['talleres','car_repair']]){
+    const before=queries.length;
+    const results=await api.nearby({lat:19.7934,lon:-70.6884,category});
+    assert.equal(results.status,'ok',category);
+    assert(queries.length>before,category);
+    assert.equal(queries[before].includedPrimaryTypes[0],type,category);
+  }
+});
+test('Descubrir más consulta un lote complementario de diez clases',async()=>{
+  const {api,queries}=configuredBrowser();
+  const result=await api.nearby({lat:19.7934,lon:-70.6884,category:'todos',batch:'extra'});
+  assert.equal(result.status,'ok');
+  assert.equal(queries.length,10);
+  assert(queries.some(r=>r.includedPrimaryTypes[0]==='shopping_mall'));
+  assert(queries.some(r=>r.includedPrimaryTypes[0]==='car_wash'));
+  assert(queries.every(r=>r.maxResultCount<=20));
+});
+test('Búsqueda por nombre devuelve exclusivamente fichas con fotos reales',async()=>{
+  const request=[];
+  const place={
+    id:'ChIJwing',displayName:'Wing and Waffle',types:['restaurant'],
+    formattedAddress:'Puerto Plata, República Dominicana',
+    location:{lat:()=>19.7934,lng:()=>-70.6884},
+    googleMapsURI:'https://maps.google.com/?q=wing-waffle',
+    photos:[{getURI:()=> 'https://example.com/wing-waffle.jpg',
+      authorAttributions:[{displayName:'Autor verificado',uri:'https://maps.google.com/author'}]}]
+  };
+  const window={
+    WTG_GOOGLE_MAPS_KEY:'AIzaTestKeyForBrowserOnly1234567890',
+    google:{maps:{importLibrary:async()=>({Place:{searchByText:async args=>{request.push(args);return {places:[place,{...place,id:'sin-foto',photos:[]}]}}})}}
+  };
+  vm.runInNewContext(adapter,{window,console});
+  const res=await window.WTG_GOOGLE_PLACES.searchText({query:'Wing and Waffle',lat:19.7934,lon:-70.6884});
+  assert.equal(res.status,'ok');
+  assert.equal(res.places.length,1);
+  assert.equal(res.places[0].name,'Wing and Waffle');
+  assert.equal(res.places[0].photo,'https://example.com/wing-waffle.jpg');
+  assert.equal(request.length,1);
+});
+test('Portada y Explorar ocultan fichas cartográficas sin fotos y exponen servicios',()=>{
+  const code=fs.readFileSync(path.join(root,'app.js'),'utf8');
+  assert(code.includes('function hasCatalogPhoto('));
+  assert(code.includes('function isVisibleBusiness('));
+  assert(code.includes("state.places.filter(p=>p.distance<=state.radius+100&&isVisibleBusiness(p))"));
+  assert(code.includes('state.places.filter(p=>matches(p)&&hasCatalogPhoto(p)'));
+  for(const id of ['supermercados','farmacias','barberias','salones','unas','tecnologia','gimnasios','bancos'])
+    assert(code.includes("'"+id+"'"),id);
+  assert(code.includes('data-google-more'));
+  assert(code.includes('data-show-all-cats'));
+  assert(code.includes('runGoogleBusinessSearch'));
 });
