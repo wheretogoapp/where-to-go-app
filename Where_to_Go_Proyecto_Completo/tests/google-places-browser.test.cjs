@@ -79,7 +79,7 @@ test('Sin clave la API no inicia consultas', async () => {
 test('La app integra Google Places con la búsqueda dominicana', () => {
   const code = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
   assert.ok(code.includes('void enrichDominicanGooglePlaces(token,[...unique.values()])'));
-  assert.ok(code.includes('const googleWithPhotos='));
+  assert.ok(code.includes('isVisibleBusiness(p)'));
   assert.ok(code.includes('photoAttributions:p.photoAttributions||[]'));
 });
 
