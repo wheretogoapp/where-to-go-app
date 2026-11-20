@@ -617,6 +617,7 @@ async function loadPlaces(force=false){
     if(!window.WTG_GOOGLE_PLACES?.configured()){
       state.dataMode='live';state.dataError='Lugares disponibles al activar Google Places. La selección de país y ciudad funciona sin la API.';renderAll();return;
     }
+    if(!window.WTG_ACTIVE_HAS_COORDINATES){state.dataMode='live';state.dataError='Selecciona una ciudad para buscar negocios reales en este país.';renderAll();return;}
     const response=await window.WTG_GOOGLE_PLACES.nearby({lat:state.lat,lon:state.lon,radius:state.radius,category:state.category});
     if(token!==state.loadingId)return;
     const typeToCategory={restaurant:'restaurantes',cafe:'cafes',bar:'bares',lodging:'hoteles',tourist_attraction:'atracciones',museum:'atracciones',park:'parques',supermarket:'supermercados',pharmacy:'farmacias',bank:'bancos',gas_station:'gasolineras',amusement_park:'entretenimiento',movie_theater:'entretenimiento',taxi_stand:'taxis'};
@@ -1081,12 +1082,13 @@ function startup(){createProvinceControls();ensureProviderBanner();putNearbyResu
 }
 document.addEventListener('DOMContentLoaded',startup);
 
-window.addEventListener('wtg-world-request-gps',()=>{window.WTG_ACTIVE_COUNTRY=null;window.WTG_ACTIVE_DESTINATION='';try{sessionStorage.removeItem('wtg_world_selection')}catch{};document.getElementById('main-content').hidden=false;document.getElementById('wtg-world-empty').hidden=true;requestLocation()});
+window.addEventListener('wtg-world-request-gps',()=>{window.WTG_ACTIVE_HAS_COORDINATES=false;window.WTG_ACTIVE_COUNTRY=null;window.WTG_ACTIVE_DESTINATION='';try{sessionStorage.removeItem('wtg_world_selection')}catch{};document.getElementById('main-content').hidden=false;document.getElementById('wtg-world-empty').hidden=true;requestLocation()});
 window.addEventListener('wtg-world-return-pilot',event=>{window.WTG_ACTIVE_COUNTRY='DO';window.WTG_ACTIVE_DESTINATION='';const place=event.detail||{};if(place.coordinates){state.lat=place.coordinates.lat;state.lon=place.coordinates.lon;state.city=place.city||'Puerto Plata';state.region=place.region||'República Dominicana'}else{state.lat=19.7934;state.lon=-70.6884;state.city='Puerto Plata';state.region='República Dominicana'}state.mode='city';renderAll();void loadPlaces()});
 window.addEventListener('wtg-world-selected',event=>{
   const selection=event.detail||{},country=selection.country;
   if(!/^[A-Z]{2}$/.test(country||''))return;
   window.WTG_ACTIVE_COUNTRY=country;
+  window.WTG_ACTIVE_HAS_COORDINATES=!!selection.coordinates;
   window.WTG_ACTIVE_DESTINATION=[selection.city,selection.region,selection.countryName].filter(Boolean).join(' · ')||country;
   ++state.loadingId;
   state.mode='city';if(selection.coordinates){state.lat=selection.coordinates.lat;state.lon=selection.coordinates.lon;}state.city=selection.city||selection.countryName||country;
