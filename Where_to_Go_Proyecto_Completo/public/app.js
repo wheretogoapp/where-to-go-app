@@ -248,7 +248,7 @@ function placeGalleryMarkup(p){
       <span class="wtg-gallery-count">1 / ${photos.length} fotos reales</span>
     </div>
     ${multiple?'<div class="wtg-gallery-thumbnails" role="group" aria-label="Elegir fotografía">'+photos.map((photo,i)=>`<button type="button" data-gallery-thumb="${i}" aria-label="Ver foto ${i+1}" aria-pressed="${i===0}" class="${i===0?'active':''}"><img src="${esc(photo.url)}" alt="" loading="lazy" referrerpolicy="${photo.provider==='google'?'strict-origin-when-cross-origin':'no-referrer'}"></button>`).join('')+'</div>':''}
-    <p class="wtg-gallery-credit">Foto: <span data-gallery-attribution>${esc(first.attribution)}</span> · <a data-gallery-source href="${esc(first.source)}" target="_blank" rel="noopener noreferrer">Ver original y derechos ↗</a><a data-gallery-license href="${esc(first.license||first.source)}" target="_blank" rel="noopener noreferrer">Licencia</a></p>
+    <p class="wtg-gallery-credit">Foto: <span data-gallery-attribution>${esc(first.attribution)}</span> · <a data-gallery-source href="${esc(first.source)}" target="_blank" rel="noopener noreferrer">Ver original y derechos ↗</a>${first.provider==='google'?'':`<a data-gallery-license href="${esc(first.license||first.source)}" target="_blank" rel="noopener noreferrer">Licencia</a>`}</p>
   </section>`;
 }
 function selectGalleryPhoto(container,index){
@@ -265,7 +265,7 @@ function selectGalleryPhoto(container,index){
   if(label)label.textContent=(at+1)+' / '+photos.length+' fotos reales';
   const credit=container.querySelector('[data-gallery-attribution]');if(credit)credit.textContent=entry.attribution;
   const src=container.querySelector('[data-gallery-source]');if(src)src.href=entry.source;
-  const license=container.querySelector('[data-gallery-license]');if(license)license.href=entry.license||entry.source;
+  const license=container.querySelector('[data-gallery-license]');if(license){license.href=entry.license||entry.source;license.hidden=entry.provider==='google'}
   container.querySelectorAll('[data-gallery-thumb]').forEach(b=>{
     const active=Number(b.dataset.galleryThumb)===at;
     b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));
@@ -746,7 +746,7 @@ const wtgPhotoAttempted=new Set();
 function candidatesForGooglePhoto(){
   const collection=state.places.filter(p=>p.source!=='google'&&p.source!=='patrocinado'&&
     !p.photo&&p.nameKnown!==false&&String(p.name||'').trim().length>=5&&
-    (state.category==='todos'?isTouristDiscovery(p):matches(p))&&
+    (state.search?(`${p.name} ${p.address||''}`.toLocaleLowerCase('es').includes(state.search.toLocaleLowerCase('es'))):state.category==='todos'?isTouristDiscovery(p):matches(p))&&
     Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&p.distance<=state.radius+100&&
     !wtgPhotoAttempted.has(p.id));
   return sortByDistance(collection);
@@ -781,8 +781,10 @@ async function enrichVisiblePhotoCards(token,maxRequests=4){
 // Consulta puntual que puede generar cargos: solo con acción expresa del visitante.
 async function fetchVerifiedGooglePhoto(id){
   const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);
-  if(!p||p.photo||p.googlePhotoTried||!window.WTG_GOOGLE_PLACES?.configured())return;
+  if(!p||p.photo||p.googlePhotoTried||wtgPhotoBudget<=0||!window.WTG_GOOGLE_PLACES?.configured())return;
   p.googlePhotoTried=true;
+  wtgPhotoAttempted.add(p.id);
+  wtgPhotoBudget--;
   toast('Buscando foto del negocio en Google Maps…');
   const result=await window.WTG_GOOGLE_PLACES.matchPhoto({name:p.name,lat:p.lat,lon:p.lon});
   if(result.status==='ok'&&safeUrl(result.photo)){
@@ -901,6 +903,9 @@ function openPlace(id){window.WTG_auth?.recordView?.(id, state.places.find(p=>p.
   const prov=p.sponsored?'Anunciante verificado · Publicidad':p.source==='propietario'?'Ficha revisada · Propietario':p.source==='google'?GOOGLE_BRAND:(p.source==='mitur'?'Ministerio de Turismo RD':p.source==='editorial'?'Cartografía documentada · consulta la fuente':p.source==='overture'?'© Overture Maps · Confirmar datos':'© OpenStreetMap contributors');
   $('place-modal-body').innerHTML=`${placeGalleryMarkup(p)}<div class="detail-content"><span class="detail-cat">${c.emoji} ${esc(c.name)}</span><h2 id="place-modal-title">${esc(p.name)}</h2><p class="detail-location">⌖ ${esc(p.address||'Dirección no publicada')} · ${distance(p.distance)} en línea recta ${state.mode==='gps'?'desde tu GPS':'desde el centro de búsqueda'}</p><p class="detail-description">${esc(p.description||'Esta ficha se obtuvo de un proveedor de lugares reales. Confirma datos importantes antes de visitar.')}</p><div class="detail-facts"><div>🗺️ Fuente: ${prov}</div><div>📍 Punto registrado: ${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}</div>${googleAttribution(p)}<div>📞 ${phone?esc(p.phone):'Teléfono no disponible en la fuente'}</div>${p.tags?.opening_hours?`<div>🕒 Horario registrado: ${esc(p.tags.opening_hours)}</div>`:''}${['osm','overture'].includes(p.source)?`<div>ℹ️ ${esc(p.accuracy||'Punto registrado en OpenStreetMap')}. Si es un área extensa, este punto puede NO ser su entrada. Comprueba la llegada antes de viajar.</div>`:p.source==='mitur'?'<div>ℹ️ Punto de destino vinculado por Turismo RD; la entrada exacta puede ser distinta. Confirma el acceso.</div>':''}</div><div class="detail-actions"><a class="wtg-external-photos" href="${esc(mapsPlaceSearch(p))}" target="_blank" rel="noopener noreferrer">🖼️ Buscar más fotos y reseñas en Maps ↗</a><a class="primary" target="_blank" rel="noopener" href="${esc(directions)}">📍 Cómo llegar ↗</a><a target="_blank" rel="noopener" href="https://waze.com/ul?ll=${encodeURIComponent(p.lat+','+p.lon)}&navigate=yes">🚗 Waze ↗</a><button data-fav="${esc(id)}">${fav?'♥ Quitar favorito':'♡ Guardar lugar'}</button>${website?`<a href="${esc(website)}" target="_blank" rel="noopener">🌐 Sitio web ↗</a>`:''}${phone?`<a href="tel:${esc(phone)}">📞 Llamar</a>`:''}${!p.photo&&window.WTG_GOOGLE_PLACES?.configured()&&!p.googlePhotoTried?`<button type="button" data-fetch-google-photo="${esc(p.id)}">📷 Buscar foto del negocio en Google</button>`:''}${!p.photo?`<button type="button" data-photo-place="${esc(p.id)}">📷 Aportar foto verificada</button>`:''}${p.source==='google'?`<a target="_blank" rel="noopener" href="${esc(p.googleUri||directions)}">Ver ficha en Google Maps ↗</a>`:`<a class="full-line" target="_blank" rel="noopener" href="${esc(p.source==='mitur'||p.source==='editorial'||p.source==='overture'||p.sponsored||p.source==='propietario'?(safeUrl(p.sourceUrl)||osmMap):osmMap)}">${p.sponsored?'Ver web del anunciante ↗':p.source==='propietario'?'Ver ubicación verificada ↗':p.source==='mitur'?'Ver fuente turística oficial ↗':p.source==='overture'?'Ver datos de Overture Maps ↗':p.source==='editorial'?'Ver fuente del lugar ↗':'Ver ficha en OpenStreetMap ↗'}</a>`}</div></div>`;
   openModal('place-modal');
+  // Al abrir un lugar sin foto se intenta verificar esa ficha, no otro negocio.
+  // Se evita repetir la consulta y el presupuesto técnico limita el consumo.
+  if(!p.photo&&!p.googlePhotoTried&&!wtgPhotoAttempted.has(p.id)&&wtgPhotoBudget>0&&window.WTG_GOOGLE_PLACES?.configured())void fetchVerifiedGooglePhoto(id);
   if(p.source==='google'&&!p.detailsLoaded){getGoogleDetails(p).then(()=>{if(state.modal==='place-modal'&&$('place-modal-title')?.textContent===p.name)openPlace(id)})}
   // Photographs from the batch catalog are licensed and attributed before display.
 
