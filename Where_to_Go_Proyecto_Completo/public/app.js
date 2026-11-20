@@ -1305,6 +1305,7 @@ function startup(){createProvinceControls();ensureProviderBanner();putNearbyResu
   }
   if('serviceWorker' in navigator&&window.isSecureContext){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js').catch(()=>{}))}
 }
+window.WTG_GOOGLE_TEXT_SEARCH=runGoogleBusinessSearch;
 document.addEventListener('DOMContentLoaded',startup);
 
 window.addEventListener('wtg-world-request-gps',()=>{window.WTG_ACTIVE_HAS_COORDINATES=false;window.WTG_ACTIVE_COUNTRY=null;window.WTG_ACTIVE_DESTINATION='';try{sessionStorage.removeItem('wtg_world_selection')}catch{};document.getElementById('main-content').hidden=false;document.getElementById('wtg-world-empty').hidden=true;requestLocation()});
