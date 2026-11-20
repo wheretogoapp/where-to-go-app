@@ -98,6 +98,32 @@ async function nearby({lat,lon,radius=12000,category='todos',batch='main'}){
 }
 // Coincidencia conservadora para evitar fotos de negocios distintos.
 // La búsqueda específica se ejecuta únicamente cuando el visitante la solicita.
+// Búsqueda de un nombre indicado por el visitante. No rastrea ni predescarga.
+async function searchText({query,lat,lon,radius=12000}){
+ if(!configured()||!String(query||'').trim()||!Number.isFinite(lat)||!Number.isFinite(lon))
+   return {status:'unconfigured',places:[]};
+ if(!await load())return {status:'unconfigured',places:[]};
+ try{
+  const {Place}=await root.google.maps.importLibrary('places');
+  const response=await Place.searchByText({
+    textQuery:String(query).trim().slice(0,110),
+    fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],
+    locationBias:{center:{lat,lng:lon},radius:Math.min(50000,Math.max(2000,radius))},
+    maxResultCount:20
+  });
+  const matches=[];
+  for(const p of response.places||[]){
+    if(!p.id||!p.location||!p.displayName)continue;
+    const photos=photoSet(p);
+    if(!photos.length)continue;
+    matches.push({id:'google:'+p.id,googlePlaceId:p.id,name:p.displayName,
+      lat:p.location.lat(),lon:p.location.lng(),address:p.formattedAddress||'',
+      mapUrl:p.googleMapsURI||'',types:p.types||[],photo:photos[0].url,
+      photos,photoAttributions:photos[0].authorAttributions||[],source:'google'});
+  }
+  return {status:matches.length?'ok':'empty',places:matches};
+ }catch(error){return {status:'error',places:[],message:String(error?.message||'Text Search no disponible')}}
+}
 function normalizedName(value){
  return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
   .toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
@@ -159,5 +185,5 @@ async function matchPhoto({name,lat,lon}){
   return {status:'not-found'};
  }catch(e){return {status:'error',message:String(e?.message||'No fue posible consultar Google Places').slice(0,160)}}
 }
-root.WTG_GOOGLE_PLACES=Object.freeze({configured,nearby,matchPhoto,sameEstablishment,matchQuality,meters});
+root.WTG_GOOGLE_PLACES=Object.freeze({configured,nearby,searchText,matchPhoto,sameEstablishment,matchQuality,meters});
 })(window);
