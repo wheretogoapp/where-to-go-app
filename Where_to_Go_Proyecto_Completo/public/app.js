@@ -647,7 +647,7 @@ async function loadPlaces(force=false){
     renderAll();return;
   }
   const token=++state.loadingId;
-  wtgGoogleNearby=[];wtgExtraBatchLoaded=false;
+  wtgGoogleNearby=[];wtgGoogleStage=0;wtgGoogleBusy=false;
   state.googleEnabled=false;state.googleIssue='';state.placesProvider='osm';
   // Do not flash a misleading 0 while downloading the regional catalogue.
   state.remotePlaces=[];state.places=[];state.dataMode='loading';state.dataError='Cargando establecimientos cercanos…';renderAll();
@@ -706,7 +706,8 @@ async function loadPlaces(force=false){
 // Complementar RD sin sustituir las fichas cartográficas ni bloquear su carga.
 // La búsqueda de Google es opcional; si falla, el directorio OSM sigue visible.
 const WTG_GOOGLE_TYPES={restaurant:'restaurantes',fast_food_restaurant:'comidarapida',cafe:'cafes',coffee_shop:'cafes',bar:'bares',pub:'bares',hotel:'hoteles',hostel:'hoteles',lodging:'hoteles',resort_hotel:'resorts',cottage:'villas',beach:'playas',swimming_pool:'piscinas',night_club:'discotecas',ice_cream_shop:'heladerias',bakery:'panaderias',tourist_attraction:'atracciones',museum:'atracciones',historical_landmark:'atracciones',scenic_spot:'atracciones',hiking_area:'senderismo',park:'parques',supermarket:'supermercados',store:'tiendas',pharmacy:'farmacias',bank:'bancos',gas_station:'gasolineras',amusement_park:'entretenimiento',movie_theater:'entretenimiento',bowling_alley:'entretenimiento',taxi_stand:'taxis',taxi_service:'taxis',barber_shop:'barberias',beauty_salon:'salones',hair_salon:'salones',hair_care:'salones',nail_salon:'unas',spa:'spas',gym:'gimnasios',grocery_store:'supermercados',hypermarket:'supermercados',convenience_store:'colmados',shopping_mall:'tiendas',clothing_store:'tiendas',department_store:'tiendas',pharmacy:'farmacias',medical_clinic:'hospitales',dentist:'odontologia',car_wash:'lavaderos',car_repair:'talleres',hardware_store:'ferreterias',cell_phone_store:'tecnologia',electronics_store:'tecnologia',atm:'cajeros',veterinary_care:'veterinarias',pet_store:'mascotas',indoor_playground:'infantil',amusement_center:'entretenimiento',night_club:'discotecas',fast_food_restaurant:'comidarapida'};
-let wtgExtraBatchLoaded=false;
+let wtgGoogleStage=0;
+let wtgGoogleBusy=false;
 function toGoogleListing(p){
  const cat=state.category==='todos'?(p.types||[]).map(t=>WTG_GOOGLE_TYPES[t]).find(Boolean)||'atracciones':state.category;
  return {...p,cat,googleId:p.googlePlaceId,googleUri:p.mapUrl,googleDirections:p.mapUrl,
@@ -715,69 +716,77 @@ function toGoogleListing(p){
    photo:p.photo||'',googlePhotos:p.photos||[],photoAttributions:p.photoAttributions||[],
    photoSource:'',photoAttribution:'',photos:[]};
 }
-async function enrichDominicanGooglePlaces(token,localPlaces){
-  if(!window.WTG_GOOGLE_PLACES?.configured())return;
-  let result;
-  try{
-    result=await window.WTG_GOOGLE_PLACES.nearby({lat:state.lat,lon:state.lon,radius:state.radius,category:state.category});
-  }catch(error){console.warn('Where to Go: búsqueda complementaria Google no disponible',String(error));return;}
-  if(token!==state.loadingId||window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')return;
-  if(!Array.isArray(result?.places)||!result.places.length){
-    if(result?.status==='error')console.warn('Where to Go: Google Places no devolvió lugares; OpenStreetMap sigue funcionando');
-    return;
-  }
-  const places=result.places.map(toGoogleListing);
-  // Relacionar fotografías solo con el negocio correspondiente.
-  // Sin llamadas adicionales ni suposiciones sobre negocios vecinos.
-  let photosLinked=0;
-  const unmatched=[];
-  for(const google of places.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&insideNearbyRadius(p))){
-    const existing=localPlaces.find(local=>
-      local.cat===google.cat&&window.WTG_GOOGLE_PLACES.sameEstablishment(local.name,google.name)&&
-      window.WTG_GOOGLE_PLACES.meters(local.lat,local.lon,google.lat,google.lon)<=100);
-    if(existing){
-      if(!existing.photo&&safeUrl(google.photo)){
-        existing.photo=google.photo;
-        existing.googlePhotoMapUrl=google.mapUrl||google.googleUri;
-        existing.googlePhotoAttributions=google.photoAttributions||[];
-        existing.googlePhotos=google.googlePhotos||[];
+function mergeGoogleListings(result,localPlaces,context='Google Maps'){
+  const incoming=(result?.places||[]).map(toGoogleListing)
+    .filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&insideNearbyRadius(p));
+  const existingIds=new Set(wtgGoogleNearby.map(p=>p.id));
+  let added=0,photosLinked=0,withPhoto=0;
+  for(const google of incoming){
+    if(!google.photo||!safeUrl(google.photo))continue;
+    withPhoto++;
+    const local=localPlaces.find(p=>p.cat===google.cat&&
+      window.WTG_GOOGLE_PLACES.sameEstablishment(p.name,google.name)&&
+      window.WTG_GOOGLE_PLACES.meters(p.lat,p.lon,google.lat,google.lon)<=100);
+    if(local){
+      if(!hasCatalogPhoto(local)){
+        local.photo=google.photo;local.googlePhotos=google.googlePhotos||[];
+        local.googlePhotoAttributions=google.photoAttributions||[];
+        local.googlePhotoMapUrl=google.mapUrl||google.googleUri||'';
         photosLinked++;
       }
-    }else unmatched.push(google);
+    }else if(!existingIds.has(google.id)){
+      wtgGoogleNearby.push(google);existingIds.add(google.id);added++;
+    }
   }
-  wtgGoogleNearby=unmatched;
-  applyNearby(localPlaces,`Catálogo local y ${unmatched.length} fichas adicionales de Google Maps · ${photosLinked} fotos relacionadas · ${state.city}`);
-  void enrichVisiblePhotoCards(token,6);
+  const photoCount=[...localPlaces,...wtgGoogleNearby].filter(hasCatalogPhoto).length;
+  applyNearby(localPlaces,context+' · '+photoCount+' establecimientos con fotografía · '+state.city);
+  return {added,photosLinked,withPhoto,photoCount};
 }
-
-// Consulta de categorías complementarias solo cuando el visitante toca "Descubrir más".
+// Mostrar Google desde el primer lote sin bloquear el catálogo local.
+async function enrichDominicanGooglePlaces(token,localPlaces){
+  if(!window.WTG_GOOGLE_PLACES?.configured())return;
+  try{
+    const result=await window.WTG_GOOGLE_PLACES.nearby({
+      lat:state.lat,lon:state.lon,radius:state.radius,category:state.category,batch:'main'
+    });
+    if(token!==state.loadingId||window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')return;
+    if(result?.places?.length)mergeGoogleListings(result,localPlaces,'Google Maps · búsqueda principal');
+    // Las cinco clases de comercios cotidianos se consultan también en Inicio,
+    // únicamente en la vista general. No se realiza un rastreo nacional.
+    if(state.category==='todos'&&result?.status!=='error'){
+      const everyday=await window.WTG_GOOGLE_PLACES.nearby({
+        lat:state.lat,lon:state.lon,radius:state.radius,category:'todos',batch:'essentials'
+      });
+      if(token!==state.loadingId)return;
+      if(everyday?.places?.length)mergeGoogleListings(everyday,localPlaces,'Google Maps · comercios y servicios');
+    }
+    if(token===state.loadingId)void enrichVisiblePhotoCards(token,6);
+  }catch(error){console.warn('Where to Go: Google Places no disponible en esta zona',String(error));}
+}
+// Explorar físicamente otros sectores del municipio. Una pulsación consulta
+// solo un sector y reúne las fotos en memoria de esta pantalla.
 async function loadMoreGoogleBusinesses(){
- if(wtgExtraBatchLoaded||state.category!=='todos'||!window.WTG_GOOGLE_PLACES?.configured())return;
- wtgExtraBatchLoaded=true;
- const token=state.loadingId;
- let response;
- try{response=await window.WTG_GOOGLE_PLACES.nearby({lat:state.lat,lon:state.lon,radius:state.radius,category:'todos',batch:'extra'});}
- catch(error){console.warn('Google Places: búsqueda adicional falló',String(error));renderExplore();return}
- if(token!==state.loadingId)return;
- const incoming=(response.places||[]).map(toGoogleListing);
- const existingIds=new Set(wtgGoogleNearby.map(p=>p.id));
- let added=0,withPhoto=0;
- for(const p of incoming){
-   if(!p.photo||!safeUrl(p.photo)||!insideNearbyRadius(p)||existingIds.has(p.id))continue;
-   const local=state.remotePlaces.find(old=>old.cat===p.cat&&
-     window.WTG_GOOGLE_PLACES.sameEstablishment(old.name,p.name)&&
-     window.WTG_GOOGLE_PLACES.meters(old.lat,old.lon,p.lat,p.lon)<=100);
-   if(local){
-     local.photo=p.photo;local.googlePhotos=p.googlePhotos||[];
-     local.googlePhotoAttributions=p.photoAttributions||[];
-     local.googlePhotoMapUrl=p.mapUrl||p.googleUri||'';
-   }else{
-     wtgGoogleNearby.push(p);added++;existingIds.add(p.id);
-   }
-   withPhoto++;
- }
- applyNearby(state.remotePlaces,'Google Maps · '+state.city+' · '+withPhoto+' negocios con fotos adicionales');
- toast(withPhoto?'Encontramos '+withPhoto+' establecimientos con foto en Google Maps.':'No aparecieron otras fotografías verificadas en esta zona.');
+  if(wtgGoogleBusy||state.category!=='todos'||!window.WTG_GOOGLE_PLACES?.configured())return;
+  const stages=window.WTG_GOOGLE_PLACES.scanStages();
+  if(wtgGoogleStage>=stages.length)return;
+  const stage=stages[wtgGoogleStage];
+  const token=state.loadingId;
+  wtgGoogleBusy=true;
+  renderExplore();
+  toast('Google Maps: buscando '+stage.name.toLowerCase()+'…');
+  try{
+    const result=await window.WTG_GOOGLE_PLACES.nearby({
+      lat:state.lat,lon:state.lon,radius:state.radius,
+      category:'todos',batch:stage.batch,sector:stage.sector
+    });
+    if(token!==state.loadingId)return;
+    wtgGoogleStage++;
+    const summary=mergeGoogleListings(result,state.remotePlaces,'Google Maps · '+stage.name);
+    toast(summary.added||summary.photosLinked?
+      'Añadimos '+summary.added+' fichas con fotografía; '+summary.photosLinked+' fotos asociadas a negocios existentes.':
+      'Sector consultado. No encontramos otras fotos verificables aquí.');
+  }catch(error){console.warn('Google Places: sector no disponible',String(error));if(token===state.loadingId)wtgGoogleStage++;}
+  finally{wtgGoogleBusy=false;if(token===state.loadingId)renderExplore();}
 }
 async function runGoogleBusinessSearch(){
  const query=String(state.search||'').trim();
@@ -975,8 +984,10 @@ function renderExplore(){
   const shown=arr.slice(0,state.exploreLimit||80);
   const findMore=window.WTG_GOOGLE_PLACES?.configured()&&wtgPhotoBudget>0&&candidatesForGooglePhoto().length&&!wtgPhotoMatching?
     '<div class="wtg-more-explore"><button type="button" data-more-photo="yes">📷 Buscar fotos de más establecimientos</button></div>':'';
-  const googleMore=window.WTG_GOOGLE_PLACES?.configured()&&state.category==='todos'&&!wtgExtraBatchLoaded&&state.dataMode==='live'?
-    '<div class="wtg-more-explore"><button type="button" data-google-more="yes">✦ Descubrir más negocios con Google Maps (compras, belleza y servicios)</button></div>':'';
+  const googleStages=window.WTG_GOOGLE_PLACES?.scanStages?.()||[];
+  const stage=googleStages[wtgGoogleStage];
+  const googleMore=window.WTG_GOOGLE_PLACES?.configured()&&state.category==='todos'&&state.dataMode==='live'&&stage?
+    `<div class="wtg-more-explore"><button type="button" data-google-more="yes" ${wtgGoogleBusy?'disabled':''}>✦ ${wtgGoogleBusy?'Buscando en Google Maps…':'Explorar más con Google Maps: '+esc(stage.name)+' ('+(wtgGoogleStage+1)+'/'+googleStages.length+')'}</button></div>`:'';
   $('explore-list').innerHTML=state.dataMode==='loading'&&!arr.length?
     '<div class="loading-state"><span class="spinner"></span><div>Buscando lugares con fotos auténticas...</div></div>':
     arr.length?shown.map(placeCard).join('')+
