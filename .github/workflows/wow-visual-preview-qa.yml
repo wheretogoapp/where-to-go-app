@@ -62,7 +62,9 @@ jobs:
             if(label==='iphone')await page.screenshot({path:'/tmp/wow-iphone-welcome.png'});
             await page.evaluate(()=>{
               document.getElementById('wtg-onboarding').hidden=true;
+              document.getElementById('wtg-onboarding').style.setProperty('display','none','important');
               document.getElementById('auth-gate').hidden=true;
+              document.getElementById('auth-gate').style.setProperty('display','none','important');
               document.body.classList.remove('wtg-onboarding-active');
               const initial=document.getElementById('view-inicio');
               if(initial){initial.classList.add('active');initial.hidden=false;}
