@@ -1269,6 +1269,47 @@ function dynamicText(text){
   const end=body.match(/^(.*?)(\s*[↗→↻])$/u);
   const suffix=end?end[2]:'';
   if(end)body=end[1];
+  // Translate changing result counts without translating names of places or cities.
+  const template=(pattern,forms)=>{
+    const match=body.match(pattern);if(!match)return null;
+    return (forms[codes.indexOf(lang)]||forms[0]).replace(/\{(\d+)\}/g,(_,n)=>match[Number(n)+1]||'');
+  };
+  const patterns=[
+    [/^(\d+) lugares con foto de (\d+) fichas · (.+?) · hasta (.+)$/,
+      ['{0} lugares con foto de {1} fichas · {2} · hasta {3}',
+       '{0} places with photos out of {1} listings · {2} · within {3}',
+       '{0} lieux avec photos sur {1} fiches · {2} · dans un rayon de {3}',
+       '{0} lugares com fotos de {1} fichas · {2} · até {3}',
+       '{0} Orte mit Fotos von {1} Einträgen · {2} · bis {3}',
+       '{0} luoghi con foto su {1} schede · {2} · entro {3}']],
+    [/^Mostrando (\d+) de (\d+) lugares$/,
+      ['Mostrando {0} de {1} lugares','Showing {0} of {1} places',
+       '{0} lieux affichés sur {1}','Mostrando {0} de {1} lugares',
+       '{0} von {1} Orten angezeigt','Mostrati {0} luoghi su {1}']],
+    [/^(\d+) con foto en esta zona · (\d+) Google Maps · (\d+) otras fuentes$/,
+      ['{0} con foto en esta zona · {1} Google Maps · {2} otras fuentes',
+       '{0} with photos nearby · {1} Google Maps · {2} other sources',
+       '{0} avec photos dans cette zone · {1} Google Maps · {2} autres sources',
+       '{0} com fotos nesta região · {1} Google Maps · {2} outras fontes',
+       '{0} mit Fotos in diesem Gebiet · {1} Google Maps · {2} andere Quellen',
+       '{0} con foto in zona · {1} Google Maps · {2} altre fonti']],
+    [/^(\d+) lugares para descubrir · (.+?) · hasta (.+)$/,
+      ['{0} lugares para descubrir · {1} · hasta {2}',
+       '{0} places to discover · {1} · within {2}',
+       '{0} lieux à découvrir · {1} · rayon de {2}',
+       '{0} lugares para descobrir · {1} · até {2}',
+       '{0} Orte zu entdecken · {1} · bis {2}',
+       '{0} luoghi da scoprire · {1} · entro {2}']],
+    [/^(\d+) fotos reales$/,
+      ['{0} fotos reales','{0} real photos','{0} photos authentiques',
+       '{0} fotos reais','{0} echte Fotos','{0} foto reali']],
+    [/^Explorando (.+)$/,
+      ['Explorando {0}','Exploring {0}','Exploration de {0}',
+       'Explorando {0}','Erkunde {0}','Esplorando {0}']]
+  ];
+  for(const [pattern,forms] of patterns){
+    const result=template(pattern,forms);if(result!==null)return prefix+result+suffix;
+  }
   const localized=t(body);
   return prefix+localized+suffix;
 }
