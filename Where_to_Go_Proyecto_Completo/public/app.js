@@ -990,9 +990,9 @@ function renderExplore(){
     `<div class="wtg-more-explore"><button type="button" data-google-more="yes" ${wtgGoogleBusy?'disabled':''}>✦ ${wtgGoogleBusy?'Buscando en Google Maps…':'Explorar más con Google Maps: '+esc(stage.name)+' ('+(wtgGoogleStage+1)+'/'+googleStages.length+')'}</button></div>`:'';
   $('explore-list').innerHTML=state.dataMode==='loading'&&!arr.length?
     '<div class="loading-state"><span class="spinner"></span><div>Buscando lugares con fotos auténticas...</div></div>':
-    arr.length?shown.map(placeCard).join('')+
-     (arr.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${arr.length} lugares con foto</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+googleMore+findMore:
-    emptyBlock('No hay negocios con fotografía verificada para esta selección','Cambiar zona','location')+googleMore+findMore;
+    arr.length?googleMore+shown.map(placeCard).join('')+
+     (arr.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${arr.length} lugares con foto</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+findMore:
+    googleMore+emptyBlock('No hay negocios con fotografía verificada para esta selección','Cambiar zona','location')+findMore;
   $('filter-categories').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.category));
   $('distance-select').value=String(state.radius);
   if($('search-input').value!==state.search)$('search-input').value=state.search;
