@@ -91,7 +91,7 @@ function photoSet(place,max=5){
  for(const item of place.photos.slice(0,max)){
   if(typeof item?.getURI!=='function')continue;
   let url='';
-  try{url=item.getURI({maxWidth:720})||''}catch{}
+  try{url=item.getURI({maxWidth:1600})||''}catch{}
   if(!/^https:\/\//.test(url))continue;
   const authors=Array.isArray(item.authorAttributions)?item.authorAttributions.map(a=>({displayName:a.displayName||'',uri:a.uri||''})).filter(a=>a.displayName):[];
   images.push({url,source,attribution:authors.map(x=>x.displayName).join(', ')||'Google Maps',
