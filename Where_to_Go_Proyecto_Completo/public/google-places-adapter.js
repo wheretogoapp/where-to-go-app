@@ -129,6 +129,46 @@ async function nearby({lat,lon,radius=12000,category='todos',batch='main',sector
   return {status:map.size?'ok':failures===results.length?'error':'empty',places:[...map.values()],failures,requestedTypes:types.length,batch,sector};
  }catch(error){return {status:'error',places:[],message:String(error?.message||'Places no disponible')}}
 }
+// Some tourist categories (rivers, waterfalls, lagoons, trails) do not map
+// cleanly to supported Places primary types. One bounded text request is
+// permitted only after the visitor explicitly selects such a category.
+const TEXT_CATEGORY_QUERIES=Object.freeze({
+ rios:'ríos y charcos para visitar',cascadas:'cascadas saltos de agua',
+ lagunas:'lagunas para visitar',senderismo:'rutas de senderismo caminatas',
+ balnearios:'balnearios naturales',pescaderias:'pescaderías',
+ mercados:'mercados locales',lavanderias:'lavandería',taxis:'servicios de taxi'
+});
+async function searchCategory({category,lat,lon,radius=12000,city=''}) {
+ const phrase=TEXT_CATEGORY_QUERIES[category];
+ if(!phrase||!configured()||!Number.isFinite(lat)||!Number.isFinite(lon))
+   return {status:'unsupported',places:[]};
+ if(!await load())return {status:'unconfigured',places:[]};
+ try {
+  const {Place}=await root.google.maps.importLibrary('places');
+  const query=phrase+(city?' en '+String(city).slice(0,90):'');
+  const found=await Place.searchByText({
+   textQuery:query,
+   fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],
+   locationBias:{center:{lat,lng:lon},radius:Math.min(50000,Math.max(1200,radius))},
+   maxResultCount:20
+  });
+  const places=[];
+  for(const p of found.places||[]){
+   if(!p?.id||!p.location||!p.displayName)continue;
+   const plat=p.location.lat(),plon=p.location.lng();
+   if(meters(lat,lon,plat,plon)>radius+100)continue;
+   const photos=photoSet(p);
+   places.push({
+     id:'google:'+p.id,googlePlaceId:p.id,name:p.displayName,
+     lat:plat,lon:plon,address:p.formattedAddress||'',
+     mapUrl:p.googleMapsURI||'',types:p.types||[],
+     photo:photos[0]?.url||'',photos,
+     photoAttributions:photos[0]?.authorAttributions||[],source:'google'
+   });
+  }
+  return {status:places.length?'ok':'empty',places};
+ }catch(e){return {status:'error',places:[],message:String(e?.message||'Error de búsqueda').slice(0,140)}}
+}
 // Coincidencia conservadora para evitar fotos de negocios distintos.
 // La búsqueda específica se ejecuta únicamente cuando el visitante la solicita.
 // Búsqueda de un nombre indicado por el visitante. No rastrea ni predescarga.
@@ -218,5 +258,5 @@ async function matchPhoto({name,lat,lon}){
   return {status:'not-found'};
  }catch(e){return {status:'error',message:String(e?.message||'No fue posible consultar Google Places').slice(0,160)}}
 }
-root.WTG_GOOGLE_PLACES=Object.freeze({configured,loadScript:load,nearby,scanStages,shiftedCenter,searchText,matchPhoto,sameEstablishment,matchQuality,meters});
+root.WTG_GOOGLE_PLACES=Object.freeze({configured,loadScript:load,nearby,searchCategory,scanStages,shiftedCenter,searchText,matchPhoto,sameEstablishment,matchQuality,meters});
 })(window);
