@@ -746,8 +746,9 @@ function mergeGoogleListings(result,localPlaces,context='Google Maps'){
   const existingIds=new Set(wtgGoogleNearby.map(p=>p.id));
   let added=0,photosLinked=0,withPhoto=0;
   for(const google of incoming){
-    if(!google.photo||!safeUrl(google.photo))continue;
-    withPhoto++;
+    // A business is useful even when Google has no photo. Never hide a real
+    // establishment merely because its photo gallery is empty.
+    if(google.photo&&safeUrl(google.photo))withPhoto++;
     const local=localPlaces.find(p=>p.cat===google.cat&&
       window.WTG_GOOGLE_PLACES.sameEstablishment(p.name,google.name)&&
       window.WTG_GOOGLE_PLACES.meters(p.lat,p.lon,google.lat,google.lon)<=100);
@@ -831,22 +832,22 @@ async function runGoogleBusinessSearch(){
  const query=String(state.search||'').trim();
  if(query.length<3||!window.WTG_GOOGLE_PLACES?.configured())return;
  const token=state.loadingId;
- toast('Buscando '+query+' en Google Maps…');
+ toast('Buscando '+query+'…');
  const result=await window.WTG_GOOGLE_PLACES.searchText({query,lat:state.lat,lon:state.lon,radius:state.radius});
  if(token!==state.loadingId||state.search!==query)return;
  if(result.status==='error'){toast('La búsqueda de Google no respondió. Revisa la API.');return}
  const ids=new Set(wtgGoogleNearby.map(p=>p.id));
  let added=0;
  for(const item of result.places||[]){
-   if(!item.photo||!safeUrl(item.photo)||ids.has(item.id))continue;
+   if(ids.has(item.id))continue;
    const p=toGoogleListing(item);
    if(p.distance>Math.max(state.radius,30000)+100)continue;
    p.matchedSearch=query;
    wtgGoogleNearby.push(p);ids.add(p.id);added++;
  }
- applyNearby(state.remotePlaces,'Búsqueda en Google Maps · '+query);
+ applyNearby(state.remotePlaces,'Resultados de búsqueda · '+query);
  navigate('explorar');
- toast(added?'Google agregó '+added+' resultados con fotografía.':'Google no devolvió fotografías verificadas para esa búsqueda.');
+ toast(added?'Se encontraron '+added+' negocios adicionales.':'No se encontraron negocios adicionales en esta zona.');
 }
 
 // Búsqueda adicional en pantalla: máximo 24 consultas puntuales por sesión.
@@ -980,12 +981,12 @@ function renderCategories(){const counts={};
     ['🏨 Alojamiento y transporte','hoteles resorts villas taxis gasolineras talleres lavaderos'],
     ['🩺 Salud y servicios','farmacias hospitales odontologia veterinarias mascotas bancos cajeros lavanderias servicios escuelas iglesias deportes']
   ];
-  $('home-categories').innerHTML=blocks.map(([label,ids])=>`<section class="wtg-category-section"><h3>${label}</h3><div class="wtg-category-group">${ids.split(' ').map(id=>CATEGORIES.find(c=>c.id===id)).filter(Boolean).map(c=>`<button class="category-card" data-cat="${c.id}"><span class="category-emoji" style="--category-color:${c.color}">${c.emoji}</span><strong>${esc(catInfo(c.id).name)}</strong><small>${state.dataMode==='live'&&state.category==='todos'?(counts[c.id]||0)?(counts[c.id]+' con foto'):'Buscar en Google Maps':'Explorar'}</small></button>`).join('')}</div></section>`).join('');
+  $('home-categories').innerHTML=blocks.map(([label,ids])=>`<section class="wtg-category-section"><h3>${label}</h3><div class="wtg-category-group">${ids.split(' ').map(id=>CATEGORIES.find(c=>c.id===id)).filter(Boolean).map(c=>`<button class="category-card" data-cat="${c.id}"><span class="category-emoji" style="--category-color:${c.color}">${c.emoji}</span><strong>${esc(catInfo(c.id).name)}</strong><small>${state.dataMode==='live'&&state.category==='todos'?(counts[c.id]||0)?(counts[c.id]+' con foto'):'Explorar negocios':'Explorar'}</small></button>`).join('')}</div></section>`).join('');
   $('filter-categories').innerHTML=[{id:'todos',name:'Todo',emoji:'✨'},...CATEGORIES].map(c=>`<button class="filter-chip ${state.category===c.id?'active':''}" data-filter="${c.id}">${c.emoji} ${esc(c.id==='todos'?(window.WTG_I18N?.t('Todo')||'Todo'):catInfo(c.id).name)}</button>`).join('');
   $('business-category').innerHTML=CATEGORIES.map(c=>`<option value="${c.id}">${esc(catInfo(c.id).name)}</option>`).join('');
 }
 function placeCard(p){const c=catInfo(p.cat),fav=state.favorites.includes(p.id),gallery=placeGalleryPhotos(p),photoCount=gallery.length,coverPhoto=safeUrl(p.photo||gallery[0]?.url||'');const provenance=p.source==='patrocinado'?'Publicidad · '+(p.plan==='premium'?'Premium':'Destacado')+' · Ficha verificada por el anunciante':p.source==='propietario'?'Ficha básica verificada · Datos del propietario':p.source==='google'?GOOGLE_BRAND:(p.source==='mitur'?'Guía oficial de Turismo RD':p.source==='editorial'?'Lugar documentado':p.source==='overture'?'© Overture Maps':'© OpenStreetMap');return `<article class="place-card ${coverPhoto?'wtg-has-photo':'wtg-no-photo'}"><div class="place-photo">${placePhotoMarkup(p)}<button type="button" class="wtg-open-photo" data-place="${esc(p.id)}" aria-label="Abrir detalles de ${esc(p.name)}"></button><span class="card-tag">${p.sponsored?'★ Anuncio · ':''}${c.emoji} ${esc(c.name)}</span>${photoCount>1?`<span class="wtg-place-gallery-count" aria-label="${photoCount} fotografías de este lugar">📷 ${photoCount} fotos</span>`:''}<button class="fav-button ${fav?'active':''}" data-fav="${esc(p.id)}" aria-label="${fav?'Quitar de favoritos':'Agregar a favoritos'}">${fav?'♥':'♡'}</button>${coverPhoto?'<span class="card-image-caption">Foto vinculada al lugar</span>':''}</div><div class="place-body"><button class="place-title" data-place="${esc(p.id)}">${esc(p.name)}</button><div class="place-meta"><span>⌖</span><b>${esc(p.address||'Dirección no publicada')}</b></div><div class="place-footer"><span class="distance-badge">↗ ${distance(p.distance)}</span><button class="card-open" data-place="${esc(p.id)}">Ver detalles →</button></div><small class="source-credit">${provenance}</small>${googleAttribution(p)}${gallery[0]?.attribution?`<small class="photo-authors"><a href="${esc(gallery[0].source)}" target="_blank" rel="noopener noreferrer">Foto: ${esc(gallery[0].attribution)}</a>${gallery[0].license?` · <a href="${esc(gallery[0].license)}" target="_blank" rel="noopener noreferrer">Licencia</a>`:''}</small>`:''}</div></article>`}
-function emptyBlock(msg,action='Cambiar ubicación',target='location'){const categoryLabel=state.category==='todos'?'sitios de interés':(catInfo(state.category)?.name||'lugares');const mapsUrl='https://www.openstreetmap.org/#map=12/'+state.lat+'/'+state.lon;return `<div class="empty-state"><span class="empty-emoji">🧭</span><h3>${msg}</h3><p>${state.dataMode==='error'?'No se pudo conectar con el catálogo en vivo. No mostraremos lugares inventados; intenta de nuevo.':(String(state.dataError).includes('Importación pendiente')?'Todavía no se ha importado el directorio nacional. No es un problema del filtro: faltan datos por publicar.':'La cobertura con fotos todavía es limitada. Amplía el radio o abre Destinos con fotos para ver la selección disponible.')}</p><button data-empty="${target}">${action} →</button><a class="empty-external" href="${esc(mapsUrl)}" target="_blank" rel="noopener">Explorar la zona en OpenStreetMap ↗</a><button type="button" class="photo-contribute" data-report-missing="yes">¿Conoces un lugar cercano que falta? Avísanos</button></div>`}
+function emptyBlock(msg,action='Cambiar ubicación',target='location'){const categoryLabel=state.category==='todos'?'sitios de interés':(catInfo(state.category)?.name||'lugares');const mapsUrl='https://www.openstreetmap.org/#map=12/'+state.lat+'/'+state.lon;return `<div class="empty-state"><span class="empty-emoji">🧭</span><h3>${msg}</h3><p>${state.dataMode==='error'?'No se pudo conectar con el catálogo en vivo. No mostraremos lugares inventados; intenta de nuevo.':(String(state.dataError).includes('Importación pendiente')?'Todavía no se ha importado el directorio nacional. No es un problema del filtro: faltan datos por publicar.':'La cobertura con fotos todavía es limitada. Amplía el radio o abre Destinos con fotos para ver la selección disponible.')}</p><button data-empty="${target}">${action} →</button><button type="button" class="photo-contribute" data-report-missing="yes">¿Conoces un lugar cercano que falta? Avísanos</button></div>`}
 function renderProvincePremium(){
   const panel=document.getElementById('province-premium-list');if(!panel)return;
   const prov=provinceFromCity();
@@ -1022,11 +1023,14 @@ function renderHome(){renderProvincePremium();
 }
 function matches(p){return placeMatchesCategory(p,state.category)&&(!state.search||p.matchedSearch===state.search||`${p.name} ${p.address} ${catInfo(p.cat).name}`.toLocaleLowerCase('es').includes(state.search.toLocaleLowerCase('es')))&&p.distance<=state.radius+100}
 function renderExplore(){
-  const arr=sortByDistance(state.places.filter(p=>matches(p)&&hasCatalogPhoto(p)&&
+  // Home prioritizes photo-rich discovery; Explore must be a complete local
+  // directory. Show verified Google listings even when photos are unavailable.
+  const arr=sortByDistance(state.places.filter(p=>matches(p)&&
+    (hasCatalogPhoto(p)||p.source==='google')&&
     (state.category!=='todos'||!!state.search||isVisibleBusiness(p))));
   $('explore-count').textContent=state.dataMode==='loading'?'...':arr.length;
-  const googleVisible=arr.filter(p=>p.source==='google').length;
-  $('explore-context').textContent=`${arr.length} con fotografía · ${googleVisible} Google Maps · ${arr.length-googleVisible} otras fuentes · ${state.city} · hasta ${distance(state.radius)}`;
+  const withPhoto=arr.filter(hasCatalogPhoto).length;
+  $('explore-context').textContent=`${arr.length} lugares · ${withPhoto} con fotografía · ${state.city} · hasta ${distance(state.radius)}`;
   const shown=arr.slice(0,state.exploreLimit||80);
   const findMore=window.WTG_GOOGLE_PLACES?.configured()&&wtgPhotoBudget>0&&candidatesForGooglePhoto().length&&!wtgPhotoMatching?
     '<div class="wtg-more-explore"><button type="button" data-more-photo="yes">📷 Buscar fotos de más establecimientos</button></div>':'';
@@ -1038,7 +1042,7 @@ function renderExplore(){
     '<div class="loading-state"><span class="spinner"></span><div>Buscando lugares con fotos auténticas...</div></div>':
     arr.length?googleMore+shown.map(placeCard).join('')+
      (arr.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${arr.length} lugares con foto</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+findMore:
-    googleMore+emptyBlock('No hay negocios con fotografía verificada para esta selección','Cambiar zona','location')+findMore;
+    googleMore+emptyBlock('Todavía no hay resultados para esta selección','Cambiar zona','location')+findMore;
   $('filter-categories').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.category));
   $('distance-select').value=String(state.radius);
   if($('search-input').value!==state.search)$('search-input').value=state.search;
