@@ -2049,6 +2049,108 @@ Object.assign(labels, {
   ]
 });
 
+// Place detail labels and the translated brand subtitle.
+Object.assign(labels, {
+  "A DÓNDE IR": [
+    "WHERE TO GO",
+    "OÙ ALLER",
+    "AONDE IR",
+    "WOHIN",
+    "DOVE ANDARE"
+  ],
+  "A dónde ir": [
+    "Where to go",
+    "Où aller",
+    "Aonde ir",
+    "Wohin",
+    "Dove andare"
+  ],
+  "Explorando lugares con fotografías": [
+    "Exploring places with photos",
+    "Découverte des lieux avec photos",
+    "Explorando lugares com fotos",
+    "Orte mit Fotos entdecken",
+    "Esplorazione di luoghi con foto"
+  ],
+  "Ver ubicación en Where to Go": [
+    "View location in Where to Go",
+    "Voir l'emplacement dans Where to Go",
+    "Ver localização no Where to Go",
+    "Standort in Where to Go anzeigen",
+    "Vedi la posizione su Where to Go"
+  ],
+  "Iniciar navegación": [
+    "Start navigation",
+    "Démarrer l'itinéraire",
+    "Iniciar navegação",
+    "Navigation starten",
+    "Avvia navigazione"
+  ],
+  "Llamar": [
+    "Call",
+    "Appeler",
+    "Ligar",
+    "Anrufen",
+    "Chiama"
+  ],
+  "Sitio web": [
+    "Website",
+    "Site web",
+    "Site",
+    "Website",
+    "Sito web"
+  ],
+  "Guardar lugar": [
+    "Save place",
+    "Enregistrer ce lieu",
+    "Salvar lugar",
+    "Ort speichern",
+    "Salva luogo"
+  ],
+  "Quitar favorito": [
+    "Remove favorite",
+    "Retirer des favoris",
+    "Remover favorito",
+    "Favorit entfernen",
+    "Rimuovi dai preferiti"
+  ],
+  "Buscar foto del negocio en Google": [
+    "Find business photo on Google",
+    "Chercher une photo du commerce sur Google",
+    "Buscar foto do negócio no Google",
+    "Unternehmensfoto auf Google suchen",
+    "Cerca foto dell'attività su Google"
+  ],
+  "Aportar foto verificada": [
+    "Submit verified photo",
+    "Proposer une photo vérifiée",
+    "Enviar foto verificada",
+    "Geprüftes Foto einreichen",
+    "Invia una foto verificata"
+  ],
+  "Ver ficha en Google Maps": [
+    "View on Google Maps",
+    "Voir sur Google Maps",
+    "Ver no Google Maps",
+    "Auf Google Maps ansehen",
+    "Vedi su Google Maps"
+  ],
+  "Ver detalles": [
+    "View details",
+    "Voir les détails",
+    "Ver detalhes",
+    "Details ansehen",
+    "Vedi dettagli"
+  ],
+  "Sin fotografía del lugar": [
+    "No photo of this place",
+    "Aucune photo de ce lieu",
+    "Sem foto deste lugar",
+    "Kein Foto dieses Ortes",
+    "Nessuna foto di questo luogo"
+  ]
+});
+
 // Category labels are stored with stable IDs; proper names and addresses are not translated.
 const categories={
 rios:['Rivers','Rivières','Rios','Flüsse','Fiumi'],balnearios:['Swimming spots','Baignades naturelles','Balneários','Badestellen','Luoghi balneari'],cascadas:['Waterfalls','Cascades','Cachoeiras','Wasserfälle','Cascate'],lagunas:['Lagoons','Lagunes','Lagoas','Lagunen','Lagune'],senderismo:['Hiking','Randonnées','Trilhas','Wandern','Escursionismo'],playas:['Beaches','Plages','Praias','Strände','Spiagge'],parques:['Parks','Parcs','Parques','Parks','Parchi'],atracciones:['Tourist attractions','Sites touristiques','Atrações turísticas','Sehenswürdigkeiten','Attrazioni turistiche'],entretenimiento:['Entertainment','Divertissement','Entretenimento','Unterhaltung','Intrattenimento'],infantil:['Kids activities','Activités enfants','Diversão infantil','Kinderaktivitäten','Attività per bambini'],piscinas:['Swimming pools','Piscines','Piscinas','Pools','Piscine'],restaurantes:['Restaurants','Restaurants','Restaurantes','Restaurants','Ristoranti'],bares:['Bars','Bars','Bares','Bars','Bar'],discotecas:['Nightclubs','Discothèques','Boates','Nachtclubs','Discoteche'],cafes:['Cafés','Cafés','Cafés','Cafés','Caffetterie'],heladerias:['Ice cream shops','Glaciers','Sorveterias','Eisdielen','Gelaterie'],panaderias:['Bakeries','Boulangeries','Padarias','Bäckereien','Panetterie'],pescaderias:['Fish shops','Poissonneries','Peixarias','Fischgeschäfte','Pescherie'],comidarapida:['Fast food','Restauration rapide','Fast food','Schnellimbiss','Fast food'],supermercados:['Supermarkets','Supermarchés','Supermercados','Supermärkte','Supermercati'],colmados:['Local grocery stores','Épiceries locales','Mercearias','Nachbarschaftsläden','Alimentari'],mercados:['Markets','Marchés','Mercados','Märkte','Mercati'],tiendas:['Shops & fashion','Magasins et mode','Lojas e moda','Geschäfte & Mode','Negozi e moda'],ferreterias:['Hardware stores','Quincailleries','Lojas de ferragens','Baumärkte','Ferramenta'],electrodomesticos:['Appliances','Électroménager','Eletrodomésticos','Haushaltsgeräte','Elettrodomestici'],tecnologia:['Technology','Technologie','Tecnologia','Technik','Tecnologia'],barberias:['Barbers','Barbiers','Barbearias','Barbershops','Barbieri'],salones:['Beauty salons','Salons de beauté','Salões de beleza','Schönheitssalons','Saloni di bellezza'],unas:['Nail salons','Ongleries','Salões de unhas','Nagelstudios','Centri unghie'],spas:['Spas & massage','Spas et massages','Spas e massagens','Spas & Massagen','Spa e massaggi'],gimnasios:['Gyms','Salles de sport','Academias','Fitnessstudios','Palestre'],hoteles:['Hotels','Hôtels','Hotéis','Hotels','Hotel'],resorts:['Resorts','Resorts','Resorts','Resorts','Resort'],villas:['Villas','Villas','Villas','Villen','Ville'],taxis:['Taxis & transport','Taxis et transport','Táxis e transporte','Taxis & Transport','Taxi e trasporti'],gasolineras:['Gas stations','Stations-service','Postos de combustível','Tankstellen','Distributori'],talleres:['Repair shops','Garages','Oficinas','Werkstätten','Officine'],lavaderos:['Car washes','Stations de lavage','Lava-rápidos','Autowaschanlagen','Autolavaggi'],farmacias:['Pharmacies','Pharmacies','Farmácias','Apotheken','Farmacie'],hospitales:['Hospitals & clinics','Hôpitaux et cliniques','Hospitais e clínicas','Krankenhäuser & Kliniken','Ospedali e cliniche'],odontologia:['Dentists','Dentistes','Dentistas','Zahnärzte','Dentisti'],veterinarias:['Veterinarians','Vétérinaires','Veterinários','Tierärzte','Veterinari'],mascotas:['Pet shops','Animaleries','Pet shops','Tierhandlungen','Negozi animali'],bancos:['Banks','Banques','Bancos','Banken','Banche'],cajeros:['ATMs','Distributeurs automatiques','Caixas eletrônicos','Geldautomaten','Bancomat'],lavanderias:['Laundries','Blanchisseries','Lavanderias','Wäschereien','Lavanderie'],servicios:['Professional services','Services professionnels','Serviços profissionais','Professionelle Dienstleistungen','Servizi professionali'],escuelas:['Schools','Écoles','Escolas','Schulen','Scuole'],iglesias:['Churches','Églises','Igrejas','Kirchen','Chiese'],deportes:['Sports','Sports','Esportes','Sport','Sport']
@@ -2113,6 +2215,10 @@ function dynamicText(text){
     [/^(\d+) fotos reales$/,
       ['{0} fotos reales','{0} real photos','{0} photos authentiques',
        '{0} fotos reais','{0} echte Fotos','{0} foto reali']],
+    [/^(\d+) ciudades de referencia disponibles\.$/,
+      ['{0} ciudades de referencia disponibles.','{0} reference cities available.',
+       '{0} villes de référence disponibles.','{0} cidades de referência disponíveis.',
+       '{0} Referenzstädte verfügbar.','{0} città di riferimento disponibili.']],
     [/^Explorando (.+)$/,
       ['Explorando {0}','Exploring {0}','Exploration de {0}',
        'Explorando {0}','Erkunde {0}','Esplorando {0}']]
