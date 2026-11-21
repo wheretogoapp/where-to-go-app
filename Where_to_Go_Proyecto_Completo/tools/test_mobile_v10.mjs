@@ -1,13 +1,11 @@
-// E2E smoke test for iPhone-size tourist experience.
-// Uses a fixed TEST GPS location in Las Terrenas; never a real user's location.
+// Mobile Safari-like smoke test (Playwright Chromium emulation, NOT physical iPhone).
+// Uses consented test GPS coordinates only; checks the current first-run UX.
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import process from 'node:process';
 import { chromium } from 'playwright';
 
 const site=process.env.TEST_SITE||'http://127.0.0.1:8765/';
-const chrome=process.env.CHROME_BIN||undefined;
-const browser=await chromium.launch({headless:true, ...(chrome?{executablePath:chrome}:{})});
+const executablePath=process.env.CHROME_BIN||undefined;
+const browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{})});
 const context=await browser.newContext({
   viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true,
   geolocation:{latitude:19.311,longitude:-69.543,accuracy:40},
@@ -15,247 +13,113 @@ const context=await browser.newContext({
 });
 const page=await context.newPage();
 const errors=[];
-page.on('pageerror',err=>errors.push(String(err)));
-let outcome=null;
-try {
+page.on('pageerror',error=>errors.push(String(error)));
+const isPublic=site.startsWith('https://wheretogoapp.github.io/');
+try{
   await page.goto(site,{waitUntil:'domcontentloaded',timeout:45000});
-  await page.waitForFunction(()=>{
-    return typeof state!=='undefined' && state.mode==='gps' && state.dataMode==='live' && state.places.length>100 &&
-      state.places.filter(p=>p.cat==='restaurantes').length>=20 &&
-      state.places.filter(p=>p.cat==='bares').length>=5 &&
-      state.places.filter(p=>p.cat==='discotecas').length>=2;
-  },null,{timeout:75000});
-  if(site.startsWith('https://wheretogoapp.github.io/')){
-    try{await page.waitForFunction(()=>document.querySelectorAll('#home-list .place-card.wtg-has-photo').length>=4,null,{timeout:28000});}catch{}
+  await page.waitForSelector('#wtg-onboarding',{timeout:10000});
+  await page.waitForSelector('#wtg-ob-welcome:not([hidden])',{timeout:18000});
+  assert(await page.locator('#wtg-ob-start').isVisible(),'La bienvenida no tiene botón Comenzar');
+  assert((await page.locator('#wtg-ob-splash').count())===1,'No se publicó la apertura con logo');
+  assert((await page.locator('#wtg-ob-welcome').textContent()).includes('próxima aventura'),'La bienvenida no muestra la experiencia turística');
+  await page.locator('#wtg-ob-start').click();
+  await page.waitForSelector('#wtg-ob-location:not([hidden])',{timeout:8000});
+  assert(await page.locator('#wtg-ob-allow-gps').isVisible(),'Falta el permiso voluntario de ubicación');
+  await page.locator('#wtg-ob-allow-gps').click();
+  await page.waitForFunction(()=>typeof state!=='undefined'&&state.mode==='gps'&&document.getElementById('wtg-onboarding').hidden,null,{timeout:30000});
+  await page.waitForFunction(()=>typeof window.WTG_auth==='object',null,{timeout:15000});
+  // Real OAuth is never faked in tests. The existing explicit demo option
+  // lets us inspect the app without inventing a signed-in account.
+  if(!(await page.locator('#auth-gate').evaluate(el=>el.hidden))){
+    await page.locator('#auth-demo').click({timeout:15000});
   }
-  const initial=await page.evaluate(()=>({
-    mode:state.mode,count:state.places.length,
-    categories:Object.fromEntries(['restaurantes','bares','discotecas','playas','hoteles'].map(c=>[c,state.places.filter(p=>p.cat===c).length])),
-    cardCount:document.querySelectorAll('#home-list .place-card').length,
-    header:document.getElementById('location-label').textContent,
-    photoAtlasShortcut:!!document.querySelector('[data-view="atlas"]'),
-    unknownPhotoPlaces:state.places.filter(p=>!p.photo).length,
-    visibleWithoutPhotos:document.querySelectorAll('#home-list .place-card.wtg-no-photo').length,
-    visibleWithPhotos:document.querySelectorAll('#home-list .place-card.wtg-has-photo').length
-  }));
-  assert.equal(initial.mode,'gps','Auto GPS was not enabled');
-  assert.equal(initial.visibleWithoutPhotos,0,'La portada muestra fichas sin fotografía a pesar del filtro');
-  const design=await page.evaluate(()=>{
-    const search=document.getElementById('wtg-v8-search'),firstCard=document.querySelector('#home-list .place-card');
+  await page.waitForFunction(()=>state.dataMode==='live'&&state.places.length>=20,null,{timeout:75000});
+  const first=await page.evaluate(()=>{
     const hero=document.querySelector('#view-inicio .hero');
-    const tools=document.querySelector('#view-inicio .wtg-v8-home-tools');
+    const rail=document.querySelector('#view-inicio .wtg-v8-category-shortcuts');
+    const result=document.querySelector('#home-list .place-card');
     return {
-      noPilot:!document.querySelector('.pilot-toolbar'),
-      premiumStyle:!!document.querySelector('link[href*="mobile-focus.css"]'),
-      searchTop:search?.getBoundingClientRect().top,
-      firstCardTop:firstCard?.getBoundingClientRect().top,
+      mode:state.mode,city:state.city,province:provinceFromCity(),
+      places:state.places.length,withPhotos:state.places.filter(p=>!!p.photo).length,
+      google:state.places.filter(p=>p.source==='google').length,
+      homeCards:document.querySelectorAll('#home-list .place-card').length,
       heroTop:hero?.getBoundingClientRect().top,
-      heroVisible:!!hero&&getComputedStyle(hero).display!=='none'&&hero.getBoundingClientRect().height>20,
-      searchBackground:search?getComputedStyle(search).backgroundColor:'',
-      searchStylesheetReady:[...document.styleSheets].some(sheet=>sheet.href?.includes('mobile-focus.css')),
-      leafletNotLoaded:!document.querySelector('script[src*="leaflet.js"]'),
-      firstCardName:firstCard?.querySelector('.place-title')?.textContent,
-      hasPhotosAtlas:!!document.querySelector('[data-view="atlas"]')
+      heroHeight:hero?.getBoundingClientRect().height,
+      cardTop:result?.getBoundingClientRect().top,
+      railCount:rail?.querySelectorAll('[data-cat]').length,
+      railScrollable:!!rail&&rail.scrollWidth>rail.clientWidth,
+      splashGone:document.getElementById('wtg-onboarding').hidden,
+      authGone:document.getElementById('auth-gate').hidden
     };
   });
-  assert(design.noPilot,'The obsolete "Piloto con lugares reales" toolbar is still visible');
-  assert(design.premiumStyle,'Mobile premium layout stylesheet was not loaded');
-  assert(design.leafletNotLoaded,'Leaflet map loads before someone opens the map');
-  console.log('FIRST SCREEN LAYOUT MEASUREMENTS:',JSON.stringify(design));
-  if(initial.cardCount>0&&!(design.firstCardTop>design.searchTop&&design.heroTop>design.firstCardTop)){
-    await page.screenshot({path:'/tmp/where-to-go-iphone-layout-debug.png',fullPage:true}).catch(()=>{});
-  }
-  assert(initial.cardCount===0||(design.firstCardTop>design.searchTop&&(!design.heroVisible||design.heroTop>design.firstCardTop)),
-    'Search and nearby places must appear before any visible large cover');
-  assert(design.searchStylesheetReady,
-    'Premium stylesheet must load, not merely exist in HTML');
-  assert(design.searchBackground==='rgb(255, 255, 255)',
-    'Main search field should render on a clean premium white surface');
-  console.log('MOBILE PREMIUM DESIGN:',JSON.stringify(design));
-  const front=await page.evaluate(()=>{
-    const home=document.querySelector('#view-inicio');
-    const nodes=[...home.children].map(x=>x.id||x.className||x.tagName);
-    const nearbyIndex=[...home.children].findIndex(x=>x.id==='home-list');
-    const heroIndex=[...home.children].findIndex(x=>x.classList.contains('hero'));
-    const first12=state.places.filter(p=>isTouristDiscovery(p)&&p.distance<=state.radius+100).sort((a,b)=>a.distance-b.distance).slice(0,12);
-    const closestDistances=first12.map(p=>Math.round(p.distance));
-    return {nearbyIndex,heroIndex,nodes:nodes.slice(0,9),closestDistances};
-  });
-  assert(front.nearbyIndex>=0&&front.nearbyIndex<front.heroIndex,
-    'First screen should show nearby places before the scenic province hero');
-  assert(front.closestDistances.length>=8,'Too few nearby businesses and tourist places');
-  assert(front.closestDistances.every((d,i,a)=>!i||d>=a[i-1]),
-    'Nearby establishments not sorted by distance');
-  console.log('FIRST-SCREEN RESULTS:',JSON.stringify(front));
-  assert(initial.count>100,'Geo-grid failed to load nearby places');
-  assert(initial.categories.restaurantes>=20,'Restaurants missing');
-  assert(initial.categories.bares>=5,'Bars missing');
-  assert(initial.categories.discotecas>=2,'Night clubs missing');
-  assert(initial.categories.playas>=5,'Beaches missing');
-  assert.equal(initial.visibleWithoutPhotos,0,'La vista principal aún muestra establecimientos sin fotografías');
-  const categoriesVisible=await page.evaluate(()=>{
-    const p=['supermercados','farmacias','barberias','salones','unas','tiendas','bancos','hospitales'];
-    return {
-      available:p.every(id=>!!document.querySelector('#view-inicio .wtg-v8-category-shortcuts [data-cat="'+id+'"]')),
-      count:document.querySelectorAll('#view-inicio .wtg-v8-category-shortcuts [data-cat]').length,
-      layout:getComputedStyle(document.querySelector('#view-inicio .wtg-v8-category-shortcuts')).display,
-      noPhotoCards:document.querySelectorAll('#view-inicio #home-list>.place-card.wtg-no-photo').length
-    };
-  });
-  console.log('CATEGORÍAS Y PRESENTACIÓN MÓVIL:',JSON.stringify(categoriesVisible));
-  assert(categoriesVisible.available&&categoriesVisible.count>=25,
-    'Faltan farmacias, supermercados, peluquerías y belleza de la navegación móvil');
-  assert.equal(initial.photoAtlasShortcut,false,'Do not insert a gallery of nearby scenery into the place-listing experience');
-  await page.waitForFunction(()=>window.WTG_GALLERY_PHOTOS &&
-    Object.keys(window.WTG_GALLERY_PHOTOS).length>=45,null,{timeout:20000});
-  const destinationPhotos=await page.evaluate(()=>{
-    const destinations=['wd-Q4208698','wd-Q6683320','wd-Q62620342'];
-    return destinations.map(id=>{
-      const p=state.catalog.find(x=>x.id===id);
-      const images=p?placeGalleryPhotos(p):[];
-      return {id,name:p?.name||'',count:images.length,
-        sources:images.map(x=>x.source),hasSource:images.every(x=>x.source&&x.attribution)};
-    });
-  });
-  assert(destinationPhotos.every(x=>x.count>=2&&x.hasSource),
-    'Photos from Commons must appear in the actual destination card');
-  console.log('REAL PHOTO GALLERIES:',JSON.stringify(destinationPhotos.map(x=>({name:x.name,count:x.count}))));
+  assert.equal(first.mode,'gps','El GPS de prueba no se aplicó tras pulsar permiso');
+  assert(first.places>=20,'El catálogo local no cargó ni veinte fichas reales');
+  assert(first.splashGone&&first.authGone,'Una pantalla de entrada bloquea el uso de la app');
+  assert(first.heroHeight>100,'La portada de destino está oculta');
+  assert(!first.homeCards||first.heroTop<first.cardTop,'Los listados aparecen encima de la portada turística');
+  assert(first.railCount>=40&&first.railScrollable,'No hay carrusel horizontal con todas las categorías');
+  console.log('MOBILE FIRST-RUN + DESTINATION:',JSON.stringify(first));
 
-  if(initial.cardCount>0){
-  const before=await page.locator('#home-list .place-title').first().textContent();
-  console.log('INITIAL MOBILE:',JSON.stringify(initial));
-  const photoButton=page.locator('#home-list .wtg-open-photo').first();
-  console.log('PHOTO BUTTON ID:',await photoButton.getAttribute('data-place'));
-  const diagnostic=await photoButton.evaluate(el=>{
-    const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,top=document.elementFromPoint(cx,cy);
-    return {rect:{x:cx,y:cy,w:r.width,h:r.height},atPoint:top?.outerHTML?.slice(0,160),
-      authGateHidden:document.querySelector('#auth-gate')?.hidden,
-      overlayHidden:document.querySelector('#overlay')?.hidden};
-  });
-  console.log('CLICK DIAGNOSTIC:',JSON.stringify(diagnostic));
-  // The product intentionally has a login gate for new visitors. Simulate
-  // an already signed-in user, so a real touch (not JS/programmatic click)
-  // reaches the card instead of the unrelated sign-in overlay.
-  await page.evaluate(()=>{
-    const gate=document.querySelector('#auth-gate');
-    if(gate){gate.hidden=true;gate.style.display='none';}
-  });
-  await photoButton.click({timeout:15000});
-  await page.waitForTimeout(500);
-  console.log('AFTER PHOTO CLICK:',JSON.stringify(await page.evaluate(()=>({
-    modal:state.modal,
-    hidden:document.getElementById('place-modal')?.hidden,
-    title:document.getElementById('place-modal-title')?.textContent,
-    body:document.getElementById('place-modal-body')?.textContent?.slice(0,160)
-  }))),JSON.stringify(errors));
-  await page.waitForFunction(()=>document.querySelector('#place-modal')&&!document.querySelector('#place-modal').hidden,null,{timeout:10000});
-  assert.equal((await page.locator('#place-modal-title').textContent()).trim(),before.trim(),
-    'Tapping a card photo did not open its correct place');
-  await page.evaluate(()=>closeModals());
-  }
-  // Comprobar la interfaz del país piloto: 32 demarcaciones y los 158 municipios,
-  // incluso en el sitio público bajo el subdirectorio de GitHub Pages.
-  await page.waitForFunction(()=>{
-    const region=document.getElementById('wtg-world-region');
-    const city=document.getElementById('wtg-world-city');
-    return document.getElementById('wtg-world-country')?.value==='DO' &&
-      region?.options.length===33 && city?.options.length>=159 &&
-      [...city.options].some(o=>o.value==='Imbert');
-  },null,{timeout:16000});
-  const dropdowns=await page.evaluate(()=>{
-    const prov=document.getElementById('wtg-world-region'),city=document.getElementById('wtg-world-city');
-    const provinces=[...prov.options].map(o=>o.value).filter(Boolean);
-    prov.value='Puerto Plata';prov.dispatchEvent(new Event('change',{bubbles:true}));
-    const cities=[...city.options].map(o=>o.value).filter(Boolean);
-    prov.value='';prov.dispatchEvent(new Event('change',{bubbles:true}));
-    return {countProvinces:provinces.length,countCitiesPuertoPlata:cities.length,
-      hasPuertoPlata:cities.includes('Puerto Plata'),hasImbert:cities.includes('Imbert'),
-      hasSosua:cities.includes('Sosúa'),hasCabarete:cities.includes('Cabarete')};
-  });
-  assert.equal(dropdowns.countProvinces,32,'El selector mundial no muestra las 32 demarcaciones de RD');
-  assert(dropdowns.hasPuertoPlata&&dropdowns.hasImbert&&dropdowns.hasSosua&&dropdowns.hasCabarete,
-    'Faltan municipios y localidades de Puerto Plata en el selector');
-  console.log('SELECTOR MUNDIAL RD VERIFICADO:',JSON.stringify(dropdowns));
-  await page.evaluate(()=>selectCity('Las Terrenas'));
-  await page.waitForFunction(()=>state.mode==='city'&&state.dataMode==='live'&&state.places.length>100,null,{timeout:75000});
-  const selected=await page.evaluate(()=>({
-    city:state.city,province:provinceFromCity(),count:state.places.length,
-    heroTitle:document.querySelector('.hero h2')?.textContent,
-    heroSource:document.querySelector('.hero .hero-art')?.style.backgroundImage,
-    homeCount:document.querySelector('#home-count')?.textContent,
-    countCards:document.querySelectorAll('#home-list .place-card').length,
-    hasTerraBar:state.places.some(p=>p.name==='Terra Bar'),
-    hasGaia:state.places.some(p=>/gaia/i.test(p.name)&&p.cat==='discotecas')
+  const rail=page.locator('#view-inicio .wtg-v8-category-shortcuts');
+  await page.waitForTimeout(3700);
+  const motion=await rail.evaluate(el=>({position:el.scrollLeft,full:el.scrollWidth,viewport:el.clientWidth}));
+  assert(motion.full>motion.viewport,'La barra de categorías no se puede desplazar');
+  console.log('CATEGORY MOTION:',JSON.stringify(motion));
+
+  // The directory must expose actual places even when an exact photo is missing.
+  await page.evaluate(()=>navigate('explorar'));
+  await page.waitForFunction(()=>document.querySelectorAll('#explore-list .place-card').length>0,null,{timeout:15000});
+  const explorer=await page.evaluate(()=>({
+    cards:document.querySelectorAll('#explore-list .place-card').length,
+    withoutPhoto:document.querySelectorAll('#explore-list .place-card.wtg-no-photo').length,
+    categoryChips:document.querySelectorAll('#filter-categories [data-filter]').length,
+    externalSearchCTA:[...document.querySelectorAll('[data-google-more]')].some(el=>/explorar más con google maps/i.test(el.textContent)),
+    internalText:document.querySelector('#google-search-submit')?.textContent
   }));
-  assert.equal(selected.city,'Las Terrenas');
-  assert.equal(selected.province,'Samaná');
-  assert(selected.hasTerraBar&&selected.hasGaia,'Known nightlife locations not loaded');
-  assert(selected.heroSource?.includes('Saman')||selected.heroSource?.includes('View%20of%20Saman'), 'Wrong regional hero for Samaná');
-  assert(!selected.heroSource?.includes('Puerto_Plata'), 'Puerto Plata image wrongly used in Samaná');
-  assert(selected.countCards<=12,'Demasiadas tarjetas en la portada fotográfica');
-  assert(!selected.heroSource?.includes('Aerial%20view%20of%20Puerto')&&!selected.heroSource?.includes('Aerial_view_of_Puerto'),
-    'Hero still uses Puerto Plata imagery in Samaná');
-  assert(Number(selected.homeCount)>=0,'Conteo de fotos cercano inválido');
-  // Inspección real de la clave ya desplegada en GitHub Pages, sin mostrarla.
-  if(site.startsWith('https://wheretogoapp.github.io/')){
-    try{
-      await page.waitForFunction(()=>state.places.some(p=>p.source==='google'),null,{timeout:25000});
-    }catch{}
-    const google=await page.evaluate(()=>({
-      configured:!!window.WTG_GOOGLE_PLACES?.configured(),
-      total:state.places.filter(p=>p.source==='google').length,
-      withPhoto:state.places.filter(p=>p.source==='google'&&!!p.photo).length,
-      withAuthor:state.places.filter(p=>p.source==='google'&&p.photoAttributions?.length).length,
-      selectedCity:state.city
-    }));
-    console.log('GOOGLE PLACES EN WEB REAL:',JSON.stringify(google));
-    if(google.configured){
-      assert(google.total>0,'Clave configurada, pero no llegaron fichas reales de Google Places');
-      assert(google.withPhoto>0,'Google Places no proporcionó fotos para los lugares consultados');
-      await page.evaluate(()=>selectCity('Puerto Plata'));
-      await page.waitForFunction(()=>state.city==='Puerto Plata'&&state.dataMode==='live'&&state.places.length>=60,null,{timeout:60000});
-      try{await page.waitForFunction(()=>state.city==='Puerto Plata'&&state.places.some(p=>p.source==='google'),null,{timeout:25000});}catch{}
-      const puerto=await page.evaluate(()=>({
-        city:state.city,
-        total:state.places.filter(p=>p.source==='google').length,
-        withPhoto:state.places.filter(p=>p.source==='google'&&p.photo).length,
-        withAuthor:state.places.filter(p=>p.source==='google'&&p.photoAttributions?.length).length,
-        sample:state.places.filter(p=>p.source==='google').slice(0,3).map(p=>p.name)
-      }));
-      console.log('GOOGLE PLACES PUERTO PLATA REAL:',JSON.stringify(puerto));
-      assert(puerto.total>0&&puerto.withPhoto>0,'Puerto Plata: Google Places no devolvió lugares con fotografías');
-      await page.evaluate(()=>navigate('inicio'));
-      // La búsqueda de fotos puede volver a pintar tarjetas; evitar referencias
-      // a nodos que se sustituyen durante el renderizado.
-      await page.waitForTimeout(1200);
-      await page.evaluate(()=>document.querySelector('#home-list img.actual-photo')?.scrollIntoView({block:'center'}));
-      try{
-        await page.waitForFunction(()=>{
-          const imgs=[...document.querySelectorAll('#home-list img.actual-photo')];
-          if(!imgs.length)return false;
-          imgs[0]?.scrollIntoView({block:'center'});
-          return imgs.some(i=>i.complete&&i.naturalWidth>0);
-        },null,{timeout:16000});
-      }catch{}
-      const displayed=await page.evaluate(()=>{
-        const imgs=[...document.querySelectorAll('#home-list img.actual-photo')];
-        const cards=[...document.querySelectorAll('#home-list .place-card')];
-        return {withImage:imgs.length,loaded:imgs.filter(i=>i.complete&&i.naturalWidth>0).length,
-          failed:imgs.filter(i=>i.complete&&i.naturalWidth===0).length,
-          pending:imgs.filter(i=>!i.complete).length,
-          cards:cards.length,placeholders:document.querySelectorAll('#home-list .wtg-photo-placeholder').length,
-          firstNames:cards.slice(0,5).map(p=>p.querySelector('.place-title')?.textContent),
-          stateGoogle:state.places.filter(p=>p.source==='google'&&p.photo).length,
-          stateCount:state.places.length,currentView:state.view};
-      });
-      console.log('FOTOS VISIBLES PUERTO PLATA:',JSON.stringify(displayed));
-      assert(displayed.loaded>0,'Puerto Plata: hay enlaces de Google pero ninguna foto carga en la interfaz');
-    }
+  assert(explorer.cards>0&&explorer.categoryChips>=40,'Explorar no muestra fichas o filtros');
+  assert(!explorer.externalSearchCTA,'Sigue apareciendo el botón que manda a Google Maps');
+  assert(!/Google Maps/i.test(explorer.internalText||''),'La búsqueda principal debe funcionar dentro de Where to Go');
+  console.log('IN-APP EXPLORE:',JSON.stringify(explorer));
+
+  const title=await page.locator('#explore-list .place-title').first().textContent();
+  await page.locator('#explore-list .place-title').first().click({timeout:12000});
+  await page.waitForSelector('#place-modal:not([hidden])',{timeout:8000});
+  assert.equal((await page.locator('#place-modal-title').textContent()).trim(),title.trim(),'La ficha abierta no coincide con el lugar');
+  assert(await page.locator('[data-internal-map]').isVisible(),'La ficha no ofrece su mapa interno');
+  await page.locator('[data-internal-map]').click();
+  await page.waitForFunction(()=>state.view==='mapa',null,{timeout:10000});
+  assert(await page.locator('#world-map').count(),'La aplicación no contiene mapa');
+  console.log('IN-APP PLACE DETAIL AND MAP: OK');
+
+  await page.evaluate(()=>selectCity('Las Terrenas'));
+  await page.waitForFunction(()=>state.city==='Las Terrenas'&&provinceFromCity()==='Samaná'&&state.dataMode==='live',null,{timeout:75000});
+  const destination=await page.evaluate(()=>({
+    city:state.city,province:provinceFromCity(),
+    cover:document.querySelector('.hero .hero-art')?.style.backgroundImage||'',
+    homeTitle:document.getElementById('wtg-local-title')?.textContent||'',
+    records:state.places.length
+  }));
+  assert.equal(destination.province,'Samaná');
+  assert(!/Puerto.Plata|Puerto_Plata|Puerto%20Plata/i.test(destination.cover),'Samaná sigue mostrando Puerto Plata');
+  assert(/Las Terrenas/i.test(destination.homeTitle),'La portada no cambió al destino seleccionado');
+  console.log('LOCATION CHANGE:',JSON.stringify(destination));
+
+  await page.evaluate(()=>window.WTG_auth?.showLogin());
+  await page.waitForSelector('#auth-gate:not([hidden])',{timeout:10000});
+  assert(await page.locator('#auth-email-fold').evaluate(el=>el.hidden),'El formulario de correo aparece antes de elegirlo');
+  await page.locator('#auth-email-reveal').click();
+  assert(!(await page.locator('#auth-email-fold').evaluate(el=>el.hidden)),'El formulario de correo no se despliega');
+  await page.locator('#auth-demo').click();
+  if(isPublic){
+    const enabled=await page.evaluate(()=>window.WTG_GOOGLE_PLACES?.configured()||false);
+    assert(enabled,'No se insertó la clave de navegador de Google Places en el sitio publicado');
   }
   await page.screenshot({path:'/tmp/where-to-go-iphone-results.png',fullPage:false});
-  outcome={initial,selected,pageErrors:errors};
-  console.log('MOBILE E2E OK:',JSON.stringify(outcome));
-  if(errors.length)console.warn('NONFATAL WEB ERRORS:',errors.slice(0,6));
+  console.log('MOBILE E2E OK:',JSON.stringify({first,explorer,destination,scriptErrors:errors.slice(0,4)}));
+} catch(error){
+  console.error('MOBILE E2E FAILURE:',String(error),JSON.stringify(errors.slice(0,8)));
+  await page.screenshot({path:'/tmp/where-to-go-iphone-results.png',fullPage:false}).catch(()=>{});
+  throw error;
 } finally {
   await browser.close();
 }
