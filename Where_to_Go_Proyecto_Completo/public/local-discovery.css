@@ -17,3 +17,42 @@
 #view-inicio .hero-art.wtg-hero-image-ready{animation:wtg-hero-reveal .85s ease-out both}
 @keyframes wtg-hero-reveal{from{opacity:.35;filter:brightness(.7);transform:scale(1.015)}to{opacity:1;filter:brightness(1);transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){#view-inicio .hero-art.wtg-hero-image-ready{animation:none!important}}
+
+/* Critical: an older mobile theme hid the entire rotating destination hero.
+   The carousel must be visible above the search bar on iPhone/Android. */
+@media(max-width:820px){
+ #view-inicio .hero{
+   display:block!important;position:relative!important;
+   min-height:355px!important;max-height:none!important;
+   margin:5px 0 17px!important;border-radius:24px!important;
+   overflow:hidden!important;background:#082952!important;
+   box-shadow:0 16px 32px #0005!important
+ }
+ #view-inicio .hero .hero-art{
+   display:block!important;position:absolute!important;inset:0!important;
+   background-size:cover!important;background-position:center!important
+ }
+ #view-inicio .hero .hero-content{
+   position:relative!important;z-index:3!important;
+   padding:32px 22px 75px!important;
+   max-width:100%!important
+ }
+ #view-inicio .hero .hero-content h2{
+   font-size:clamp(28px,8.2vw,40px)!important;max-width:17ch!important;
+   line-height:1.04!important;margin:17px 0 12px!important;
+   text-shadow:0 3px 12px #001634b3!important
+ }
+ #view-inicio .hero .hero-content p{display:block!important;font-size:12px!important;
+   max-width:28ch!important;line-height:1.42!important;
+   text-shadow:0 2px 10px #000b!important}
+ #view-inicio .hero .wtg-hero-controls{
+   display:flex!important;position:absolute!important;z-index:5!important;
+   left:auto!important;right:13px!important;bottom:12px!important;
+   padding:4px 6px!important;gap:5px!important
+ }
+ #view-inicio .hero .wtg-hero-controls button{min-width:29px!important;min-height:30px!important}
+ #view-inicio .hero .wtg-hero-controls span{font-size:10px!important}
+ #view-inicio .hero-credit{display:block!important;color:#cbdaf0!important;
+   font-size:9px!important;margin:4px 4px 12px!important}
+ #view-inicio .wtg-local-cards{scroll-padding-inline:4px}
+}
