@@ -902,7 +902,7 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
         typeof localPlaces==='function'?localPlaces():localPlaces,
         'Lugares de '+catInfo(category).name);
     }
-    if(token===state.loadingId){if(state.mode!=='sector'){void enrichIconicPuertoPlata(token);void enrichPhotographedDestinations(token);}void enrichVisiblePhotoCards(token,6);}
+    if(token===state.loadingId){if(state.mode!=='sector'){void enrichIconicPuertoPlata(token);void enrichPhotographedDestinations(token);}void enrichVisiblePhotoCards(token,6);if(state.category==='todos')void autoDiscoverNearbyPhotos(token);}
   }catch(error){console.warn('Where to Go: Google Places no disponible en esta zona',String(error));}
 }
 // Explorar físicamente otros sectores del municipio. Una pulsación consulta
@@ -944,6 +944,25 @@ async function loadMoreGoogleBusinesses(){
          (failed?' Algunas consultas no respondieron.':''));
    }
  }finally{wtgGoogleBusy=false;if(token===state.loadingId)renderExplore();}
+}
+// Bounded automatic expansion, only for the destination currently visited.
+let wtgAutoDiscoveryBudget=12;
+const wtgAutoDiscoveryLocations=new Set();
+async function autoDiscoverNearbyPhotos(token){
+  if(token!==state.loadingId||state.category!=='todos'||
+     !window.WTG_GOOGLE_PLACES?.configured()||
+     !window.WTG_GOOGLE_PLACES?.scanStages||wtgAutoDiscoveryBudget<2)return;
+  const key=[window.WTG_ACTIVE_COUNTRY||'DO',state.city,
+    Math.round(state.lat*1000),Math.round(state.lon*1000)].join('|');
+  if(wtgAutoDiscoveryLocations.has(key))return;
+  wtgAutoDiscoveryLocations.add(key);
+  const stages=window.WTG_GOOGLE_PLACES.scanStages();
+  const count=Math.min(2,Math.ceil(stages.length/2),Math.floor(wtgAutoDiscoveryBudget/2));
+  for(let n=0;n<count;n++){
+    if(token!==state.loadingId)return;
+    wtgAutoDiscoveryBudget-=2;
+    await loadMoreGoogleBusinesses();
+  }
 }
 async function runGoogleBusinessSearch(){
  const query=String(state.search||'').trim();
@@ -1228,32 +1247,24 @@ function renderExplore(){
   const priority=p=>p.source==='google'&&hasCatalogPhoto(p)?0:
     hasCatalogPhoto(p)?1:p.source==='google'?2:3;
   arr.sort((a,b)=>priority(a)-priority(b)||a.distance-b.distance);
-  $('explore-count').textContent=state.dataMode==='loading'?'...':arr.length;
+  $('explore-count').textContent=state.dataMode==='loading'?'...':(state.category==='todos'&&!state.search?arr.filter(hasCatalogPhoto).length:arr.length);
   const withPhoto=arr.filter(hasCatalogPhoto).length;
-  $('explore-context').textContent=`${withPhoto} con foto · ${arr.length} lugares registrados · ${state.city} · hasta ${distance(state.radius)}`;
+  $('explore-context').textContent=`${withPhoto} lugares para descubrir · ${state.city} · hasta ${distance(state.radius)}`;
   // On the general discovery page, lead with photographed places for ALL
   // cities, as the Las Terrenas experience did. Unphotographed records remain
   // available through a clearly labelled opt-in, never silently discarded.
   const photographed=arr.filter(hasCatalogPhoto);
-  const photoFirst=state.category==='todos'&&!state.search&&!state.showUnpictured;
-  const display=photoFirst&&photographed.length?photographed:arr;
-  const hiddenWithoutPhoto=arr.length-display.length;
+  const photoFirst=state.category==='todos'&&!state.search;
+  const display=photoFirst?photographed:arr;
   const shown=display.slice(0,state.exploreLimit||80);
-  const missingPhotoToggle=state.category==='todos'&&!state.search&&arr.length>photographed.length?
-    '<div class="wtg-more-explore wtg-unpictured-toggle"><button type="button" data-toggle-unpictured="yes">'+
-      (state.showUnpictured?'Mostrar solo lugares con fotos':
-        'Ver también '+(arr.length-photographed.length)+' lugares sin fotografía')+'</button></div>':'';
-  const findMore=window.WTG_GOOGLE_PLACES?.configured()&&wtgPhotoBudget>0&&candidatesForGooglePhoto().length&&!wtgPhotoMatching?
-    '<div class="wtg-more-explore"><button type="button" data-more-photo="yes">📷 Buscar fotos de más establecimientos</button></div>':'';
-  const googleStages=window.WTG_GOOGLE_PLACES?.scanStages?.()||[];
-  const stage=googleStages[wtgGoogleStage];
-  const googleMore=window.WTG_GOOGLE_PLACES?.configured()&&state.category==='todos'&&state.dataMode==='live'&&stage?
-    `<div class="wtg-more-explore wtg-discover-more"><button type="button" data-google-more="yes" ${wtgGoogleBusy?'disabled':''}>✦ ${wtgGoogleBusy?'Buscando más lugares…':'Descubrir más negocios y lugares ('+(wtgGoogleStage+1)+'/'+googleStages.length+')'}</button></div>`:'';
+  const googleMore=wtgGoogleBusy&&photoFirst?
+    '<div class="wtg-more-explore wtg-auto-discovery" role="status" aria-live="polite">Descubriendo más lugares de esta zona…</div>':'';
+
   $('explore-list').innerHTML=state.dataMode==='loading'&&!arr.length?
     '<div class="loading-state"><span class="spinner"></span><div>Buscando lugares reales de esta zona...</div></div>':
     arr.length?shown.map(placeCard).join('')+
-     (display.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${display.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+missingPhotoToggle+googleMore+findMore:
-    googleMore+emptyBlock('Todavía no hay resultados para esta selección','Cambiar zona','location')+findMore;
+     (display.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${display.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+googleMore:
+    googleMore+emptyBlock('Buscando lugares con fotografías en esta zona','Cambiar zona','location');
   $('filter-categories').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.category));
   $('distance-select').value=String(state.radius);
   if($('search-input').value!==state.search)$('search-input').value=state.search;
