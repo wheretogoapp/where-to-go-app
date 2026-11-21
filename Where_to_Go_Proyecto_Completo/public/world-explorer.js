@@ -14,6 +14,7 @@ function init(){
  if(!button||!dialog||!country||!city||!status||!apply)return;
  const lang=()=>document.documentElement.lang||navigator.language||'es';
  const names=()=>new Intl.DisplayNames([lang()],{type:'region'});
+ const tr=source=>window.WTG_I18N?.t(source)||source;
  const countries=popular.map(code=>({code,name:names().of(code)})).sort((a,b)=>a.name.localeCompare(b.name,lang()));
  const notice=document.getElementById('wtg-world-notice'),main=document.getElementById('main-content'),empty=document.getElementById('wtg-world-empty');
  function setPilotVisible(show){if(main)main.hidden=!show;if(empty)empty.hidden=show;if(notice)notice.hidden=show;}
@@ -31,13 +32,13 @@ function init(){
    const list=entriesForCountry(country.value);
    const previousRegion=region.value,previousCity=city.value;
    const regions=[...new Set(list.map(p=>p.region).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
-   region.replaceChildren(new Option('Todas las regiones',''),...regions.map(x=>new Option(x,x)));
+   region.replaceChildren(new Option(tr('Todas las regiones'),''),...regions.map(x=>new Option(x,x)));
    if(regions.includes(previousRegion))region.value=previousRegion;
    // Choosing a province first prevents ambiguous municipality names
    // from resolving to the wrong territory in the nationwide directory.
    const filtered=(country.value==='DO'&&!region.value?[]:list.filter(p=>!region.value||p.region===region.value))
       .sort((a,b)=>a.city.localeCompare(b.city,'es'));
-   city.replaceChildren(new Option(country.value==='DO'&&!region.value?'Primero elige una provincia':'Selecciona una ciudad o municipio',''),...filtered.map(p=>new Option(p.city,p.city)));
+   city.replaceChildren(new Option(tr(country.value==='DO'&&!region.value?'Primero elige una provincia':'Selecciona una ciudad o municipio'),''),...filtered.map(p=>new Option(p.city,p.city)));
    if(filtered.some(p=>p.city===previousCity))city.value=previousCity;
    if(geoNote){
      geoNote.textContent=country.value==='DO'
@@ -120,6 +121,20 @@ function init(){
  void loadDominicanMunicipalities();
  document.getElementById('wtg-world-change')?.addEventListener('click',()=>button.click());
  document.getElementById('wtg-world-gps')?.addEventListener('click',()=>{dialog.hidden=true;window.dispatchEvent(new Event('wtg-world-request-gps'))});
+ // Region names are rendered by Intl.DisplayNames: refresh the options when language changes
+ // while preserving the actual selected codes, city and region. Never request new Places here.
+ window.addEventListener('wtg-language-changed',()=>{
+   const selectedCountry=country.value,selectedRegion=region.value,selectedCity=city.value;
+   const localNames=names();
+   const localized=popular.map(code=>({code,name:localNames.of(code)}))
+      .sort((a,b)=>a.name.localeCompare(b.name,lang()));
+   country.replaceChildren(...localized.map(({code,name})=>new Option(name,code)));
+   country.value=selectedCountry;
+   update();
+   if(selectedRegion)region.value=selectedRegion;
+   updateCities();
+   if(selectedCity)city.value=selectedCity;
+ });
  try{
    const saved=JSON.parse(sessionStorage.getItem('wtg_world_selection')||'null');
    if(saved?.country && /^[A-Z]{2}$/.test(saved.country) && saved.country!=='DO'){
