@@ -24,6 +24,12 @@ async function loadProfile(){
       currentProfile={personalization_opt_in:document.getElementById('auth-consent').checked};}
     document.getElementById('auth-consent').checked=!!currentProfile?.personalization_opt_in;
     await importLocalFavorites();
+    const listed=await client.from('favorites').select('place_id').eq('user_id',currentUser.id).limit(500);
+    if(!listed.error&&Array.isArray(listed.data)){
+      window.dispatchEvent(new CustomEvent('wtg-cloud-favorites',{
+        detail:{placeIds:listed.data.map(row=>row.place_id).filter(id=>typeof id==='string')}
+      }));
+    }
   }catch(e){console.warn('No se pudo cargar el perfil:',e?.message)}
 }
 async function importLocalFavorites(){
@@ -59,6 +65,7 @@ async function setPersonalization(value){
   const {error:e}=await client.from('profiles').upsert({id:currentUser.id,personalization_opt_in:!!value},{onConflict:'id'});
   if(e){showMessage('No se pudo guardar el consentimiento.');return;}
   currentProfile={personalization_opt_in:!!value};
+  window.dispatchEvent(new CustomEvent('wtg-personalization-changed',{detail:{enabled:!!value}}));
 }
 function handleUser(user){
   currentUser=user||null;
