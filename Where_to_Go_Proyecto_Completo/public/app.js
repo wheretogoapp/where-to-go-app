@@ -959,15 +959,33 @@ function navigate(view){if(!$("view-"+view))view='inicio';state.view=view;docume
   if(map&&!window.L)map.textContent='Preparando mapa de esta zona…';
   void ensureLeaflet().then(()=>{if(state.view==='mapa')renderMap()});
 }window.scrollTo({top:0,behavior:'instant'});try{history.replaceState(null,'',`#${view}`)}catch{}}
+function startCategoryRotation(rail){
+ if(rail.dataset.wtgRotating==='yes')return;
+ rail.dataset.wtgRotating='yes';
+ let resumeAt=0;
+ const progress=()=>{const track=rail.nextElementSibling?.querySelector('.wtg-category-motion-bar');if(track){const max=Math.max(1,rail.scrollWidth-rail.clientWidth);const percent=Math.min(100,(rail.scrollLeft/max)*100);track.style.transform='translateX('+percent*.75+'%)';}};
+ rail.addEventListener('scroll',progress,{passive:true});
+ rail.addEventListener('pointerdown',()=>{resumeAt=Date.now()+11000},{passive:true});
+ rail.addEventListener('touchstart',()=>{resumeAt=Date.now()+11000},{passive:true});
+ setInterval(()=>{
+   if(document.hidden||Date.now()<resumeAt||rail.offsetParent===null||rail.scrollWidth<=rail.clientWidth)return;
+   const step=rail.querySelector('button')?.getBoundingClientRect().width||150;
+   const end=rail.scrollWidth-rail.clientWidth;
+   rail.scrollTo({left:rail.scrollLeft+step+12>=end?0:rail.scrollLeft+step+12,behavior:'smooth'});
+ },3200);
+ progress();
+}
 function renderCategories(){const counts={};
   // Never fill the home screen with 50 category cards. The full directory
   // belongs to Explore, while Home stays focused on nearby photo listings.
   $('home-categories')?.classList.remove('wtg-v8-expanded');state.places.filter(hasCatalogPhoto).forEach(p=>{counts[p.cat]=(counts[p.cat]||0)+1;if(p.relatedTags)for(const tag of p.relatedTags)counts[tag]=(counts[tag]||0)+1});
   const shortcuts=document.querySelector('.wtg-v8-category-shortcuts');
   if(shortcuts&&shortcuts.dataset.wtgLoaded!=='yes'){
-    shortcuts.innerHTML=WTG_QUICK_CATEGORIES.slice(0,4).map(id=>CATEGORY_BY_ID[id]).filter(Boolean)
-      .map(cat=>`<button type="button" data-cat="${esc(cat.id)}" aria-label="Explorar ${esc(cat.name)}"><span aria-hidden="true">${cat.emoji}</span><strong>${esc(cat.name)}</strong></button>`).join('')+
-      '<button type="button" class="wtg-all-categories" data-show-all-cats="yes"><span>⊞</span><strong>Ver todas</strong></button>';
+    shortcuts.innerHTML=CATEGORIES.filter(cat=>!['escuelas','iglesias'].includes(cat.id))
+      .map(cat=>`<button type="button" data-cat="${esc(cat.id)}" aria-label="Explorar ${esc(cat.name)}"><span aria-hidden="true">${cat.emoji}</span><strong>${esc(cat.name)}</strong></button>`).join('');
+    shortcuts.setAttribute('role','region');shortcuts.setAttribute('aria-label','Categorías deslizables');
+    shortcuts.insertAdjacentHTML('afterend','<div class="wtg-category-motion"><span class="wtg-category-motion-bar"></span></div>');
+    startCategoryRotation(shortcuts);
     if(!document.querySelector('#wtg-category-bar-title')){
       shortcuts.insertAdjacentHTML('beforebegin','<div class="wtg-category-bar-title" id="wtg-category-bar-title"><strong>Todo cerca de ti</strong><button type="button" data-show-all-cats="yes">Ver las '+CATEGORIES.length+' categorías ↗</button></div>');
     }
@@ -1058,11 +1076,11 @@ function renderExplore(){
   const googleStages=window.WTG_GOOGLE_PLACES?.scanStages?.()||[];
   const stage=googleStages[wtgGoogleStage];
   const googleMore=window.WTG_GOOGLE_PLACES?.configured()&&state.category==='todos'&&state.dataMode==='live'&&stage?
-    `<div class="wtg-more-explore"><button type="button" data-google-more="yes" ${wtgGoogleBusy?'disabled':''}>✦ ${wtgGoogleBusy?'Buscando en Google Maps…':'Explorar más con Google Maps: '+esc(stage.name)+' ('+(wtgGoogleStage+1)+'/'+googleStages.length+')'}</button></div>`:'';
+    `<div class="wtg-more-explore"><button type="button" data-google-more="yes" ${wtgGoogleBusy?'disabled':''}>✦ ${wtgGoogleBusy?'Buscando más lugares…':'Descubrir más negocios y lugares ('+(wtgGoogleStage+1)+'/'+googleStages.length+')'}</button></div>`:'';
   $('explore-list').innerHTML=state.dataMode==='loading'&&!arr.length?
     '<div class="loading-state"><span class="spinner"></span><div>Buscando lugares con fotos auténticas...</div></div>':
     arr.length?googleMore+shown.map(placeCard).join('')+
-     (arr.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${arr.length} lugares con foto</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+findMore:
+     (arr.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${arr.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+findMore:
     googleMore+emptyBlock('Todavía no hay resultados para esta selección','Cambiar zona','location')+findMore;
   $('filter-categories').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.category));
   $('distance-select').value=String(state.radius);
