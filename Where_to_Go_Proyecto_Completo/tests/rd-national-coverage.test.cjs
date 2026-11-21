@@ -284,3 +284,55 @@ test('Puerto Plata conserva 30 km al recargar y al cambiar desde el selector mun
  assert(app.includes("state.radius=(c.name==='Las Terrenas'||c.name==='Puerto Plata')?30000:12000"),
    'El selector de ciudades debe conservar el radio especial de Puerto Plata');
 });
+
+test('Galerías accesibles y refrescos sin recargar imágenes idénticas',()=>{
+ const app=source('app.js'),css=source('ux-polish.css'),html=source('index.html');
+ assert(app.includes('list.dataset.wtgSignature=homeSignature'));
+ assert(app.includes('exploreTarget.dataset.wtgSignature=exploreSignature'));
+ assert(app.includes("if(!list.dataset||list.dataset.wtgSignature!==homeSignature)"));
+ assert(app.includes("if(!exploreTarget.dataset||exploreTarget.dataset.wtgSignature!==exploreSignature)"));
+ assert(app.includes('placeGalleryPhotos(p)'));
+ assert(app.includes("e.pointerType!=='touch'"),'El gesto de galería solo procede en pantallas táctiles');
+ assert(app.includes("Math.abs(dx)<55"),'Evita cambiar de foto al desplazarse verticalmente');
+ assert(app.includes("e.key==='ArrowLeft'||e.key==='ArrowRight'"));
+ assert(app.includes('data-gallery-attribution'));
+ assert(app.includes('data-gallery-license'));
+ assert(css.includes('content-visibility:auto'));
+ assert(css.includes('#place-modal .detail-actions'));
+ assert(html.includes('app.js?v=25.4'));
+ assert(html.includes('ux-polish.css?v=7'));
+});
+
+test('Auditoría territorial de 32 demarcaciones con catálogo, fotos de portada y municipios',()=>{
+ const manifest=JSON.parse(source('data/places/manifest.json'));
+ const municipalities=JSON.parse(source('data/municipios-rd.json'));
+ const app=source('app.js');
+ const start=app.indexOf('const WTG_PROVINCE_HUBS=');
+ const end=app.indexOf(';',start);
+ assert(start>=0&&end>start);
+ const hubs=JSON.parse(app.slice(start+'const WTG_PROVINCE_HUBS='.length,end));
+ const provinces=Object.keys(hubs).sort();
+ assert.equal(provinces.length,32);
+ assert(manifest.recordCount>=44000,'El catálogo nacional no debe disminuir silenciosamente');
+ assert(Array.isArray(manifest.cells)&&manifest.cells.length>0);
+ assert.equal(municipalities.length,158);
+ const context={window:{}};vm.runInNewContext(source('province-heroes.js'),context);
+ const cover=context.window.WTG_PROVINCE_HEROES;
+ const municipalProvinces=new Set(municipalities.map(x=>x.provincia));
+ const cellSet=new Set(manifest.cells);
+ for(const province of provinces){
+   const hub=hubs[province],hero=cover[province];
+   assert(municipalProvinces.has(province),province+' sin municipios');
+   assert(hero?.photo?.startsWith('https://')&&hero?.source?.startsWith('https://'),
+     province+' sin portada acreditada');
+   assert(hero.author&&hero.license,province+' sin autor y licencia');
+   assert(Number.isFinite(hub.lat)&&Number.isFinite(hub.lon),province+' sin centro de referencia');
+   // Muestra de cobertura a partir del centro de referencia; no inventa cifras
+   // de fotos Google por provincia ni afirma disponibilidad comercial en vivo.
+   const a=Math.floor((hub.lat+90)/.2),b=Math.floor((hub.lon+180)/.2);
+   const near=[a-1,a,a+1].some(x=>[b-1,b,b+1].some(y=>cellSet.has(x+'_'+y)));
+   assert(near,province+' sin bloque cartográfico cercano');
+ }
+ console.log('Auditoría territorial: '+provinces.length+' demarcaciones, '+
+   municipalities.length+' municipios, '+manifest.recordCount+' fichas registradas.');
+});
