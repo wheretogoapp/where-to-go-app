@@ -127,12 +127,28 @@
      manual=false;root.hidden=false;showFallback();
    }
  });
+ // Avoid hiding the welcome before the HD image has actually loaded on iOS.
+ // If the image cannot load, restore the working original logo automatically.
+ const splashMark=splash.querySelector('.wtg-ob-complete');
+ const splashImages=[...splash.querySelectorAll('.wtg-ob-splash-logo img')];
+ const markReady=new Promise(resolve=>{
+   if(!splashMark){resolve();return}
+   const show=()=>{splash.classList.add('wtg-ob-mark-ready');resolve()};
+   const fallback=()=>{
+     splashImages.forEach(img=>{img.src='/assets/wtg-brand.svg?v=10'});
+     splash.classList.add('wtg-ob-mark-fallback');show();
+   };
+   if(splashMark.complete){splashMark.naturalWidth?show():fallback();return}
+   splashMark.addEventListener('load',show,{once:true});
+   splashMark.addEventListener('error',fallback,{once:true});
+   setTimeout(()=>{if(!splash.classList.contains('wtg-ob-mark-ready'))fallback()},4500);
+ });
  // Wait for verified GPS/country before presenting location-specific imagery.
  // A previous city can be stale when the traveler opens the app elsewhere.
  splash.hidden=false;welcome.hidden=true;locationStep.hidden=true;root.dataset.step='splash';
  // Request iOS native location permission while the mark is assembling.
  setTimeout(requestNativeLocation,100);
- setTimeout(()=>{
+ markReady.then(()=>setTimeout(()=>{
    launchEnded=true;
    if(result==='success')finish();
    else if(result==='failure')showFallback(window.WTG_LAST_LOCATION_ERROR||{});
@@ -140,5 +156,5 @@
      // Permission dialog may still be open; show only the logo until resolved.
      splash.hidden=false;
    }
- },reduced?200:2100);
+ },reduced?200:2100));
 })();
