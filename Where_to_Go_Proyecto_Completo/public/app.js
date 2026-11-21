@@ -445,9 +445,31 @@ function placeMatchesCategory(p,cat){
 // Tourist discovery excludes everyday services from the default Explore/Home feeds.
 // Categories remain completely accessible when chosen explicitly, or by an exact text search.
 const WTG_DISCOVERY_CATEGORIES = new Set(['rios','balnearios','cascadas','lagunas','senderismo','playas','parques','atracciones','entretenimiento','infantil','piscinas','restaurantes','bares','discotecas','hoteles','resorts','villas','cafes','comidarapida','heladerias']);
-const WTG_DISCOVERY_PRIORITY = {atracciones:9,cascadas:9,balnearios:9,rios:9,playas:9,parques:8,senderismo:8,lagunas:8,entretenimiento:7,infantil:7,piscinas:6,restaurantes:5,hoteles:5,resorts:5,villas:4,bares:3,discotecas:3};
-function isTouristDiscovery(p){return WTG_DISCOVERY_CATEGORIES.has(p.cat) && p.nameKnown!==false && !!String(p.name||'').trim();}
-function tourismSort(arr){return arr.sort((a,b)=>(a.distance-b.distance) || ((WTG_DISCOVERY_PRIORITY[b.cat]||0)-(WTG_DISCOVERY_PRIORITY[a.cat]||0)) || a.name.localeCompare(b.name,'es'));}
+// A natural attraction or buggy experience outranks closer everyday services.
+const WTG_TOURISM_NATURE=new Set(['rios','balnearios','cascadas','lagunas','senderismo','playas','parques','atracciones']);
+const WTG_TOURISM_EXPERIENCES=new Set(['entretenimiento','infantil']);
+const WTG_TOURISM_STAYS=new Set(['villas','resorts','hoteles','piscinas']);
+const WTG_TOURISM_FOOD=new Set(['restaurantes','bares','cafes','heladerias','comidarapida','discotecas']);
+const WTG_TOURISM_SERVICE_EXCLUSIONS=new Set(['barberias','salones','unas','farmacias','hospitales','bancos','cajeros','talleres','gasolineras','escuelas','iglesias']);
+const WTG_TOURISM_ACTIVITY=/\b(buggy|buggies|atv|cuatrimoto(?:s)?|4x4|four.wheel|zip.?line|tirolesa|excursi[oó]n|safari|cabalgata|rafting|kayak|snorkel|buceo|catamar[aá]n|paseo en barco|paseo en bote|aventura|adventure|tours?)\b/i;
+function tourismRank(p){
+ const cat=p?.cat||'';
+ if(WTG_TOURISM_NATURE.has(cat))return 0;
+ if(!WTG_TOURISM_SERVICE_EXCLUSIONS.has(cat)&&WTG_TOURISM_ACTIVITY.test(String(p?.name||'')))return 0;
+ if(WTG_TOURISM_EXPERIENCES.has(cat))return 1;
+ if(WTG_TOURISM_STAYS.has(cat))return 2;
+ if(WTG_TOURISM_FOOD.has(cat))return 3;
+ return 4;
+}
+function isTouristDiscovery(p){
+ return !!p&&p.nameKnown!==false&&!!String(p.name||'').trim()&&tourismRank(p)<4;
+}
+function tourismSort(arr){
+ return arr.sort((a,b)=>tourismRank(a)-tourismRank(b)||
+   (a.distance-b.distance)||
+   (a.source==='google'?0:1)-(b.source==='google'?0:1)||
+   String(a.name||'').localeCompare(String(b.name||''),'es'));
+}
 function discoveryMatches(p){return state.category!=='todos'||!!state.search||isTouristDiscovery(p);}
 function sortByDistance(arr){return promoSort(arr)}
 function classify(tags){
@@ -1195,11 +1217,11 @@ function renderLocalDiscovery(){
  const list=state.places.filter(p=>
    p.distance<=state.radius+100&&hasCatalogPhoto(p)&&
    !wtgFailedLocalPhotos.has(placeCoverUrl(p))&&
-   ['playas','atracciones','parques','cascadas','rios','balnearios','restaurantes','hoteles','resorts','entretenimiento'].includes(p.cat)
+   isTouristDiscovery(p)
  );
- const iconic=p=>/malec[oó]n|sombrillas|do[ñn]a blanca|telef[eé]rico|monumento|fortaleza|plaza|catedral|paseo|cascada/i.test(p.name)?0:1;
- list.sort((a,b)=>iconic(a)-iconic(b)||
-   (a.source==='google'?0:1)-(b.source==='google'?0:1)||a.distance-b.distance);
+ const iconic=p=>/malec[oó]n|sombrillas|do[ñn]a blanca|telef[eé]rico|monumento|fortaleza|plaza|catedral|paseo|cascada|bugg(?:y|ies)|atv/i.test(p.name)?0:1;
+ list.sort((a,b)=>tourismRank(a)-tourismRank(b)||iconic(a)-iconic(b)||
+   (a.distance-b.distance)||(a.source==='google'?0:1)-(b.source==='google'?0:1));
  const photographed=list.slice(0,12);
  const signature=city+'|'+photographed.map(p=>p.id+'@'+p.photo).join('|');
  if(rail.dataset.wtgSignature!==signature){
@@ -1216,14 +1238,12 @@ function renderHome(){renderProvincePremium();renderLocalDiscovery();
  const teaser=document.querySelector('.taxi-teaser');
  if(teaser)teaser.hidden=!(state.province==='Puerto Plata'||['Puerto Plata','Sosúa','Cabarete'].includes(state.city));
  const list=$('home-list');
- const candidates=state.places.filter(p=>p.distance<=state.radius+100&&isVisibleBusiness(p));
+ const candidates=state.places.filter(p=>p.distance<=state.radius+100&&isVisibleBusiness(p)&&isTouristDiscovery(p));
  $('home-count').textContent=state.dataMode==='loading'?'...':candidates.length;
  const googleCount=candidates.filter(p=>p.source==='google').length;
  const coverage=document.getElementById('wtg-coverage-counts');
  if(coverage)coverage.textContent=state.dataMode==='loading'?'Consultando lugares…':`${candidates.length} con foto en esta zona · ${googleCount} Google Maps · ${candidates.length-googleCount} otras fuentes`;
- const googleFirst=sortByDistance(candidates.filter(p=>p.source==='google')).slice(0,8);
- const selected=new Set(googleFirst.map(p=>p.id));
- const sorted=[...googleFirst,...sortByDistance(candidates.filter(p=>!selected.has(p.id)))].slice(0,12);
+ const sorted=tourismSort(candidates).slice(0,12);
  list.innerHTML=state.dataMode==='loading'&&!sorted.length?
    '<div class="wtg-loading-cards" aria-label="Buscando fotos de negocios reales"><div class="wtg-skeleton-card"></div><div class="wtg-skeleton-card"></div><div class="wtg-skeleton-card"></div></div>':
    sorted.length?sorted.map(placeCard).join(''):
@@ -1241,12 +1261,13 @@ function renderExplore(){
   // A missing photo does not erase a real establishment from Explore.
   const arr=state.places.filter(p=>matches(p)&&
     p.nameKnown!==false&&String(p.name||'').trim()&&
-    (state.category!=='todos'||!!state.search||!['escuelas','iglesias'].includes(p.cat)));
+    (state.category!=='todos'||!!state.search||isTouristDiscovery(p)));
   // Photo-first relevance: Google with a real linked photo, then other photographed
   // listings, then authentic no-photo directory records. Nearby within each tier.
   const priority=p=>p.source==='google'&&hasCatalogPhoto(p)?0:
     hasCatalogPhoto(p)?1:p.source==='google'?2:3;
-  arr.sort((a,b)=>priority(a)-priority(b)||a.distance-b.distance);
+  const touristDefault=state.category==='todos'&&!state.search;
+  arr.sort((a,b)=>(touristDefault?tourismRank(a)-tourismRank(b):0)||priority(a)-priority(b)||a.distance-b.distance);
   $('explore-count').textContent=state.dataMode==='loading'?'...':(state.category==='todos'&&!state.search?arr.filter(hasCatalogPhoto).length:arr.length);
   const withPhoto=arr.filter(hasCatalogPhoto).length;
   $('explore-context').textContent=`${withPhoto} lugares para descubrir · ${state.city} · hasta ${distance(state.radius)}`;
