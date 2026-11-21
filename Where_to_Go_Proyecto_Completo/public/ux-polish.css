@@ -171,3 +171,21 @@
    backdrop-filter:blur(8px)!important;box-shadow:0 6px 19px #001c3e55!important
  }
 }
+/* Photo-first discovery is the default in every Dominican location.
+   Missing images remain accessible, but never overwhelm the tourist cards. */
+#view-explorar .wtg-unpictured-toggle{
+ width:100%;display:flex;justify-content:center;margin:10px auto 4px!important;
+ border:0!important;box-shadow:none!important;background:transparent!important;
+ padding:5px 6px!important
+}
+#view-explorar .wtg-unpictured-toggle button{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:43px;padding:11px 16px;max-width:min(100%,370px);
+ border:1px solid #f0c66c!important;border-radius:999px!important;
+ color:#ffdf91!important;background:#102c50!important;
+ font:750 12px 'DM Sans',sans-serif;cursor:pointer;
+ white-space:normal;text-align:center
+}
+#view-explorar .wtg-unpictured-toggle button:focus-visible{
+ outline:3px solid #f4bc3f;outline-offset:3px
+}
