@@ -142,6 +142,346 @@ Object.assign(labels,{
   'Ir al inicio':['Go to home','Aller à l’accueil','Ir ao início','Zur Startseite','Vai alla home']
 });
 
+// Additional complete-screen translations: onboarding, search and geographic controls.
+Object.assign(labels, {
+  "Explora el mundo": [
+    "Explore the world",
+    "Explorez le monde",
+    "Explore o mundo",
+    "Entdecke die Welt",
+    "Esplora il mondo"
+  ],
+  "Tu próxima aventura comienza aquí.": [
+    "Your next adventure starts here.",
+    "Votre prochaine aventure commence ici.",
+    "Sua próxima aventura começa aqui.",
+    "Dein nächstes Abenteuer beginnt hier.",
+    "La tua prossima avventura inizia qui."
+  ],
+  "Descubre destinos increíbles, negocios y experiencias auténticas cerca de ti.": [
+    "Discover amazing destinations, businesses and authentic experiences near you.",
+    "Découvrez des destinations, des commerces et des expériences authentiques près de vous.",
+    "Descubra destinos incríveis, negócios e experiências autênticas perto de você.",
+    "Entdecke fantastische Reiseziele, Geschäfte und authentische Erlebnisse in deiner Nähe.",
+    "Scopri destinazioni incredibili, attività ed esperienze autentiche vicino a te."
+  ],
+  "Comenzar a descubrir": [
+    "Start exploring",
+    "Commencer à explorer",
+    "Começar a explorar",
+    "Jetzt entdecken",
+    "Inizia a esplorare"
+  ],
+  "Haz tu experiencia personal": [
+    "Personalize your experience",
+    "Personnalisez votre expérience",
+    "Personalize sua experiência",
+    "Personalisiere dein Erlebnis",
+    "Personalizza la tua esperienza"
+  ],
+  "¿A dónde quieres ir?": [
+    "Where would you like to go?",
+    "Où souhaitez-vous aller ?",
+    "Aonde você quer ir?",
+    "Wohin möchtest du reisen?",
+    "Dove vuoi andare?"
+  ],
+  "República Dominicana": [
+    "Dominican Republic",
+    "République dominicaine",
+    "República Dominicana",
+    "Dominikanische Republik",
+    "Repubblica Dominicana"
+  ],
+  "Permite tu ubicación para descubrir lugares reales cerca de ti. También puedes elegir cualquier destino manualmente.": [
+    "Allow location access to find real places nearby. You can also choose a destination manually.",
+    "Autorisez la localisation pour découvrir de vrais lieux à proximité. Vous pouvez aussi choisir une destination.",
+    "Permita o acesso à localização para encontrar lugares reais próximos. Também pode escolher um destino.",
+    "Erlaube den Standortzugriff, um echte Orte in deiner Nähe zu finden. Du kannst auch ein Ziel auswählen.",
+    "Consenti l'accesso alla posizione per trovare luoghi reali vicini. Puoi anche scegliere una destinazione."
+  ],
+  "Usar mi ubicación": [
+    "Use my location",
+    "Utiliser ma position",
+    "Usar minha localização",
+    "Meinen Standort verwenden",
+    "Usa la mia posizione"
+  ],
+  "Elegir país o ciudad": [
+    "Choose country or city",
+    "Choisir un pays ou une ville",
+    "Escolher país ou cidade",
+    "Land oder Stadt wählen",
+    "Scegli paese o città"
+  ],
+  "Continuar sin usar GPS": [
+    "Continue without GPS",
+    "Continuer sans GPS",
+    "Continuar sem GPS",
+    "Ohne GPS fortfahren",
+    "Continua senza GPS"
+  ],
+  "WHERE TO GO · DESCUBRE EL MUNDO": [
+    "WHERE TO GO · DISCOVER THE WORLD",
+    "WHERE TO GO · DÉCOUVREZ LE MONDE",
+    "WHERE TO GO · DESCUBRA O MUNDO",
+    "WHERE TO GO · ENTDECKE DIE WELT",
+    "WHERE TO GO · SCOPRI IL MONDO"
+  ],
+  "Cada lugar tiene una historia.": [
+    "Every place has a story.",
+    "Chaque lieu a une histoire.",
+    "Cada lugar tem uma história.",
+    "Jeder Ort hat eine Geschichte.",
+    "Ogni luogo ha una storia."
+  ],
+  "Paisajes auténticos de República Dominicana": [
+    "Authentic scenery of the Dominican Republic",
+    "Paysages authentiques de République dominicaine",
+    "Paisagens autênticas da República Dominicana",
+    "Authentische Landschaften der Dominikanischen Republik",
+    "Paesaggi autentici della Repubblica Dominicana"
+  ],
+  "TU PRÓXIMA AVENTURA COMIENZA AQUÍ": [
+    "YOUR NEXT ADVENTURE STARTS HERE",
+    "VOTRE PROCHAINE AVENTURE COMMENCE ICI",
+    "SUA PRÓXIMA AVENTURA COMEÇA AQUI",
+    "DEIN NÄCHSTES ABENTEUER BEGINNT HIER",
+    "LA TUA PROSSIMA AVVENTURA INIZIA QUI"
+  ],
+  "Descubre lugares que te encantarán.": [
+    "Discover places you'll love.",
+    "Découvrez des lieux que vous allez adorer.",
+    "Descubra lugares que você vai adorar.",
+    "Entdecke Orte, die du lieben wirst.",
+    "Scopri luoghi che amerai."
+  ],
+  "Inicia sesión para guardar favoritos y descubrir qué hacer cerca de ti.": [
+    "Sign in to save favorites and discover things to do near you.",
+    "Connectez-vous pour enregistrer vos favoris et découvrir quoi faire près de vous.",
+    "Entre para salvar favoritos e descobrir o que fazer perto de você.",
+    "Melde dich an, speichere Favoriten und entdecke Aktivitäten in deiner Nähe.",
+    "Accedi per salvare i preferiti e scoprire cosa fare vicino a te."
+  ],
+  "Continuar con correo": [
+    "Continue with email",
+    "Continuer avec un e-mail",
+    "Continuar com e-mail",
+    "Mit E-Mail fortfahren",
+    "Continua con email"
+  ],
+  "O CONTINÚA CON TU CORREO": [
+    "OR CONTINUE WITH EMAIL",
+    "OU CONTINUEZ AVEC VOTRE E-MAIL",
+    "OU CONTINUE COM SEU E-MAIL",
+    "ODER MIT E-MAIL FORTFAHREN",
+    "OPPURE CONTINUA CON EMAIL"
+  ],
+  "Google, Facebook, Apple y correo requieren conectar Supabase y habilitar cada proveedor.": [
+    "Google, Facebook, Apple and email sign-in require a configured Supabase connection.",
+    "La connexion via Google, Facebook, Apple ou e-mail nécessite une configuration Supabase.",
+    "O login com Google, Facebook, Apple ou e-mail requer uma conexão Supabase configurada.",
+    "Google-, Facebook-, Apple- und E-Mail-Anmeldung erfordern eine Supabase-Konfiguration.",
+    "L'accesso con Google, Facebook, Apple ed email richiede la configurazione di Supabase."
+  ],
+  "Tours y excursiones": [
+    "Tours and excursions",
+    "Visites et excursions",
+    "Passeios e excursões",
+    "Touren und Ausflüge",
+    "Tour ed escursioni"
+  ],
+  "¿Tienes un negocio?": [
+    "Own a business?",
+    "Vous avez une entreprise ?",
+    "Você tem um negócio?",
+    "Hast du ein Unternehmen?",
+    "Hai un'attività?"
+  ],
+  "Haz que más personas te descubran.": [
+    "Help more people discover you.",
+    "Faites-vous connaître auprès de plus de personnes.",
+    "Faça mais pessoas conhecerem você.",
+    "Lass mehr Menschen dich entdecken.",
+    "Fatti scoprire da più persone."
+  ],
+  "Quiero anunciarme": [
+    "Promote my business",
+    "Promouvoir mon entreprise",
+    "Anunciar meu negócio",
+    "Mein Unternehmen bewerben",
+    "Promuovi la mia attività"
+  ],
+  "Tu ubicación": [
+    "Your location",
+    "Votre position",
+    "Sua localização",
+    "Dein Standort",
+    "La tua posizione"
+  ],
+  "Google Places está temporalmente fuera de servicio": [
+    "Google Places is temporarily unavailable",
+    "Google Places est temporairement indisponible",
+    "O Google Places está temporariamente indisponível",
+    "Google Places ist vorübergehend nicht verfügbar",
+    "Google Places è temporaneamente non disponibile"
+  ],
+  "La búsqueda continúa con datos reales de OpenStreetMap.": [
+    "Search continues using real OpenStreetMap data.",
+    "La recherche continue avec les données réelles d’OpenStreetMap.",
+    "A busca continua com dados reais do OpenStreetMap.",
+    "Die Suche nutzt weiterhin echte OpenStreetMap-Daten.",
+    "La ricerca continua con dati reali di OpenStreetMap."
+  ],
+  "Reintentar Google": [
+    "Retry Google",
+    "Réessayer Google",
+    "Tentar Google novamente",
+    "Google erneut versuchen",
+    "Riprova Google"
+  ],
+  "Destino internacional": [
+    "International destination",
+    "Destination internationale",
+    "Destino internacional",
+    "Internationales Reiseziel",
+    "Destinazione internazionale"
+  ],
+  "Estamos preparando las fichas, fotografías icónicas y negocios verificados de esta ciudad o país. Aún no hay un catálogo publicado para esta ubicación.": [
+    "We are preparing listings, landmark photos and verified businesses for this destination. The directory is not yet available here.",
+    "Nous préparons les fiches, photos emblématiques et commerces vérifiés pour cette destination. Le catalogue n'est pas encore disponible.",
+    "Estamos preparando listagens, fotos icônicas e empresas verificadas para este destino. O catálogo ainda não está disponível.",
+    "Wir bereiten Einträge, Sehenswürdigkeitenfotos und geprüfte Unternehmen für dieses Reiseziel vor. Das Verzeichnis ist noch nicht verfügbar.",
+    "Stiamo preparando schede, foto dei luoghi e attività verificate per questa destinazione. Il catalogo non è ancora disponibile."
+  ],
+  "No utilizamos fotografías de otras ciudades ni mostramos negocios de República Dominicana como si estuvieran aquí.": [
+    "We never show photos or businesses from other cities as if they were here.",
+    "Nous ne présentons jamais des photos ou commerces d'autres villes comme s'ils étaient ici.",
+    "Não mostramos fotos ou negócios de outras cidades como se fossem daqui.",
+    "Wir zeigen niemals Fotos oder Unternehmen aus anderen Städten als lokale Ergebnisse.",
+    "Non mostriamo foto o attività di altre città come se fossero locali."
+  ],
+  "Cambiar país o ciudad": [
+    "Change country or city",
+    "Changer de pays ou de ville",
+    "Mudar país ou cidade",
+    "Land oder Stadt ändern",
+    "Cambia paese o città"
+  ],
+  "¿Qué hay cerca de ti": [
+    "What's near you",
+    "Que trouve-t-on près de vous",
+    "O que há perto de você",
+    "Was ist in deiner Nähe",
+    "Cosa c'è vicino a te"
+  ],
+  "Restaurantes, playas, bares y planes para disfrutar.": [
+    "Restaurants, beaches, bars and things to do.",
+    "Restaurants, plages, bars et activités à découvrir.",
+    "Restaurantes, praias, bares e passeios.",
+    "Restaurants, Strände, Bars und Erlebnisse.",
+    "Ristoranti, spiagge, bar e attività."
+  ],
+  "DESTINOS QUE INSPIRAN": [
+    "INSPIRING DESTINATIONS",
+    "DESTINATIONS INSPIRANTES",
+    "DESTINOS INSPIRADORES",
+    "INSPIRIERENDE REISEZIELE",
+    "DESTINAZIONI CHE ISPIRANO"
+  ],
+  "Comenzar a explorar": [
+    "Start exploring",
+    "Commencer à explorer",
+    "Começar a explorar",
+    "Erkundung starten",
+    "Inizia a esplorare"
+  ],
+  "EXPLORA TU ZONA": [
+    "EXPLORE YOUR AREA",
+    "EXPLOREZ VOTRE RÉGION",
+    "EXPLORE SUA REGIÃO",
+    "ENTDECKE DEINE UMGEBUNG",
+    "ESPLORA LA TUA ZONA"
+  ],
+  "DESCUBRE TU DESTINO": [
+    "DISCOVER YOUR DESTINATION",
+    "DÉCOUVREZ VOTRE DESTINATION",
+    "DESCUBRA SEU DESTINO",
+    "ENTDECKE DEIN REISEZIEL",
+    "SCOPRI LA TUA DESTINAZIONE"
+  ],
+  "Explora lugares auténticos": [
+    "Explore authentic places",
+    "Explorez des lieux authentiques",
+    "Explore lugares autênticos",
+    "Entdecke authentische Orte",
+    "Esplora luoghi autentici"
+  ],
+  "Fotografías y lugares de la zona seleccionada": [
+    "Photos and places in your selected area",
+    "Photos et lieux de la zone choisie",
+    "Fotos e lugares da região selecionada",
+    "Fotos und Orte in der gewählten Region",
+    "Foto e luoghi della zona selezionata"
+  ],
+  "DESCUBRE MÁS CERCA": [
+    "DISCOVER MORE NEARBY",
+    "DÉCOUVREZ PLUS PRÈS DE VOUS",
+    "DESCUBRA MAIS POR PERTO",
+    "MEHR IN DEINER NÄHE",
+    "SCOPRI ALTRO VICINO A TE"
+  ],
+  "Explora más zonas de tu destino": [
+    "Explore more areas of your destination",
+    "Explorez d'autres zones de votre destination",
+    "Explore mais áreas do seu destino",
+    "Entdecke weitere Gebiete deines Reiseziels",
+    "Esplora altre zone della tua destinazione"
+  ],
+  "Elige una dirección para conocer otros lugares cercanos.": [
+    "Choose a direction to discover more nearby places.",
+    "Choisissez une direction pour découvrir d'autres lieux à proximité.",
+    "Escolha uma direção para descobrir mais lugares próximos.",
+    "Wähle eine Richtung, um weitere Orte in der Nähe zu finden.",
+    "Scegli una direzione per scoprire altri luoghi vicini."
+  ],
+  "Las zonas son áreas aproximadas de búsqueda, no límites oficiales de barrios o sectores. Solo mostramos establecimientos geolocalizados.": [
+    "These areas are approximate search zones, not official neighborhood boundaries. Only geolocated places appear.",
+    "Ces zones de recherche sont approximatives et ne représentent pas des limites officielles. Seuls les lieux géolocalisés sont affichés.",
+    "Essas áreas de busca são aproximadas, não limites oficiais. Exibimos apenas estabelecimentos geolocalizados.",
+    "Diese Suchgebiete sind ungefähre Bereiche und keine offiziellen Stadtteilgrenzen. Es erscheinen nur geolokalisierte Orte.",
+    "Le zone di ricerca sono approssimative, non confini ufficiali. Mostriamo solo luoghi geolocalizzati."
+  ],
+  "Buscar destinos y establecimientos": [
+    "Search destinations and businesses",
+    "Rechercher des destinations et des commerces",
+    "Buscar destinos e estabelecimentos",
+    "Reiseziele und Unternehmen suchen",
+    "Cerca destinazioni e attività"
+  ],
+  "INSPIRACIÓN PARA TU PRÓXIMO VIAJE": [
+    "INSPIRATION FOR YOUR NEXT TRIP",
+    "INSPIRATION POUR VOTRE PROCHAIN VOYAGE",
+    "INSPIRAÇÃO PARA SUA PRÓXIMA VIAGEM",
+    "INSPIRATION FÜR DEINE NÄCHSTE REISE",
+    "ISPIRAZIONE PER IL PROSSIMO VIAGGIO"
+  ],
+  "Un mundo por descubrir": [
+    "A world to explore",
+    "Un monde à découvrir",
+    "Um mundo para explorar",
+    "Eine Welt voller Entdeckungen",
+    "Un mondo da scoprire"
+  ],
+  "Elige una provincia para conocer la fotografía, su autor y su licencia.": [
+    "Choose a province to see its photo, photographer and license.",
+    "Choisissez une province pour voir la photo, son auteur et sa licence.",
+    "Escolha uma província para ver a foto, o autor e a licença.",
+    "Wähle eine Provinz, um Foto, Urheber und Lizenz zu sehen.",
+    "Scegli una provincia per vedere la foto, l'autore e la licenza."
+  ]
+});
+
 // Category labels are stored with stable IDs; proper names and addresses are not translated.
 const categories={
 rios:['Rivers','Rivières','Rios','Flüsse','Fiumi'],balnearios:['Swimming spots','Baignades naturelles','Balneários','Badestellen','Luoghi balneari'],cascadas:['Waterfalls','Cascades','Cachoeiras','Wasserfälle','Cascate'],lagunas:['Lagoons','Lagunes','Lagoas','Lagunen','Lagune'],senderismo:['Hiking','Randonnées','Trilhas','Wandern','Escursionismo'],playas:['Beaches','Plages','Praias','Strände','Spiagge'],parques:['Parks','Parcs','Parques','Parks','Parchi'],atracciones:['Tourist attractions','Sites touristiques','Atrações turísticas','Sehenswürdigkeiten','Attrazioni turistiche'],entretenimiento:['Entertainment','Divertissement','Entretenimento','Unterhaltung','Intrattenimento'],infantil:['Kids activities','Activités enfants','Diversão infantil','Kinderaktivitäten','Attività per bambini'],piscinas:['Swimming pools','Piscines','Piscinas','Pools','Piscine'],restaurantes:['Restaurants','Restaurants','Restaurantes','Restaurants','Ristoranti'],bares:['Bars','Bars','Bares','Bars','Bar'],discotecas:['Nightclubs','Discothèques','Boates','Nachtclubs','Discoteche'],cafes:['Cafés','Cafés','Cafés','Cafés','Caffetterie'],heladerias:['Ice cream shops','Glaciers','Sorveterias','Eisdielen','Gelaterie'],panaderias:['Bakeries','Boulangeries','Padarias','Bäckereien','Panetterie'],pescaderias:['Fish shops','Poissonneries','Peixarias','Fischgeschäfte','Pescherie'],comidarapida:['Fast food','Restauration rapide','Fast food','Schnellimbiss','Fast food'],supermercados:['Supermarkets','Supermarchés','Supermercados','Supermärkte','Supermercati'],colmados:['Local grocery stores','Épiceries locales','Mercearias','Nachbarschaftsläden','Alimentari'],mercados:['Markets','Marchés','Mercados','Märkte','Mercati'],tiendas:['Shops & fashion','Magasins et mode','Lojas e moda','Geschäfte & Mode','Negozi e moda'],ferreterias:['Hardware stores','Quincailleries','Lojas de ferragens','Baumärkte','Ferramenta'],electrodomesticos:['Appliances','Électroménager','Eletrodomésticos','Haushaltsgeräte','Elettrodomestici'],tecnologia:['Technology','Technologie','Tecnologia','Technik','Tecnologia'],barberias:['Barbers','Barbiers','Barbearias','Barbershops','Barbieri'],salones:['Beauty salons','Salons de beauté','Salões de beleza','Schönheitssalons','Saloni di bellezza'],unas:['Nail salons','Ongleries','Salões de unhas','Nagelstudios','Centri unghie'],spas:['Spas & massage','Spas et massages','Spas e massagens','Spas & Massagen','Spa e massaggi'],gimnasios:['Gyms','Salles de sport','Academias','Fitnessstudios','Palestre'],hoteles:['Hotels','Hôtels','Hotéis','Hotels','Hotel'],resorts:['Resorts','Resorts','Resorts','Resorts','Resort'],villas:['Villas','Villas','Villas','Villen','Ville'],taxis:['Taxis & transport','Taxis et transport','Táxis e transporte','Taxis & Transport','Taxi e trasporti'],gasolineras:['Gas stations','Stations-service','Postos de combustível','Tankstellen','Distributori'],talleres:['Repair shops','Garages','Oficinas','Werkstätten','Officine'],lavaderos:['Car washes','Stations de lavage','Lava-rápidos','Autowaschanlagen','Autolavaggi'],farmacias:['Pharmacies','Pharmacies','Farmácias','Apotheken','Farmacie'],hospitales:['Hospitals & clinics','Hôpitaux et cliniques','Hospitais e clínicas','Krankenhäuser & Kliniken','Ospedali e cliniche'],odontologia:['Dentists','Dentistes','Dentistas','Zahnärzte','Dentisti'],veterinarias:['Veterinarians','Vétérinaires','Veterinários','Tierärzte','Veterinari'],mascotas:['Pet shops','Animaleries','Pet shops','Tierhandlungen','Negozi animali'],bancos:['Banks','Banques','Bancos','Banken','Banche'],cajeros:['ATMs','Distributeurs automatiques','Caixas eletrônicos','Geldautomaten','Bancomat'],lavanderias:['Laundries','Blanchisseries','Lavanderias','Wäschereien','Lavanderie'],servicios:['Professional services','Services professionnels','Serviços profissionais','Professionelle Dienstleistungen','Servizi professionali'],escuelas:['Schools','Écoles','Escolas','Schulen','Scuole'],iglesias:['Churches','Églises','Igrejas','Kirchen','Chiese'],deportes:['Sports','Sports','Esportes','Sport','Sport']
