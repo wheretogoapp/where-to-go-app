@@ -1307,7 +1307,18 @@ function renderExplore(){
   $('distance-select').value=String(state.radius);
   if($('search-input').value!==state.search)$('search-input').value=state.search;
 }
-function renderFavorites(){const arr=state.favoritePlaces.filter(hasCatalogPhoto).map(p=>({...p,distance:haversine(state.lat,state.lon,p.lat,p.lon)}));$('favorite-list').innerHTML=arr.length?arr.map(placeCard).join(''):`<div class="empty-state"><span class="empty-emoji">💚</span><h3>¡Aquí comienza tu lista!</h3><p>Cuando encuentres un lugar especial, toca el corazón para guardarlo. Los favoritos se guardan en este dispositivo.</p><button data-empty="explore">Explorar lugares →</button></div>`}
+function renderFavorites(){
+ const current=state.places.filter(p=>state.favorites.includes(p.id));
+ const saved=[...state.favoritePlaces];
+ for(const p of current)if(!saved.some(x=>x.id===p.id))saved.push(p);
+ const arr=saved.filter(hasCatalogPhoto).map(p=>({...p,distance:haversine(state.lat,state.lon,p.lat,p.lon)}));$('favorite-list').innerHTML=arr.length?arr.map(placeCard).join(''):`<div class="empty-state"><span class="empty-emoji">💚</span><h3>¡Aquí comienza tu lista!</h3><p>Cuando encuentres un lugar especial, toca el corazón para guardarlo. Los favoritos se guardan en este dispositivo.</p><button data-empty="explore">Explorar lugares →</button></div>`}
+window.addEventListener('wtg-cloud-favorites',event=>{
+ const ids=(event.detail?.placeIds||[]).filter(id=>typeof id==='string'&&id.length<=250);
+ if(!ids.length)return;
+ state.favorites=Array.from(new Set([...state.favorites,...ids]));
+ saveJSON('wtg_favorites',state.favorites);
+ renderFavorites();window.WTG_PROFILE?.refresh?.();
+});
 function toggleFavorite(id){const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);if(!p)return;const has=state.favorites.includes(id);state.favorites=has?state.favorites.filter(x=>x!==id):[...state.favorites,id];state.favoritePlaces=has?state.favoritePlaces.filter(x=>x.id!==id):[...state.favoritePlaces,p];saveJSON('wtg_favorites',state.favorites);saveJSON('wtg_favorite_places',state.favoritePlaces);window.WTG_auth?.syncFavorite?.(id,!has);window.WTG_PROFILE?.refresh?.();toast(has?'Eliminado de favoritos':'Guardado en tus favoritos ♥');renderAll();}
 function renderAll(){if(!wtgProvincePreview)updateProvinceHero();updateProviderNotice();renderCategories();renderHome();renderExplore();renderFavorites();if(state.view==='mapa')renderMap();renderTaxis();$('location-label').textContent=(window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')?('📍 '+(window.WTG_ACTIVE_DESTINATION||window.WTG_ACTIVE_COUNTRY)):state.mode==='gps'?`📍 ${state.city==='Cerca de mí'?'Mi GPS':state.city}`:state.mode==='pending'?'📍 Activar ubicación':`📍 ${state.city}`;window.WTG_EXPERIENCE?.update?.();window.WTG_AREA_DISCOVERY?.refresh?.();window.WTG_PILOT?.refresh?.();window.WTG_PHOTO_ATLAS?.refresh?.();}
 function openPlace(id){window.WTG_auth?.recordView?.(id, state.places.find(p=>p.id===id)?.cat||"atracciones");const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);if(!p)return;window.WTG_PROFILE?.recordOpen?.(p);
