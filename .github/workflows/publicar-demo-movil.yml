@@ -41,6 +41,23 @@ jobs:
           test -s /tmp/where-to-go-pages/world-geography.js
           test -s /tmp/where-to-go-pages/native-mobile.css
           test -s /tmp/where-to-go-pages/local-discovery.css
+          test -s /tmp/where-to-go-pages/onboarding.js
+          test -s /tmp/where-to-go-pages/onboarding.css
+          test -s /tmp/where-to-go-pages/ux-polish.css
+          grep -q 'id="wtg-onboarding"' /tmp/where-to-go-pages/index.html
+          grep -q 'id="auth-email-reveal"' /tmp/where-to-go-pages/index.html
+          grep -q 'WTG_ONBOARDING_ENABLED=true' /tmp/where-to-go-pages/index.html
+          python - <<'PY'
+          import json, os, pathlib, datetime
+          output = pathlib.Path('/tmp/where-to-go-pages/data/release.json')
+          output.parent.mkdir(parents=True, exist_ok=True)
+          output.write_text(json.dumps({
+              'commit': os.environ['GITHUB_SHA'],
+              'name': 'Where to Go - A dónde ir',
+              'features': ['onboarding', 'destination-covers', 'in-app-map', 'complete-local-listings'],
+              'built_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat()
+          }, ensure_ascii=False, indent=2), encoding='utf-8')
+          PY
           grep -q 'id="wtg-local-discovery"' /tmp/where-to-go-pages/index.html
           grep -q 'A dónde ir' /tmp/where-to-go-pages/index.html
           grep -q 'renderLocalDiscovery' /tmp/where-to-go-pages/app.js
@@ -57,6 +74,7 @@ jobs:
       - name: Comprobar que 32 zonas tienen directorio real y JavaScript válido
         run: |
           node --check /tmp/where-to-go-pages/app.js
+          node --check /tmp/where-to-go-pages/onboarding.js
           node --check /tmp/where-to-go-pages/google-places-adapter.js
           node --test Where_to_Go_Proyecto_Completo/tests/google-places-browser.test.cjs
           node --check /tmp/where-to-go-pages/world-location.js
@@ -182,7 +200,7 @@ jobs:
               try:
                   with urllib.request.urlopen(urllib.request.Request(base,headers={'User-Agent':'WhereToGo-DeploymentCheck/1.0'}),timeout=20) as response:
                       body=response.read()
-                      if response.status==200 and all(x in body for x in (b'navy-gold-mobile.css',b'data-view="tours"',b'tours.js',b'id="location-pill"',b'world-explorer.js',b'id="wtg-local-discovery"',b'local-discovery.css',b'native-mobile.css',b'A d\xc3\xb3nde ir')):
+                      if response.status==200 and all(x in body for x in (b'navy-gold-mobile.css',b'data-view="tours"',b'tours.js',b'id="location-pill"',b'world-explorer.js',b'id="wtg-local-discovery"',b'local-discovery.css',b'native-mobile.css',b'id="wtg-onboarding"',b'ux-polish.css',b'A d\xc3\xb3nde ir')):
                           print('Aplicación publicada y verificada:',base)
                           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out:
                               out.write('### Aplicación publicada y comprobada\n'+base+'\n')
@@ -203,14 +221,29 @@ jobs:
               assert 'enrichDominicanGooglePlaces' in js,'Falta conexión Google con catálogo dominicano'
               assert 'renderLocalDiscovery' in js,'No se publicó la portada de descubrimiento por destino'
               print('Google Places: integración RD publicada')
-          for asset in ('world-location.js','world-explorer.js','world-explorer.css','city-covers.js','world-geography.js','native-mobile.css','local-discovery.css'):
+          for asset in ('world-location.js','world-explorer.js','world-explorer.css','city-covers.js','world-geography.js','native-mobile.css','local-discovery.css','onboarding.js','onboarding.css','ux-polish.css'):
               with urllib.request.urlopen(base+asset,timeout=20) as response:
                   assert response.status==200 and len(response.read())>100,asset
                   print('ASSET MUNDIAL PUBLICADO:',asset)
-          # Verify national data files are genuinely published at the URL, not
-          # merely bundled in the artifact.
+          # Check the exact deployed commit, rather than trusting a prior version
+          # from CDN or a successful push that never reached GitHub Pages.
           import json
           base=os.environ['PAGE_URL'].rstrip('/')+'/'
+          for attempt in range(12):
+              try:
+                  req=urllib.request.Request(base+'data/release.json?commit='+os.environ['GITHUB_SHA'][:12],headers={'Cache-Control':'no-cache'})
+                  with urllib.request.urlopen(req,timeout=20) as response:
+                      release=json.load(response)
+                  if release.get('commit')!=os.environ['GITHUB_SHA']:
+                      raise RuntimeError('Pages todavía publica una revisión anterior')
+                  print('VERSIÓN EXACTA CONFIRMADA EN PÁGINA PÚBLICA:',release['commit'])
+                  break
+              except Exception as exc:
+                  if attempt==11:raise
+                  print('Esperando nueva revisión publicada:',attempt+1,str(exc))
+                  time.sleep(10)
+          # Verify national data files are genuinely published at the URL, not
+          # merely bundled in the artifact.
           for path in ('data/places/manifest.json','data/places/cell_548_546.json','data/pages-catalog-check.json'):
               req=urllib.request.Request(base+path,headers={'User-Agent':'WhereToGo-Catalog-Smoke/1.0'})
               with urllib.request.urlopen(req,timeout=25) as res:
