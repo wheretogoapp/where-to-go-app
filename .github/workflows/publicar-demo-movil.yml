@@ -98,7 +98,7 @@ jobs:
           node --test Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs
           node --check /tmp/where-to-go-pages/onboarding.js
           node --check /tmp/where-to-go-pages/traveler-profile.js
-          node --check /tmp/where-to-go-pages/auth.js
+          node --input-type=module --check < /tmp/where-to-go-pages/auth.js
           node --test Where_to_Go_Proyecto_Completo/tests/traveler-profile.test.cjs
           node --check /tmp/where-to-go-pages/google-places-adapter.js
           node --test Where_to_Go_Proyecto_Completo/tests/google-places-browser.test.cjs
