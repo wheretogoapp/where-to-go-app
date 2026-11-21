@@ -1311,7 +1311,7 @@ function renderFavorites(){
  const current=state.places.filter(p=>state.favorites.includes(p.id));
  const saved=[...state.favoritePlaces];
  for(const p of current)if(!saved.some(x=>x.id===p.id))saved.push(p);
- const arr=saved.filter(hasCatalogPhoto).map(p=>({...p,distance:haversine(state.lat,state.lon,p.lat,p.lon)}));$('favorite-list').innerHTML=arr.length?arr.map(placeCard).join(''):`<div class="empty-state"><span class="empty-emoji">💚</span><h3>¡Aquí comienza tu lista!</h3><p>Cuando encuentres un lugar especial, toca el corazón para guardarlo. Los favoritos se guardan en este dispositivo.</p><button data-empty="explore">Explorar lugares →</button></div>`}
+ const arr=saved.map(p=>({...p,distance:haversine(state.lat,state.lon,p.lat,p.lon)}));$('favorite-list').innerHTML=arr.length?arr.map(placeCard).join(''):`<div class="empty-state"><span class="empty-emoji">💚</span><h3>¡Aquí comienza tu lista!</h3><p>Cuando encuentres un lugar especial, toca el corazón para guardarlo. Los favoritos se guardan en este dispositivo.</p><button data-empty="explore">Explorar lugares →</button></div>`}
 window.addEventListener('wtg-cloud-favorites',event=>{
  const ids=(event.detail?.placeIds||[]).filter(id=>typeof id==='string'&&id.length<=250);
  if(!ids.length)return;
