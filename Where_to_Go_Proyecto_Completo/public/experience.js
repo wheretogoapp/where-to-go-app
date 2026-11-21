@@ -32,6 +32,7 @@
   };
   let interval=null;
   const validUrl=s=>{if(/^\/assets\/places\/[a-z0-9-]+\.(jpg|webp|png)$/.test(s))return s;try{let x=new URL(s);return x.protocol==='https:'?x.href:''}catch{return''}};
+  const brokenPhotos=new Set(); // Never retry a failed image at each render.
   function region(){
     try{return typeof wtgProvincePreview==='string'&&wtgProvincePreview||provinceFromCity()||''}
     catch{return ''}
@@ -44,11 +45,11 @@
     const additional=(name==='Puerto Plata' ? PP : []);
     if(!d)return additional;
     const first={title:d.landmark,place:d.province+' · República Dominicana',image:d.photo,source:d.source,credit:d.author+' · '+d.license};
-    return additional.length ? [...additional] : [first];
+    return (additional.length ? [...additional,first] : [first]).filter(item=>!brokenPhotos.has(item.image));
   }
   function slideSet(name){
     // Without a confirmed province, don't invent a backdrop from Puerto Plata.
-    return name ? provSlides(name) : [];
+    return name ? provSlides(name).filter(item=>!brokenPhotos.has(item.image)) : [];
   }
   function updateSet(key, items,signature){
     const s=stateSlider[key];
@@ -79,6 +80,7 @@
       };
       candidate.onerror=()=>{
         if(art.dataset.wtgImage!==signature)return;
+        brokenPhotos.add(signature);
         s.items=s.items.filter(item=>item.image!==signature);
         s.index%=Math.max(1,s.items.length);
         art.dataset.wtgImage='';
@@ -171,7 +173,7 @@
     })) : [];
     const identity=name+'|'+[...iconic,...localReal].map(p=>p.title+'@'+p.image).join('|');
     const combined=[...iconic,...localReal,...slides].filter((item,index,array)=>
-      array.findIndex(other=>other.image===item.image)===index);
+      !brokenPhotos.has(item.image)&&array.findIndex(other=>other.image===item.image)===index);
     updateSet('hero',combined,'hero:'+identity);
     updateSet('auth',combined,'auth:'+identity);
     const eligible=typeof state!=='undefined'?state.places.filter(p=>isTouristDiscovery(p)&&!!validUrl(p.photo||'')&&p.distance<=state.radius+100).slice().sort((a,b)=>a.distance-b.distance):[];
