@@ -115,6 +115,7 @@ test('El catálogo visual prioriza fotografías auténticas en cualquier provinc
  const vmContext={state,$,provinceFromCity:()=>state.province,window:{WTG_GOOGLE_PLACES:{configured:()=>false}},
    wtgPhotoBudget:0,wtgPhotoMatching:false,wtgGoogleStage:0,wtgGoogleBusy:false,
    candidatesForGooglePhoto:()=>[],matches:()=>true,hasCatalogPhoto:p=>!!p.photo,
+   placeCoverUrl:p=>p.photo||'',placeGalleryPhotos:p=>p.photos||[],
    tourismRank:p=>['atracciones','playas'].includes(p.cat)?0:3,
    isTouristDiscovery:p=>!['salones','barberias'].includes(p.cat),
    distance:n=>String(n),placeCard:p=>p.name+'|',emptyBlock:()=>'',console};
