@@ -32,15 +32,15 @@ const categories={
 };
 // Los resultados son en vivo: no se descargan ni se guardan fichas o fotos de Google.
 const ALL_GROUPS={
- main:['restaurant','hotel','supermarket','pharmacy','barber_shop','beauty_salon','bar','cafe','tourist_attraction','night_club'],
+ main:['tourist_attraction','beach','historical_landmark','hiking_area','amusement_park','resort_hotel','hotel','restaurant','cafe'],
  essentials:['grocery_store','shopping_mall','hair_salon','gas_station','bank'],
  extra:['hair_salon','grocery_store','shopping_mall','convenience_store','fast_food_restaurant','gas_station','car_wash','gym','beach','bank'],
  districts:['restaurant','hotel','supermarket','pharmacy','barber_shop','beauty_salon','cafe','night_club','grocery_store','shopping_mall'],
- tourism:['tourist_attraction','beach','resort_hotel','hotel','restaurant','cafe','night_club','amusement_park']
+ tourism:['tourist_attraction','beach','historical_landmark','hiking_area','resort_hotel','hotel','restaurant','amusement_park']
 };
 const SCAN_STAGES=[
-  {batch:'extra',sector:'center',name:'Comercios y servicios del centro'},
-  {batch:'districts',sector:'north',name:'Negocios de la zona norte'},
+  {batch:'tourism',sector:'center',name:'Atracciones y experiencias turísticas'},
+  {batch:'tourism',sector:'north',name:'Actividades y naturaleza de la zona norte'},
   {batch:'districts',sector:'east',name:'Negocios de la zona este'},
   {batch:'districts',sector:'south',name:'Negocios de la zona sur'},
   {batch:'districts',sector:'west',name:'Negocios de la zona oeste'},
