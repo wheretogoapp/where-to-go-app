@@ -160,3 +160,36 @@ body.wtg-onboarding-active #auth-gate{display:none!important}
   display:block!important;opacity:1!important;animation:none!important;filter:none!important
  }
 }
+
+
+/* Approved 1000px transparent HD artwork, revealed as if assembled live. */
+#wtg-onboarding #wtg-ob-splash .wtg-ob-splash-logo{
+ width:clamp(230px,72vw,390px)!important;
+ height:clamp(230px,72vw,390px)!important;
+ margin:0 auto!important;
+ filter:drop-shadow(0 14px 26px #00d76d38)!important;
+}
+#wtg-onboarding #wtg-ob-splash .wtg-ob-splash-label{display:none!important}
+#wtg-onboarding #wtg-ob-splash .wtg-ob-fragment{
+ animation-duration:1.42s!important;
+}
+#wtg-onboarding #wtg-ob-splash .wtg-ob-complete{
+ animation:wtg-live-final .62s ease-out 1.35s both!important;
+}
+#wtg-onboarding #wtg-ob-splash{
+ background:radial-gradient(circle at 50% 46%,#0b3468,transparent 67%),#03152d!important;
+}
+#wtg-onboarding #wtg-ob-splash .wtg-ob-splash-logo:after{
+ animation-duration:1.6s!important;
+}
+@media(max-width:420px){
+ #wtg-onboarding #wtg-ob-splash .wtg-ob-splash-logo{
+  width:min(84vw,350px)!important;height:min(84vw,350px)!important
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #wtg-onboarding #wtg-ob-splash .wtg-ob-fragment{display:none!important}
+ #wtg-onboarding #wtg-ob-splash .wtg-ob-complete{
+  display:block!important;opacity:1!important;animation:none!important
+ }
+}
