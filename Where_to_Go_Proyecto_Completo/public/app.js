@@ -767,6 +767,41 @@ function mergeGoogleListings(result,localPlaces,context='Google Maps'){
   applyNearby(localPlaces,context+' · '+photoCount+' establecimientos con fotografía · '+state.city);
   return {added,photosLinked,withPhoto,photoCount};
 }
+// Exact iconic destinations: at most two targeted Places Text Search
+// requests per browser session, only when GPS/city is actually Puerto Plata.
+// Other regions do not receive borrowed photos. Do not permanently cache Google content.
+let wtgIconicPuertoPlataCache=null;
+let wtgIconicPuertoPlataPending=null;
+async function enrichIconicPuertoPlata(token){
+ if(!window.WTG_GOOGLE_PLACES?.configured()||window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')return;
+ if(haversine(state.lat,state.lon,19.7934,-70.6884)>7000)return;
+ const wanted=[
+   {query:'Paseo de Doña Blanca Puerto Plata República Dominicana',match:/paseo.{0,12}do[ñn]a blanca|do[ñn]a blanca/i},
+   {query:'Calle de las Sombrillas Puerto Plata República Dominicana',match:/sombrillas/i}
+ ];
+ if(!wtgIconicPuertoPlataPending && !wtgIconicPuertoPlataCache){
+   wtgIconicPuertoPlataPending=(async()=>{
+     const results=[];
+     for(const target of wanted){
+       const known=state.places.find(p=>target.match.test(p.name)&&hasCatalogPhoto(p)&&
+         haversine(p.lat,p.lon,19.7934,-70.6884)<6000);
+       if(known)continue;
+       // One text query per landmark. Never scan entire provinces or store photos.
+       const response=await window.WTG_GOOGLE_PLACES.searchText({
+         query:target.query,lat:19.7934,lon:-70.6884,radius:7500
+       });
+       const exact=(response?.places||[]).find(p=>target.match.test(p.name)&&
+         haversine(p.lat,p.lon,19.7934,-70.6884)<6000&&safeUrl(p.photo));
+       if(exact)results.push(exact);
+     }
+     return results;
+   })().then(value=>(wtgIconicPuertoPlataCache=value,value)).finally(()=>{wtgIconicPuertoPlataPending=null});
+ }
+ const rows=wtgIconicPuertoPlataCache||await wtgIconicPuertoPlataPending;
+ if(token!==state.loadingId||!rows?.length)return;
+ mergeGoogleListings({places:rows},state.remotePlaces,'Sitios emblemáticos de Puerto Plata');
+}
+
 // Mostrar Google desde el primer lote sin bloquear el catálogo local.
 async function enrichDominicanGooglePlaces(token,localPlaces){
   if(!window.WTG_GOOGLE_PLACES?.configured())return;
@@ -785,7 +820,7 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
       if(token!==state.loadingId)return;
       if(everyday?.places?.length)mergeGoogleListings(everyday,typeof localPlaces==='function'?localPlaces():localPlaces,'Google Maps · comercios y servicios');
     }
-    if(token===state.loadingId)void enrichVisiblePhotoCards(token,6);
+    if(token===state.loadingId){void enrichIconicPuertoPlata(token);void enrichVisiblePhotoCards(token,6);}
   }catch(error){console.warn('Where to Go: Google Places no disponible en esta zona',String(error));}
 }
 // Explorar físicamente otros sectores del municipio. Una pulsación consulta
