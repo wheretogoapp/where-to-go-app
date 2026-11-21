@@ -816,7 +816,7 @@ async function enrichIconicPuertoPlata(token){
 // It is NOT a national crawler; no Google photos are saved for later sessions.
 const wtgNationalPhotoLookups=new Set();
 async function enrichPhotographedDestinations(token){
-  if(token!==state.loadingId||state.category!=='todos'||state.mode==='sector'||
+  if(token!==state.loadingId||state.category!=='todos'||
      !window.WTG_GOOGLE_PLACES?.searchText||
      !window.WTG_GOOGLE_PLACES.configured()||
      (window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO'))return;
@@ -827,11 +827,13 @@ async function enrichPhotographedDestinations(token){
   const city=String(state.city||'').trim();
   if(!city||!province||state.mode==='demo')return;
   const lookupKey=[province,city,Math.round(state.lat*100),Math.round(state.lon*100)].join('|');
-  if(wtgNationalPhotoLookups.has(lookupKey))return;
+  // At most 24 extra photo searches per browser session even when visitors
+  // explore many sectors. Each visited destination/sector is checked once.
+  if(wtgNationalPhotoLookups.has(lookupKey)||wtgNationalPhotoLookups.size>=24)return;
   wtgNationalPhotoLookups.add(lookupKey);
   try{
-    // One text lookup after the normal nearby batches, only in a photo-poor
-    // destination. The query describes the selected REAL city/province.
+    // One bounded text lookup for a photo-poor city or a sector explicitly
+    // selected by the visitor. The query names the REAL city/province.
     const response=await window.WTG_GOOGLE_PLACES.searchText({
       query:'lugares turísticos y atractivos para visitar en '+city+', '+province+', República Dominicana',
       lat:state.lat,lon:state.lon,radius:state.radius
