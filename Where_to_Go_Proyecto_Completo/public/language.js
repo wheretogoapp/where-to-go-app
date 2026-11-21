@@ -1891,6 +1891,164 @@ Object.assign(labels, {
   ]
 });
 
+// Location selection and remaining dynamic interaction labels.
+Object.assign(labels, {
+  "TRANSPORTE · SOCIO FUNDADOR · PUERTO PLATA": [
+    "TRANSPORT · FOUNDING PARTNER · PUERTO PLATA",
+    "TRANSPORT · PARTENAIRE FONDATEUR · PUERTO PLATA",
+    "TRANSPORTE · PARCEIRO FUNDADOR · PUERTO PLATA",
+    "TRANSPORT · GRÜNDUNGSPARTNER · PUERTO PLATA",
+    "TRASPORTO · PARTNER FONDATORE · PUERTO PLATA"
+  ],
+  "WHERE TO GO · TRANSPORTE": [
+    "WHERE TO GO · TRANSPORT",
+    "WHERE TO GO · TRANSPORTS",
+    "WHERE TO GO · TRANSPORTE",
+    "WHERE TO GO · TRANSPORT",
+    "WHERE TO GO · TRASPORTI"
+  ],
+  "No llenar": [
+    "Do not fill in",
+    "Ne pas remplir",
+    "Não preencher",
+    "Nicht ausfüllen",
+    "Non compilare"
+  ],
+  "Selecciona una ciudad o municipio": [
+    "Choose a city or municipality",
+    "Choisissez une ville ou une commune",
+    "Escolha uma cidade ou município",
+    "Stadt oder Gemeinde auswählen",
+    "Scegli una città o un comune"
+  ],
+  "32 demarcaciones y 158 municipios disponibles. Elige una provincia y una ciudad para explorar.": [
+    "32 areas and 158 municipalities available. Choose a province and city to explore.",
+    "32 zones et 158 communes disponibles. Choisissez une province et une ville.",
+    "32 áreas e 158 municípios disponíveis. Escolha uma província e uma cidade.",
+    "32 Gebiete und 158 Gemeinden verfügbar. Wähle eine Provinz und Stadt.",
+    "32 aree e 158 comuni disponibili. Scegli una provincia e una città."
+  ],
+  "32 demarcaciones disponibles. Se está cargando el índice de los 158 municipios.": [
+    "32 areas available. Loading the index of 158 municipalities.",
+    "32 zones disponibles. Chargement de l'index des 158 communes.",
+    "32 áreas disponíveis. Carregando o índice de 158 municípios.",
+    "32 Gebiete verfügbar. Das Verzeichnis mit 158 Gemeinden wird geladen.",
+    "32 aree disponibili. Caricamento dell'elenco di 158 comuni."
+  ],
+  "Este país todavía no tiene regiones y ciudades precargadas.": [
+    "This country does not have preloaded regions and cities yet.",
+    "Ce pays n'a pas encore de régions ou de villes préchargées.",
+    "Este país ainda não tem regiões e cidades pré-carregadas.",
+    "Für dieses Land sind noch keine Regionen und Städte vorgeladen.",
+    "Questo paese non dispone ancora di regioni e città precaricate."
+  ],
+  "República Dominicana: elige la provincia y luego la ciudad o municipio.": [
+    "Dominican Republic: choose a province, then a city or municipality.",
+    "République dominicaine : choisissez une province, puis une ville ou commune.",
+    "República Dominicana: escolha a província, depois a cidade ou município.",
+    "Dominikanische Republik: Wähle zuerst die Provinz, dann die Stadt oder Gemeinde.",
+    "Repubblica Dominicana: scegli la provincia e poi la città o il comune."
+  ],
+  "Selecciona una ciudad para buscar lugares reales con Google Places.": [
+    "Choose a city to search for real places with Google Places.",
+    "Choisissez une ville pour rechercher des lieux réels avec Google Places.",
+    "Escolha uma cidade para buscar lugares reais no Google Places.",
+    "Wähle eine Stadt, um echte Orte mit Google Places zu suchen.",
+    "Scegli una città per cercare luoghi reali con Google Places."
+  ],
+  "Este país no tiene todavía un índice de ciudades verificadas. No se mostrarán ubicaciones inventadas.": [
+    "This country has no verified city index yet. No invented locations will be shown.",
+    "Ce pays n'a pas encore d'index de villes vérifiées. Aucun lieu inventé ne sera affiché.",
+    "Este país ainda não tem índice de cidades verificadas. Nenhuma localização inventada será exibida.",
+    "Für dieses Land gibt es noch kein geprüftes Stadtverzeichnis. Es werden keine erfundenen Orte angezeigt.",
+    "Questo paese non ha ancora un elenco verificato di città. Non mostreremo luoghi inventati."
+  ],
+  "Explorar destino en República Dominicana": [
+    "Explore destination in the Dominican Republic",
+    "Explorer une destination en République dominicaine",
+    "Explorar destino na República Dominicana",
+    "Reiseziel in der Dominikanischen Republik entdecken",
+    "Esplora destinazione nella Repubblica Dominicana"
+  ],
+  "Explorar destino seleccionado": [
+    "Explore selected destination",
+    "Explorer la destination choisie",
+    "Explorar destino selecionado",
+    "Gewähltes Reiseziel erkunden",
+    "Esplora la destinazione selezionata"
+  ],
+  "Selecciona una provincia y una ciudad para ver lugares cercanos.": [
+    "Choose a province and city to see nearby places.",
+    "Choisissez une province et une ville pour voir les lieux proches.",
+    "Escolha uma província e uma cidade para ver lugares próximos.",
+    "Wähle Provinz und Stadt, um Orte in der Nähe zu sehen.",
+    "Scegli una provincia e una città per vedere luoghi vicini."
+  ],
+  "Comprobando ubicación del destino…": [
+    "Checking destination location…",
+    "Vérification de l'emplacement…",
+    "Verificando a localização…",
+    "Standort des Reiseziels wird geprüft…",
+    "Verifica della posizione della destinazione…"
+  ],
+  "Esta ciudad todavía no tiene coordenadas comprobadas.": [
+    "This city does not have verified coordinates yet.",
+    "Cette ville n'a pas encore de coordonnées vérifiées.",
+    "Esta cidade ainda não tem coordenadas verificadas.",
+    "Für diese Stadt gibt es noch keine geprüften Koordinaten.",
+    "Questa città non ha ancora coordinate verificate."
+  ],
+  "Selecciona una provincia y un municipio válidos.": [
+    "Choose a valid province and municipality.",
+    "Choisissez une province et une commune valides.",
+    "Escolha uma província e um município válidos.",
+    "Wähle eine gültige Provinz und Gemeinde.",
+    "Scegli una provincia e un comune validi."
+  ],
+  "El localizador territorial no se cargó. Intenta actualizar la aplicación.": [
+    "Location data could not be loaded. Try refreshing the app.",
+    "Le service de localisation n'a pas pu se charger. Réactualisez l'application.",
+    "Os dados de localização não carregaram. Atualize o aplicativo.",
+    "Der Ortungsdienst konnte nicht geladen werden. Bitte App aktualisieren.",
+    "Impossibile caricare il servizio di localizzazione. Aggiorna l'app."
+  ],
+  "No se pudo seleccionar el destino.": [
+    "Could not select destination.",
+    "Impossible de choisir la destination.",
+    "Não foi possível selecionar o destino.",
+    "Reiseziel konnte nicht ausgewählt werden.",
+    "Impossibile selezionare la destinazione."
+  ],
+  "(precio normal US$360 por 12 meses).": [
+    "(regular price US$360 for 12 months).",
+    "(prix habituel 360 USD pour 12 mois).",
+    "(preço normal US$360 por 12 meses).",
+    "(regulärer Preis 360 USD für 12 Monate).",
+    "(prezzo normale 360 USD per 12 mesi)."
+  ],
+  "(precio normal US$600 por 12 meses). Cupos propuestos: 50 negocios inicialmente, ampliables a 100. El plazo empieza con el lanzamiento comercial, sujeto a contrato y fecha de activación confirmada.": [
+    "(regular price US$600 for 12 months). Proposed capacity: initially 50 businesses, expandable to 100. The period starts at commercial launch, subject to contract and confirmed activation date.",
+    "(prix habituel 600 USD pour 12 mois). Capacité envisagée : 50 entreprises au départ, extensible à 100. La période commence au lancement commercial, sous réserve du contrat et de la date d'activation confirmée.",
+    "(preço normal US$600 por 12 meses). Limite proposta: 50 negócios inicialmente, ampliável a 100. O prazo começa no lançamento comercial, sujeito a contrato e confirmação da ativação.",
+    "(regulärer Preis 600 USD für 12 Monate). Geplant sind zunächst 50 Unternehmen, ausbaubar auf 100. Die Laufzeit beginnt mit dem kommerziellen Start, vorbehaltlich Vertrag und bestätigtem Aktivierungsdatum.",
+    "(prezzo normale 600 USD per 12 mesi). Disponibilità proposta: 50 attività inizialmente, ampliabili a 100. Il periodo decorre dal lancio commerciale, secondo contratto e data di attivazione confermata."
+  ],
+  "Solicita información desde el formulario de registro, seleccionando el plan mensual equivalente, hasta habilitar el contrato de fundadores.": [
+    "Request information through the registration form using the corresponding monthly plan until the founding partner agreement is available.",
+    "Demandez des informations dans le formulaire en choisissant l'offre mensuelle correspondante, en attendant le contrat fondateur.",
+    "Solicite informações pelo formulário, escolhendo o plano mensal equivalente, até que o contrato de fundadores esteja disponível.",
+    "Fordere Informationen über das Anmeldeformular mit dem entsprechenden Monatspaket an, bis der Gründungspartnervertrag verfügbar ist.",
+    "Richiedi informazioni nel modulo scegliendo il piano mensile corrispondente, in attesa del contratto per i partner fondatori."
+  ],
+  "Registro Básico US$10 una sola vez; Destacado US$30/mes; Premium US$50/mes. Los planes mensuales incluyen el registro (no se añaden otros US$10).": [
+    "Basic listing US$10 once; Featured US$30/month; Premium US$50/month. Monthly plans include registration (no additional US$10 fee).",
+    "Inscription de base : 10 USD une fois ; Mise en avant : 30 USD/mois ; Premium : 50 USD/mois. Les abonnements comprennent l'inscription, sans 10 USD supplémentaires.",
+    "Cadastro básico US$10 uma vez; Destaque US$30/mês; Premium US$50/mês. Os planos mensais incluem o cadastro, sem taxa extra de US$10.",
+    "Basiseintrag einmalig 10 USD; Hervorgehoben 30 USD/Monat; Premium 50 USD/Monat. Monatspakete enthalten die Anmeldung, keine zusätzlichen 10 USD.",
+    "Registrazione base 10 USD una tantum; In evidenza 30 USD/mese; Premium 50 USD/mese. I piani mensili includono la registrazione senza altri 10 USD."
+  ]
+});
+
 // Category labels are stored with stable IDs; proper names and addresses are not translated.
 const categories={
 rios:['Rivers','Rivières','Rios','Flüsse','Fiumi'],balnearios:['Swimming spots','Baignades naturelles','Balneários','Badestellen','Luoghi balneari'],cascadas:['Waterfalls','Cascades','Cachoeiras','Wasserfälle','Cascate'],lagunas:['Lagoons','Lagunes','Lagoas','Lagunen','Lagune'],senderismo:['Hiking','Randonnées','Trilhas','Wandern','Escursionismo'],playas:['Beaches','Plages','Praias','Strände','Spiagge'],parques:['Parks','Parcs','Parques','Parks','Parchi'],atracciones:['Tourist attractions','Sites touristiques','Atrações turísticas','Sehenswürdigkeiten','Attrazioni turistiche'],entretenimiento:['Entertainment','Divertissement','Entretenimento','Unterhaltung','Intrattenimento'],infantil:['Kids activities','Activités enfants','Diversão infantil','Kinderaktivitäten','Attività per bambini'],piscinas:['Swimming pools','Piscines','Piscinas','Pools','Piscine'],restaurantes:['Restaurants','Restaurants','Restaurantes','Restaurants','Ristoranti'],bares:['Bars','Bars','Bares','Bars','Bar'],discotecas:['Nightclubs','Discothèques','Boates','Nachtclubs','Discoteche'],cafes:['Cafés','Cafés','Cafés','Cafés','Caffetterie'],heladerias:['Ice cream shops','Glaciers','Sorveterias','Eisdielen','Gelaterie'],panaderias:['Bakeries','Boulangeries','Padarias','Bäckereien','Panetterie'],pescaderias:['Fish shops','Poissonneries','Peixarias','Fischgeschäfte','Pescherie'],comidarapida:['Fast food','Restauration rapide','Fast food','Schnellimbiss','Fast food'],supermercados:['Supermarkets','Supermarchés','Supermercados','Supermärkte','Supermercati'],colmados:['Local grocery stores','Épiceries locales','Mercearias','Nachbarschaftsläden','Alimentari'],mercados:['Markets','Marchés','Mercados','Märkte','Mercati'],tiendas:['Shops & fashion','Magasins et mode','Lojas e moda','Geschäfte & Mode','Negozi e moda'],ferreterias:['Hardware stores','Quincailleries','Lojas de ferragens','Baumärkte','Ferramenta'],electrodomesticos:['Appliances','Électroménager','Eletrodomésticos','Haushaltsgeräte','Elettrodomestici'],tecnologia:['Technology','Technologie','Tecnologia','Technik','Tecnologia'],barberias:['Barbers','Barbiers','Barbearias','Barbershops','Barbieri'],salones:['Beauty salons','Salons de beauté','Salões de beleza','Schönheitssalons','Saloni di bellezza'],unas:['Nail salons','Ongleries','Salões de unhas','Nagelstudios','Centri unghie'],spas:['Spas & massage','Spas et massages','Spas e massagens','Spas & Massagen','Spa e massaggi'],gimnasios:['Gyms','Salles de sport','Academias','Fitnessstudios','Palestre'],hoteles:['Hotels','Hôtels','Hotéis','Hotels','Hotel'],resorts:['Resorts','Resorts','Resorts','Resorts','Resort'],villas:['Villas','Villas','Villas','Villen','Ville'],taxis:['Taxis & transport','Taxis et transport','Táxis e transporte','Taxis & Transport','Taxi e trasporti'],gasolineras:['Gas stations','Stations-service','Postos de combustível','Tankstellen','Distributori'],talleres:['Repair shops','Garages','Oficinas','Werkstätten','Officine'],lavaderos:['Car washes','Stations de lavage','Lava-rápidos','Autowaschanlagen','Autolavaggi'],farmacias:['Pharmacies','Pharmacies','Farmácias','Apotheken','Farmacie'],hospitales:['Hospitals & clinics','Hôpitaux et cliniques','Hospitais e clínicas','Krankenhäuser & Kliniken','Ospedali e cliniche'],odontologia:['Dentists','Dentistes','Dentistas','Zahnärzte','Dentisti'],veterinarias:['Veterinarians','Vétérinaires','Veterinários','Tierärzte','Veterinari'],mascotas:['Pet shops','Animaleries','Pet shops','Tierhandlungen','Negozi animali'],bancos:['Banks','Banques','Bancos','Banken','Banche'],cajeros:['ATMs','Distributeurs automatiques','Caixas eletrônicos','Geldautomaten','Bancomat'],lavanderias:['Laundries','Blanchisseries','Lavanderias','Wäschereien','Lavanderie'],servicios:['Professional services','Services professionnels','Serviços profissionais','Professionelle Dienstleistungen','Servizi professionali'],escuelas:['Schools','Écoles','Escolas','Schulen','Scuole'],iglesias:['Churches','Églises','Igrejas','Kirchen','Chiese'],deportes:['Sports','Sports','Esportes','Sport','Sport']
