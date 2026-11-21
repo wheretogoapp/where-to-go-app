@@ -78,6 +78,31 @@ jobs:
             console.log('WOW_LAYOUT:',label,JSON.stringify(layout));
             if(layout.styleLinks!==1||layout.heroRect.width<200)throw Error(label+' design not visible');
             if(label==='iphone')await page.screenshot({path:'/tmp/wow-iphone-home.png',fullPage:true});
+            if(label==='iphone'){
+              const profile=await page.evaluate(()=>{
+                const account=document.getElementById('wtg-account');
+                account.hidden=false;
+                const button=document.querySelector('[data-wtg-theme="dark"]');
+                button.click();
+                return {
+                  appearance:document.documentElement.dataset.wtgAppearance,
+                  selected:button.getAttribute('aria-pressed'),
+                  accountTitle:document.getElementById('wtg-account-title')?.textContent,
+                  profileVisible:!account.hidden
+                };
+              });
+              if(profile.appearance!=='dark'||profile.selected!=='true'||!profile.profileVisible)throw Error('Dark profile mode broken: '+JSON.stringify(profile));
+              await page.screenshot({path:'/tmp/wow-iphone-profile-dark.png'});
+              await page.evaluate(()=>{
+                document.getElementById('wtg-account').hidden=true;
+                document.querySelector('[data-wtg-theme="light"]').click();
+              });
+              await page.screenshot({path:'/tmp/wow-iphone-home-light.png',fullPage:true});
+              await page.evaluate(()=>document.querySelector('[data-wtg-theme="dark"]').click());
+              await page.screenshot({path:'/tmp/wow-iphone-home-dark.png',fullPage:true});
+              console.log('WOW_PROFILE_THEME:',JSON.stringify(profile));
+            }
+
             if(label==='desktop')await page.screenshot({path:'/tmp/wow-desktop-home.png',fullPage:true});
             await page.close();
           }
@@ -93,4 +118,7 @@ jobs:
             /tmp/wow-iphone-welcome.png
             /tmp/wow-iphone-home.png
             /tmp/wow-desktop-home.png
+            /tmp/wow-iphone-profile-dark.png
+            /tmp/wow-iphone-home-light.png
+            /tmp/wow-iphone-home-dark.png
           if-no-files-found: ignore
