@@ -182,7 +182,8 @@ function haversine(lat1,lon1,lat2,lon2){const r=Math.PI/180, a=Math.sin((lat2-la
 function distance(m){return Number.isFinite(m)?m<1000?`${Math.round(m)} m`:`${(m/1000).toFixed(1).replace('.0','')} km`:'—'}
 function catInfo(id){const c=CATEGORY_BY_ID[id]||CATEGORY_BY_ID.atracciones;return {...c,name:window.WTG_I18N?.category(c.id,c.name)||c.name}}
 // Solo mostrar en los resultados destacados fotos vinculadas a la ficha.
-function hasCatalogPhoto(p){return !!safeUrl(p?.photo||placeGalleryPhotos(p)?.[0]?.url||'')}
+const wtgUnavailableImageUrls=new Set();
+function hasCatalogPhoto(p){const url=safeUrl(p?.photo||placeGalleryPhotos(p)?.[0]?.url||'');return !!url&&!wtgUnavailableImageUrls.has(url)}
 function isVisibleBusiness(p){return !!p&&p.nameKnown!==false&&
   !['escuelas','iglesias'].includes(p.cat)&&hasCatalogPhoto(p)}
 const WTG_QUICK_CATEGORIES=['restaurantes','supermercados','farmacias','barberias',
@@ -206,6 +207,8 @@ document.addEventListener('error', event => {
     parent?.querySelector('.wtg-regional-disclaimer')?.remove();
     card?.querySelector('.wtg-regional-credit')?.remove();
   }
+  const failedSrc=el.getAttribute('src')||'';
+  if(failedSrc)wtgUnavailableImageUrls.add(failedSrc);
   fallback.append(sign,label);el.replaceWith(fallback);
   card?.classList.add('wtg-photo-load-failed');
 },true);
@@ -225,7 +228,8 @@ function mapsPlaceSearch(p){
 }
 function placePhotoMarkup(p, kind='card'){
   // Extra photos approved for this exact place also serve as its card cover.
-  const src=safeUrl(p.photo||placeGalleryPhotos(p)[0]?.url||'');
+  const candidate=safeUrl(p.photo||placeGalleryPhotos(p)[0]?.url||'');
+  const src=wtgUnavailableImageUrls.has(candidate)?'':candidate;
   const icon=catInfo(p.cat).emoji;
   const placeholder=`<div class="photo-empty wtg-photo-placeholder" role="img" aria-label="Sin fotografía del lugar"><span class="wtg-photo-icon" aria-hidden="true">${icon}</span><span class="wtg-photo-label">${esc(catInfo(p.cat).name)}</span></div>`;
   // Las fotos de Google utilizan una clave restringida por sitio: envía solo
@@ -245,7 +249,7 @@ function placeGalleryPhotos(p){
     if(!item||typeof item!=='object')continue;
     const url=safeUrl(item.url||item.photo),source=safeUrl(item.source||item.photoSource);
     const attribution=String(item.attribution||item.photoAttribution||'').trim();
-    if(!url||!source||!attribution||seen.has(url))continue;
+    if(!url||wtgUnavailableImageUrls.has(url)||!source||!attribution||seen.has(url))continue;
     seen.add(url);
     list.push({url,source,attribution,provider:item.provider||'',license:safeUrl(item.license||item.photoLicense||'')});
     if(list.length>=19)break;
