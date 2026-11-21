@@ -1067,7 +1067,19 @@ function renderProvincePremium(){
     return `<article class="wtg-provincial-premium" data-premium-slide="${i}" ${i?'hidden':''}><div class="premium-marker">PUBLICIDAD · PREMIUM · ${esc(prov)}</div><div><strong>${esc(x.name)}</strong><small>${esc(cat.name)} · ${esc(x.province)}</small></div>${source?`<a target="_blank" rel="noopener noreferrer" href="${esc(source)}">Ver negocio ↗</a>`:''}</article>`;
   }).join('');
 }
+const wtgFailedLocalPhotos=new Set();
 function startDestinationRotation(rail){
+ rail.addEventListener('error',event=>{
+   const img=event.target;
+   if(img?.tagName!=='IMG')return;
+   const url=img.getAttribute('src');
+   if(url)wtgFailedLocalPhotos.add(url);
+   img.closest('.wtg-local-card')?.remove();
+   if(!rail.querySelector('.wtg-local-card')){
+     const section=rail.closest('.wtg-local-discovery');
+     if(section)section.hidden=true;
+   }
+ },true);
  if(rail.dataset.wtgCarousel==='yes')return;
  rail.dataset.wtgCarousel='yes';
  let holdUntil=0;
@@ -1096,6 +1108,7 @@ function renderLocalDiscovery(){
  if(subtitle)subtitle.textContent='Fotografías auténticas y lugares para visitar en '+city;
  const list=state.places.filter(p=>
    p.distance<=state.radius+100&&hasCatalogPhoto(p)&&
+   !wtgFailedLocalPhotos.has(safeUrl(p.photo||placeGalleryPhotos(p)[0]?.url||''))&&
    ['playas','atracciones','parques','cascadas','rios','balnearios','restaurantes','hoteles','resorts','entretenimiento'].includes(p.cat)
  );
  const iconic=p=>/malec[oó]n|sombrillas|do[ñn]a blanca|telef[eé]rico|monumento|fortaleza|plaza|catedral|paseo|cascada/i.test(p.name)?0:1;
