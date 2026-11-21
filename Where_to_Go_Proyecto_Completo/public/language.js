@@ -1915,7 +1915,7 @@ function dynamicText(text){
   const m=text.match(exp);if(m)return t(m[1])+' '+m[2]+': '+t(m[3]);
   // Translate UI labels even when they include decorative arrows/icons.
   // The place name itself is never translated.
-  const glyph=text.match(/^([✦★▤◈📷◎⌖🌐]+\s*)(.*)$/u);
+  const glyph=text.match(/^([✦★▤◈📷◎⌖🌐📍🌎🌍🧭✉♡🔐🚘]+\s*)(.*)$/u);
   const prefix=glyph?glyph[1]:'';
   let body=glyph?glyph[2]:text;
   const end=body.match(/^(.*?)(\s*[↗→↻])$/u);
