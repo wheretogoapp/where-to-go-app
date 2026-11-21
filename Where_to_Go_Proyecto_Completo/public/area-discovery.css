@@ -1,0 +1,29 @@
+/* Reusable in-app geographic sector carousel; all 32 provinces & 158 municipalities. */
+#wtg-area-discovery[hidden]{display:none!important}
+#wtg-area-discovery{margin:12px 0 23px;padding:19px 17px 13px;border-radius:22px;
+  background:linear-gradient(135deg,#08274c,#0d3564);border:1px solid #f3ce7e44;
+  color:#fff;overflow:hidden}
+#wtg-area-discovery h2{font:850 clamp(18px,3vw,24px)/1.2 Outfit,'DM Sans',sans-serif;
+  color:#fff;margin:4px 0 6px;letter-spacing:-.03em}
+#wtg-area-discovery p{font-size:12px;color:#d5e2f4;margin:0 0 12px;line-height:1.45}
+#wtg-area-options{display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;
+  scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;padding:3px 2px 10px}
+#wtg-area-options::-webkit-scrollbar{display:none}
+#wtg-area-options button{flex:0 0 94px;min-width:94px;min-height:72px;
+  border-radius:15px;border:1px solid #b0d4f054;background:#ffffff12;
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:5px;cursor:pointer;scroll-snap-align:start;
+  transition:background .2s,border-color .2s}
+#wtg-area-options button span{font-size:18px;line-height:1}
+#wtg-area-options button strong{font-size:12px;font-weight:800}
+#wtg-area-options button.active{color:#072246;background:#f4d180;border-color:#ffe2a1}
+#wtg-area-options button:focus-visible{outline:3px solid #efc25b;outline-offset:3px}
+#wtg-area-disclaimer{display:block;font-size:10px!important;line-height:1.45;
+  color:#b8cce3!important;margin:2px 0 0!important}
+@media(max-width:820px){
+ #wtg-area-discovery{margin:10px 0 17px;padding:15px 13px 10px!important;border-radius:19px}
+ #wtg-area-discovery h2{font-size:19px}
+ #wtg-area-options button{flex-basis:83px;min-width:83px;min-height:67px}
+ #wtg-area-disclaimer{font-size:9px!important}
+}
