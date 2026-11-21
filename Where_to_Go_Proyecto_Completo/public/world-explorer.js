@@ -109,7 +109,8 @@ function init(){
      if(code==='DO'){
        window.WTG_ACTIVE_COUNTRY='DO';
        setPilotVisible(true);
-       window.dispatchEvent(new CustomEvent('wtg-world-return-pilot',{detail:selection}));
+       // El único evento wtg-world-selected ya actualizó la portada y los lugares.
+       // Evita una segunda carga de Google Places al confirmar el municipio.
      }else{
        const canQuery=!!window.WTG_GOOGLE_PLACES?.configured();
        setPilotVisible(canQuery);
