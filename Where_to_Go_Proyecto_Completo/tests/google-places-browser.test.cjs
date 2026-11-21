@@ -78,8 +78,8 @@ test('Sin clave la API no inicia consultas', async () => {
 
 test('La app integra Google Places con la búsqueda dominicana', () => {
   const code = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
-  assert.ok(code.includes('void enrichDominicanGooglePlaces(token,()=>[...unique.values()])'));
-  assert.ok(code.includes('if(!googleStarted&&(finished>=4||complete))'));
+  assert.ok(code.includes('void enrichDominicanGooglePlaces(token,()=>state.remotePlaces)'));
+  assert.ok(code.includes('applyNearby([], \'Directorio cartográfico no disponible'));
   assert.ok(code.includes('isVisibleBusiness(p)'));
   assert.ok(code.includes('photoAttributions:p.photoAttributions||[]'));
 });
@@ -238,7 +238,8 @@ test('Portada y Explorar ocultan fichas cartográficas sin fotos y exponen servi
 test('Se pueden consultar varios sectores reales del mismo municipio sin repetir el centro',async()=>{
   const {api,queries}=configuredBrowser();
   const stages=api.scanStages();
-  assert.equal(stages.length,7);
+  assert.equal(stages.length,10);
+  assert(stages.some(s=>s.batch==='tourism'));
   assert(stages.some(s=>s.sector==='north'));
   assert(stages.some(s=>s.sector==='east'));
   const north=await api.nearby({lat:19.7934,lon:-70.6884,radius:12000,category:'todos',batch:'districts',sector:'north'});
@@ -264,9 +265,9 @@ test('Al ampliar, fusionar por Place ID y mostrar solo fotos verificables de Goo
 });
 
 
-test('Ampliación manual recorre como máximo tres sectores por toque',()=>{
+test('Ampliación manual recorre como máximo dos sectores por toque',()=>{
  const src=fs.readFileSync(path.join(root,'app.js'),'utf8');
- assert(src.includes('for(let part=0;part<3&&wtgGoogleStage<stages.length;part++)'));
+ assert(src.includes('for(let part=0;part<2&&wtgGoogleStage<stages.length;part++)'));
  assert(src.includes("batch:stage.batch,sector:stage.sector"));
  assert(src.includes("Google: '+added+' negocios nuevos con foto"));
 });
@@ -279,4 +280,18 @@ test('Búsqueda inicial también incorpora negocios cotidianos sin consumir la e
  const src=fs.readFileSync(path.join(root,'app.js'),'utf8');
  assert(src.includes("batch:'essentials'"));
  assert(src.includes("if(state.category==='todos'&&result?.status!=='error')"));
+});
+
+test('Catálogo local caído no desactiva Google Places y no duplica negocios al llegar las celdas',()=>{
+ const src=fs.readFileSync(path.join(root,'app.js'),'utf8');
+ assert(src.includes("applyNearby([], 'Directorio cartográfico no disponible; consultando negocios reales en Google Maps…')"));
+ assert(src.includes('window.WTG_GOOGLE_PLACES.sameEstablishment(p.name,google.name)'));
+ assert(src.includes('wtgGoogleNearby=unmatched;'));
+});
+test('Cada sector usa una región de búsqueda menor que el radio completo',async()=>{
+ const {api,queries}=configuredBrowser();
+ await api.nearby({lat:19.7934,lon:-70.6884,radius:30000,category:'todos',batch:'districts',sector:'east'});
+ assert(queries.length>0&&queries.every(q=>q.locationRestriction.radius<30000));
+ const shifted=queries[0].locationRestriction.center.lng;
+ assert(shifted>-70.6884);
 });
