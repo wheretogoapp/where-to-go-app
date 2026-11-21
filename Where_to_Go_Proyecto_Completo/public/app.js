@@ -1279,16 +1279,11 @@ async function selectMunicipality(){
   if(!selected)return toast('Selecciona una provincia y un municipio.');
   const btn=$('municipality-go');btn.disabled=true;btn.textContent='Buscando ubicación…';
   try{
-    const search=`${selected.municipio}, ${selected.provincia}, República Dominicana`;
-    const url=`https://nominatim.openstreetmap.org/search?format=json&limit=6&countrycodes=do&addressdetails=1&q=${encodeURIComponent(search)}`;
-    let r=await fetch(url,{headers:{'Accept-Language':'es'}});
-    if(!r.ok)throw Error('Servicio de geocodificación no disponible');
-    let records=await r.json();
-    if(!records.length){const fallback=`https://nominatim.openstreetmap.org/search?format=json&limit=6&countrycodes=do&q=${encodeURIComponent(selected.municipio+', República Dominicana')}`;r=await fetch(fallback);records=await r.json()}
-    const match=records.find(x=>String(x.display_name||'').toLocaleLowerCase('es').includes(selected.provincia.toLocaleLowerCase('es')));
-    if(!match)throw Error('No se pudo comprobar la provincia del municipio en el mapa. Para evitar mostrar lugares de otro sitio, utiliza GPS o prueba más tarde.');
-    const lat=Number(match.lat),lon=Number(match.lon);
-    if(!Number.isFinite(lat)||!Number.isFinite(lon)||lat<17||lat>21||lon< -73||lon> -67)throw Error('Coordenadas fuera de República Dominicana');
+    if(!window.WTG_MUNICIPAL_GEOCODER?.locate)
+      throw Error('No se cargó el índice de coordenadas. Actualiza la aplicación.');
+    const {lat,lon}=await window.WTG_MUNICIPAL_GEOCODER.locate({
+      city:selected.municipio,province:selected.provincia
+    });
     activateDominicanDestination();state.lat=lat;state.lon=lon;state.city=selected.municipio;state.province=selected.provincia;state.region=selected.provincia+' · RD';state.mode='municipio';state.category='todos';state.search='';state.radius=12000;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));toast(`Explorando ${selected.municipio}, ${selected.provincia}`);loadPlaces();
   }catch(e){toast(e.message||'No fue posible localizar el municipio.');$('municipal-status').textContent='No se cambió de ciudad: ubicación sin verificar.'}
   finally{btn.disabled=false;btn.textContent='Explorar este municipio →'}
