@@ -35,7 +35,8 @@ const ALL_GROUPS={
  main:['restaurant','hotel','supermarket','pharmacy','barber_shop','beauty_salon','bar','cafe','tourist_attraction','night_club'],
  essentials:['grocery_store','shopping_mall','hair_salon','gas_station','bank'],
  extra:['hair_salon','grocery_store','shopping_mall','convenience_store','fast_food_restaurant','gas_station','car_wash','gym','beach','bank'],
- districts:['restaurant','hotel','supermarket','pharmacy','barber_shop','beauty_salon','cafe','night_club','grocery_store','shopping_mall']
+ districts:['restaurant','hotel','supermarket','pharmacy','barber_shop','beauty_salon','cafe','night_club','grocery_store','shopping_mall'],
+ tourism:['tourist_attraction','beach','resort_hotel','hotel','restaurant','cafe','night_club','amusement_park']
 };
 const SCAN_STAGES=[
   {batch:'extra',sector:'center',name:'Comercios y servicios del centro'},
@@ -44,10 +45,15 @@ const SCAN_STAGES=[
   {batch:'districts',sector:'south',name:'Negocios de la zona sur'},
   {batch:'districts',sector:'west',name:'Negocios de la zona oeste'},
   {batch:'extra',sector:'north-east',name:'Comercios del noreste'},
-  {batch:'extra',sector:'south-west',name:'Comercios del suroeste'}
+  {batch:'extra',sector:'south-west',name:'Comercios del suroeste'},
+  {batch:'tourism',sector:'center',name:'Playas, hoteles, gastronomía y turismo'},
+  {batch:'tourism',sector:'east',name:'Destinos y turismo del este'},
+  {batch:'tourism',sector:'west',name:'Destinos y turismo del oeste'}
 ];
 function shiftedCenter(lat,lon,radius,sector='center'){
-  const offset=Math.min(8000,Math.max(1200,radius*0.33));
+  // Sector searches focus on different neighborhoods, instead of repeatedly
+  // returning the same nearest 20 places from overlapping full-radius circles.
+  const offset=Math.min(26000,Math.max(1600,radius*0.6));
   const directions={
     center:[0,0],north:[1,0],south:[-1,0],east:[0,1],west:[0,-1],
     'north-east':[0.707,0.707],'south-west':[-0.707,-0.707]
@@ -98,8 +104,9 @@ async function nearby({lat,lon,radius=12000,category='todos',batch='main',sector
   // Consultas limitadas: no descargar catálogos masivos ni multiplicar llamadas pagadas.
   const types=category==='todos'?(ALL_GROUPS[batch]||ALL_GROUPS.main):(categories[category]||[]);
   if(!types.length)return {status:'unsupported',places:[]};
+  const queryRadius=sector==='center'?radius:Math.max(1200,Math.min(20000,radius*0.68));
   const results=await Promise.allSettled(types.slice(0,10).map(async type=>{
-   const response=await Place.searchNearby({fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],locationRestriction:{center:shiftedCenter(lat,lon,radius,sector),radius:Math.min(50000,Math.max(100,radius))},includedPrimaryTypes:[type],maxResultCount:20,rankPreference:'DISTANCE'});
+   const response=await Place.searchNearby({fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],locationRestriction:{center:shiftedCenter(lat,lon,radius,sector),radius:Math.min(50000,Math.max(100,queryRadius))},includedPrimaryTypes:[type],maxResultCount:20,rankPreference:'DISTANCE'});
    return response.places||[];
   }));
   const map=new Map();let failures=0;
