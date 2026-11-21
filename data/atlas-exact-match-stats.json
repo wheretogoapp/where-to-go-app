@@ -1,0 +1,10 @@
+{
+  "updatedAt": "2026-11-13T15:21:36.219368+00:00",
+  "atlasPhotosChecked": 3279,
+  "cataloguePlaces": 44696,
+  "candidatesWithTitleAndGPS": 0,
+  "newPlaceCardsWithPhoto": 0,
+  "byCategory": {},
+  "accepted": [],
+  "rule": "Same exact name phrase in file title and camera GPS within 90m (built) or 350m (natural); non-business categories only"
+}
