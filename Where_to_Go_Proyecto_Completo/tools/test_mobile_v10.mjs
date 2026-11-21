@@ -63,6 +63,9 @@ try{
   assert(!first.homeCards||first.heroTop<first.cardTop,'Los listados aparecen encima de la portada turística');
   assert(first.railCount>=40&&first.railScrollable,'No hay carrusel horizontal con todas las categorías');
   console.log('MOBILE FIRST-RUN + DESTINATION:',JSON.stringify(first));
+  // Keep a separate home screenshot: Explore screenshots cannot prove that the
+  // destination hero and its photo transitions are visible on a mobile screen.
+  await page.screenshot({path:'/tmp/where-to-go-iphone-home.png',fullPage:false});
 
   const rail=page.locator('#view-inicio .wtg-v8-category-shortcuts');
   await page.waitForTimeout(3700);
