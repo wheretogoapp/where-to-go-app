@@ -442,8 +442,8 @@ function applyNearby(remote=[],message=''){
 function placeMatchesCategory(p,cat){
   return cat==='todos' || p.cat===cat || (p.source==='mitur'&&p.relatedTags?.includes(cat));
 }
-// Tourist discovery excludes everyday services from the default Explore/Home feeds.
-// Categories remain completely accessible when chosen explicitly, or by an exact text search.
+// Tourism is a ranking priority, NOT a filter that hides everyday businesses.
+// The general visual catalogue includes all photo-backed categories; schools and churches stay excluded.
 const WTG_DISCOVERY_CATEGORIES = new Set(['rios','balnearios','cascadas','lagunas','senderismo','playas','parques','atracciones','entretenimiento','infantil','piscinas','restaurantes','bares','discotecas','hoteles','resorts','villas','cafes','comidarapida','heladerias']);
 // A natural attraction or buggy experience outranks closer everyday services.
 const WTG_TOURISM_NATURE=new Set(['rios','balnearios','cascadas','lagunas','senderismo','playas','parques','atracciones']);
@@ -1016,10 +1016,10 @@ const wtgPhotoAttempted=new Set();
 function candidatesForGooglePhoto(){
   const collection=state.places.filter(p=>p.source!=='google'&&p.source!=='patrocinado'&&
     !p.photo&&p.nameKnown!==false&&String(p.name||'').trim().length>=5&&
-    (state.search?(`${p.name} ${p.address||''}`.toLocaleLowerCase('es').includes(state.search.toLocaleLowerCase('es'))):state.category==='todos'?isTouristDiscovery(p):matches(p))&&
+    (state.search?(`${p.name} ${p.address||''}`.toLocaleLowerCase('es').includes(state.search.toLocaleLowerCase('es'))):state.category==='todos'?!['escuelas','iglesias'].includes(p.cat):matches(p))&&
     Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&p.distance<=state.radius+100&&
     !wtgPhotoAttempted.has(p.id));
-  return sortByDistance(collection);
+  return tourismSort(collection);
 }
 async function enrichVisiblePhotoCards(token,maxRequests=4){
   if(token!==state.loadingId||wtgPhotoMatching||wtgPhotoBudget<=0||
@@ -1238,7 +1238,7 @@ function renderHome(){renderProvincePremium();renderLocalDiscovery();
  const teaser=document.querySelector('.taxi-teaser');
  if(teaser)teaser.hidden=!(state.province==='Puerto Plata'||['Puerto Plata','Sosúa','Cabarete'].includes(state.city));
  const list=$('home-list');
- const candidates=state.places.filter(p=>p.distance<=state.radius+100&&isVisibleBusiness(p)&&isTouristDiscovery(p));
+ const candidates=state.places.filter(p=>p.distance<=state.radius+100&&isVisibleBusiness(p));
  $('home-count').textContent=state.dataMode==='loading'?'...':candidates.length;
  const googleCount=candidates.filter(p=>p.source==='google').length;
  const coverage=document.getElementById('wtg-coverage-counts');
@@ -1261,7 +1261,7 @@ function renderExplore(){
   // A missing photo does not erase a real establishment from Explore.
   const arr=state.places.filter(p=>matches(p)&&
     p.nameKnown!==false&&String(p.name||'').trim()&&
-    (state.category!=='todos'||!!state.search||isTouristDiscovery(p)));
+    !['escuelas','iglesias'].includes(p.cat));
   // Photo-first relevance: Google with a real linked photo, then other photographed
   // listings, then authentic no-photo directory records. Nearby within each tier.
   const priority=p=>p.source==='google'&&hasCatalogPhoto(p)?0:
@@ -1271,9 +1271,9 @@ function renderExplore(){
   $('explore-count').textContent=state.dataMode==='loading'?'...':(state.category==='todos'&&!state.search?arr.filter(hasCatalogPhoto).length:arr.length);
   const withPhoto=arr.filter(hasCatalogPhoto).length;
   $('explore-context').textContent=`${withPhoto} lugares para descubrir · ${state.city} · hasta ${distance(state.radius)}`;
-  // On the general discovery page, lead with photographed places for ALL
-  // cities, as the Las Terrenas experience did. Unphotographed records remain
-  // available through a clearly labelled opt-in, never silently discarded.
+  // Keep ALL categories in the general photo-first catalogue for every city.
+  // Tourist ranking changes order only, not eligibility. Without-photo records
+  // remain searchable through their individual category or by name.
   const photographed=arr.filter(hasCatalogPhoto);
   const photoFirst=state.category==='todos'&&!state.search;
   const display=photoFirst?photographed:arr;

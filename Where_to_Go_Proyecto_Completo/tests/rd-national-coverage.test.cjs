@@ -104,7 +104,10 @@ test('El catálogo visual prioriza fotografías auténticas en cualquier provinc
    {id:'osm-1',name:'Negocio sin imagen',cat:'restaurantes',source:'osm',distance:200,photo:''},
    {id:'google-1',name:'Lugar con foto Google',cat:'atracciones',source:'google',distance:1300,photo:'https://example.com/exact-photo.jpg'},
    {id:'osm-2',name:'Playa con foto propia',cat:'playas',source:'osm',distance:600,photo:'https://example.com/real-place.jpg'},
-   {id:'google-2',name:'Negocio Google sin foto',cat:'restaurantes',source:'google',distance:90,photo:''}
+   {id:'google-2',name:'Negocio Google sin foto',cat:'restaurantes',source:'google',distance:90,photo:''},
+   {id:'google-3',name:'Salón con foto',cat:'salones',source:'google',distance:800,photo:'https://example.com/salon.jpg'},
+   {id:'google-4',name:'Farmacia con foto',cat:'farmacias',source:'google',distance:900,photo:'https://example.com/farmacia.jpg'},
+   {id:'osm-3',name:'Hotel con foto',cat:'hoteles',source:'osm',distance:1000,photo:'https://example.com/hotel.jpg'}
  ];
  const state={places,category:'todos',search:'',showUnpictured:false,exploreLimit:80,
    dataMode:'live',city:'Santiago de los Caballeros',radius:12000};
@@ -119,13 +122,19 @@ test('El catálogo visual prioriza fotografías auténticas en cualquier provinc
  const firstView=$('explore-list').innerHTML;
  assert(firstView.includes('Lugar con foto Google'));
  assert(firstView.includes('Playa con foto propia'));
+ assert(firstView.includes('Salón con foto'), 'No ocultar salones con foto en el listado general');
+ assert(firstView.includes('Farmacia con foto'), 'No ocultar farmacias con foto en el listado general');
+ assert(firstView.includes('Hotel con foto'));
+ assert(firstView.indexOf('Playa con foto propia')<firstView.indexOf('Salón con foto'));
  assert(!firstView.includes('Negocio sin imagen'));
  assert(!firstView.includes('Negocio Google sin foto'));
  assert(firstView.indexOf('Lugar con foto Google')<firstView.indexOf('Playa con foto propia'));
  assert(!firstView.includes('lugares sin fotografía'));
  assert(!firstView.includes('Descubrir más negocios y lugares'));
  assert(!firstView.includes('Buscar fotos de más establecimientos'));
- assert.equal($('explore-count').textContent,2);
+ assert.equal($('explore-count').textContent,5);
+ assert(app.includes('state.places.filter(p=>p.distance<=state.radius+100&&isVisibleBusiness(p));'),
+   'Inicio debe incluir negocios fotografiados de todas las categorías');
  state.category='restaurantes';
  vm.runInNewContext('renderExplore()',vmContext);
  assert($('explore-list').innerHTML.includes('Negocio sin imagen'),
