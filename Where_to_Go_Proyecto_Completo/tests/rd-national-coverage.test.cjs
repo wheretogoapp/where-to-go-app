@@ -120,16 +120,20 @@ test('El catálogo visual prioriza fotografías auténticas en cualquier provinc
  assert(!firstView.includes('Negocio sin imagen'));
  assert(!firstView.includes('Negocio Google sin foto'));
  assert(firstView.indexOf('Lugar con foto Google')<firstView.indexOf('Playa con foto propia'));
- assert(firstView.includes('Ver también 2 lugares sin fotografía'));
- state.showUnpictured=true;
+ assert(!firstView.includes('lugares sin fotografía'));
+ assert(!firstView.includes('Descubrir más negocios y lugares'));
+ assert(!firstView.includes('Buscar fotos de más establecimientos'));
+ assert.equal($('explore-count').textContent,2);
+ state.category='restaurantes';
  vm.runInNewContext('renderExplore()',vmContext);
- assert($('explore-list').innerHTML.includes('Negocio sin imagen'));
- assert($('explore-list').innerHTML.includes('Negocio Google sin foto'));
- assert($('explore-list').innerHTML.includes('Mostrar solo lugares con fotos'));
- state.showUnpictured=false;
+ assert($('explore-list').innerHTML.includes('Negocio sin imagen'),
+   'La búsqueda por categoría mantiene accesibles fichas sin imagen');
+ state.category='todos';
  places.forEach(p=>p.photo='');
  vm.runInNewContext('renderExplore()',vmContext);
- assert($('explore-list').innerHTML.includes('Negocio sin imagen'),'Si Google no tiene fotos, nunca presentar una ciudad como vacía');
+ assert(!$('explore-list').innerHTML.includes('Negocio sin imagen'),
+   'La portada visual no debe rellenarse con fichas sin fotografía');
+
 });
 
 test('La búsqueda fotográfica funciona por municipio o sector visitado, con límites de consultas pagadas',()=>{
@@ -140,6 +144,11 @@ test('La búsqueda fotográfica funciona por municipio o sector visitado, con l�
  assert(app.includes("haversine(state.lat,state.lon,p.lat,p.lon)<=state.radius+100"));
  assert(app.includes("void enrichPhotographedDestinations(token);"));
  assert(app.includes("navigate(c.name==='Las Terrenas'?'explorar':'inicio')"));
+ assert(app.includes('async function autoDiscoverNearbyPhotos(token)'));
+ assert(app.includes('wtgAutoDiscoveryBudget=12'));
+ assert(app.includes('void autoDiscoverNearbyPhotos(token)'));
+ assert(!app.includes('Ver también '+"'"+' lugares sin fotografía'));
+
 });
 
 test('Las 32 portadas tienen fotografía real, fuente, autor y licencia',()=>{
