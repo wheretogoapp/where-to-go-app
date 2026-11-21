@@ -81,3 +81,29 @@ body.wtg-onboarding-active #auth-gate{display:none!important}
   .wtg-ob-fragment{animation:none!important}
   .wtg-ob-complete{animation:none!important}
 }
+
+
+/* Source artwork is a small embedded raster: display it near native size
+   rather than stretching it or stacking five blurred copies on retina screens.
+   Keep the official palm logo and colors completely unchanged. */
+#wtg-onboarding #wtg-ob-splash .wtg-ob-splash-logo{
+ width:76px!important;height:76px!important;min-width:76px!important;
+ min-height:76px!important;max-width:76px!important;max-height:76px!important;
+ filter:none!important;transform:none!important;
+ margin-bottom:20px!important;
+}
+#wtg-onboarding #wtg-ob-splash .wtg-ob-fragment{
+ display:none!important;animation:none!important;
+}
+#wtg-onboarding #wtg-ob-splash .wtg-ob-complete{
+ display:block!important;opacity:1!important;
+ animation:wtg-logo-crisp-reveal .55s ease-out both!important;
+ filter:none!important;transform:none!important;
+ image-rendering:auto!important;
+}
+@keyframes wtg-logo-crisp-reveal{
+ from{opacity:0}to{opacity:1}
+}
+@media(prefers-reduced-motion:reduce){
+ #wtg-onboarding #wtg-ob-splash .wtg-ob-complete{animation:none!important}
+}
