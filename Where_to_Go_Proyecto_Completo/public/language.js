@@ -1649,6 +1649,248 @@ Object.assign(labels, {
   ]
 });
 
+// Business submission, account, privacy and legal notices.
+Object.assign(labels, {
+  "Solicita tu registro empresarial": [
+    "Request a business listing",
+    "Demandez l'inscription de votre entreprise",
+    "Solicite o cadastro da sua empresa",
+    "Unternehmenseintrag beantragen",
+    "Richiedi la registrazione della tua attività"
+  ],
+  "Elige un plan. Solo se publicará la ficha tras revisión y confirmación del pago.": [
+    "Choose a plan. Your listing will be published only after review and confirmed payment.",
+    "Choisissez une formule. Votre fiche sera publiée uniquement après examen et confirmation du paiement.",
+    "Escolha um plano. A ficha será publicada apenas após revisão e confirmação do pagamento.",
+    "Wähle ein Paket. Dein Eintrag wird erst nach Prüfung und Zahlungsbestätigung veröffentlicht.",
+    "Scegli un piano. La scheda sarà pubblicata solo dopo verifica e conferma del pagamento."
+  ],
+  "Nombre del negocio *": [
+    "Business name *",
+    "Nom de l'entreprise *",
+    "Nome do negócio *",
+    "Name des Unternehmens *",
+    "Nome dell'attività *"
+  ],
+  "Categoría *": [
+    "Category *",
+    "Catégorie *",
+    "Categoria *",
+    "Kategorie *",
+    "Categoria *"
+  ],
+  "Dirección *": [
+    "Address *",
+    "Adresse *",
+    "Endereço *",
+    "Adresse *",
+    "Indirizzo *"
+  ],
+  "WhatsApp / teléfono *": [
+    "WhatsApp / phone *",
+    "WhatsApp / téléphone *",
+    "WhatsApp / telefone *",
+    "WhatsApp / Telefon *",
+    "WhatsApp / telefono *"
+  ],
+  "Enlace de Google Maps, Waze u OSM (opcional)": [
+    "Google Maps, Waze or OSM link (optional)",
+    "Lien Google Maps, Waze ou OSM (facultatif)",
+    "Link Google Maps, Waze ou OSM (opcional)",
+    "Google Maps-, Waze- oder OSM-Link (optional)",
+    "Link Google Maps, Waze o OSM (facoltativo)"
+  ],
+  "Enlace a una foto propia autorizada (opcional)": [
+    "Link to your own authorized photo (optional)",
+    "Lien vers votre photo autorisée (facultatif)",
+    "Link da sua foto autorizada (opcional)",
+    "Link zu eigenem genehmigtem Foto (optional)",
+    "Link a una foto autorizzata (facoltativo)"
+  ],
+  "Hasta cuatro enlaces a fotos adicionales autorizadas (uno por línea)": [
+    "Up to four links to additional authorized photos (one per line)",
+    "Jusqu'à quatre liens vers d'autres photos autorisées (un par ligne)",
+    "Até quatro links para fotos adicionais autorizadas (um por linha)",
+    "Bis zu vier Links zu weiteren genehmigten Fotos (einer pro Zeile)",
+    "Fino a quattro link a foto aggiuntive autorizzate (uno per riga)"
+  ],
+  "Plan deseado": [
+    "Preferred plan",
+    "Formule souhaitée",
+    "Plano desejado",
+    "Gewünschtes Paket",
+    "Piano desiderato"
+  ],
+  "Registro Básico · US$10 una vez": [
+    "Basic listing · US$10 once",
+    "Inscription de base · 10 USD une fois",
+    "Cadastro básico · US$10 uma vez",
+    "Basiseintrag · einmalig 10 USD",
+    "Registrazione base · 10 USD una tantum"
+  ],
+  "Destacado · US$30/mes": [
+    "Featured · US$30/month",
+    "Mise en avant · 30 USD/mois",
+    "Destaque · US$30/mês",
+    "Hervorgehoben · 30 USD/Monat",
+    "In evidenza · 30 USD/mese"
+  ],
+  "Premium · US$50/mes": [
+    "Premium · US$50/month",
+    "Premium · 50 USD/mois",
+    "Premium · US$50/mês",
+    "Premium · 50 USD/Monat",
+    "Premium · 50 USD/mese"
+  ],
+  "Descripción": [
+    "Description",
+    "Description",
+    "Descrição",
+    "Beschreibung",
+    "Descrizione"
+  ],
+  "Confirmo que soy propietario o representante autorizado y que puedo compartir estos datos para revisión.": [
+    "I confirm that I own or am authorized to represent this business and may submit these details for review.",
+    "Je confirme être propriétaire ou représentant autorisé et pouvoir transmettre ces informations pour examen.",
+    "Confirmo ser proprietário ou representante autorizado e poder enviar esses dados para revisão.",
+    "Ich bestätige, Inhaber oder bevollmächtigter Vertreter zu sein und diese Angaben zur Prüfung weitergeben zu dürfen.",
+    "Confermo di essere proprietario o rappresentante autorizzato e di poter condividere questi dati per la verifica."
+  ],
+  "Al enviar, el negocio se remite para revisión humana mediante Netlify Forms, si está activo. La solicitud no es un cobro: después de revisar el negocio, confirmaremos el precio y el pago. No se publica automáticamente; se guarda una copia local.": [
+    "If Netlify Forms is enabled, the request is sent for manual review. Submitting does not charge you; the price and payment are confirmed later. Nothing is published automatically, and a local copy is saved.",
+    "Si Netlify Forms est activé, la demande est envoyée pour vérification manuelle. Aucun paiement n'est effectué lors de l'envoi ; le tarif sera confirmé ensuite. Publication non automatique et copie locale conservée.",
+    "Se Netlify Forms estiver ativo, o pedido será enviado para revisão humana. O envio não gera cobrança; o preço e o pagamento serão confirmados depois. Nada é publicado automaticamente; uma cópia local é salva.",
+    "Ist Netlify Forms aktiviert, wird die Anfrage manuell geprüft. Das Absenden löst keine Zahlung aus; Preis und Zahlung werden später bestätigt. Keine automatische Veröffentlichung; eine lokale Kopie wird gespeichert.",
+    "Se Netlify Forms è attivo, la richiesta viene inviata per revisione manuale. L'invio non comporta addebiti; prezzo e pagamento saranno confermati successivamente. Nessuna pubblicazione automatica; viene salvata una copia locale."
+  ],
+  "Enviar solicitud de registro": [
+    "Submit listing request",
+    "Envoyer la demande d'inscription",
+    "Enviar solicitação de cadastro",
+    "Eintrag beantragen",
+    "Invia richiesta di registrazione"
+  ],
+  "Mi cuenta": [
+    "My account",
+    "Mon compte",
+    "Minha conta",
+    "Mein Konto",
+    "Il mio account"
+  ],
+  "Comprobando sesión…": [
+    "Checking your session…",
+    "Vérification de votre session…",
+    "Verificando sua sessão…",
+    "Sitzung wird geprüft…",
+    "Verifica della sessione…"
+  ],
+  "Mis lugares favoritos": [
+    "My favorite places",
+    "Mes lieux favoris",
+    "Meus lugares favoritos",
+    "Meine Lieblingsorte",
+    "I miei luoghi preferiti"
+  ],
+  "Reenviar confirmación de correo": [
+    "Resend email confirmation",
+    "Renvoyer l'e-mail de confirmation",
+    "Reenviar confirmação por e-mail",
+    "Bestätigungs-E-Mail erneut senden",
+    "Invia di nuovo l'email di conferma"
+  ],
+  "Cambiar contraseña por correo": [
+    "Change password by email",
+    "Modifier le mot de passe par e-mail",
+    "Alterar senha por e-mail",
+    "Passwort per E-Mail ändern",
+    "Modifica la password via email"
+  ],
+  "Privacidad y condiciones": [
+    "Privacy and terms",
+    "Confidentialité et conditions",
+    "Privacidade e condições",
+    "Datenschutz und Bedingungen",
+    "Privacy e condizioni"
+  ],
+  "Cerrar sesión": [
+    "Sign out",
+    "Se déconnecter",
+    "Sair da conta",
+    "Abmelden",
+    "Esci"
+  ],
+  "Ver pantalla de inicio de sesión": [
+    "Open sign-in screen",
+    "Afficher l'écran de connexion",
+    "Abrir tela de login",
+    "Anmeldebildschirm öffnen",
+    "Apri la schermata di accesso"
+  ],
+  "Privacidad y condiciones — versión de prueba": [
+    "Privacy and terms — preview version",
+    "Confidentialité et conditions — version de test",
+    "Privacidade e condições — versão de teste",
+    "Datenschutz und Bedingungen — Testversion",
+    "Privacy e condizioni — versione di prova"
+  ],
+  "Información que tratamos": [
+    "Information we process",
+    "Informations que nous traitons",
+    "Informações que tratamos",
+    "Daten, die wir verarbeiten",
+    "Dati che trattiamo"
+  ],
+  "Supabase gestiona tu correo y autenticación. Si aceptas la personalización, podemos guardar tus lugares vistos y favoritos vinculados a tu cuenta. Los proveedores de mapas pueden procesar búsquedas o ubicación cuando los utilizas.": [
+    "Supabase manages your email and authentication. With your consent, viewed places and favorites may be saved to your account. Map providers may process search or location data when used.",
+    "Supabase gère votre e-mail et votre authentification. Avec votre accord, les lieux consultés et favoris peuvent être liés à votre compte. Les fournisseurs de cartes peuvent traiter la recherche et la position lors de leur utilisation.",
+    "Supabase gerencia seu e-mail e autenticação. Com consentimento, lugares vistos e favoritos podem ser salvos em sua conta. Provedores de mapas podem processar buscas ou localização quando utilizados.",
+    "Supabase verwaltet E-Mail und Anmeldung. Mit Zustimmung können besuchte Orte und Favoriten dem Konto zugeordnet werden. Kartenanbieter können bei Nutzung Such- oder Standortdaten verarbeiten.",
+    "Supabase gestisce email e autenticazione. Con il consenso, luoghi visualizzati e preferiti possono essere salvati nell'account. I fornitori di mappe possono elaborare ricerche e posizione quando vengono utilizzati."
+  ],
+  "Control de tus datos": [
+    "Control of your data",
+    "Contrôle de vos données",
+    "Controle dos seus dados",
+    "Kontrolle über deine Daten",
+    "Controllo dei tuoi dati"
+  ],
+  "Puedes cerrar sesión y desactivar la personalización. Para solicitar acceso, corrección o eliminación de datos, necesitamos habilitar un canal de atención verificado antes del lanzamiento público.": [
+    "You can sign out and disable personalization. A verified support channel for requests to access, correct or delete data must be enabled before public launch.",
+    "Vous pouvez vous déconnecter et désactiver la personnalisation. Un canal de contact vérifié pour accéder, corriger ou supprimer les données doit être mis en place avant le lancement.",
+    "Você pode sair e desativar a personalização. Um canal de atendimento verificado para acessar, corrigir ou excluir dados deverá estar ativo antes do lançamento público.",
+    "Du kannst dich abmelden und die Personalisierung deaktivieren. Vor dem öffentlichen Start muss ein geprüfter Kontaktweg für Auskunft, Berichtigung oder Löschung bereitstehen.",
+    "Puoi uscire e disattivare la personalizzazione. Prima del lancio pubblico occorre un canale verificato per richiedere accesso, rettifica o cancellazione dei dati."
+  ],
+  "Condiciones de uso": [
+    "Terms of use",
+    "Conditions d'utilisation",
+    "Condições de uso",
+    "Nutzungsbedingungen",
+    "Condizioni d'uso"
+  ],
+  "Where to Go está en fase de prueba. Las fichas, fotos, horarios, precios y excursiones deben comprobarse con el proveedor. Ninguna excursión está certificada como segura por aparecer aquí. Los anuncios requieren revisión y pago confirmado antes de publicarse.": [
+    "Where to Go is in testing. Verify listings, photos, hours, prices and excursions with the provider. An excursion is not certified safe by appearing here. Ads require review and confirmed payment before publication.",
+    "Where to Go est en phase de test. Vérifiez les fiches, photos, horaires, prix et excursions auprès des prestataires. Une excursion n'est pas certifiée sûre du seul fait de sa présence. Les annonces nécessitent vérification et paiement confirmé.",
+    "Where to Go está em teste. Verifique fichas, fotos, horários, preços e excursões com o prestador. Aparecer aqui não certifica a segurança de uma excursão. Anúncios exigem revisão e pagamento confirmado.",
+    "Where to Go befindet sich in der Testphase. Prüfe Einträge, Fotos, Öffnungszeiten, Preise und Ausflüge beim Anbieter. Ein Eintrag ist keine Sicherheitszertifizierung. Anzeigen erfordern Prüfung und bestätigte Zahlung.",
+    "Where to Go è in fase di test. Verifica schede, foto, orari, prezzi ed escursioni con il fornitore. La presenza qui non certifica la sicurezza di un'escursione. Gli annunci richiedono revisione e pagamento confermato."
+  ],
+  "Aviso:": [
+    "Notice:",
+    "Avis :",
+    "Aviso:",
+    "Hinweis:",
+    "Avviso:"
+  ],
+  "este resumen provisional no sustituye una política legal definitiva ni constituye consentimiento automático para nuevos tratamientos.": [
+    "this provisional summary is not a final legal policy and does not constitute automatic consent to further data processing.",
+    "ce résumé provisoire ne remplace pas une politique juridique définitive et ne vaut pas consentement automatique à d'autres traitements.",
+    "este resumo provisório não substitui uma política jurídica definitiva nem representa consentimento automático para novos tratamentos.",
+    "diese vorläufige Zusammenfassung ersetzt keine endgültige Rechtserklärung und stellt keine automatische Einwilligung in weitere Datenverarbeitung dar.",
+    "questa sintesi provvisoria non sostituisce un'informativa legale definitiva né costituisce consenso automatico a ulteriori trattamenti."
+  ]
+});
+
 // Category labels are stored with stable IDs; proper names and addresses are not translated.
 const categories={
 rios:['Rivers','Rivières','Rios','Flüsse','Fiumi'],balnearios:['Swimming spots','Baignades naturelles','Balneários','Badestellen','Luoghi balneari'],cascadas:['Waterfalls','Cascades','Cachoeiras','Wasserfälle','Cascate'],lagunas:['Lagoons','Lagunes','Lagoas','Lagunen','Lagune'],senderismo:['Hiking','Randonnées','Trilhas','Wandern','Escursionismo'],playas:['Beaches','Plages','Praias','Strände','Spiagge'],parques:['Parks','Parcs','Parques','Parks','Parchi'],atracciones:['Tourist attractions','Sites touristiques','Atrações turísticas','Sehenswürdigkeiten','Attrazioni turistiche'],entretenimiento:['Entertainment','Divertissement','Entretenimento','Unterhaltung','Intrattenimento'],infantil:['Kids activities','Activités enfants','Diversão infantil','Kinderaktivitäten','Attività per bambini'],piscinas:['Swimming pools','Piscines','Piscinas','Pools','Piscine'],restaurantes:['Restaurants','Restaurants','Restaurantes','Restaurants','Ristoranti'],bares:['Bars','Bars','Bares','Bars','Bar'],discotecas:['Nightclubs','Discothèques','Boates','Nachtclubs','Discoteche'],cafes:['Cafés','Cafés','Cafés','Cafés','Caffetterie'],heladerias:['Ice cream shops','Glaciers','Sorveterias','Eisdielen','Gelaterie'],panaderias:['Bakeries','Boulangeries','Padarias','Bäckereien','Panetterie'],pescaderias:['Fish shops','Poissonneries','Peixarias','Fischgeschäfte','Pescherie'],comidarapida:['Fast food','Restauration rapide','Fast food','Schnellimbiss','Fast food'],supermercados:['Supermarkets','Supermarchés','Supermercados','Supermärkte','Supermercati'],colmados:['Local grocery stores','Épiceries locales','Mercearias','Nachbarschaftsläden','Alimentari'],mercados:['Markets','Marchés','Mercados','Märkte','Mercati'],tiendas:['Shops & fashion','Magasins et mode','Lojas e moda','Geschäfte & Mode','Negozi e moda'],ferreterias:['Hardware stores','Quincailleries','Lojas de ferragens','Baumärkte','Ferramenta'],electrodomesticos:['Appliances','Électroménager','Eletrodomésticos','Haushaltsgeräte','Elettrodomestici'],tecnologia:['Technology','Technologie','Tecnologia','Technik','Tecnologia'],barberias:['Barbers','Barbiers','Barbearias','Barbershops','Barbieri'],salones:['Beauty salons','Salons de beauté','Salões de beleza','Schönheitssalons','Saloni di bellezza'],unas:['Nail salons','Ongleries','Salões de unhas','Nagelstudios','Centri unghie'],spas:['Spas & massage','Spas et massages','Spas e massagens','Spas & Massagen','Spa e massaggi'],gimnasios:['Gyms','Salles de sport','Academias','Fitnessstudios','Palestre'],hoteles:['Hotels','Hôtels','Hotéis','Hotels','Hotel'],resorts:['Resorts','Resorts','Resorts','Resorts','Resort'],villas:['Villas','Villas','Villas','Villen','Ville'],taxis:['Taxis & transport','Taxis et transport','Táxis e transporte','Taxis & Transport','Taxi e trasporti'],gasolineras:['Gas stations','Stations-service','Postos de combustível','Tankstellen','Distributori'],talleres:['Repair shops','Garages','Oficinas','Werkstätten','Officine'],lavaderos:['Car washes','Stations de lavage','Lava-rápidos','Autowaschanlagen','Autolavaggi'],farmacias:['Pharmacies','Pharmacies','Farmácias','Apotheken','Farmacie'],hospitales:['Hospitals & clinics','Hôpitaux et cliniques','Hospitais e clínicas','Krankenhäuser & Kliniken','Ospedali e cliniche'],odontologia:['Dentists','Dentistes','Dentistas','Zahnärzte','Dentisti'],veterinarias:['Veterinarians','Vétérinaires','Veterinários','Tierärzte','Veterinari'],mascotas:['Pet shops','Animaleries','Pet shops','Tierhandlungen','Negozi animali'],bancos:['Banks','Banques','Bancos','Banken','Banche'],cajeros:['ATMs','Distributeurs automatiques','Caixas eletrônicos','Geldautomaten','Bancomat'],lavanderias:['Laundries','Blanchisseries','Lavanderias','Wäschereien','Lavanderie'],servicios:['Professional services','Services professionnels','Serviços profissionais','Professionelle Dienstleistungen','Servizi professionali'],escuelas:['Schools','Écoles','Escolas','Schulen','Scuole'],iglesias:['Churches','Églises','Igrejas','Kirchen','Chiese'],deportes:['Sports','Sports','Esportes','Sport','Sport']
