@@ -221,19 +221,19 @@ test('Búsqueda por nombre devuelve exclusivamente fichas con fotos reales',asyn
   assert.equal(res.places[0].photo,'https://example.com/wing-waffle.jpg');
   assert.equal(request.length,1);
 });
-test('Portada y Explorar ocultan fichas cartográficas sin fotos y exponen servicios',()=>{
+test('Portada destaca fotos; Explorar conserva fichas reales sin fotografía',()=>{
   const code=fs.readFileSync(path.join(root,'app.js'),'utf8');
   assert(code.includes('function hasCatalogPhoto('));
   assert(code.includes('function isVisibleBusiness('));
-  assert(code.includes("state.places.filter(p=>p.distance<=state.radius+100&&isVisibleBusiness(p))"));
-  assert(code.includes('state.places.filter(p=>matches(p)&&hasCatalogPhoto(p)'));
+  assert(code.includes('renderLocalDiscovery()'));
+  assert(code.includes('state.places.filter(p=>matches(p)&&'));
+  assert(code.includes("p.nameKnown!==false&&String(p.name||'').trim()"));
   for(const id of ['supermercados','farmacias','barberias','salones','unas','tecnologia','gimnasios','bancos'])
     assert(code.includes("'"+id+"'"),id);
   assert(code.includes('data-google-more'));
   assert(code.includes('data-show-all-cats'));
   assert(code.includes('runGoogleBusinessSearch'));
 });
-
 
 test('Se pueden consultar varios sectores reales del mismo municipio sin repetir el centro',async()=>{
   const {api,queries}=configuredBrowser();
@@ -253,17 +253,16 @@ test('Se pueden consultar varios sectores reales del mismo municipio sin repetir
   assert.equal(queries.length,10);
   assert(queries.every(x=>x.locationRestriction.center.lng<-70.6884));
 });
-test('Al ampliar, fusionar por Place ID y mostrar solo fotos verificables de Google',()=>{
+test('Al ampliar, fusionar por Place ID y conservar negocios sin fotografía',()=>{
   const code=fs.readFileSync(path.join(root,'app.js'),'utf8');
-  assert(code.includes("mergeGoogleListings("));
-  assert(code.includes("window.WTG_GOOGLE_PLACES.scanStages()"));
-  assert(code.includes("wtgGoogleStage++"));
-  assert(code.includes("existingIds.has(google.id)"));
-  assert(code.includes("if(!google.photo||!safeUrl(google.photo))continue"));
+  assert(code.includes('mergeGoogleListings('));
+  assert(code.includes('window.WTG_GOOGLE_PLACES.scanStages()'));
+  assert(code.includes('wtgGoogleStage++'));
+  assert(code.includes('existingIds.has(google.id)'));
+  assert(code.includes('if(google.photo&&safeUrl(google.photo))withPhoto++'));
   assert(code.includes("batch:'essentials'"));
-  assert(code.includes("data-google-more"));
+  assert(code.includes('data-google-more'));
 });
-
 
 test('Ampliación manual recorre como máximo dos sectores por toque',()=>{
  const src=fs.readFileSync(path.join(root,'app.js'),'utf8');
@@ -317,12 +316,28 @@ test('Cobertura territorial: 32 demarcaciones, 158 municipios y nueve municipios
   assert(app.includes('zone-bavaro'));
 });
 
-test('La portada muestra cuatro categorías y cuenta fuentes por zona',()=>{
- const src=fs.readFileSync(path.join(root,'app.js'),'utf8');
- assert(src.includes('WTG_QUICK_CATEGORIES.slice(0,4)'));
- assert(src.includes("candidates.filter(p=>p.source==='google').length"));
- assert(src.includes("arr.filter(p=>p.source==='google').length"));
+test('La portada ofrece categorías en movimiento y cuenta negocios reales',()=>{
+  const src=fs.readFileSync(path.join(root,'app.js'),'utf8');
+  assert(src.includes("shortcuts.innerHTML=CATEGORIES.filter(cat=>!['escuelas','iglesias'].includes(cat.id))"));
+  assert(src.includes('startCategoryRotation(shortcuts)'));
+  assert(src.includes('state.places.filter(p=>p&&p.nameKnown!==false'));
+  assert(src.includes('const withPhoto=arr.filter(hasCatalogPhoto).length'));
 });
+test('Apertura móvil con logo, bienvenida, elección de ubicación y login',()=>{
+  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+  const onboarding=fs.readFileSync(path.join(root,'onboarding.js'),'utf8');
+  const main=fs.readFileSync(path.join(root,'app.js'),'utf8');
+  for(const id of ['wtg-ob-splash','wtg-ob-welcome','wtg-ob-location','wtg-ob-start','wtg-ob-manual','wtg-ob-allow-gps'])
+    assert(html.includes('id="'+id+'"'),id);
+  assert(html.includes('src="/onboarding.js?v=1"'));
+  assert(html.includes('src="/auth.js?v=13"'));
+  assert(html.includes('window.WTG_ONBOARDING_ENABLED=true'));
+  assert(onboarding.includes("new Event('wtg-world-request-gps')"));
+  assert(onboarding.includes('wtg-world-selected'));
+  assert(main.includes('if(window.WTG_ONBOARDING_ENABLED)'));
+  assert(fs.statSync(path.join(root,'onboarding.css')).size>1000);
+});
+
 test('El carrusel retira fotos que fallan',()=>{
  const src=fs.readFileSync(path.join(root,'experience.js'),'utf8');
  assert(src.includes("s.items=s.items.filter(item=>item.id!==x.id)"));
