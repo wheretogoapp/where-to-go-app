@@ -810,6 +810,11 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
       lat:state.lat,lon:state.lon,radius:state.radius,category:state.category,batch:'main'
     });
     if(token!==state.loadingId||window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')return;
+    if(result?.status==='error'||result?.status==='unconfigured'){
+      state.googleIssue='Proveedor de resultados temporalmente no disponible. Puedes reintentar.';
+      updateProviderNotice();
+      return;
+    }
     if(result?.places?.length)mergeGoogleListings(result,typeof localPlaces==='function'?localPlaces():localPlaces,'Google Maps · búsqueda principal');
     // Las cinco clases de comercios cotidianos se consultan también en Inicio,
     // únicamente en la vista general. No se realiza un rastreo nacional.
@@ -1501,7 +1506,7 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
   $('alert-locate').onclick=()=>{if($('alert-locate').dataset.action==='retry'){loadPlaces(true)}else if($('alert-locate').dataset.action==='change'){openModal('location-modal')}else requestLocation()};
   $('use-live-location').onclick=requestLocation;$('province-select').onchange=refreshMunicipalitySelect;$('municipality-select').onchange=()=>{$('municipality-go').disabled=!$('municipality-select').value};$('municipality-go').onclick=selectMunicipality;$('municipal-retry').onclick=()=>{ $('municipal-retry').hidden=true;loadMunicipalities()};$('business-cta').onclick=()=>openRegister('basico');$('home-see-taxis').onclick=()=>navigate('taxis');$('taxi-register').onclick=()=>{openRegister('basico');$('business-category').value='taxis'};$('add-another-business').onclick=()=>openRegister('basico');$('explore-map').onclick=()=>navigate('mapa');
   $('recenter-map').onclick=()=>{if(state.map)state.map.setView([state.lat,state.lon],13)};
-  if($('retry-google-provider'))$('retry-google-provider').onclick=()=>toast('Esta versión funciona sin Google Places.');
+  if($('retry-google-provider'))$('retry-google-provider').onclick=()=>{if(window.WTG_GOOGLE_PLACES?.configured()){toast('Actualizando resultados de esta zona…');void loadPlaces(true);}else toast('No hay proveedor de lugares configurado para esta publicación.');};
   $('search-input').addEventListener('input',e=>{state.search=e.target.value.trim();renderExplore()});$('search-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&state.search.length>=3){e.preventDefault();void runGoogleBusinessSearch()}});$('clear-search').onclick=()=>{state.search='';$('search-input').value='';renderExplore()};if($('google-search-submit'))$('google-search-submit').onclick=()=>{state.search=$('search-input').value.trim();void runGoogleBusinessSearch()};
   $('distance-select').addEventListener('change',e=>{state.radius=Number(e.target.value);loadPlaces()});
   $('report-form').onsubmit=async e=>{
