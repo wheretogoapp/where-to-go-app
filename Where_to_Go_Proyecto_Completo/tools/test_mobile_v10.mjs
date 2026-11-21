@@ -124,6 +124,27 @@ try{
     assert.equal(chosen.radius,12000,'El radio por municipio no debe mostrar lugares de zonas lejanas');
     console.log('SAME APP EXPERIENCE:',JSON.stringify(chosen));
   }
+  // Check that sector cards actually change the local search center and
+  // return to the selected municipality (no fabricated neighborhood names).
+  await page.evaluate(()=>selectCity('Santiago de los Caballeros'));
+  await page.locator('#wtg-area-options [data-area="este"]').click({timeout:10000});
+  const east=await page.evaluate(()=>({
+    mode:state.mode,lat:state.lat,lon:state.lon,city:state.city,
+    area:window.WTG_AREA_DISCOVERY?.area
+  }));
+  assert.equal(east.mode,'sector');
+  assert.equal(east.city,'Santiago de los Caballeros');
+  assert(east.lon>-70.697,'Este debe desplazar la búsqueda al este');
+  assert.equal(east.area,'este');
+  await page.locator('#wtg-area-options [data-area="centro"]').click({timeout:10000});
+  const center=await page.evaluate(()=>({
+    mode:state.mode,lat:state.lat,lon:state.lon,
+    area:window.WTG_AREA_DISCOVERY?.area
+  }));
+  assert.equal(center.mode,'city');
+  assert(Math.abs(center.lon-(-70.697))<0.000001,'Volver al centro restaura las coordenadas originales');
+  console.log('CITY SECTORS EAST/CENTER:',JSON.stringify({east,center}));
+
   const region=await page.evaluate(()=>{
     selectProvinceHub('Pedernales');
     return {city:state.city,province:provinceFromCity(),view:state.view,
