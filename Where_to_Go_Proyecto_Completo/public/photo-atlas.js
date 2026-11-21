@@ -19,6 +19,23 @@
     const filtered=images.filter(p=>(!province||p.province===province)&&(!keyword||(p.title+' '+p.area+' '+p.province).toLocaleLowerCase('es').includes(keyword.toLocaleLowerCase('es')))&&(!nearTerrenas||distance(baseLat,baseLon,p.lat,p.lon)<=12000));
     return nearTerrenas?filtered.sort((a,b)=>distance(baseLat,baseLon,a.lat,a.lon)-distance(baseLat,baseLon,b.lat,b.lon)):filtered;
   }
+  // Only verified geotagged SCENERY appears in the rotating destination hero.
+  // These are NOT business photos and must never be merged with place cards.
+  const scenicTitle=/playa|beach|malec[oó]n|fortaleza|monumento|cascad|salto de agua|waterfall|r[ií]o |river|laguna|lago |isla |cayo |mountain|monta[ñn]a|pico |telef[eé]rico|paseo |plaza |parque |park |mirador|viewpoint|costa |coast/i;
+  function scenesForLocation({lat,lon,province,radius=12000,max=6}={}){
+    if(!loaded||!Number.isFinite(lat)||!Number.isFinite(lon)||!province)return [];
+    const unique=new Set(),radiusM=Math.max(4000,Math.min(18000,radius));
+    return images.filter(photo=>photo.province===province&&
+      scenicTitle.test(String(photo.title||'').normalize('NFD').replace(/[\u0300-\u036f]/g,''))&&
+      photo.area&&photo.credit&&photo.license&&safe(photo.image)&&safe(photo.source)&&
+      distance(lat,lon,photo.lat,photo.lon)<=radiusM)
+      .sort((a,b)=>distance(lat,lon,a.lat,a.lon)-distance(lat,lon,b.lat,b.lon))
+      .filter(photo=>{if(unique.has(photo.source))return false;unique.add(photo.source);return true})
+      .slice(0,Math.max(0,Math.min(8,max)))
+      .map(photo=>({title:photo.title,place:photo.area+' · '+photo.province,
+        image:photo.image,source:photo.source,
+        credit:photo.credit+' · '+photo.license,kind:'geotagged-scenery'}));
+  }
   function render(){
     const target=$('wtg-atlas-photos');if(!target)return;
     const list=actualPhotos();
@@ -69,7 +86,7 @@
         $('wtg-atlas-province').innerHTML='<option value="">Todas las provincias</option>'+provinces.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join('');
       }catch(e){
         $('wtg-atlas-status').textContent='El atlas de fotografías está pendiente de publicación. El directorio nacional de lugares sigue funcionando por separado.';
-      }finally{loaded=true;render();refreshNearbyStrip()}
+      }finally{loaded=true;render();refreshNearbyStrip();window.dispatchEvent(new Event('wtg-photo-atlas-ready'))}
     })();
     return loading;
   }
@@ -103,7 +120,7 @@
       if(typeof state!=='undefined'&&state.city==='Las Terrenas'){nearTerrenas=true;province='';}
       render();void load();
     });
-    window.WTG_PHOTO_ATLAS={refresh:refreshNearbyStrip};
+    window.WTG_PHOTO_ATLAS={refresh:refreshNearbyStrip,scenesForLocation};
     void load();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup,{once:true});else setup();
