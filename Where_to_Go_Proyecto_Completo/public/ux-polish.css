@@ -121,3 +121,41 @@
 #view-explorar .wtg-more-explore.wtg-discover-more>button:focus-visible{
  outline:3px solid #f5bc42!important;outline-offset:2px
 }
+
+/* Explore looks like a mobile destination finder, not a wide desktop form. */
+@media(max-width:820px){
+ #view-explorar .page-intro{margin:18px 2px 15px!important}
+ #view-explorar .page-intro h1{font-size:clamp(28px,7.3vw,36px)!important;
+   letter-spacing:-.045em!important;line-height:1.08!important;margin:4px 0 8px!important}
+ #view-explorar .page-intro p{font-size:13px!important;line-height:1.4!important}
+ #view-explorar .filter-panel{
+   padding:14px!important;border-radius:22px!important;
+   box-shadow:0 8px 20px #001a3a20!important
+ }
+ #view-explorar .filter-panel .searchbar{
+   display:flex!important;gap:6px!important;align-items:center!important;
+   border:1px solid #bed5ed!important;border-radius:15px!important;
+   overflow:hidden!important;min-height:52px!important;
+   padding:5px 5px 5px 10px!important;box-shadow:none!important
+ }
+ #view-explorar .filter-panel .searchbar input{
+   min-width:0!important;flex:1 1 auto!important;width:0!important;
+   height:40px!important;font-size:15px!important;padding:8px 4px!important
+ }
+ #view-explorar .filter-panel .searchbar .search-icon{
+   flex:0 0 19px!important;font-size:20px!important
+ }
+ #view-explorar #google-search-submit{
+   width:auto!important;min-width:69px!important;flex:0 0 auto!important;
+   height:41px!important;min-height:41px!important;
+   padding:6px 11px!important;margin:0!important;font-size:12px!important;
+   border:0!important;border-radius:11px!important;
+   background:linear-gradient(135deg,#f9d37e,#e7ab37)!important;
+   color:#061c3c!important;box-shadow:none!important
+ }
+ #view-explorar #clear-search{flex:0 0 22px!important;min-width:22px!important}
+ #view-explorar .filter-row{margin-top:12px!important;row-gap:9px!important}
+ #view-explorar .explorer-result-heading{margin:18px 1px 12px!important}
+ #view-explorar .explorer-result-heading h2{font-size:23px!important}
+ #view-explorar #explore-map{min-height:41px!important;padding:7px 10px!important;font-size:11px!important}
+}
