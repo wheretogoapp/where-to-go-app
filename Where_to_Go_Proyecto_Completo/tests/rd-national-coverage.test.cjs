@@ -301,7 +301,7 @@ test('Galerías accesibles y refrescos sin recargar imágenes idénticas',()=>{
  assert(css.includes('content-visibility:auto'));
  assert(css.includes('#place-modal .detail-actions'));
  assert(/app\.js\?v=25\.\d+/.test(html),'App con versión de caché móvil explícita');
- assert(html.includes('ux-polish.css?v=7'));
+ assert(/ux-polish\.css\?v=\d+/.test(html),'Los estilos móviles deben usar una versión de caché visible');
 });
 
 test('Auditoría territorial de 32 demarcaciones con catálogo, fotos de portada y municipios',()=>{
