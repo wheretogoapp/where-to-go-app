@@ -190,6 +190,8 @@ function saveSettings(){
  state.historyEnabled=$('wtg-profile-history-input').checked;
  applyPreferences();
  try{window.WTG_I18N?.change?.(state.language)}catch{}
+ const consent=window.WTG_auth?.setPersonalization?.(state.historyEnabled);
+ if(consent?.catch)consent.catch(()=>tell('La preferencia quedó en este dispositivo; revisa la conexión de cuenta.'));
  $('wtg-profile-settings').dataset.loaded='no';
  put();
  if(active.client && active.user){
@@ -255,12 +257,15 @@ root.addEventListener('click',event=>{
  if(btn.id==='wtg-profile-export'){exportData();return}
  if(btn.id==='wtg-profile-clear-history'){void clearHistory();return}
  if(btn.id==='wtg-profile-install'){installHelp();return}
- if(btn.id==='wtg-profile-signin'){close();window.WTG_auth?.showLogin?.();return}
+ if(btn.id==='wtg-profile-signin'||btn.id==='wtg-profile-signin-settings'){close();window.WTG_auth?.showLogin?.();return}
  if(btn.id==='wtg-profile-logout'){close();void window.WTG_auth?.signOut?.();return}
 });
 document.querySelectorAll('[data-profile-open]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();open()}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden)close()});
 window.matchMedia?.('(prefers-color-scheme: light)')?.addEventListener?.('change',()=>{if(state.theme==='auto')applyPreferences()});
+window.addEventListener('wtg-personalization-changed',event=>{
+ state.historyEnabled=!!event.detail?.enabled;put();
+});
 window.WTG_PROFILE={open,close,setSession,markVisited,recordOpen,addToTrip,refresh:render,get snapshot(){return cloudData()}};
 state=read();applyPreferences();
 })();
