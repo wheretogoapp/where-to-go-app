@@ -184,7 +184,12 @@ function catInfo(id){const c=CATEGORY_BY_ID[id]||CATEGORY_BY_ID.atracciones;retu
 // Solo mostrar en los resultados destacados fotos vinculadas a la ficha.
 const wtgUnavailableImageUrls=new Set();
 let wtgBrokenPhotoRefreshScheduled=false;
-function hasCatalogPhoto(p){const url=safeUrl(p?.photo||placeGalleryPhotos(p)?.[0]?.url||'');return !!url&&!wtgUnavailableImageUrls.has(url)}
+function placeCoverUrl(p){
+  const direct=safeUrl(p?.photo||'');
+  if(direct&&!wtgUnavailableImageUrls.has(direct))return direct;
+  return placeGalleryPhotos(p).find(photo=>photo.url&&!wtgUnavailableImageUrls.has(photo.url))?.url||'';
+}
+function hasCatalogPhoto(p){return !!placeCoverUrl(p)}
 function isVisibleBusiness(p){return !!p&&p.nameKnown!==false&&
   !['escuelas','iglesias'].includes(p.cat)&&hasCatalogPhoto(p)}
 const WTG_QUICK_CATEGORIES=['restaurantes','supermercados','farmacias','barberias',
@@ -239,8 +244,7 @@ function mapsPlaceSearch(p){
 }
 function placePhotoMarkup(p, kind='card'){
   // Extra photos approved for this exact place also serve as its card cover.
-  const candidate=safeUrl(p.photo||placeGalleryPhotos(p)[0]?.url||'');
-  const src=wtgUnavailableImageUrls.has(candidate)?'':candidate;
+  const src=placeCoverUrl(p);
   const icon=catInfo(p.cat).emoji;
   const placeholder=`<div class="photo-empty wtg-photo-placeholder" role="img" aria-label="Sin fotografía del lugar"><span class="wtg-photo-icon" aria-hidden="true">${icon}</span><span class="wtg-photo-label">${esc(catInfo(p.cat).name)}</span></div>`;
   // Las fotos de Google utilizan una clave restringida por sitio: envía solo
@@ -1117,7 +1121,7 @@ function renderCategories(){const counts={};
   $('filter-categories').innerHTML=[{id:'todos',name:'Todo',emoji:'✨'},...CATEGORIES].map(c=>`<button class="filter-chip ${state.category===c.id?'active':''}" data-filter="${c.id}">${c.emoji} ${esc(c.id==='todos'?(window.WTG_I18N?.t('Todo')||'Todo'):catInfo(c.id).name)}</button>`).join('');
   $('business-category').innerHTML=CATEGORIES.map(c=>`<option value="${c.id}">${esc(catInfo(c.id).name)}</option>`).join('');
 }
-function placeCard(p){const c=catInfo(p.cat),fav=state.favorites.includes(p.id),gallery=placeGalleryPhotos(p),photoCount=gallery.length,coverPhoto=safeUrl(p.photo||gallery[0]?.url||'');const provenance=p.source==='patrocinado'?'Publicidad · '+(p.plan==='premium'?'Premium':'Destacado')+' · Ficha verificada por el anunciante':p.source==='propietario'?'Ficha básica verificada · Datos del propietario':p.source==='google'?GOOGLE_BRAND:(p.source==='mitur'?'Guía oficial de Turismo RD':p.source==='editorial'?'Lugar documentado':p.source==='overture'?'© Overture Maps':'© OpenStreetMap');return `<article class="place-card ${coverPhoto?'wtg-has-photo':'wtg-no-photo'}"><div class="place-photo">${placePhotoMarkup(p)}<button type="button" class="wtg-open-photo" data-place="${esc(p.id)}" aria-label="Abrir detalles de ${esc(p.name)}"></button><span class="card-tag">${p.sponsored?'★ Anuncio · ':''}${c.emoji} ${esc(c.name)}</span>${photoCount>1?`<span class="wtg-place-gallery-count" aria-label="${photoCount} fotografías de este lugar">📷 ${photoCount} fotos</span>`:''}<button class="fav-button ${fav?'active':''}" data-fav="${esc(p.id)}" aria-label="${fav?'Quitar de favoritos':'Agregar a favoritos'}">${fav?'♥':'♡'}</button>${coverPhoto?'<span class="card-image-caption">Foto vinculada al lugar</span>':''}</div><div class="place-body"><button class="place-title" data-place="${esc(p.id)}">${esc(p.name)}</button><div class="place-meta"><span>⌖</span><b>${esc(p.address||'Dirección no publicada')}</b></div><div class="place-footer"><span class="distance-badge">↗ ${distance(p.distance)}</span><button class="card-open" data-place="${esc(p.id)}">Ver detalles →</button></div><small class="source-credit">${provenance}</small>${googleAttribution(p)}${gallery[0]?.attribution?`<small class="photo-authors"><a href="${esc(gallery[0].source)}" target="_blank" rel="noopener noreferrer">Foto: ${esc(gallery[0].attribution)}</a>${gallery[0].license?` · <a href="${esc(gallery[0].license)}" target="_blank" rel="noopener noreferrer">Licencia</a>`:''}</small>`:''}</div></article>`}
+function placeCard(p){const c=catInfo(p.cat),fav=state.favorites.includes(p.id),gallery=placeGalleryPhotos(p),photoCount=gallery.length,coverPhoto=placeCoverUrl(p);const provenance=p.source==='patrocinado'?'Publicidad · '+(p.plan==='premium'?'Premium':'Destacado')+' · Ficha verificada por el anunciante':p.source==='propietario'?'Ficha básica verificada · Datos del propietario':p.source==='google'?GOOGLE_BRAND:(p.source==='mitur'?'Guía oficial de Turismo RD':p.source==='editorial'?'Lugar documentado':p.source==='overture'?'© Overture Maps':'© OpenStreetMap');return `<article class="place-card ${coverPhoto?'wtg-has-photo':'wtg-no-photo'}"><div class="place-photo">${placePhotoMarkup(p)}<button type="button" class="wtg-open-photo" data-place="${esc(p.id)}" aria-label="Abrir detalles de ${esc(p.name)}"></button><span class="card-tag">${p.sponsored?'★ Anuncio · ':''}${c.emoji} ${esc(c.name)}</span>${photoCount>1?`<span class="wtg-place-gallery-count" aria-label="${photoCount} fotografías de este lugar">📷 ${photoCount} fotos</span>`:''}<button class="fav-button ${fav?'active':''}" data-fav="${esc(p.id)}" aria-label="${fav?'Quitar de favoritos':'Agregar a favoritos'}">${fav?'♥':'♡'}</button>${coverPhoto?'<span class="card-image-caption">Foto vinculada al lugar</span>':''}</div><div class="place-body"><button class="place-title" data-place="${esc(p.id)}">${esc(p.name)}</button><div class="place-meta"><span>⌖</span><b>${esc(p.address||'Dirección no publicada')}</b></div><div class="place-footer"><span class="distance-badge">↗ ${distance(p.distance)}</span><button class="card-open" data-place="${esc(p.id)}">Ver detalles →</button></div><small class="source-credit">${provenance}</small>${googleAttribution(p)}${gallery[0]?.attribution?`<small class="photo-authors"><a href="${esc(gallery[0].source)}" target="_blank" rel="noopener noreferrer">Foto: ${esc(gallery[0].attribution)}</a>${gallery[0].license?` · <a href="${esc(gallery[0].license)}" target="_blank" rel="noopener noreferrer">Licencia</a>`:''}</small>`:''}</div></article>`}
 function emptyBlock(msg,action='Cambiar ubicación',target='location'){const categoryLabel=state.category==='todos'?'sitios de interés':(catInfo(state.category)?.name||'lugares');const mapsUrl='https://www.openstreetmap.org/#map=12/'+state.lat+'/'+state.lon;return `<div class="empty-state"><span class="empty-emoji">🧭</span><h3>${msg}</h3><p>${state.dataMode==='error'?'No se pudo conectar con el catálogo en vivo. No mostraremos lugares inventados; intenta de nuevo.':(String(state.dataError).includes('Importación pendiente')?'Todavía no se ha importado el directorio nacional. No es un problema del filtro: faltan datos por publicar.':'La cobertura con fotos todavía es limitada. Amplía el radio o abre Destinos con fotos para ver la selección disponible.')}</p><button data-empty="${target}">${action} →</button><button type="button" class="photo-contribute" data-report-missing="yes">¿Conoces un lugar cercano que falta? Avísanos</button></div>`}
 function renderProvincePremium(){
   const panel=document.getElementById('province-premium-list');if(!panel)return;
@@ -1171,7 +1175,7 @@ function renderLocalDiscovery(){
  if(subtitle)subtitle.textContent='Fotografías auténticas y lugares para visitar en '+city;
  const list=state.places.filter(p=>
    p.distance<=state.radius+100&&hasCatalogPhoto(p)&&
-   !wtgFailedLocalPhotos.has(safeUrl(p.photo||placeGalleryPhotos(p)[0]?.url||''))&&
+   !wtgFailedLocalPhotos.has(placeCoverUrl(p))&&
    ['playas','atracciones','parques','cascadas','rios','balnearios','restaurantes','hoteles','resorts','entretenimiento'].includes(p.cat)
  );
  const iconic=p=>/malec[oó]n|sombrillas|do[ñn]a blanca|telef[eé]rico|monumento|fortaleza|plaza|catedral|paseo|cascada/i.test(p.name)?0:1;
@@ -1182,7 +1186,7 @@ function renderLocalDiscovery(){
  if(rail.dataset.wtgSignature!==signature){
    rail.dataset.wtgSignature=signature;
    rail.innerHTML=photographed.map(p=>'<button type="button" class="wtg-local-card" data-place="'+esc(p.id)+'" aria-label="Descubrir '+esc(p.name)+'">'+
-      '<img loading="lazy" decoding="async" src="'+esc(safeUrl(p.photo||placeGalleryPhotos(p)[0]?.url||''))+'" alt="Fotografía de '+esc(p.name)+'" referrerpolicy="'+(p.source==='google'?'strict-origin-when-cross-origin':'no-referrer')+'">'+
+      '<img loading="lazy" decoding="async" src="'+esc(placeCoverUrl(p))+'" alt="Fotografía de '+esc(p.name)+'" referrerpolicy="'+(p.source==='google'?'strict-origin-when-cross-origin':'no-referrer')+'">'+
       '<span class="wtg-local-card-caption"><strong>'+esc(p.name)+'</strong><small>'+esc(catInfo(p.cat).name)+' · '+distance(p.distance)+'</small></span></button>').join('');
    rail.scrollLeft=0;
  }
