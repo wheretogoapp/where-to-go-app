@@ -5,6 +5,9 @@
   <title>Where to Go · A dónde ir</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#041b40" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Where to Go" />
   <meta name="description" content="Where to Go — A dónde ir. Descubre restaurantes, playas, hoteles y lugares increíbles cerca de ti." />
   <meta property="og:title" content="Where to Go · A dónde ir" />
   <meta property="og:description" content="Explora lo mejor de tu ciudad, estés donde estés." />
@@ -66,6 +69,7 @@
         <button class="nav-btn" data-view="tours"><span class="nav-ico">🧭</span> Tours y excursiones</button>
         <button class="nav-btn" data-view="taxis"><span class="nav-ico">🚘</span> Taxis y transporte <span class="side-mini">NUEVO</span></button>
         <button class="nav-btn" data-view="favoritos"><span class="nav-ico">♡</span> Mis favoritos</button>
+        <button type="button" class="nav-btn" data-profile-open><span class="nav-ico">♙</span> Mi perfil</button>
       </nav>
       <div class="sidebar-label second-label">PARA NEGOCIOS</div>
       <nav class="nav-main" aria-label="Negocios">
@@ -204,7 +208,7 @@
       <footer class="site-footer"><span>Where to Go <span class="brand-dot">.</span> A dónde ir</span><span>Hecho para descubrir el mundo 🌎 · <a href="/privacidad.html">Privacidad</a> · <a href="/terminos.html">Términos</a></span></footer>
     </div>
 
-    <nav class="mobile-tabbar" aria-label="Navegación móvil"><button class="mobile-tab active" data-view="inicio"><span>⌂</span><small>Inicio</small></button><button class="mobile-tab" data-view="explorar"><span>◈</span><small>Explorar</small></button><button class="mobile-tab" data-view="mapa"><span>♧</span><small>Mapa</small></button><button class="mobile-tab" data-view="favoritos"><span>♡</span><small>Favoritos</small></button><button class="mobile-tab" data-view="tours"><span>🧭</span><small>Tours</small></button><button class="mobile-tab" data-view="promocionar"><span>✦</span><small>Negocios</small></button></nav>
+    <nav class="mobile-tabbar" aria-label="Navegación móvil"><button class="mobile-tab active" data-view="inicio"><span>⌂</span><small>Inicio</small></button><button class="mobile-tab" data-view="explorar"><span>◈</span><small>Explorar</small></button><button class="mobile-tab" data-view="mapa"><span>♧</span><small>Mapa</small></button><button class="mobile-tab" data-view="favoritos"><span>♡</span><small>Favoritos</small></button><button class="mobile-tab" data-view="tours"><span>🧭</span><small>Tours</small></button><button type="button" class="mobile-tab" data-profile-open aria-label="Abrir mi perfil"><span>♙</span><small>Perfil</small></button></nav>
 
     <div id="overlay" class="overlay" hidden></div>
     <section id="place-modal" class="sheet place-sheet" role="dialog" aria-modal="true" aria-labelledby="place-modal-title" hidden><button class="modal-close" data-close aria-label="Cerrar">×</button><div id="place-modal-body"></div></section>
@@ -262,6 +266,55 @@
 <button class="btn btn-primary full-width" type="submit">Enviar solicitud para revisión →</button><p id="wtg-tours-feedback" role="status"></p>
 </form></section>
     <section id="register-modal" class="sheet register-sheet" role="dialog" aria-modal="true" aria-labelledby="register-title" hidden><button class="modal-close" data-close aria-label="Cerrar">×</button><div class="sheet-icon">🏪</div><h2 id="register-title">Solicita tu registro empresarial</h2><p>Elige un plan. Solo se publicará la ficha tras revisión y confirmación del pago.</p><form id="register-form"><div class="form-grid"><label class="form-field full">Nombre del negocio *<input id="business-name" maxlength="100" required placeholder="Ej. Mi Restaurante" /></label><label class="form-field">Categoría *<select id="business-category" required></select></label><label class="form-field">Provincia *<select id="business-province" required><option value="">Selecciona provincia</option></select></label><label class="form-field">Municipio o localidad *<input id="business-city" maxlength="80" required placeholder="Ej. Puerto Plata" /></label><label class="form-field full">Dirección *<input id="business-address" maxlength="180" required placeholder="Calle, sector, referencia" /></label><label class="form-field">WhatsApp / teléfono *<input type="tel" id="business-phone" maxlength="30" required placeholder="+1 809 000 0000" /></label><label class="form-field full">Enlace de Google Maps, Waze u OSM (opcional)<input id="business-map-url" type="url" placeholder="https://..." /></label><label class="form-field full">Enlace a una foto propia autorizada (opcional)<input id="business-photo-url" type="url" placeholder="https://..." /></label><label class="form-field full">Hasta cuatro enlaces a fotos adicionales autorizadas (uno por línea)<textarea id="business-photo-links" rows="3" maxlength="1800" placeholder="https://..."></textarea></label><label class="form-field">Plan deseado<select id="business-plan"><option value="basico">Registro Básico · US$10 una vez</option><option value="destacado">Destacado · US$30/mes</option><option value="premium">Premium · US$50/mes</option></select></label><label class="form-field full">Descripción<textarea id="business-description" rows="3" maxlength="500" placeholder="Cuéntanos por qué tu negocio es especial..."></textarea></label></div><label class="form-field full"><input type="checkbox" id="business-consent" required /> Confirmo que soy propietario o representante autorizado y que puedo compartir estos datos para revisión.</label><div class="privacy-note">Al enviar, el negocio se remite para revisión humana mediante Netlify Forms, si está activo. La solicitud no es un cobro: después de revisar el negocio, confirmaremos el precio y el pago. No se publica automáticamente; se guarda una copia local.</div><button type="submit" class="btn btn-primary full-width">Enviar solicitud de registro →</button></form></section>
+<section id="wtg-traveler-profile" role="dialog" aria-modal="true" aria-labelledby="wtg-profile-name" hidden>
+ <div class="wtg-profile-shell">
+  <header class="wtg-profile-cover">
+   <button type="button" class="wtg-profile-close" id="wtg-profile-close" aria-label="Cerrar perfil">×</button>
+   <div class="wtg-profile-brand"><img src="/assets/wtg-logo-hd.webp?v=1" alt=""> WHERE TO GO · MI ESPACIO</div>
+   <div class="wtg-profile-user"><div class="wtg-profile-avatar" id="wtg-profile-avatar" aria-hidden="true">W</div><div><h2 id="wtg-profile-name">Mi perfil</h2><p id="wtg-profile-email">Mis viajes y lugares guardados</p></div></div>
+   <p class="wtg-profile-sync" id="wtg-profile-sync" role="status">Preparando tu perfil…</p>
+  </header>
+  <div class="wtg-profile-stats" aria-label="Tu actividad">
+   <div class="wtg-profile-stat"><strong id="wtg-profile-fav-count">0</strong><span>Favoritos</span></div>
+   <div class="wtg-profile-stat"><strong id="wtg-profile-visit-count">0</strong><span>Visitados</span></div>
+   <div class="wtg-profile-stat"><strong id="wtg-profile-trip-count">0</strong><span>Viajes</span></div>
+   <div class="wtg-profile-stat"><strong id="wtg-profile-explore-count">0</strong><span>Explorados</span></div>
+  </div>
+  <nav class="wtg-profile-tabs" role="tablist" aria-label="Secciones del perfil">
+   <button type="button" role="tab" data-profile-tab="home" aria-selected="true">Inicio</button>
+   <button type="button" role="tab" data-profile-tab="visited" aria-selected="false">Visitados</button>
+   <button type="button" role="tab" data-profile-tab="trips" aria-selected="false">Mis viajes</button>
+   <button type="button" role="tab" data-profile-tab="settings" aria-selected="false">Ajustes</button>
+  </nav>
+  <div class="wtg-profile-body">
+   <section data-profile-panel="home"><h3>Tu mundo, a tu manera 🌎</h3><p>Aquí se reúne todo lo que guardas para tus próximas aventuras: favoritos, lugares visitados y viajes.</p>
+    <div class="wtg-profile-cta"><button type="button" class="wtg-profile-primary" id="wtg-profile-favorites">♡ Ver mis favoritos</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-install">📲 Instalar Where to Go</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-signin">🔐 Iniciar sesión o cambiar cuenta</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-logout">Cerrar sesión</button></div>
+    <p class="wtg-profile-note">Ver un lugar no confirma que lo hayas visitado. Puedes marcarlo como visitado desde su ficha. El historial de lugares explorados solo se guarda si lo activas en Ajustes.</p>
+   </section>
+   <section data-profile-panel="visited" hidden><h3>Mis lugares visitados 📍</h3><p>Solo lugares que marcaste como visitados; no comprobamos tu ubicación física.</p><div id="wtg-profile-visited"></div>
+    <h4>Historial de lugares explorados</h4><p class="wtg-profile-hint">Se guarda al abrir fichas solo si activas la opción correspondiente.</p><div id="wtg-profile-explored"></div>
+   </section>
+   <section data-profile-panel="trips" hidden><h3>Organiza tus viajes 🧳</h3><p>Crea un viaje y agrégale lugares desde las fichas que encuentres en la aplicación.</p>
+    <div class="wtg-profile-fields"><label>Nombre de tu viaje<input id="wtg-profile-new-trip" type="text" maxlength="80" placeholder="Ej. Mi próxima escapada a Samaná"></label><label>Fecha (opcional)<input id="wtg-profile-trip-date" type="date"></label></div>
+    <p class="wtg-profile-pending" id="wtg-profile-pending" aria-live="polite"></p>
+    <button type="button" class="wtg-profile-primary" id="wtg-profile-add-trip">+ Crear viaje</button><h4>Viajes guardados</h4><div id="wtg-profile-trips"></div>
+   </section>
+   <section data-profile-panel="settings" id="wtg-profile-settings" hidden><h3>Mi cuenta y preferencias ⚙️</h3>
+    <div class="wtg-profile-fields">
+      <label>Nombre visible<input id="wtg-profile-name-input" maxlength="80" autocomplete="name" placeholder="¿Cómo te llamas?"></label>
+      <label>Ciudad habitual<input id="wtg-profile-city-input" maxlength="80" placeholder="Ej. Puerto Plata"></label>
+      <label>Apariencia<select id="wtg-profile-theme-input"><option value="auto">Automático (dispositivo)</option><option value="dark">Oscuro</option><option value="light">Claro</option></select></label>
+      <label>Idioma de la aplicación<select id="wtg-profile-language-input"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option></select></label>
+      <label class="wtg-profile-toggle"><input id="wtg-profile-history-input" type="checkbox"> Guardar los lugares que exploro (opcional)</label>
+    </div>
+    <p class="wtg-profile-note">Los favoritos y viajes que guardas explícitamente son independientes del historial automático. Los datos de los lugares de Google se almacenan únicamente mediante sus identificadores, sin copiar fichas completas.</p>
+    <div class="wtg-profile-cta"><button type="button" class="wtg-profile-primary" id="wtg-profile-save">Guardar cambios</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-export">Descargar mis datos</button><button type="button" class="wtg-profile-danger" id="wtg-profile-clear-history">Borrar lugares explorados y visitados</button></div>
+    <h4>Privacidad, ayuda y seguridad</h4><div class="wtg-profile-cta"><a class="wtg-profile-secondary" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad ↗</a><a class="wtg-profile-secondary" href="/terminos.html" target="_blank" rel="noopener">Términos y condiciones ↗</a><button type="button" class="wtg-profile-secondary" id="wtg-profile-signin-settings" data-profile-close>Volver y cambiar cuenta</button></div>
+   </section>
+   <p id="wtg-profile-message" role="status"></p>
+  </div>
+ </div>
+</section>
 <section id="wtg-account" class="wtg-account" role="dialog" aria-modal="true" aria-labelledby="wtg-account-title" hidden>
 <div class="wtg-account-card"><div class="wtg-account-head"><h2 id="wtg-account-title">Mi cuenta</h2><button type="button" id="wtg-account-close" aria-label="Cerrar cuenta">✕</button></div>
 <p id="wtg-account-status">Comprobando sesión…</p><p id="wtg-account-email"></p>
@@ -277,6 +330,7 @@
   </div>
 
   <link rel="stylesheet" href="/account.css?v=1" />
+  <link rel="stylesheet" href="/traveler-profile.css?v=1" />
   <script defer src="/language.js?v=7.0"></script>
   <script defer src="/province-heroes.js?v=10.0"></script>
   <script defer src="/config.js?v=6"></script>
@@ -294,6 +348,7 @@
   <script defer src="/world-v8.js?v=12.0"></script>
   <script defer src="/photo-atlas.js?v=13.0"></script>
   <script defer src="/tours.js?v=1"></script>
-  <script type="module" src="/auth.js?v=13"></script>
+  <script defer src="/traveler-profile.js?v=1"></script>
+  <script type="module" src="/auth.js?v=14"></script>
 </body>
 </html>
