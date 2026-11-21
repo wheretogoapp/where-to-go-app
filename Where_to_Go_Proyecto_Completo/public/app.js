@@ -1017,26 +1017,51 @@ function renderProvincePremium(){
     return `<article class="wtg-provincial-premium" data-premium-slide="${i}" ${i?'hidden':''}><div class="premium-marker">PUBLICIDAD · PREMIUM · ${esc(prov)}</div><div><strong>${esc(x.name)}</strong><small>${esc(cat.name)} · ${esc(x.province)}</small></div>${source?`<a target="_blank" rel="noopener noreferrer" href="${esc(source)}">Ver negocio ↗</a>`:''}</article>`;
   }).join('');
 }
+function startDestinationRotation(rail){
+ if(rail.dataset.wtgCarousel==='yes')return;
+ rail.dataset.wtgCarousel='yes';
+ let holdUntil=0;
+ const hold=()=>{holdUntil=Date.now()+12000};
+ rail.addEventListener('pointerdown',hold,{passive:true});
+ rail.addEventListener('touchstart',hold,{passive:true});
+ rail.addEventListener('focusin',hold);
+ if(window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return;
+ setInterval(()=>{
+   if(document.hidden||state.view!=='inicio'||Date.now()<holdUntil||
+      rail.offsetParent===null||rail.children.length<2)return;
+   const card=rail.querySelector('.wtg-local-card');if(!card)return;
+   const step=card.getBoundingClientRect().width+12;
+   const max=rail.scrollWidth-rail.clientWidth;
+   if(max<=0)return;
+   rail.scrollTo({left:rail.scrollLeft+step>max-25?0:rail.scrollLeft+step,behavior:'smooth'});
+ },4800);
+}
 function renderLocalDiscovery(){
  const section=document.getElementById('wtg-local-discovery');
  const rail=document.getElementById('wtg-local-cards');
  if(!section||!rail)return;
  const city=state.city==='Cerca de mí'?(provinceFromCity()||'tu zona'):state.city;
- const title=document.getElementById('wtg-local-title');
- const subtitle=document.getElementById('wtg-local-subtitle');
+ const title=document.getElementById('wtg-local-title'),subtitle=document.getElementById('wtg-local-subtitle');
  if(title)title.textContent='Descubre '+city;
- if(subtitle)subtitle.textContent='Lugares reales con fotografías de '+city;
- // Only use geolocated, genuinely photographed places from the selected area.
- // No generic stock images or photos from another province.
- const photographed=sortByDistance(state.places.filter(p=>
+ if(subtitle)subtitle.textContent='Fotografías auténticas y lugares para visitar en '+city;
+ const list=state.places.filter(p=>
    p.distance<=state.radius+100&&hasCatalogPhoto(p)&&
-   (['playas','atracciones','parques','cascadas','rios','balnearios','restaurantes','hoteles'].includes(p.cat))
- )).slice(0,8);
- rail.innerHTML=photographed.map(p=>`<button type="button" class="wtg-local-card" data-place="${esc(p.id)}" aria-label="Descubrir ${esc(p.name)}">
-   <img loading="lazy" src="${esc(safeUrl(p.photo||placeGalleryPhotos(p)[0]?.url||''))}" alt="Fotografía de ${esc(p.name)}" referrerpolicy="${p.source==='google'?'strict-origin-when-cross-origin':'no-referrer'}">
-   <span class="wtg-local-card-caption"><strong>${esc(p.name)}</strong><small>${esc(catInfo(p.cat).name)} · ${distance(p.distance)}</small></span>
- </button>`).join('');
+   ['playas','atracciones','parques','cascadas','rios','balnearios','restaurantes','hoteles','resorts','entretenimiento'].includes(p.cat)
+ );
+ const iconic=p=>/malec[oó]n|sombrillas|do[ñn]a blanca|telef[eé]rico|monumento|fortaleza|plaza|catedral|paseo|cascada/i.test(p.name)?0:1;
+ list.sort((a,b)=>iconic(a)-iconic(b)||
+   (a.source==='google'?0:1)-(b.source==='google'?0:1)||a.distance-b.distance);
+ const photographed=list.slice(0,12);
+ const signature=city+'|'+photographed.map(p=>p.id+'@'+p.photo).join('|');
+ if(rail.dataset.wtgSignature!==signature){
+   rail.dataset.wtgSignature=signature;
+   rail.innerHTML=photographed.map(p=>'<button type="button" class="wtg-local-card" data-place="'+esc(p.id)+'" aria-label="Descubrir '+esc(p.name)+'">'+
+      '<img loading="lazy" decoding="async" src="'+esc(safeUrl(p.photo||placeGalleryPhotos(p)[0]?.url||''))+'" alt="Fotografía de '+esc(p.name)+'" referrerpolicy="'+(p.source==='google'?'strict-origin-when-cross-origin':'no-referrer')+'">'+
+      '<span class="wtg-local-card-caption"><strong>'+esc(p.name)+'</strong><small>'+esc(catInfo(p.cat).name)+' · '+distance(p.distance)+'</small></span></button>').join('');
+   rail.scrollLeft=0;
+ }
  section.hidden=!photographed.length;
+ startDestinationRotation(rail);
 }
 function renderHome(){renderProvincePremium();renderLocalDiscovery();
  const teaser=document.querySelector('.taxi-teaser');
