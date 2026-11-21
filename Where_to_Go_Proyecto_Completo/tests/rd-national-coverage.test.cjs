@@ -111,6 +111,8 @@ test('El catálogo visual prioriza fotografías auténticas en cualquier provinc
  const vmContext={state,$,window:{WTG_GOOGLE_PLACES:{configured:()=>false}},
    wtgPhotoBudget:0,wtgPhotoMatching:false,wtgGoogleStage:0,wtgGoogleBusy:false,
    candidatesForGooglePhoto:()=>[],matches:()=>true,hasCatalogPhoto:p=>!!p.photo,
+   tourismRank:p=>['atracciones','playas'].includes(p.cat)?0:3,
+   isTouristDiscovery:p=>!['salones','barberias'].includes(p.cat),
    distance:n=>String(n),placeCard:p=>p.name+'|',emptyBlock:()=>'',console};
  vm.runInNewContext(code,vmContext);
  vm.runInNewContext('renderExplore()',vmContext);
@@ -201,4 +203,49 @@ test('Si una foto Google falla, usa la siguiente imagen auténtica de ese mismo 
  assert.equal(vm.runInNewContext('placeCoverUrl(place)',ctx),'');
  assert(app.includes('coverPhoto=placeCoverUrl(p)'));
  assert(app.includes("const src=placeCoverUrl(p);"));
+});
+
+test('Ríos, cascadas y experiencias de buggy aparecen antes que hoteles y peluquerías',()=>{
+ const app=source('app.js');
+ const from=app.indexOf('const WTG_TOURISM_NATURE=');
+ const to=app.indexOf('function discoveryMatches(',from);
+ assert(from>0&&to>from,'No se encontró el ranking turístico real');
+ const ctx={samples:[
+   {name:'Peluquería cerca',cat:'salones',distance:15},
+   {name:'Hotel al lado',cat:'hoteles',distance:150},
+   {name:'Cascada aventura',cat:'cascadas',distance:5100},
+   {name:'Eco Buggy Puerto Plata Adventure',cat:'entretenimiento',distance:2600},
+   {name:'Villa en las montañas',cat:'villas',distance:2000},
+   {name:'Playa de la provincia',cat:'playas',distance:4500},
+   {name:'Restaurante cerca',cat:'restaurantes',distance:80},
+   {name:'Río de la localidad',cat:'rios',distance:3800}
+ ]};
+ vm.runInNewContext(app.slice(from,to)+
+   '\nresults=tourismSort(samples).map(p=>p.name);'+
+   '\nrejected=isTouristDiscovery(samples.find(p=>p.cat==="salones"));'+
+   '\naccepted=isTouristDiscovery(samples.find(p=>p.name.includes("Buggy")));',ctx);
+ const names=Array.from(ctx.results);
+ assert.deepEqual(names.slice(0,4),[
+   'Eco Buggy Puerto Plata Adventure','Río de la localidad',
+   'Playa de la provincia','Cascada aventura'
+ ].sort((a,b)=> {
+   const distances={'Eco Buggy Puerto Plata Adventure':2600,'Río de la localidad':3800,
+   'Playa de la provincia':4500,'Cascada aventura':5100};
+   return distances[a]-distances[b];
+ }));
+ assert(names.indexOf('Hotel al lado')<names.indexOf('Restaurante cerca'));
+ assert(names.indexOf('Restaurante cerca')<names.indexOf('Peluquería cerca'));
+ assert.equal(ctx.rejected,false);
+ assert.equal(ctx.accepted,true);
+ assert(app.includes('const sorted=tourismSort(candidates).slice(0,12);'));
+ assert(app.includes("(touristDefault?tourismRank(a)-tourismRank(b):0)"));
+ assert(app.includes("list.sort((a,b)=>tourismRank(a)-tourismRank(b)"));
+});
+test('Google descubre primero atractivos turísticos y conserva servicios en filtros explícitos',()=>{
+ const google=source('google-places-adapter.js');
+ assert(google.includes("main:['tourist_attraction','beach','historical_landmark'"));
+ assert(google.includes("{batch:'tourism',sector:'center'"));
+ assert(google.includes("{batch:'tourism',sector:'north'"));
+ assert(google.includes("barberias:['barber_shop']"));
+ assert(google.includes("farmacias:['pharmacy']"));
 });
