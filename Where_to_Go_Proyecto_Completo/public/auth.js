@@ -85,6 +85,14 @@ window.WTG_auth={
 document.querySelectorAll('[data-social]').forEach(button=>button.addEventListener('click',()=>social(button.dataset.social)));
 document.getElementById('auth-email-form').addEventListener('submit',e=>{e.preventDefault();loginEmail(false)});
 document.getElementById('auth-create').addEventListener('click',()=>loginEmail(true));
+const emailReveal=document.getElementById('auth-email-reveal');
+emailReveal?.addEventListener('click',()=>{
+  const panel=document.getElementById('auth-email-fold');
+  if(!panel)return;
+  panel.hidden=!panel.hidden;
+  emailReveal.setAttribute('aria-expanded',String(!panel.hidden));
+  if(!panel.hidden)document.getElementById('auth-email')?.focus({preventScroll:true});
+});
 demo.addEventListener('click',()=>{if(settings.allowDemo===false)return;demoMode=true;showMessage('');closeGate()});
 document.getElementById('auth-consent').addEventListener('change',e=>setPersonalization(e.target.checked));
 const account=document.getElementById('wtg-account'),legal=document.getElementById('wtg-legal');
