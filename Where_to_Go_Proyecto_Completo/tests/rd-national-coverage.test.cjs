@@ -110,7 +110,7 @@ test('El catálogo visual prioriza fotografías auténticas en cualquier provinc
    {id:'osm-3',name:'Hotel con foto',cat:'hoteles',source:'osm',distance:1000,photo:'https://example.com/hotel.jpg'}
  ];
  const state={places,category:'todos',search:'',showUnpictured:false,exploreLimit:80,
-   dataMode:'live',city:'Santiago de los Caballeros',province:'Santiago',radius:12000};
+   dataMode:'live',city:'Santiago de los Caballeros',province:'Santiago',radius:12000,favorites:[]};
  // renderExplore is executed alone here, so supply the province helper normally provided by app.js.
  const vmContext={state,$,provinceFromCity:()=>state.province,window:{WTG_GOOGLE_PLACES:{configured:()=>false}},
    wtgPhotoBudget:0,wtgPhotoMatching:false,wtgGoogleStage:0,wtgGoogleBusy:false,
@@ -300,7 +300,7 @@ test('Galerías accesibles y refrescos sin recargar imágenes idénticas',()=>{
  assert(app.includes('data-gallery-license'));
  assert(css.includes('content-visibility:auto'));
  assert(css.includes('#place-modal .detail-actions'));
- assert(html.includes('app.js?v=25.4'));
+ assert(/app\.js\?v=25\.\d+/.test(html),'App con versión de caché móvil explícita');
  assert(html.includes('ux-polish.css?v=7'));
 });
 
