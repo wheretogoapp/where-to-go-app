@@ -7,6 +7,10 @@ on:
       - 'netlify.toml'
       - 'Where_to_Go_Proyecto_Completo/netlify.toml'
       - 'Where_to_Go_Proyecto_Completo/public/app.js'
+      - 'Where_to_Go_Proyecto_Completo/public/language.js'
+      - 'Where_to_Go_Proyecto_Completo/public/ux-polish.css'
+      - 'Where_to_Go_Proyecto_Completo/public/world-explorer.js'
+      - 'Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/public/index.html'
       - 'Where_to_Go_Proyecto_Completo/public/world-v8.css'
       - 'Where_to_Go_Proyecto_Completo/public/service-worker.js'
@@ -55,6 +59,9 @@ jobs:
       - name: Comprobar sintaxis JavaScript de la aplicación
         run: |
           node --check Where_to_Go_Proyecto_Completo/public/app.js
+          node --check Where_to_Go_Proyecto_Completo/public/language.js
+          node --check Where_to_Go_Proyecto_Completo/public/world-explorer.js
+          node --test Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs
           node --check Where_to_Go_Proyecto_Completo/public/experience.js
           node --check Where_to_Go_Proyecto_Completo/public/pilot.js
           node --check Where_to_Go_Proyecto_Completo/public/photo-atlas.js
