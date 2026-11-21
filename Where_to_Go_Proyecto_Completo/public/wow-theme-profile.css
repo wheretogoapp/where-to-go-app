@@ -135,3 +135,10 @@ html[data-wtg-appearance="dark"] #view-mapa .map-list-head{
  html[data-wtg-appearance="dark"] .mobile-tab.active{color:#f7d184!important}
 }
 @media(prefers-reduced-motion:reduce){.wtg-account-actions button{transition:none!important}}
+
+/* Public legal documents remain available even before a user logs in. */
+.wtg-legal-access{font-size:12px;line-height:1.65;color:#dce9f5;margin:12px 0}
+.wtg-legal-access a,.wtg-legal-links a{color:#f9da95;text-decoration:underline;text-underline-offset:3px;font-weight:750}
+.wtg-legal-links{display:flex;flex-wrap:wrap;gap:12px;padding:10px 5px}
+.wtg-legal-links a{font-size:13px}
+.wtg-legal-access a:focus-visible,.wtg-legal-links a:focus-visible{outline:3px solid #f4d58d;outline-offset:3px}
