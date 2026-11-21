@@ -218,5 +218,5 @@ async function matchPhoto({name,lat,lon}){
   return {status:'not-found'};
  }catch(e){return {status:'error',message:String(e?.message||'No fue posible consultar Google Places').slice(0,160)}}
 }
-root.WTG_GOOGLE_PLACES=Object.freeze({configured,nearby,scanStages,shiftedCenter,searchText,matchPhoto,sameEstablishment,matchQuality,meters});
+root.WTG_GOOGLE_PLACES=Object.freeze({configured,loadScript:load,nearby,scanStages,shiftedCenter,searchText,matchPhoto,sameEstablishment,matchQuality,meters});
 })(window);
