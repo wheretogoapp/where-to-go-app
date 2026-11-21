@@ -47,3 +47,37 @@ body.wtg-onboarding-active #auth-gate{display:none!important}
  .wtg-ob-splash-logo,.wtg-ob-plane,.wtg-ob-splash h1,.wtg-ob-splash p{animation:none!important}
  .wtg-ob-actions button{transition:none}
 }
+/* Real official mark assembled from its original image, never redrawn or warped.
+   The supplied master embeds a low-resolution raster. Keep display compact;
+   actual 8K sharpness requires a genuine high-resolution original. */
+#wtg-onboarding .wtg-ob-splash-logo{
+  width:112px!important;height:112px!important;position:relative!important;
+  animation:none!important;filter:drop-shadow(0 8px 18px #0008)!important;
+  margin-bottom:24px!important
+}
+.wtg-ob-splash-logo .wtg-ob-fragment,
+.wtg-ob-splash-logo .wtg-ob-complete{
+  display:block!important;position:absolute;inset:0;
+  width:100%;height:100%;object-fit:contain;
+  image-rendering:auto;
+}
+.wtg-ob-fragment{animation:wtg-assemble 1.35s cubic-bezier(.15,.7,.25,1) both}
+.wtg-ob-a{clip-path:polygon(0 0,50% 0,50% 50%,0 50%);--dx:-40px;--dy:-45px;--turn:-12deg}
+.wtg-ob-b{clip-path:polygon(50% 0,100% 0,100% 50%,50% 50%);--dx:40px;--dy:-42px;--turn:11deg;animation-delay:.1s}
+.wtg-ob-c{clip-path:polygon(0 50%,50% 50%,50% 100%,0 100%);--dx:-35px;--dy:50px;--turn:12deg;animation-delay:.15s}
+.wtg-ob-d{clip-path:polygon(50% 50%,100% 50%,100% 100%,50% 100%);--dx:42px;--dy:49px;--turn:-13deg;animation-delay:.2s}
+.wtg-ob-complete{animation:wtg-mark-complete 1.5s ease both}
+#wtg-onboarding .wtg-ob-plane{display:none!important}
+@keyframes wtg-assemble{
+  0%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--turn)) scale(.7);filter:blur(8px)}
+  68%{opacity:1;transform:translate(0,0) rotate(0) scale(1.02);filter:blur(0)}
+  100%{opacity:1;transform:translate(0,0) rotate(0) scale(1);filter:blur(0)}
+}
+@keyframes wtg-mark-complete{
+  0%,72%{opacity:0}
+  100%{opacity:1}
+}
+@media(prefers-reduced-motion:reduce){
+  .wtg-ob-fragment{animation:none!important}
+  .wtg-ob-complete{animation:none!important}
+}
