@@ -393,6 +393,23 @@ function combineNearby(remote=[]){
 let wtgGoogleNearby=[];
 function applyNearby(remote=[],message=''){
   state.remotePlaces=remote.filter(insideNearbyRadius);
+  // Google may finish first on mobile. Reconcile its photos with cartographic
+  // records loaded later, without showing the same establishment twice.
+  if(window.WTG_GOOGLE_PLACES?.sameEstablishment){
+    const unmatched=[];
+    for(const google of wtgGoogleNearby){
+      const local=state.remotePlaces.find(p=>p.cat===google.cat&&
+        window.WTG_GOOGLE_PLACES.sameEstablishment(p.name,google.name)&&
+        window.WTG_GOOGLE_PLACES.meters(p.lat,p.lon,google.lat,google.lon)<=100);
+      if(!local){unmatched.push(google);continue;}
+      if(!hasCatalogPhoto(local)&&safeUrl(google.photo)){
+        local.photo=google.photo;local.googlePhotos=google.googlePhotos||[];
+        local.googlePhotoAttributions=google.photoAttributions||[];
+        local.googlePhotoMapUrl=google.googleUri||google.mapUrl||'';
+      }
+    }
+    wtgGoogleNearby=unmatched;
+  }
   state.places=combineNearby([...state.remotePlaces,...wtgGoogleNearby]);
   state.dataMode='live';state.dataError=message;
   renderAll();
@@ -652,9 +669,18 @@ async function loadPlaces(force=false){
   // Do not flash a misleading 0 while downloading the regional catalogue.
   state.remotePlaces=[];state.places=[];state.dataMode='loading';state.dataError='Cargando establecimientos cercanos…';renderAll();
   wtgFailedCells.clear();
+  // Google Places is an independent live source. Start it immediately; a slow
+  // or unavailable local data manifest must never hide verified Google places.
+  if(window.WTG_GOOGLE_PLACES?.configured()){
+    void enrichDominicanGooglePlaces(token,()=>state.remotePlaces);
+  }
   const manifest=await wtgManifest(force);
   if(token!==state.loadingId)return;
   if(!manifest||!Array.isArray(manifest.cells)||!manifest.cells.length){
+    if(window.WTG_GOOGLE_PLACES?.configured()){
+      applyNearby([], 'Directorio cartográfico no disponible; consultando negocios reales en Google Maps…');
+      return;
+    }
     state.dataMode='error';
     state.dataError='No se pudo descargar el índice nacional. Reintenta con Actualizar: no significa que esta provincia no tenga negocios.';
     renderAll();return;
@@ -675,16 +701,9 @@ async function loadPlaces(force=false){
   keys.sort((a,b)=>tileDistance(a)-tileDistance(b));
   const unique=new Map();
   let next=0,finished=0;
-  let googleStarted=false;
   const total=keys.length;
   const publish=complete=>{
     if(token!==state.loadingId)return;
-    // Consultar Google en paralelo desde el primer bloque de datos: no esperar
-    // a descargar todo el catálogo local. No se realizan consultas adicionales.
-    if(!googleStarted&&(finished>=4||complete)){
-      googleStarted=true;
-      void enrichDominicanGooglePlaces(token,()=>[...unique.values()]);
-    }
     if(!unique.size&&!complete)return;
     const msg=complete?`Lugares dentro de ${distance(state.radius)} · ${wtgFailedCells.size?'Algunos bloques sin cargar; pulsa Actualizar':'Catálogo actualizado'}`:'Ampliando los resultados cercanos…';
     applyNearby([...unique.values()],msg);
@@ -705,8 +724,7 @@ async function loadPlaces(force=false){
   }));
   if(token!==state.loadingId)return;
   publish(true);
-  // La búsqueda de Google ya comenzó en publish(), durante la carga local.
-  // GitHub Actions incorpora la clave de navegador restringida al publicar.
+  // Google Places ya empezó en paralelo, sin depender del índice local.
 }
 
 // Complementar RD sin sustituir las fichas cartográficas ni bloquear su carga.
@@ -780,9 +798,9 @@ async function loadMoreGoogleBusinesses(){
  let added=0,linked=0,completed=0,failed=0;
  renderExplore();
  try{
-   // Cada toque explora hasta tres sectores diferentes, sin descargarlos
-   // ni almacenarlos en una base propia. 30 consultas como máximo por toque.
-   for(let part=0;part<3&&wtgGoogleStage<stages.length;part++){
+   // Cada toque explora hasta dos sectores; se consulta en vivo sin descargar
+   // una base nacional ni disparar decenas de llamadas al abrir la página.
+   for(let part=0;part<2&&wtgGoogleStage<stages.length;part++){
      if(token!==state.loadingId)break;
      const stage=stages[wtgGoogleStage];
      toast('Google Maps: ampliando '+stage.name.toLowerCase()+'…');
