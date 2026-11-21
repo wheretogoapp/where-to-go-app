@@ -193,3 +193,24 @@ body.wtg-onboarding-active #auth-gate{display:none!important}
   display:block!important;opacity:1!important;animation:none!important
  }
 }
+
+
+/* HD mark is not animated until the image finishes loading.
+   This avoids a blank splash on slower iPhones and mobile connections. */
+#wtg-onboarding #wtg-ob-splash:not(.wtg-ob-mark-ready) .wtg-ob-fragment,
+#wtg-onboarding #wtg-ob-splash:not(.wtg-ob-mark-ready) .wtg-ob-complete,
+#wtg-onboarding #wtg-ob-splash:not(.wtg-ob-mark-ready) .wtg-ob-splash-logo:after{
+ animation-play-state:paused!important;
+}
+#wtg-onboarding #wtg-ob-splash:not(.wtg-ob-mark-ready) .wtg-ob-splash-label{
+ display:block!important;
+}
+#wtg-onboarding #wtg-ob-splash.wtg-ob-mark-fallback .wtg-ob-splash-label{
+ display:block!important;
+}
+#wtg-onboarding #wtg-ob-splash.wtg-ob-mark-fallback .wtg-ob-fragment{
+ display:none!important;
+}
+#wtg-onboarding #wtg-ob-splash.wtg-ob-mark-fallback .wtg-ob-complete{
+ animation:none!important;opacity:1!important;display:block!important;
+}
