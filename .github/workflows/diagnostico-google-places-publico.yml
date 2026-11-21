@@ -1,0 +1,70 @@
+name: Where to Go - diagnostico puntual Google Places publico
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/diagnostico-google-places-publico.yml'
+permissions:
+  contents: read
+jobs:
+  google-places-real:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Instalar navegador de diagnóstico
+        run: |
+          npm install --no-save playwright
+          if command -v google-chrome >/dev/null 2>&1; then
+            echo "CHROME_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            npx playwright install chromium
+          fi
+      - name: Diagnosticar conexión Google Places en la web real sin revelar credenciales
+        env:
+          SITE: https://wheretogoapp.github.io/where-to-go-app/
+        run: |
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright';
+          const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
+          const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'es-DO'});
+          const jsErrors=[],googleErrors=[],failedHosts=new Set();
+          page.on('pageerror',e=>jsErrors.push(String(e?.name||'Error').slice(0,80)));
+          page.on('console',msg=>{
+            const raw=msg.text();
+            const match=raw.match(/Google Maps JavaScript API error:\s*([A-Za-z_]+)/);
+            if(match)googleErrors.push(match[1]);
+          });
+          page.on('requestfailed',r=>{
+            try { const host=new URL(r.url()).hostname;
+              if(/googleapis|gstatic/.test(host))failedHosts.add(host);
+            }catch{}
+          });
+          try {
+            const res=await page.goto(process.env.SITE,{waitUntil:'domcontentloaded',timeout:45000});
+            await page.waitForFunction(()=>!!window.WTG_GOOGLE_PLACES,{timeout:20000});
+            const info=await page.evaluate(async()=>{
+              const api=window.WTG_GOOGLE_PLACES;
+              const raw={configured:api.configured()};
+              const timeout=promise=>Promise.race([promise,new Promise(resolve=>setTimeout(()=>resolve({status:'timeout',places:[]}),40000))]);
+              if(raw.configured){
+                const puerto=await timeout(api.nearby({lat:19.7934,lon:-70.6884,radius:12000,category:'playas'}));
+                raw.puerto={status:puerto.status,count:(puerto.places||[]).length,photos:(puerto.places||[]).filter(p=>!!p.photo).length,failures:puerto.failures??null};
+                if(puerto.status!=='error'&&puerto.status!=='unconfigured'&&puerto.status!=='timeout'){
+                  const santiago=await timeout(api.nearby({lat:19.4517,lon:-70.697,radius:12000,category:'parques'}));
+                  raw.santiago={status:santiago.status,count:(santiago.places||[]).length,photos:(santiago.places||[]).filter(p=>!!p.photo).length,failures:santiago.failures??null};
+                }
+              }
+              try{const r=await fetch('/where-to-go-app/data/release.json',{cache:'no-store'});if(r.ok)raw.release=(await r.json()).commit;}catch{}
+              return raw;
+            });
+            console.log('PUBLIC_HTTP:',res?.status());
+            console.log('GOOGLE_DIAGNOSTIC:',JSON.stringify(info));
+            console.log('GOOGLE_JS_ERROR_CODES:',JSON.stringify(googleErrors));
+            console.log('FAILED_GOOGLE_HOSTS:',JSON.stringify([...failedHosts]));
+            console.log('APP_JS_ERROR_TYPES:',JSON.stringify(jsErrors.slice(0,8)));
+          }finally{await browser.close();}
+          JS
