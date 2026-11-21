@@ -1239,6 +1239,416 @@ Object.assign(labels, {
   ]
 });
 
+// Report-place and excursion registration forms.
+Object.assign(labels, {
+  "EXPLORA EL MUNDO": [
+    "EXPLORE THE WORLD",
+    "EXPLOREZ LE MONDE",
+    "EXPLORE O MUNDO",
+    "ENTDECKE DIE WELT",
+    "ESPLORA IL MONDO"
+  ],
+  "WHERE TO GO · EXPLORA EL MUNDO": [
+    "WHERE TO GO · EXPLORE THE WORLD",
+    "WHERE TO GO · EXPLOREZ LE MONDE",
+    "WHERE TO GO · EXPLORE O MUNDO",
+    "WHERE TO GO · ENTDECKE DIE WELT",
+    "WHERE TO GO · ESPLORA IL MONDO"
+  ],
+  "WHERE TO GO · REPÚBLICA DOMINICANA": [
+    "WHERE TO GO · DOMINICAN REPUBLIC",
+    "WHERE TO GO · RÉPUBLIQUE DOMINICAINE",
+    "WHERE TO GO · REPÚBLICA DOMINICANA",
+    "WHERE TO GO · DOMINIKANISCHE REPUBLIK",
+    "WHERE TO GO · REPUBBLICA DOMINICANA"
+  ],
+  "INSPIRACIÓN PARA TU PRÓXIMO VIAJE": [
+    "INSPIRATION FOR YOUR NEXT TRIP",
+    "INSPIRATION POUR VOTRE PROCHAIN VOYAGE",
+    "INSPIRAÇÃO PARA SUA PRÓXIMA VIAGEM",
+    "INSPIRATION FÜR DEINE NÄCHSTE REISE",
+    "ISPIRAZIONE PER IL PROSSIMO VIAGGIO"
+  ],
+  "Playas": [
+    "Beaches",
+    "Plages",
+    "Praias",
+    "Strände",
+    "Spiagge"
+  ],
+  "Cascadas": [
+    "Waterfalls",
+    "Cascades",
+    "Cachoeiras",
+    "Wasserfälle",
+    "Cascate"
+  ],
+  "Restaurantes": [
+    "Restaurants",
+    "Restaurants",
+    "Restaurantes",
+    "Restaurants",
+    "Ristoranti"
+  ],
+  "Hoteles": [
+    "Hotels",
+    "Hôtels",
+    "Hotéis",
+    "Hotels",
+    "Hotel"
+  ],
+  "Ríos": [
+    "Rivers",
+    "Rivières",
+    "Rios",
+    "Flüsse",
+    "Fiumi"
+  ],
+  "Atractivos": [
+    "Attractions",
+    "Attractions",
+    "Atrações",
+    "Sehenswürdigkeiten",
+    "Attrazioni"
+  ],
+  "Discotecas": [
+    "Nightclubs",
+    "Discothèques",
+    "Boates",
+    "Nachtclubs",
+    "Discoteche"
+  ],
+  "Bares": [
+    "Bars",
+    "Bars",
+    "Bares",
+    "Bars",
+    "Bar"
+  ],
+  "Cafeterías": [
+    "Cafés",
+    "Cafés",
+    "Cafeterias",
+    "Cafés",
+    "Caffetterie"
+  ],
+  "Transporte": [
+    "Transport",
+    "Transports",
+    "Transporte",
+    "Transport",
+    "Trasporti"
+  ],
+  "Tours": [
+    "Tours",
+    "Excursions",
+    "Passeios",
+    "Touren",
+    "Tour"
+  ],
+  "A 60 km": [
+    "Within 60 km",
+    "Dans un rayon de 60 km",
+    "Até 60 km",
+    "Im Umkreis von 60 km",
+    "Entro 60 km"
+  ],
+  "A 100 km": [
+    "Within 100 km",
+    "Dans un rayon de 100 km",
+    "Até 100 km",
+    "Im Umkreis von 100 km",
+    "Entro 100 km"
+  ],
+  "Cargando municipios...": [
+    "Loading municipalities...",
+    "Chargement des communes...",
+    "Carregando municípios...",
+    "Gemeinden werden geladen...",
+    "Caricamento comuni..."
+  ],
+  "Permiso de ubicación solo al usar el botón o si ya lo concediste antes. Requiere HTTPS. La búsqueda y geocodificación pueden enviar coordenadas a proveedores de mapas; no guardamos tu GPS en una cuenta.": [
+    "Location is requested only when you tap the button or previously granted permission. Requires HTTPS. Search and geocoding may send coordinates to map providers; we do not store your GPS location in an account.",
+    "La position n'est demandée qu'après action de votre part ou autorisation préalable. HTTPS requis. La recherche peut transmettre les coordonnées aux fournisseurs de cartes ; nous ne stockons pas votre GPS dans un compte.",
+    "A localização é solicitada apenas ao tocar no botão ou se já houver permissão. Requer HTTPS. Busca e geocodificação podem enviar coordenadas aos mapas; não guardamos seu GPS em uma conta.",
+    "Der Standort wird nur nach Tippen oder bestehender Berechtigung angefragt. HTTPS erforderlich. Suche und Geokodierung können Koordinaten an Kartenanbieter übermitteln; wir speichern deinen GPS-Standort nicht in einem Konto.",
+    "La posizione viene richiesta solo quando tocchi il pulsante o se hai già autorizzato. Richiede HTTPS. La ricerca può inviare coordinate ai fornitori di mappe; non salviamo il GPS nell'account."
+  ],
+  "Ayúdanos a completar Where to Go": [
+    "Help us improve Where to Go",
+    "Aidez-nous à enrichir Where to Go",
+    "Ajude a melhorar o Where to Go",
+    "Hilf uns, Where to Go zu verbessern",
+    "Aiutaci a migliorare Where to Go"
+  ],
+  "Proporciona información verificable. Nunca publicamos lugares ni imágenes sin revisar.": [
+    "Share verifiable information. We never publish places or photos without review.",
+    "Fournissez des informations vérifiables. Nous ne publions aucun lieu ou photo sans vérification.",
+    "Forneça informações verificáveis. Nunca publicamos locais ou fotos sem revisão.",
+    "Teile überprüfbare Angaben. Orte und Bilder veröffentlichen wir erst nach Prüfung.",
+    "Fornisci informazioni verificabili. Non pubblichiamo luoghi o foto senza verifica."
+  ],
+  "Nombre del lugar *": [
+    "Place name *",
+    "Nom du lieu *",
+    "Nome do lugar *",
+    "Name des Ortes *",
+    "Nome del luogo *"
+  ],
+  "Provincia *": [
+    "Province *",
+    "Province *",
+    "Província *",
+    "Provinz *",
+    "Provincia *"
+  ],
+  "Municipio o localidad *": [
+    "Municipality or town *",
+    "Commune ou localité *",
+    "Município ou localidade *",
+    "Gemeinde oder Ort *",
+    "Comune o località *"
+  ],
+  "Enlace a ubicación precisa (OSM, Waze o Maps)": [
+    "Link to precise location (OSM, Waze or Maps)",
+    "Lien vers l'emplacement exact (OSM, Waze ou Maps)",
+    "Link da localização exata (OSM, Waze ou Maps)",
+    "Link zum genauen Standort (OSM, Waze oder Maps)",
+    "Link alla posizione esatta (OSM, Waze o Maps)"
+  ],
+  "Subir una fotografía propia o autorizada (máximo 6 MB)": [
+    "Upload your own or authorized photo (max 6 MB)",
+    "Ajouter votre photo ou une photo autorisée (6 Mo max)",
+    "Enviar foto própria ou autorizada (máx. 6 MB)",
+    "Eigenes oder genehmigtes Foto hochladen (max. 6 MB)",
+    "Carica una foto propria o autorizzata (max 6 MB)"
+  ],
+  "O enlace a una fotografía autorizada": [
+    "Or link to an authorized photo",
+    "Ou lien vers une photo autorisée",
+    "Ou link para uma foto autorizada",
+    "Oder Link zu einem genehmigten Foto",
+    "Oppure link a una foto autorizzata"
+  ],
+  "Detalles para verificar": [
+    "Details for verification",
+    "Détails à vérifier",
+    "Detalhes para verificação",
+    "Angaben zur Prüfung",
+    "Dettagli da verificare"
+  ],
+  "Contacto para aclaraciones (opcional)": [
+    "Contact for follow-up (optional)",
+    "Contact pour précisions (facultatif)",
+    "Contato para esclarecimentos (opcional)",
+    "Kontakt für Rückfragen (optional)",
+    "Contatto per chiarimenti (facoltativo)"
+  ],
+  "Confirmo que mis datos son correctos y que tengo permiso para compartir la foto, si adjunto una.": [
+    "I confirm my details are accurate and I have permission to share any attached photo.",
+    "Je confirme l'exactitude des informations et avoir l'autorisation de partager la photo jointe.",
+    "Confirmo que os dados estão corretos e tenho permissão para compartilhar qualquer foto anexada.",
+    "Ich bestätige die Richtigkeit meiner Angaben und die Berechtigung zur Weitergabe angehängter Fotos.",
+    "Confermo che i dati sono corretti e di avere il permesso di condividere le foto allegate."
+  ],
+  "Se enviará a Netlify Forms para revisión; no se publica automáticamente. No subas fotos de niños ni información privada de terceros.": [
+    "Sent to Netlify Forms for review; not published automatically. Do not upload photos of children or others' private information.",
+    "Envoyé à Netlify Forms pour vérification ; aucune publication automatique. N'ajoutez pas de photos d'enfants ni de données privées de tiers.",
+    "Enviado ao Netlify Forms para revisão; sem publicação automática. Não envie fotos de crianças nem dados privados de terceiros.",
+    "An Netlify Forms zur Prüfung gesendet; keine automatische Veröffentlichung. Keine Kinderfotos oder privaten Daten Dritter hochladen.",
+    "Inviato a Netlify Forms per la verifica; nessuna pubblicazione automatica. Non caricare foto di minori o dati privati di terzi."
+  ],
+  "Enviar para revisión": [
+    "Submit for review",
+    "Envoyer pour vérification",
+    "Enviar para revisão",
+    "Zur Prüfung senden",
+    "Invia per la verifica"
+  ],
+  "Publica tu tour o excursión": [
+    "List your tour or excursion",
+    "Publiez votre visite ou excursion",
+    "Publique seu passeio ou excursão",
+    "Tour oder Ausflug veröffentlichen",
+    "Pubblica il tuo tour o la tua escursione"
+  ],
+  "US$10 mensuales por anuncio. Se publica únicamente tras verificación del organizador, revisión del contenido y pago confirmado.": [
+    "US$10 per month per listing. Published only after organizer verification, content review and payment confirmation.",
+    "10 USD par mois et par annonce. Publication uniquement après vérification de l'organisateur, examen du contenu et confirmation du paiement.",
+    "US$10 por mês por anúncio. Publicação apenas após verificação do organizador, revisão do conteúdo e confirmação do pagamento.",
+    "10 USD monatlich pro Eintrag. Veröffentlichung erst nach Veranstalterprüfung, Inhaltsprüfung und bestätigter Zahlung.",
+    "10 USD al mese per annuncio. Pubblicazione solo dopo verifica dell'organizzatore, revisione dei contenuti e conferma del pagamento."
+  ],
+  "Nombre de la excursión *": [
+    "Tour or excursion name *",
+    "Nom de la visite ou excursion *",
+    "Nome do passeio ou excursão *",
+    "Name der Tour oder des Ausflugs *",
+    "Nome del tour o dell'escursione *"
+  ],
+  "Nombre legal del organizador *": [
+    "Organizer's legal name *",
+    "Nom légal de l'organisateur *",
+    "Nome legal do organizador *",
+    "Rechtlicher Name des Veranstalters *",
+    "Nome legale dell'organizzatore *"
+  ],
+  "Teléfono / WhatsApp verificable *": [
+    "Verifiable phone / WhatsApp *",
+    "Téléphone / WhatsApp vérifiable *",
+    "Telefone / WhatsApp verificável *",
+    "Verifizierbares Telefon / WhatsApp *",
+    "Telefono / WhatsApp verificabile *"
+  ],
+  "Correo de contacto *": [
+    "Contact email *",
+    "E-mail de contact *",
+    "E-mail de contato *",
+    "Kontakt-E-Mail *",
+    "Email di contatto *"
+  ],
+  "País donde se realiza *": [
+    "Country where the activity takes place *",
+    "Pays où se déroule l'activité *",
+    "País onde a atividade ocorre *",
+    "Land, in dem die Aktivität stattfindet *",
+    "Paese in cui si svolge l'attività *"
+  ],
+  "Provincia / región donde se realiza *": [
+    "Province / region of the activity *",
+    "Province / région de l'activité *",
+    "Província / região da atividade *",
+    "Provinz / Region der Aktivität *",
+    "Provincia / regione dell'attività *"
+  ],
+  "Ciudad / municipio *": [
+    "City / municipality *",
+    "Ville / commune *",
+    "Cidade / município *",
+    "Stadt / Gemeinde *",
+    "Città / comune *"
+  ],
+  "Lugar exacto de salida *": [
+    "Exact departure location *",
+    "Lieu de départ exact *",
+    "Local exato de saída *",
+    "Genauer Abfahrtsort *",
+    "Punto di partenza esatto *"
+  ],
+  "Hora de salida *": [
+    "Departure time *",
+    "Heure de départ *",
+    "Horário de saída *",
+    "Abfahrtszeit *",
+    "Ora di partenza *"
+  ],
+  "Fecha de salida *": [
+    "Departure date *",
+    "Date de départ *",
+    "Data de saída *",
+    "Abfahrtsdatum *",
+    "Data di partenza *"
+  ],
+  "Destino o paradas *": [
+    "Destination or stops *",
+    "Destination ou arrêts *",
+    "Destino ou paradas *",
+    "Ziel oder Zwischenstopps *",
+    "Destinazione o tappe *"
+  ],
+  "Hora aproximada de regreso *": [
+    "Approximate return time *",
+    "Heure de retour approximative *",
+    "Horário aproximado de volta *",
+    "Ungefähre Rückkehrzeit *",
+    "Orario approssimativo di ritorno *"
+  ],
+  "Precio por persona *": [
+    "Price per person *",
+    "Prix par personne *",
+    "Preço por pessoa *",
+    "Preis pro Person *",
+    "Prezzo a persona *"
+  ],
+  "Cupos disponibles *": [
+    "Available spaces *",
+    "Places disponibles *",
+    "Vagas disponíveis *",
+    "Verfügbare Plätze *",
+    "Posti disponibili *"
+  ],
+  "Qué incluye *": [
+    "What's included *",
+    "Ce qui est inclus *",
+    "O que inclui *",
+    "Enthaltene Leistungen *",
+    "Cosa include *"
+  ],
+  "Qué NO incluye *": [
+    "What's NOT included *",
+    "Ce qui n'est PAS inclus *",
+    "O que NÃO inclui *",
+    "Nicht enthalten *",
+    "Cosa NON include *"
+  ],
+  "Descripción e itinerario *": [
+    "Description and itinerary *",
+    "Description et itinéraire *",
+    "Descrição e itinerário *",
+    "Beschreibung und Reiseverlauf *",
+    "Descrizione e itinerario *"
+  ],
+  "Política de cancelación y reembolso *": [
+    "Cancellation and refund policy *",
+    "Politique d'annulation et de remboursement *",
+    "Política de cancelamento e reembolso *",
+    "Stornierungs- und Erstattungsregeln *",
+    "Politica di cancellazione e rimborso *"
+  ],
+  "Información de seguridad, responsable y contacto de emergencia *": [
+    "Safety information, organizer and emergency contact *",
+    "Informations de sécurité, responsable et contact d'urgence *",
+    "Informações de segurança, responsável e contato de emergência *",
+    "Sicherheitsinformationen, Verantwortliche und Notfallkontakt *",
+    "Informazioni sulla sicurezza, responsabile e contatto d'emergenza *"
+  ],
+  "Hasta 5 fotografías propias o autorizadas *": [
+    "Up to 5 owned or authorized photos *",
+    "Jusqu'à 5 photos personnelles ou autorisées *",
+    "Até 5 fotos próprias ou autorizadas *",
+    "Bis zu 5 eigene oder genehmigte Fotos *",
+    "Fino a 5 foto proprie o autorizzate *"
+  ],
+  "Selecciona de 1 a 5 fotos, máximo 5 MB por foto. Las imágenes se revisan antes de publicar.": [
+    "Choose 1 to 5 photos, up to 5 MB each. Images are reviewed before publication.",
+    "Choisissez 1 à 5 photos de 5 Mo maximum chacune. Les images seront vérifiées avant publication.",
+    "Escolha de 1 a 5 fotos, máximo 5 MB cada. As imagens serão revisadas antes da publicação.",
+    "Wähle 1 bis 5 Fotos mit maximal 5 MB pro Foto. Bilder werden vor der Veröffentlichung geprüft.",
+    "Scegli da 1 a 5 foto, massimo 5 MB ciascuna. Le immagini saranno verificate prima della pubblicazione."
+  ],
+  "Confirmo que tengo autorización para ofrecer la actividad, que la información es correcta y que tengo derechos de uso sobre las fotografías.": [
+    "I confirm I am authorized to offer this activity, all information is accurate, and I have rights to use the photos.",
+    "Je confirme être autorisé à proposer cette activité, que les informations sont exactes et que je dispose des droits sur les photos.",
+    "Confirmo autorização para oferecer a atividade, que as informações estão corretas e que tenho direitos sobre as fotos.",
+    "Ich bestätige, dass ich die Aktivität anbieten darf, alle Angaben korrekt sind und ich die Bildrechte besitze.",
+    "Confermo di essere autorizzato a offrire l'attività, che le informazioni sono corrette e che ho i diritti sulle foto."
+  ],
+  "La solicitud no implica cobro ni publicación automática. Los anuncios solo se mostrarán en el país y provincia correspondientes, una vez exista la infraestructura de publicación y filtrado.": [
+    "Submitting a request does not trigger a charge or publication. Listings will appear only in the corresponding country and province once publishing and filtering are available.",
+    "L'envoi n'entraîne ni facturation ni publication automatique. Les annonces apparaîtront uniquement dans le pays et la province concernés, une fois l'infrastructure disponible.",
+    "O envio não gera cobrança nem publicação automática. Anúncios aparecerão apenas no país e província correspondentes quando a infraestrutura estiver disponível.",
+    "Eine Anfrage führt weder zu Abbuchung noch zur Veröffentlichung. Anzeigen erscheinen erst nach Bereitstellung der Infrastruktur im richtigen Land und der richtigen Provinz.",
+    "L'invio non comporta addebiti né pubblicazione automatica. Gli annunci appariranno solo nel paese e nella provincia corretti quando l'infrastruttura sarà disponibile."
+  ],
+  "Enviar solicitud para revisión": [
+    "Submit request for review",
+    "Envoyer la demande pour vérification",
+    "Enviar solicitação para revisão",
+    "Anfrage zur Prüfung senden",
+    "Invia la richiesta per la verifica"
+  ]
+});
+
 // Category labels are stored with stable IDs; proper names and addresses are not translated.
 const categories={
 rios:['Rivers','Rivières','Rios','Flüsse','Fiumi'],balnearios:['Swimming spots','Baignades naturelles','Balneários','Badestellen','Luoghi balneari'],cascadas:['Waterfalls','Cascades','Cachoeiras','Wasserfälle','Cascate'],lagunas:['Lagoons','Lagunes','Lagoas','Lagunen','Lagune'],senderismo:['Hiking','Randonnées','Trilhas','Wandern','Escursionismo'],playas:['Beaches','Plages','Praias','Strände','Spiagge'],parques:['Parks','Parcs','Parques','Parks','Parchi'],atracciones:['Tourist attractions','Sites touristiques','Atrações turísticas','Sehenswürdigkeiten','Attrazioni turistiche'],entretenimiento:['Entertainment','Divertissement','Entretenimento','Unterhaltung','Intrattenimento'],infantil:['Kids activities','Activités enfants','Diversão infantil','Kinderaktivitäten','Attività per bambini'],piscinas:['Swimming pools','Piscines','Piscinas','Pools','Piscine'],restaurantes:['Restaurants','Restaurants','Restaurantes','Restaurants','Ristoranti'],bares:['Bars','Bars','Bares','Bars','Bar'],discotecas:['Nightclubs','Discothèques','Boates','Nachtclubs','Discoteche'],cafes:['Cafés','Cafés','Cafés','Cafés','Caffetterie'],heladerias:['Ice cream shops','Glaciers','Sorveterias','Eisdielen','Gelaterie'],panaderias:['Bakeries','Boulangeries','Padarias','Bäckereien','Panetterie'],pescaderias:['Fish shops','Poissonneries','Peixarias','Fischgeschäfte','Pescherie'],comidarapida:['Fast food','Restauration rapide','Fast food','Schnellimbiss','Fast food'],supermercados:['Supermarkets','Supermarchés','Supermercados','Supermärkte','Supermercati'],colmados:['Local grocery stores','Épiceries locales','Mercearias','Nachbarschaftsläden','Alimentari'],mercados:['Markets','Marchés','Mercados','Märkte','Mercati'],tiendas:['Shops & fashion','Magasins et mode','Lojas e moda','Geschäfte & Mode','Negozi e moda'],ferreterias:['Hardware stores','Quincailleries','Lojas de ferragens','Baumärkte','Ferramenta'],electrodomesticos:['Appliances','Électroménager','Eletrodomésticos','Haushaltsgeräte','Elettrodomestici'],tecnologia:['Technology','Technologie','Tecnologia','Technik','Tecnologia'],barberias:['Barbers','Barbiers','Barbearias','Barbershops','Barbieri'],salones:['Beauty salons','Salons de beauté','Salões de beleza','Schönheitssalons','Saloni di bellezza'],unas:['Nail salons','Ongleries','Salões de unhas','Nagelstudios','Centri unghie'],spas:['Spas & massage','Spas et massages','Spas e massagens','Spas & Massagen','Spa e massaggi'],gimnasios:['Gyms','Salles de sport','Academias','Fitnessstudios','Palestre'],hoteles:['Hotels','Hôtels','Hotéis','Hotels','Hotel'],resorts:['Resorts','Resorts','Resorts','Resorts','Resort'],villas:['Villas','Villas','Villas','Villen','Ville'],taxis:['Taxis & transport','Taxis et transport','Táxis e transporte','Taxis & Transport','Taxi e trasporti'],gasolineras:['Gas stations','Stations-service','Postos de combustível','Tankstellen','Distributori'],talleres:['Repair shops','Garages','Oficinas','Werkstätten','Officine'],lavaderos:['Car washes','Stations de lavage','Lava-rápidos','Autowaschanlagen','Autolavaggi'],farmacias:['Pharmacies','Pharmacies','Farmácias','Apotheken','Farmacie'],hospitales:['Hospitals & clinics','Hôpitaux et cliniques','Hospitais e clínicas','Krankenhäuser & Kliniken','Ospedali e cliniche'],odontologia:['Dentists','Dentistes','Dentistas','Zahnärzte','Dentisti'],veterinarias:['Veterinarians','Vétérinaires','Veterinários','Tierärzte','Veterinari'],mascotas:['Pet shops','Animaleries','Pet shops','Tierhandlungen','Negozi animali'],bancos:['Banks','Banques','Bancos','Banken','Banche'],cajeros:['ATMs','Distributeurs automatiques','Caixas eletrônicos','Geldautomaten','Bancomat'],lavanderias:['Laundries','Blanchisseries','Lavanderias','Wäschereien','Lavanderie'],servicios:['Professional services','Services professionnels','Serviços profissionais','Professionelle Dienstleistungen','Servizi professionali'],escuelas:['Schools','Écoles','Escolas','Schulen','Scuole'],iglesias:['Churches','Églises','Igrejas','Kirchen','Chiese'],deportes:['Sports','Sports','Esportes','Sport','Sport']
