@@ -1,0 +1,137 @@
+/* Visual-only account and theme extension. Existing Supabase handlers untouched. */
+.wtg-account-card{
+ border-radius:28px!important;
+ border:1px solid rgba(247,215,151,.45)!important;
+ background:linear-gradient(160deg,#102f52,#061a33 80%)!important;
+ box-shadow:0 30px 95px rgba(0,8,25,.55)!important;
+ color:#f7fbff!important;
+}
+.wtg-account-head h2{font-family:Outfit,'DM Sans',sans-serif;font-size:28px!important;letter-spacing:-.045em}
+.wtg-profile-identity{
+ display:flex;align-items:center;gap:14px;padding:17px 16px;margin:15px 0 12px;
+ border-radius:20px;background:linear-gradient(115deg,rgba(245,209,132,.17),rgba(75,162,212,.09));
+ border:1px solid rgba(249,222,166,.22)
+}
+.wtg-profile-avatar{
+ width:52px;height:52px;border-radius:17px;display:grid;place-items:center;
+ font-size:25px;background:linear-gradient(135deg,#f8dfaa,#e4af55);color:#092746;
+ box-shadow:0 8px 24px rgba(1,12,34,.3);flex-shrink:0
+}
+.wtg-profile-identity strong,.wtg-theme-settings strong{display:block;font-size:16px;color:#fff}
+.wtg-profile-identity small,.wtg-theme-settings small{display:block;color:#d0dfef;font-size:12px;line-height:1.45;margin-top:4px}
+#wtg-account-status{display:inline-block;padding:7px 11px;border-radius:99px;background:rgba(102,184,219,.13);border:1px solid rgba(153,213,241,.25);font-size:12px}
+#wtg-account-email{font-weight:700;color:#f7dba3!important;overflow-wrap:anywhere}
+.wtg-theme-settings{
+ padding:15px;border-radius:18px;border:1px solid rgba(199,222,239,.25);
+ background:rgba(255,255,255,.045);margin:12px 0
+}
+.wtg-theme-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:13px}
+.wtg-theme-choices button{
+ min-height:43px;padding:7px 5px;border-radius:12px;
+ color:#e7f2ff;background:#1b3b5c;border:1px solid rgba(255,255,255,.19);
+ font:750 12px 'DM Sans',sans-serif;cursor:pointer
+}
+.wtg-theme-choices button.is-active,.wtg-theme-choices button[aria-pressed="true"]{
+ color:#0c2d4a!important;background:linear-gradient(125deg,#fff0c6,#eac274)!important;
+ border-color:#f8d88b!important
+}
+.wtg-account-actions button{
+ border-radius:15px!important;min-height:48px;transition:background .2s,border-color .2s;
+ font-weight:750!important
+}
+.wtg-account-actions button:hover{background:#264b70!important;border-color:#edcf93!important}
+.wtg-account-actions button:last-child:hover{background:#62323a!important}
+.wtg-account-card button:focus-visible{outline:3px solid #f2d38b!important;outline-offset:3px}
+html[data-wtg-appearance="dark"] body{
+ background:#061a31!important;color:#eef6ff!important
+}
+html[data-wtg-appearance="dark"] .main-shell,
+html[data-wtg-appearance="dark"] #main-content{
+ background:#061a31!important;color:#eef6ff!important
+}
+html[data-wtg-appearance="dark"] .topbar{
+ background:#092540!important;color:#f1f8ff!important;
+ border-color:#264d6b!important
+}
+html[data-wtg-appearance="dark"] .topbar .breadcrumb,
+html[data-wtg-appearance="dark"] .topbar #current-page-label,
+html[data-wtg-appearance="dark"] .topbar #mobile-brand,
+html[data-wtg-appearance="dark"] .topbar .wtg-mobile-brand-text strong{
+ color:#f5faff!important
+}
+html[data-wtg-appearance="dark"] .topbar .location-pill,
+html[data-wtg-appearance="dark"] .topbar .wtg-language-control{
+ background:#153b5c!important;color:#f4faff!important;border-color:#47718c!important
+}
+html[data-wtg-appearance="dark"] .topbar #wtg-language-select{
+ background:#fff!important;color:#09243f!important;border-radius:7px!important
+}
+html[data-wtg-appearance="dark"] .welcome-row h1,
+html[data-wtg-appearance="dark"] .page-intro h1,
+html[data-wtg-appearance="dark"] .section-heading h2,
+html[data-wtg-appearance="dark"] #view-explorar .explorer-result-heading h2,
+html[data-wtg-appearance="dark"] .wtg-v8-section-title h2,
+html[data-wtg-appearance="dark"] #province-explorer h3{
+ color:#f8fbff!important
+}
+html[data-wtg-appearance="dark"] .welcome-row p,
+html[data-wtg-appearance="dark"] .page-intro p,
+html[data-wtg-appearance="dark"] .section-heading p,
+html[data-wtg-appearance="dark"] #explore-context{
+ color:#c3d7e8!important
+}
+html[data-wtg-appearance="dark"] #view-explorar .filter-panel{
+ background:linear-gradient(145deg,#123452,#0b2744)!important;
+ border-color:#37617e!important;color:#f5faff!important
+}
+html[data-wtg-appearance="dark"] #view-explorar .filter-panel input,
+html[data-wtg-appearance="dark"] #view-explorar .filter-panel select,
+html[data-wtg-appearance="dark"] #view-inicio #wtg-v8-query{
+ background:#f8fbff!important;color:#092b47!important;
+ border-color:#89aec7!important
+}
+html[data-wtg-appearance="dark"] #view-explorar #explore-list>.place-card,
+html[data-wtg-appearance="dark"] #view-inicio #home-list>.place-card,
+html[data-wtg-appearance="dark"] #view-favoritos #favorite-list>.place-card{
+ background:#10304e!important;border-color:#2e5876!important;color:#f6fbff!important
+}
+html[data-wtg-appearance="dark"] #view-explorar .place-title,
+html[data-wtg-appearance="dark"] #view-inicio #home-list .place-title,
+html[data-wtg-appearance="dark"] #view-favoritos .place-title{
+ color:#f9fcff!important
+}
+html[data-wtg-appearance="dark"] #view-explorar .place-body,
+html[data-wtg-appearance="dark"] #view-inicio #home-list .place-body,
+html[data-wtg-appearance="dark"] #view-favoritos .place-body{color:#e6f2ff!important}
+html[data-wtg-appearance="dark"] #view-explorar .place-meta,
+html[data-wtg-appearance="dark"] #view-explorar .place-meta b,
+html[data-wtg-appearance="dark"] #view-explorar .source-credit,
+html[data-wtg-appearance="dark"] #view-inicio #home-list .place-meta,
+html[data-wtg-appearance="dark"] #view-inicio #home-list .source-credit{
+ color:#c8dbea!important
+}
+html[data-wtg-appearance="dark"] #view-explorar .card-open,
+html[data-wtg-appearance="dark"] #view-inicio #home-list .card-open{color:#f3d287!important}
+html[data-wtg-appearance="dark"] #view-inicio #province-explorer,
+html[data-wtg-appearance="dark"] #view-inicio .wtg-v8-home-tools{
+ border-color:#2d5775!important
+}
+html[data-wtg-appearance="dark"] #view-mapa .map-list{
+ background:#0c2b48!important;color:#eef7ff!important
+}
+html[data-wtg-appearance="dark"] #view-mapa .map-list-head{
+ background:#143c5c!important;color:#fff!important
+}
+/* Keep actual map tiles, photographs, attribution and provider UI unchanged. */
+@media(max-width:820px){
+ .wtg-account-card{padding:18px!important;border-radius:24px!important;max-height:calc(100dvh - 24px)!important}
+ .wtg-theme-choices{gap:5px}
+ .wtg-theme-choices button{font-size:11px;min-height:46px}
+ html[data-wtg-appearance="dark"] .mobile-tabs,
+ html[data-wtg-appearance="dark"] .mobile-bottom-nav{
+  background:#0b2745!important;border-color:#335a78!important
+ }
+ html[data-wtg-appearance="dark"] .mobile-tab{color:#c8d9e9!important}
+ html[data-wtg-appearance="dark"] .mobile-tab.active{color:#f7d184!important}
+}
+@media(prefers-reduced-motion:reduce){.wtg-account-actions button{transition:none!important}}
