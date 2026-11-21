@@ -142,11 +142,12 @@ function render(){
  $('wtg-profile-visited').innerHTML=placeList(state.visited,'visited');
  $('wtg-profile-explored').innerHTML=placeList(state.explored,'explored');
  const trips=$('wtg-profile-trips');
- trips.innerHTML=state.trips.length?state.trips.map(t=>
+ trips.innerHTML=state.trips.length?state.trips.map(t=>(
   '<article class="wtg-profile-trip"><div><strong>🧳 '+safe(t.title)+'</strong><small>'+safe(t.date?stamp(t.date):'Sin fecha')+' · '+(t.places||[]).length+' lugares</small></div>'+
-  (t.places||[]).length?'<div class="wtg-profile-trip-places">'+t.places.map(id=>'<span>'+safe(rowLabel({id,source:id.startsWith('google')?'google':''}))+' <button type="button" data-wtg-trip-remove-place="'+safe(t.id)+'" data-wtg-id="'+safe(id)+'" aria-label="Quitar del viaje">×</button></span>').join('')+'</div>':'')+
+  ((t.places||[]).length?'<div class="wtg-profile-trip-places">'+t.places.map(id=>'<span>'+safe(rowLabel({id,source:id.startsWith('google')?'google':''}))+' <button type="button" data-wtg-trip-remove-place="'+safe(t.id)+'" data-wtg-id="'+safe(id)+'" aria-label="Quitar del viaje">×</button></span>').join('')+'</div>':'')+
   '<div class="wtg-profile-trip-actions">'+(active.pending?'<button type="button" data-wtg-trip-add="'+safe(t.id)+'">+ Añadir lugar pendiente</button>':'')+
-  '<button type="button" data-wtg-trip-remove="'+safe(t.id)+'">Eliminar viaje</button></div></article>').join(''):
+  '<button type="button" data-wtg-trip-remove="'+safe(t.id)+'">Eliminar viaje</button></div></article>'
+ )).join(''):
   '<p class="wtg-profile-empty">Crea tu primer viaje para organizar los lugares que quieres conocer.</p>';
  $('wtg-profile-pending').textContent=active.pending?'Lugar listo para añadir: '+(names.get(active.pending)||'lugar guardado'):'';
  const c=$('wtg-profile-settings');
