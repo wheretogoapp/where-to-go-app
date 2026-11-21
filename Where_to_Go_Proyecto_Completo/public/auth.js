@@ -23,6 +23,7 @@ async function loadProfile(){
     if(!data){const {error:insError}=await client.from('profiles').insert({id:currentUser.id,personalization_opt_in:document.getElementById('auth-consent').checked});if(insError)throw insError;
       currentProfile={personalization_opt_in:document.getElementById('auth-consent').checked};}
     document.getElementById('auth-consent').checked=!!currentProfile?.personalization_opt_in;
+    window.dispatchEvent(new CustomEvent('wtg-personalization-changed',{detail:{enabled:!!currentProfile?.personalization_opt_in}}));
     await importLocalFavorites();
     const listed=await client.from('favorites').select('place_id').eq('user_id',currentUser.id).limit(500);
     if(!listed.error&&Array.isArray(listed.data)){
@@ -78,7 +79,7 @@ window.WTG_auth={
   get user(){return currentUser;},
   get demo(){return demoMode;},
   get available(){return !!client;},
-  get consented(){return !!currentProfile?.personalization_opt_in;},
+  get consented(){return currentProfile?!!currentProfile.personalization_opt_in:null;},
   setPersonalization,
   async syncFavorite(place_id,added){
     if(!client||!currentUser||typeof place_id!=='string'||place_id.length>250)return;
