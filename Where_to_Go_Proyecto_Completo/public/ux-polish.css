@@ -159,3 +159,15 @@
  #view-explorar .explorer-result-heading h2{font-size:23px!important}
  #view-explorar #explore-map{min-height:41px!important;padding:7px 10px!important;font-size:11px!important}
 }
+
+/* Small transient status pill above the tab bar, not a large card overlay. */
+@media(max-width:820px){
+ #toast.toast{
+   bottom:calc(80px + env(safe-area-inset-bottom))!important;
+   max-width:min(296px,calc(100vw - 50px))!important;
+   padding:10px 13px!important;border:1px solid #ffffff3b!important;
+   border-radius:18px!important;font-size:11px!important;font-weight:750!important;
+   line-height:1.35!important;background:#073678ee!important;
+   backdrop-filter:blur(8px)!important;box-shadow:0 6px 19px #001c3e55!important
+ }
+}
