@@ -278,7 +278,7 @@ test('Búsqueda inicial también incorpora negocios cotidianos sin consumir la e
  assert(stages[2].sector==='east');
  const src=fs.readFileSync(path.join(root,'app.js'),'utf8');
  assert(src.includes("batch:'essentials'"));
- assert(src.includes("if(state.category==='todos'&&result?.status!=='error')"));
+ assert(src.includes("if(state.category==='todos'&&state.mode!=='sector'&&result?.status!=='error')"));
 });
 
 test('Catálogo local caído no desactiva Google Places y no duplica negocios al llegar las celdas',()=>{
