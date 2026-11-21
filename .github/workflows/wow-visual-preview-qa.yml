@@ -24,6 +24,15 @@ jobs:
           assert '/wow-premium-preview.css?v=1' in html
           assert html.index('/wow-premium-preview.css?v=1')>html.index('/area-discovery.css?v=1')
           assert style.count('{')==style.count('}'), 'Unbalanced CSS rules'
+          assert Path('Where_to_Go_Proyecto_Completo/public/wow-theme-profile.css').is_file()
+          assert Path('Where_to_Go_Proyecto_Completo/public/wow-theme-profile.js').is_file()
+          assert '/wow-theme-profile.css?v=1' in html
+          assert '/wow-theme-profile.js?v=1' in html
+          assert 'href="/privacidad.html"' in html and 'href="/terminos.html"' in html
+          for name in ('privacidad.html','terminos.html'):
+              page=Path('Where_to_Go_Proyecto_Completo/public',name).read_text()
+              assert '<h1>' in page and 'Pendiente de completar' in page, name
+
           assert not any(term in style for term in ['@import','background-image:url(http','javascript:'])
           for path in ['app.js','google-places-adapter.js','world-location.js','world-explorer.js','auth.js']:
               assert Path('Where_to_Go_Proyecto_Completo/public',path).is_file(),path
@@ -51,6 +60,8 @@ jobs:
             const response=await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded',timeout:40000});
             if(response?.status()!==200)throw Error(label+' home '+response?.status());
             const styles=await page.evaluate(async()=>{
+              const legal=await Promise.all(['/privacidad.html','/terminos.html','/wow-theme-profile.css?v=1','/wow-theme-profile.js?v=1'].map(async u=>(await fetch(u)).status));
+              if(legal.some(code=>code!==200))throw Error('Legal/theme assets missing '+legal);
               const r=await fetch('/wow-premium-preview.css?v=1');
               return {status:r.status,size:(await r.text()).length,
                 hero:!!document.querySelector('#view-inicio .hero'),
