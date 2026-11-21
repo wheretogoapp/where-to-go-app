@@ -1,5 +1,5 @@
 /* Offline pilot: bundled public destinations/photos; no location or personal data cached. */
-const CACHE='where-to-go-shell-v12-destination-discovery';
+const CACHE='where-to-go-shell-v13-puerto-plata-autoload';
 const ASSETS=['/','/index.html','/styles.css','/premium.css','/experience.css','/visual-v7.css','/world-v8.css','/mobile-focus.css','/world-v8.js','/assets/wtg-brand.svg','/experience.js','/onboarding.js','/onboarding.css','/native-mobile.css','/ux-polish.css','/local-discovery.css','/category-motion.css','/google-places-adapter.js','/app.js','/language.js','/manifest.webmanifest','/data/place-gallery.json','/data/pilot-places.json','/data/municipios-rd.json','/data/province-heroes.json','/province-heroes.js','/auth.js','/config.js','/data/aventuras.json','/privacidad.html','/terminos.html','/assets/favicon.svg','/assets/icon-192.png','/assets/icon-512.png'];
 self.addEventListener('install',event=>{
  event.waitUntil((async()=>{
