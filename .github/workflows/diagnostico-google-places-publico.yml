@@ -80,5 +80,35 @@ jobs:
             console.log('APP_JS_ERROR_TYPES:',JSON.stringify(jsErrors.slice(0,8)));
             if(!info.scriptLoaded||info.puerto?.status!=='ok'||info.puerto.count<1||info.santiago?.status!=='ok'||info.santiago.count<1)
               throw Error('El adaptador no recuperó resultados reales de Google Places en dos provincias');
+            // Fresh mobile browser context: test the actual app's FIRST 12 km
+            // search in Villa Montellano, without touching the radius dropdown.
+            const fresh=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'es-DO'});
+            const freshErrors=[];
+            fresh.on('pageerror',e=>freshErrors.push(String(e?.name||'Error')));
+            await fresh.goto(process.env.SITE,{waitUntil:'domcontentloaded',timeout:45000});
+            await fresh.waitForFunction(()=>!!window.WTG_GOOGLE_PLACES?.configured()&&typeof loadPlaces==='function',{timeout:18000});
+            await fresh.evaluate(()=>{
+              Object.assign(state,{city:'Villa Montellano',province:'Puerto Plata',region:'Puerto Plata',
+                lat:19.73,lon:-70.60,mode:'municipio',radius:12000,
+                search:'',category:'todos',exploreLimit:80});
+              window.WTG_ACTIVE_COUNTRY='DO';
+              void loadPlaces();
+            });
+            try{
+              await fresh.waitForFunction(()=>state.places.filter(p=>p.source==='google'&&!!p.photo).length>=8,null,{timeout:75000});
+            }catch{}
+            const firstLoad=await fresh.evaluate(()=>({
+              city:state.city,radius:state.radius,dataMode:state.dataMode,
+              places:state.places.length,photos:state.places.filter(p=>!!p.photo).length,
+              google:state.places.filter(p=>p.source==='google').length,
+              googlePhotos:state.places.filter(p=>p.source==='google'&&!!p.photo).length,
+              exploreCount:document.getElementById('explore-count')?.textContent,
+              googleIssue:!!state.googleIssue
+            }));
+            console.log('VILLA_MONTELLANO_FIRST_LOAD:',JSON.stringify(firstLoad));
+            console.log('VILLA_MONTELLANO_JS_ERROR_TYPES:',JSON.stringify(freshErrors.slice(0,5)));
+            await fresh.close();
+            if(firstLoad.radius!==12000||firstLoad.googlePhotos<8)
+              throw Error('Villa Montellano sigue sin cargar suficientes fotos Google en la primera búsqueda a 12 km');
           }finally{await browser.close();}
           JS
