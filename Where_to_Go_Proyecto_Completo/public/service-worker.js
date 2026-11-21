@@ -1,9 +1,12 @@
 /* Offline pilot: bundled public destinations/photos; no location or personal data cached. */
-const CACHE='where-to-go-shell-v11-premium';
-const ASSETS=['/','/index.html','/styles.css','/premium.css','/experience.css','/visual-v7.css','/world-v8.css','/mobile-focus.css','/world-v8.js','/assets/wtg-brand.svg','/experience.js','/app.js','/language.js','/manifest.webmanifest','/data/place-gallery.json','/data/pilot-places.json','/data/municipios-rd.json','/data/province-heroes.json','/province-heroes.js','/auth.js','/config.js','/data/aventuras.json','/privacidad.html','/terminos.html','/assets/favicon.svg','/assets/icon-192.png','/assets/icon-512.png'];
+const CACHE='where-to-go-shell-v12-destination-discovery';
+const ASSETS=['/','/index.html','/styles.css','/premium.css','/experience.css','/visual-v7.css','/world-v8.css','/mobile-focus.css','/world-v8.js','/assets/wtg-brand.svg','/experience.js','/onboarding.js','/onboarding.css','/native-mobile.css','/ux-polish.css','/local-discovery.css','/category-motion.css','/google-places-adapter.js','/app.js','/language.js','/manifest.webmanifest','/data/place-gallery.json','/data/pilot-places.json','/data/municipios-rd.json','/data/province-heroes.json','/province-heroes.js','/auth.js','/config.js','/data/aventuras.json','/privacidad.html','/terminos.html','/assets/favicon.svg','/assets/icon-192.png','/assets/icon-512.png'];
 self.addEventListener('install',event=>{
  event.waitUntil((async()=>{
-  const cache=await caches.open(CACHE);await cache.addAll(ASSETS);
+  const cache=await caches.open(CACHE);
+  // One optional resource must never prevent the whole PWA from installing.
+  await cache.addAll(['/','/index.html','/styles.css','/app.js']);
+  await Promise.allSettled(ASSETS.filter(asset=>!['/','/index.html','/styles.css','/app.js'].includes(asset)).map(asset=>cache.add(asset)));
   const data=await cache.match('/data/pilot-places.json');const places=await data.json();
   // The shell remains installable if one optional photograph is unavailable.
   await Promise.allSettled([...new Set(places.map(p=>p.photo).filter(p=>/^\/assets\/places\//.test(p)))].map(path=>cache.add(path)));
@@ -29,7 +32,10 @@ self.addEventListener('fetch',event=>{
     return new Response('Sin conexión',{status:503,statusText:'Offline'});
   };
   try{
-    const response=await fetch(event.request);
+    // Fetch fresh HTML and app code after every deployment. Cached shell is
+    // exclusively a fallback during network outages, not the primary source.
+    const isCode=event.request.mode==='navigate'||/\.(?:js|css|html)$/.test(u.pathname);
+    const response=await fetch(isCode?new Request(event.request,{cache:'no-store'}):event.request);
     if(response.ok){
       if(isLocalData){try{await cache.put(u.pathname,response.clone())}catch{/* Safari storage quota can vary */}}
       return response;
