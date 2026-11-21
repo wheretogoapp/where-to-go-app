@@ -124,6 +124,48 @@ try{
     assert.equal(chosen.radius,12000,'El radio por municipio no debe mostrar lugares de zonas lejanas');
     console.log('SAME APP EXPERIENCE:',JSON.stringify(chosen));
   }
+  // Exercise ALL provincial hubs, not just the showcase in Las Terrenas.
+  // Stub the data fetch for this navigation-only check: never run 32 paid or
+  // network-heavy location searches simply to verify cover accuracy.
+  const nationwide=await page.evaluate(()=>{
+    const load=window.loadPlaces;
+    window.loadPlaces=async()=>{};
+    const results=[];
+    try{
+      for(const province of Object.keys(window.WTG_PROVINCE_HEROES||{})){
+        selectProvinceHub(province);
+        renderAll();
+        const hero=window.WTG_PROVINCE_HEROES[province];
+        const cover=document.querySelector('#view-inicio .hero');
+        const art=cover?.querySelector('.hero-art');
+        results.push({
+          province,matched:provinceFromCity()===province,
+          mode:state.mode,view:state.view,
+          city:state.city,source:hero?.source||'',
+          license:hero?.license||'',photo:hero?.photo||'',
+          coverHeight:Math.round(cover?.getBoundingClientRect().height||0),
+          heroSlides:document.getElementById('wtg-hero-progress')?.textContent||'',
+          backgroundSet:!!art?.dataset.wtgImage,
+          range:state.radius
+        });
+      }
+    }finally{window.loadPlaces=load;}
+    return results;
+  });
+  assert.equal(nationwide.length,32,'No están disponibles las 32 portadas provinciales');
+  for(const entry of nationwide){
+    assert(entry.matched,entry.province+' muestra otra provincia');
+    assert.equal(entry.view,'inicio',entry.province+' no abre la portada');
+    assert.equal(entry.mode,'city',entry.province+' no seleccionó su centro provincial');
+    assert.equal(entry.range,30000,entry.province+' tiene un radio distinto al provincial');
+    assert(entry.coverHeight>100,entry.province+' tiene una portada móvil oculta');
+    assert(/^https:\/\//.test(entry.photo)&&/^https:\/\//.test(entry.source)&&entry.license,
+      entry.province+' no tiene foto identificada, fuente y licencia');
+    assert(entry.backgroundSet,entry.province+' no preparó la foto de su portada');
+  }
+  console.log('32 PROVINCE HOME COVERS VERIFIED:',
+    JSON.stringify(nationwide.map(({province,city,heroSlides})=>({province,city,heroSlides}))));
+
   // Check that sector cards actually change the local search center and
   // return to the selected municipality (no fabricated neighborhood names).
   await page.evaluate(()=>selectCity('Santiago de los Caballeros'));
