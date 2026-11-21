@@ -183,6 +183,7 @@ function distance(m){return Number.isFinite(m)?m<1000?`${Math.round(m)} m`:`${(m
 function catInfo(id){const c=CATEGORY_BY_ID[id]||CATEGORY_BY_ID.atracciones;return {...c,name:window.WTG_I18N?.category(c.id,c.name)||c.name}}
 // Solo mostrar en los resultados destacados fotos vinculadas a la ficha.
 const wtgUnavailableImageUrls=new Set();
+let wtgBrokenPhotoRefreshScheduled=false;
 function hasCatalogPhoto(p){const url=safeUrl(p?.photo||placeGalleryPhotos(p)?.[0]?.url||'');return !!url&&!wtgUnavailableImageUrls.has(url)}
 function isVisibleBusiness(p){return !!p&&p.nameKnown!==false&&
   !['escuelas','iglesias'].includes(p.cat)&&hasCatalogPhoto(p)}
@@ -211,6 +212,16 @@ document.addEventListener('error', event => {
   if(failedSrc)wtgUnavailableImageUrls.add(failedSrc);
   fallback.append(sign,label);el.replaceWith(fallback);
   card?.classList.add('wtg-photo-load-failed');
+  // The page must not keep a broken photo card in the photo-first grid.
+  // Re-render once after the failed URL is memoized; no retry loop.
+  if(!wtgBrokenPhotoRefreshScheduled&&typeof state!=='undefined'){
+    wtgBrokenPhotoRefreshScheduled=true;
+    requestAnimationFrame(()=>{
+      wtgBrokenPhotoRefreshScheduled=false;
+      if(state.view==='explorar')renderExplore();
+      else if(state.view==='inicio')renderHome();
+    });
+  }
 },true);
 function regionalScene(p){
   // Province scenery is never published as the photo of a particular business.
