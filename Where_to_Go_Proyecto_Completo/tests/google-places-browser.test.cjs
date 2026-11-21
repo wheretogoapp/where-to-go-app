@@ -261,3 +261,21 @@ test('Al ampliar, fusionar por Place ID y mostrar solo fotos verificables de Goo
   assert(code.includes("batch:'essentials'"));
   assert(code.includes("data-google-more"));
 });
+
+
+test('Ampliación manual recorre como máximo tres sectores por toque',()=>{
+ const src=fs.readFileSync(path.join(root,'app.js'),'utf8');
+ assert(src.includes('for(let part=0;part<3&&wtgGoogleStage<stages.length;part++)'));
+ assert(src.includes("batch:stage.batch,sector:stage.sector"));
+ assert(src.includes("Google: '+added+' negocios nuevos con foto"));
+});
+test('Búsqueda inicial también incorpora negocios cotidianos sin consumir la exploración de sectores',()=>{
+ const {api}=configuredBrowser();
+ const stages=api.scanStages();
+ assert(stages[0].sector==='center');
+ assert(stages[1].sector==='north');
+ assert(stages[2].sector==='east');
+ const src=fs.readFileSync(path.join(root,'app.js'),'utf8');
+ assert(src.includes("batch:'essentials'"));
+ assert(src.includes("if(state.category==='todos'&&result?.status!=='error')"));
+});
