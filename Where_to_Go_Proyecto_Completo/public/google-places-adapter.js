@@ -30,10 +30,33 @@ const categories={
  lavaderos:['car_wash'],lavanderias:['laundry'],taxis:['taxi_stand'],
  servicios:['lawyer','accounting'],deportes:['gym','sports_complex']
 };
+// Los resultados son en vivo: no se descargan ni se guardan fichas o fotos de Google.
 const ALL_GROUPS={
  main:['restaurant','hotel','supermarket','pharmacy','barber_shop','beauty_salon','bar','cafe','tourist_attraction','night_club'],
- extra:['hair_salon','grocery_store','shopping_mall','convenience_store','fast_food_restaurant','gas_station','car_wash','gym','beach','bank']
+ essentials:['grocery_store','shopping_mall','hair_salon','gas_station','bank'],
+ extra:['hair_salon','grocery_store','shopping_mall','convenience_store','fast_food_restaurant','gas_station','car_wash','gym','beach','bank'],
+ districts:['restaurant','hotel','supermarket','pharmacy','barber_shop','beauty_salon','cafe','night_club','grocery_store','shopping_mall']
 };
+const SCAN_STAGES=[
+  {batch:'extra',sector:'center',name:'Comercios y servicios del centro'},
+  {batch:'districts',sector:'north',name:'Negocios de la zona norte'},
+  {batch:'districts',sector:'east',name:'Negocios de la zona este'},
+  {batch:'districts',sector:'south',name:'Negocios de la zona sur'},
+  {batch:'districts',sector:'west',name:'Negocios de la zona oeste'},
+  {batch:'extra',sector:'north-east',name:'Comercios del noreste'},
+  {batch:'extra',sector:'south-west',name:'Comercios del suroeste'}
+];
+function shiftedCenter(lat,lon,radius,sector='center'){
+  const offset=Math.min(8000,Math.max(1200,radius*0.33));
+  const directions={
+    center:[0,0],north:[1,0],south:[-1,0],east:[0,1],west:[0,-1],
+    'north-east':[0.707,0.707],'south-west':[-0.707,-0.707]
+  };
+  const [n,e]=directions[sector]||directions.center;
+  const longitudeMeters=111195*Math.max(0.2,Math.cos(lat*Math.PI/180));
+  return {lat:lat+n*offset/111195,lng:lon+e*offset/longitudeMeters};
+}
+function scanStages(){return SCAN_STAGES.map((x,i)=>({...x,index:i}));}
 let promise=null;
 function configured(){return typeof root.WTG_GOOGLE_MAPS_KEY==='string'&&root.WTG_GOOGLE_MAPS_KEY.trim().length>15}
 function load(){
@@ -67,7 +90,7 @@ function photoSet(place,max=5){
  }
  return images;
 }
-async function nearby({lat,lon,radius=12000,category='todos',batch='main'}){
+async function nearby({lat,lon,radius=12000,category='todos',batch='main',sector='center'}){
  if(!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)throw Error('Coordenadas inválidas');
  if(!await load())return {status:'unconfigured',places:[]};
  try{
@@ -76,7 +99,7 @@ async function nearby({lat,lon,radius=12000,category='todos',batch='main'}){
   const types=category==='todos'?(ALL_GROUPS[batch]||ALL_GROUPS.main):(categories[category]||[]);
   if(!types.length)return {status:'unsupported',places:[]};
   const results=await Promise.allSettled(types.slice(0,10).map(async type=>{
-   const response=await Place.searchNearby({fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],locationRestriction:{center:{lat,lng:lon},radius:Math.min(50000,Math.max(100,radius))},includedPrimaryTypes:[type],maxResultCount:20,rankPreference:'DISTANCE'});
+   const response=await Place.searchNearby({fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],locationRestriction:{center:shiftedCenter(lat,lon,radius,sector),radius:Math.min(50000,Math.max(100,radius))},includedPrimaryTypes:[type],maxResultCount:20,rankPreference:'DISTANCE'});
    return response.places||[];
   }));
   const map=new Map();let failures=0;
@@ -93,7 +116,7 @@ async function nearby({lat,lon,radius=12000,category='todos',batch='main'}){
     });
    }
   }
-  return {status:map.size?'ok':failures===results.length?'error':'empty',places:[...map.values()],failures,requestedTypes:types.length};
+  return {status:map.size?'ok':failures===results.length?'error':'empty',places:[...map.values()],failures,requestedTypes:types.length,batch,sector};
  }catch(error){return {status:'error',places:[],message:String(error?.message||'Places no disponible')}}
 }
 // Coincidencia conservadora para evitar fotos de negocios distintos.
@@ -185,5 +208,5 @@ async function matchPhoto({name,lat,lon}){
   return {status:'not-found'};
  }catch(e){return {status:'error',message:String(e?.message||'No fue posible consultar Google Places').slice(0,160)}}
 }
-root.WTG_GOOGLE_PLACES=Object.freeze({configured,nearby,searchText,matchPhoto,sameEstablishment,matchQuality,meters});
+root.WTG_GOOGLE_PLACES=Object.freeze({configured,nearby,scanStages,shiftedCenter,searchText,matchPhoto,sameEstablishment,matchQuality,meters});
 })(window);
