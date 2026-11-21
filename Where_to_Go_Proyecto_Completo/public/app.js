@@ -1270,7 +1270,7 @@ function renderExplore(){
   arr.sort((a,b)=>(touristDefault?tourismRank(a)-tourismRank(b):0)||priority(a)-priority(b)||a.distance-b.distance);
   $('explore-count').textContent=state.dataMode==='loading'?'...':(state.category==='todos'&&!state.search?arr.filter(hasCatalogPhoto).length:arr.length);
   const withPhoto=arr.filter(hasCatalogPhoto).length;
-  $('explore-context').textContent=`${withPhoto} lugares para descubrir · ${state.city} · hasta ${distance(state.radius)}`;
+  $('explore-context').textContent=`${withPhoto} lugares con foto de ${arr.length} fichas · ${state.city} · hasta ${distance(state.radius)}`;
   // Keep ALL categories in the general photo-first catalogue for every city.
   // Tourist ranking changes order only, not eligibility. Without-photo records
   // remain searchable through their individual category or by name.
@@ -1278,14 +1278,16 @@ function renderExplore(){
   const photoFirst=state.category==='todos'&&!state.search;
   const display=photoFirst?photographed:arr;
   const shown=display.slice(0,state.exploreLimit||80);
+  const expandPuertoPlata=photoFirst&&state.dataMode!=='loading'&&provinceFromCity()==='Puerto Plata'&&state.radius<30000&&withPhoto<=8?
+    '<div class="wtg-more-explore"><span>Esta búsqueda cubre solo '+distance(state.radius)+'. Amplía la zona de Puerto Plata para descubrir más lugares.</span><button type="button" data-expand-puerto-plata="yes">Explorar hasta 30 km ↓</button></div>':'';
   const googleMore=wtgGoogleBusy&&photoFirst?
     '<div class="wtg-more-explore wtg-auto-discovery" role="status" aria-live="polite">Descubriendo más lugares de esta zona…</div>':'';
 
   $('explore-list').innerHTML=state.dataMode==='loading'&&!arr.length?
     '<div class="loading-state"><span class="spinner"></span><div>Buscando lugares reales de esta zona...</div></div>':
     arr.length?shown.map(placeCard).join('')+
-     (display.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${display.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+googleMore:
-    googleMore+emptyBlock('Buscando lugares con fotografías en esta zona','Cambiar zona','location');
+     (display.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${display.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+expandPuertoPlata+googleMore:
+    googleMore+expandPuertoPlata+emptyBlock('Buscando lugares con fotografías en esta zona','Cambiar zona','location');
   $('filter-categories').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.category));
   $('distance-select').value=String(state.radius);
   if($('search-input').value!==state.search)$('search-input').value=state.search;
@@ -1346,7 +1348,7 @@ function selectProvinceHub(province){
   toast('Mostrando lugares alrededor de '+hub.city+', '+province+'. Puedes elegir otro municipio.');
   navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));void loadPlaces();
 }
-function selectCity(name){const c=CITIES.find(x=>x.name===name);if(!c)return;activateDominicanDestination();state.city=c.name;state.province=['Puerto Plata','Sosúa','Cabarete'].includes(c.name)?'Puerto Plata':c.name==='La Romana'?'La Romana':['Punta Cana','Bávaro','Verón–Punta Cana'].includes(c.name)?'La Altagracia':c.name==='Santiago de los Caballeros'?'Santiago':['Las Terrenas','El Limón'].includes(c.name)?'Samaná':c.name==='Santo Domingo de Guzmán'?'Distrito Nacional':'';state.region=c.region;state.lat=c.lat;state.lon=c.lon;state.mode='city';state.category='todos';state.search='';state.radius=c.name==='Las Terrenas'?30000:12000;state.exploreLimit=80;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();navigate(c.name==='Las Terrenas'?'explorar':'inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));toast(`Explorando ${c.name} 🌎`);loadPlaces();}
+function selectCity(name){const c=CITIES.find(x=>x.name===name);if(!c)return;activateDominicanDestination();state.city=c.name;state.province=['Puerto Plata','Sosúa','Cabarete'].includes(c.name)?'Puerto Plata':c.name==='La Romana'?'La Romana':['Punta Cana','Bávaro','Verón–Punta Cana'].includes(c.name)?'La Altagracia':c.name==='Santiago de los Caballeros'?'Santiago':['Las Terrenas','El Limón'].includes(c.name)?'Samaná':c.name==='Santo Domingo de Guzmán'?'Distrito Nacional':'';state.region=c.region;state.lat=c.lat;state.lon=c.lon;state.mode='city';state.category='todos';state.search='';state.radius=(c.name==='Las Terrenas'||c.name==='Puerto Plata')?30000:12000;state.exploreLimit=80;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();navigate(c.name==='Las Terrenas'?'explorar':'inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));toast(`Explorando ${c.name} 🌎`);loadPlaces();}
 function loadCachedMunicipalities(){try{const v=JSON.parse(localStorage.getItem('wtg_municipalities_v2')||'null');return Array.isArray(v)&&v.length===158?v:[]}catch{return[]}}
 async function loadMunicipalities(){
   municipalities=loadCachedMunicipalities();if(municipalities.length){updateTaxiMunicipios();refreshMunicipalitySelect();return}
@@ -1383,7 +1385,7 @@ async function selectMunicipality(){
     const {lat,lon}=await window.WTG_MUNICIPAL_GEOCODER.locate({
       city:selected.municipio,province:selected.provincia
     });
-    activateDominicanDestination();state.lat=lat;state.lon=lon;state.city=selected.municipio;state.province=selected.provincia;state.region=selected.provincia+' · RD';state.mode='municipio';state.category='todos';state.search='';state.radius=12000;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));toast(`Explorando ${selected.municipio}, ${selected.provincia}`);loadPlaces();
+    activateDominicanDestination();state.lat=lat;state.lon=lon;state.city=selected.municipio;state.province=selected.provincia;state.region=selected.provincia+' · RD';state.mode='municipio';state.category='todos';state.search='';state.radius=selected.provincia==='Puerto Plata'?30000:12000;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));toast(`Explorando ${selected.municipio}, ${selected.provincia}`);loadPlaces();
   }catch(e){toast(e.message||'No fue posible localizar el municipio.');$('municipal-status').textContent='No se cambió de ciudad: ubicación sin verificar.'}
   finally{btn.disabled=false;btn.textContent='Explorar este municipio →'}
 }
@@ -1576,6 +1578,7 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
     const v=e.target.closest('[data-view]');if(v){navigate(v.dataset.view);return}
     const c=e.target.closest('[data-cat]');if(c){if(c.dataset.cat==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=c.dataset.cat;state.search='';const expand=state.mode!=='gps'&&state.radius<30000;if(expand)state.radius=30000;navigate('explorar');void loadPlaces();return}
     const f=e.target.closest('[data-filter]');if(f){if(f.dataset.filter==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=f.dataset.filter;const expand=state.mode!=='gps'&&state.category!=='todos'&&state.radius<30000;if(expand)state.radius=30000;void loadPlaces();return}
+    const expandPuertoPlata=e.target.closest('[data-expand-puerto-plata]');if(expandPuertoPlata){state.radius=30000;state.exploreLimit=80;void loadPlaces();return}
     const more=e.target.closest('[data-more-explore]');if(more){state.exploreLimit=(state.exploreLimit||80)+80;renderExplore();return}
     const unpictured=e.target.closest('[data-toggle-unpictured]');if(unpictured){state.showUnpictured=!state.showUnpictured;state.exploreLimit=80;renderExplore();return}
     const morePhotos=e.target.closest('[data-more-photo]');if(morePhotos){void enrichVisiblePhotoCards(state.loadingId,12);return}
