@@ -250,7 +250,7 @@ function placePhotoMarkup(p, kind='card'){
   // Las fotos de Google utilizan una clave restringida por sitio: envía solo
   // el ORIGEN como Referer; para las fuentes abiertas, conservar no-referrer.
   const referrerPolicy=p.source==='google'||p.googlePhotoMapUrl?'strict-origin-when-cross-origin':'no-referrer';
-  if(src)return `<img class="photo-illustration actual-photo" loading="lazy" decoding="async" src="${esc(src)}" alt="Fotografía vinculada a ${esc(p.name)}" referrerpolicy="${referrerPolicy}" />`;
+  if(src)return `<img class="photo-illustration actual-photo" loading="lazy" decoding="async" fetchpriority="low" width="960" height="640" src="${esc(src)}" alt="Fotografía vinculada a ${esc(p.name)}" referrerpolicy="${referrerPolicy}" />`;
   return placeholder;
 }
 // Galería de fotos del MISMO lugar: solo fotos con fuente y autor/licencia.
@@ -277,11 +277,11 @@ function placeGalleryMarkup(p){
   const first=photos[0],multiple=photos.length>1;
   return `<section class="wtg-gallery" data-gallery-place="${esc(p.id)}" data-gallery-current="0" aria-label="Fotografías auténticas de ${esc(p.name)}">
     <div class="wtg-gallery-stage">
-      <img class="actual-photo wtg-gallery-main" src="${esc(first.url)}" alt="Fotografía 1 de ${photos.length} del lugar ${esc(p.name)}" decoding="async" referrerpolicy="${first.provider==='google'?'strict-origin-when-cross-origin':'no-referrer'}">
+      <img class="actual-photo wtg-gallery-main" fetchpriority="high" width="1200" height="800" src="${esc(first.url)}" alt="Fotografía 1 de ${photos.length} del lugar ${esc(p.name)}" decoding="async" referrerpolicy="${first.provider==='google'?'strict-origin-when-cross-origin':'no-referrer'}">
       ${multiple?'<button type="button" class="wtg-gallery-prev" data-gallery-step="-1" aria-label="Fotografía anterior">‹</button><button type="button" class="wtg-gallery-next" data-gallery-step="1" aria-label="Siguiente fotografía">›</button>':''}
       <span class="wtg-gallery-count">1 / ${photos.length} fotos reales</span>
     </div>
-    ${multiple?'<div class="wtg-gallery-thumbnails" role="group" aria-label="Elegir fotografía">'+photos.map((photo,i)=>`<button type="button" data-gallery-thumb="${i}" aria-label="Ver foto ${i+1}" aria-pressed="${i===0}" class="${i===0?'active':''}"><img src="${esc(photo.url)}" alt="" loading="lazy" referrerpolicy="${photo.provider==='google'?'strict-origin-when-cross-origin':'no-referrer'}"></button>`).join('')+'</div>':''}
+    ${multiple?'<div class="wtg-gallery-thumbnails" role="group" aria-label="Elegir fotografía">'+photos.map((photo,i)=>`<button type="button" data-gallery-thumb="${i}" aria-label="Ver foto ${i+1}" aria-pressed="${i===0}" class="${i===0?'active':''}"><img src="${esc(photo.url)}" alt="" loading="lazy" decoding="async" fetchpriority="low" width="100" height="72" referrerpolicy="${photo.provider==='google'?'strict-origin-when-cross-origin':'no-referrer'}"></button>`).join('')+'</div>':''}
     <p class="wtg-gallery-credit">Foto: <span data-gallery-attribution>${esc(first.attribution)}</span> · <a data-gallery-source href="${esc(first.source)}" target="_blank" rel="noopener noreferrer">Ver original y derechos ↗</a>${first.provider==='google'?'':`<a data-gallery-license href="${esc(first.license||first.source)}" target="_blank" rel="noopener noreferrer">Licencia</a>`}</p>
   </section>`;
 }
@@ -1244,10 +1244,17 @@ function renderHome(){renderProvincePremium();renderLocalDiscovery();
  const coverage=document.getElementById('wtg-coverage-counts');
  if(coverage)coverage.textContent=state.dataMode==='loading'?'Consultando lugares…':`${candidates.length} con foto en esta zona · ${googleCount} Google Maps · ${candidates.length-googleCount} otras fuentes`;
  const sorted=tourismSort(candidates).slice(0,12);
+ // Keep image elements mounted if another provider update leaves the cards unchanged.
+ const homeSignature=[state.dataMode,state.city,state.radius,...sorted.map(p=>
+  [p.id,p.name,p.address,Math.round(p.distance),placeCoverUrl(p),
+   state.favorites.includes(p.id)?'fav':'',placeGalleryPhotos(p).length].join('|'))].join('~');
+ if(!list.dataset||list.dataset.wtgSignature!==homeSignature){
  list.innerHTML=state.dataMode==='loading'&&!sorted.length?
    '<div class="wtg-loading-cards" aria-label="Buscando fotos de negocios reales"><div class="wtg-skeleton-card"></div><div class="wtg-skeleton-card"></div><div class="wtg-skeleton-card"></div></div>':
    sorted.length?sorted.map(placeCard).join(''):
    emptyBlock('Todavía no hay fotografías verificadas para esta búsqueda','Cambiar zona','location');
+ if(list.dataset)list.dataset.wtgSignature=homeSignature;
+ }
   const mainPromo=document.getElementById('province-anchor-sponsor');
   if(mainPromo){mainPromo.hidden=provinceFromCity()!=='Puerto Plata';}
   const alert=$('location-alert'),title=$('location-alert-title'),desc=$('location-alert-desc'),btn=$('alert-locate');
@@ -1283,11 +1290,19 @@ function renderExplore(){
   const googleMore=wtgGoogleBusy&&photoFirst?
     '<div class="wtg-more-explore wtg-auto-discovery" role="status" aria-live="polite">Descubriendo más lugares de esta zona…</div>':'';
 
-  $('explore-list').innerHTML=state.dataMode==='loading'&&!arr.length?
+  const exploreTarget=$('explore-list');
+  const exploreSignature=[state.dataMode,state.city,state.radius,state.category,state.search,
+    state.exploreLimit,wtgGoogleBusy?'busy':'idle',...shown.map(p=>
+    [p.id,p.name,p.address,Math.round(p.distance),placeCoverUrl(p),
+      state.favorites.includes(p.id)?'fav':'',placeGalleryPhotos(p).length].join('|'))].join('~');
+  if(!exploreTarget.dataset||exploreTarget.dataset.wtgSignature!==exploreSignature){
+  exploreTarget.innerHTML=state.dataMode==='loading'&&!arr.length?
     '<div class="loading-state"><span class="spinner"></span><div>Buscando lugares reales de esta zona...</div></div>':
     arr.length?shown.map(placeCard).join('')+
      (display.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${display.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+expandPuertoPlata+googleMore:
     googleMore+expandPuertoPlata+emptyBlock('Buscando lugares con fotografías en esta zona','Cambiar zona','location');
+  if(exploreTarget.dataset)exploreTarget.dataset.wtgSignature=exploreSignature;
+  }
   $('filter-categories').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.category));
   $('distance-select').value=String(state.radius);
   if($('search-input').value!==state.search)$('search-input').value=state.search;
@@ -1296,12 +1311,12 @@ function renderFavorites(){const arr=state.favoritePlaces.filter(hasCatalogPhoto
 function toggleFavorite(id){const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);if(!p)return;const has=state.favorites.includes(id);state.favorites=has?state.favorites.filter(x=>x!==id):[...state.favorites,id];state.favoritePlaces=has?state.favoritePlaces.filter(x=>x.id!==id):[...state.favoritePlaces,p];saveJSON('wtg_favorites',state.favorites);saveJSON('wtg_favorite_places',state.favoritePlaces);toast(has?'Eliminado de favoritos':'Guardado en tus favoritos ♥');renderAll();}
 function renderAll(){if(!wtgProvincePreview)updateProvinceHero();updateProviderNotice();renderCategories();renderHome();renderExplore();renderFavorites();if(state.view==='mapa')renderMap();renderTaxis();$('location-label').textContent=(window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')?('📍 '+(window.WTG_ACTIVE_DESTINATION||window.WTG_ACTIVE_COUNTRY)):state.mode==='gps'?`📍 ${state.city==='Cerca de mí'?'Mi GPS':state.city}`:state.mode==='pending'?'📍 Activar ubicación':`📍 ${state.city}`;window.WTG_EXPERIENCE?.update?.();window.WTG_AREA_DISCOVERY?.refresh?.();window.WTG_PILOT?.refresh?.();window.WTG_PHOTO_ATLAS?.refresh?.();}
 function openPlace(id){window.WTG_auth?.recordView?.(id, state.places.find(p=>p.id===id)?.cat||"atracciones");const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);if(!p)return;
-  const c=catInfo(p.cat),fav=state.favorites.includes(id),website=safeUrl(p.website),phone=normalizedPhone(p.phone);
+  const c=catInfo(p.cat),fav=state.favorites.includes(id),website=safeUrl(p.website),phone=normalizedPhone(p.phone),photoTotal=placeGalleryPhotos(p).length;
   const osmMap=`https://www.openstreetmap.org/?mlat=${encodeURIComponent(p.lat)}&mlon=${encodeURIComponent(p.lon)}#map=18/${p.lat}/${p.lon}`;
   // Google Maps will route by Google Place ID if available; otherwise by the exact OSM mapped point.
   const directions=p.googleDirections||`https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=${encodeURIComponent(state.lat+','+state.lon)}%3B${encodeURIComponent(p.lat+','+p.lon)}`;
   const prov=p.sponsored?'Anunciante verificado · Publicidad':p.source==='propietario'?'Ficha revisada · Propietario':p.source==='google'?GOOGLE_BRAND:(p.source==='mitur'?'Ministerio de Turismo RD':p.source==='editorial'?'Cartografía documentada · consulta la fuente':p.source==='overture'?'© Overture Maps · Confirmar datos':'© OpenStreetMap contributors');
-  $('place-modal-body').innerHTML=`${placeGalleryMarkup(p)}<div class="detail-content"><span class="detail-cat">${c.emoji} ${esc(c.name)}</span><h2 id="place-modal-title">${esc(p.name)}</h2><p class="detail-location">⌖ ${esc(p.address||'Dirección no publicada')} · ${distance(p.distance)} en línea recta ${state.mode==='gps'?'desde tu GPS':'desde el centro de búsqueda'}</p><p class="detail-description">${esc(p.description||'Esta ficha se obtuvo de un proveedor de lugares reales. Confirma datos importantes antes de visitar.')}</p><div class="detail-facts"><div>🗺️ Fuente: ${prov}</div><div>📍 Punto registrado: ${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}</div>${googleAttribution(p)}<div>📞 ${phone?esc(p.phone):'Teléfono no disponible en la fuente'}</div>${p.tags?.opening_hours?`<div>🕒 Horario registrado: ${esc(p.tags.opening_hours)}</div>`:''}${['osm','overture'].includes(p.source)?`<div>ℹ️ ${esc(p.accuracy||'Punto registrado en OpenStreetMap')}. Si es un área extensa, este punto puede NO ser su entrada. Comprueba la llegada antes de viajar.</div>`:p.source==='mitur'?'<div>ℹ️ Punto de destino vinculado por Turismo RD; la entrada exacta puede ser distinta. Confirma el acceso.</div>':''}</div><div class="detail-actions"><button class="primary" type="button" data-internal-map="${esc(id)}">🗺️ Ver ubicación en Where to Go</button><a target="_blank" rel="noopener" href="${esc(directions)}">🚗 Iniciar navegación ↗</a><a target="_blank" rel="noopener" href="https://waze.com/ul?ll=${encodeURIComponent(p.lat+','+p.lon)}&navigate=yes">🚗 Waze ↗</a><button data-fav="${esc(id)}">${fav?'♥ Quitar favorito':'♡ Guardar lugar'}</button>${website?`<a href="${esc(website)}" target="_blank" rel="noopener">🌐 Sitio web ↗</a>`:''}${phone?`<a href="tel:${esc(phone)}">📞 Llamar</a>`:''}${!p.photo&&window.WTG_GOOGLE_PLACES?.configured()&&!p.googlePhotoTried?`<button type="button" data-fetch-google-photo="${esc(p.id)}">📷 Buscar foto del negocio en Google</button>`:''}${!p.photo?`<button type="button" data-photo-place="${esc(p.id)}">📷 Aportar foto verificada</button>`:''}${p.source==='google'?`<a target="_blank" rel="noopener" href="${esc(p.googleUri||directions)}">Ver ficha en Google Maps ↗</a>`:`<a class="full-line" target="_blank" rel="noopener" href="${esc(p.source==='mitur'||p.source==='editorial'||p.source==='overture'||p.sponsored||p.source==='propietario'?(safeUrl(p.sourceUrl)||osmMap):osmMap)}">${p.sponsored?'Ver web del anunciante ↗':p.source==='propietario'?'Ver ubicación verificada ↗':p.source==='mitur'?'Ver fuente turística oficial ↗':p.source==='overture'?'Ver datos de Overture Maps ↗':p.source==='editorial'?'Ver fuente del lugar ↗':'Ver ficha en OpenStreetMap ↗'}</a>`}</div></div>`;
+  $('place-modal-body').innerHTML=`${placeGalleryMarkup(p)}<div class="detail-content"><div class="wtg-detail-eyebrow">✦ DESCUBRE ESTE LUGAR · ${photoTotal?photoTotal+" FOTO"+(photoTotal===1?"":"S"):"FOTOGRAFÍA PENDIENTE"}</div><span class="detail-cat">${c.emoji} ${esc(c.name)}</span><h2 id="place-modal-title">${esc(p.name)}</h2><p class="detail-location">⌖ ${esc(p.address||'Dirección no publicada')} · ${distance(p.distance)} en línea recta ${state.mode==='gps'?'desde tu GPS':'desde el centro de búsqueda'}</p><p class="detail-description">${esc(p.description||'Esta ficha se obtuvo de un proveedor de lugares reales. Confirma datos importantes antes de visitar.')}</p><div class="detail-facts"><div>🗺️ Fuente: ${prov}</div><div>📍 Punto registrado: ${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}</div>${googleAttribution(p)}<div>📞 ${phone?esc(p.phone):'Teléfono no disponible en la fuente'}</div>${p.tags?.opening_hours?`<div>🕒 Horario registrado: ${esc(p.tags.opening_hours)}</div>`:''}${['osm','overture'].includes(p.source)?`<div>ℹ️ ${esc(p.accuracy||'Punto registrado en OpenStreetMap')}. Si es un área extensa, este punto puede NO ser su entrada. Comprueba la llegada antes de viajar.</div>`:p.source==='mitur'?'<div>ℹ️ Punto de destino vinculado por Turismo RD; la entrada exacta puede ser distinta. Confirma el acceso.</div>':''}</div><div class="detail-actions"><button class="primary" type="button" data-internal-map="${esc(id)}">🗺️ Ver ubicación en Where to Go</button><a target="_blank" rel="noopener" href="${esc(directions)}">🚗 Iniciar navegación ↗</a><a target="_blank" rel="noopener" href="https://waze.com/ul?ll=${encodeURIComponent(p.lat+','+p.lon)}&navigate=yes">🚗 Waze ↗</a><button data-fav="${esc(id)}">${fav?'♥ Quitar favorito':'♡ Guardar lugar'}</button>${website?`<a href="${esc(website)}" target="_blank" rel="noopener">🌐 Sitio web ↗</a>`:''}${phone?`<a href="tel:${esc(phone)}">📞 Llamar</a>`:''}${!p.photo&&window.WTG_GOOGLE_PLACES?.configured()&&!p.googlePhotoTried?`<button type="button" data-fetch-google-photo="${esc(p.id)}">📷 Buscar foto del negocio en Google</button>`:''}${!p.photo?`<button type="button" data-photo-place="${esc(p.id)}">📷 Aportar foto verificada</button>`:''}${p.source==='google'?`<a target="_blank" rel="noopener" href="${esc(p.googleUri||directions)}">Ver ficha en Google Maps ↗</a>`:`<a class="full-line" target="_blank" rel="noopener" href="${esc(p.source==='mitur'||p.source==='editorial'||p.source==='overture'||p.sponsored||p.source==='propietario'?(safeUrl(p.sourceUrl)||osmMap):osmMap)}">${p.sponsored?'Ver web del anunciante ↗':p.source==='propietario'?'Ver ubicación verificada ↗':p.source==='mitur'?'Ver fuente turística oficial ↗':p.source==='overture'?'Ver datos de Overture Maps ↗':p.source==='editorial'?'Ver fuente del lugar ↗':'Ver ficha en OpenStreetMap ↗'}</a>`}</div></div>`;
   openModal('place-modal');
   // Al abrir un lugar sin foto se intenta verificar esa ficha, no otro negocio.
   // Se evita repetir la consulta y el presupuesto técnico limita el consumo.
@@ -1607,7 +1622,31 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
     const empty=e.target.closest('[data-empty]');if(empty){if(empty.dataset.empty==='radius'){$('distance-select').value='30000';state.radius=30000;loadPlaces()}else if(empty.dataset.empty==='explore')navigate('explorar');else openModal('location-modal');return}
     if(e.target.closest('[data-close]')){closeModals();return}
   });
-  $('overlay').addEventListener('click',closeModals);document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModals();if(e.key==='Enter'&&e.target.matches('[data-map-place]'))e.target.click()});
+  // Swipe only the gallery image; leave the vertical page scroll intact.
+  let galleryTouch=null;
+  document.addEventListener('pointerdown',e=>{
+    const stage=e.target.closest?.('#place-modal .wtg-gallery-stage');
+    if(!stage||e.pointerType!=='touch'||e.target.closest('button'))return;
+    galleryTouch={x:e.clientX,y:e.clientY,id:e.pointerId,stage};
+  },{passive:true});
+  document.addEventListener('pointerup',e=>{
+    const touch=galleryTouch;galleryTouch=null;
+    if(!touch||touch.id!==e.pointerId||!touch.stage.isConnected)return;
+    const dx=e.clientX-touch.x,dy=e.clientY-touch.y;
+    if(Math.abs(dx)<55||Math.abs(dx)<Math.abs(dy)*1.4)return;
+    const gallery=touch.stage.closest('.wtg-gallery');
+    if(gallery)selectGalleryPhoto(gallery,Number(gallery.dataset.galleryCurrent||0)+(dx<0?1:-1));
+  },{passive:true});
+  document.addEventListener('pointercancel',()=>{galleryTouch=null},{passive:true});
+  $('overlay').addEventListener('click',closeModals);document.addEventListener('keydown',e=>{
+    if(e.key==='Escape')closeModals();
+    if(e.key==='Enter'&&e.target.matches('[data-map-place]'))e.target.click();
+    const gallery=e.target.closest?.('#place-modal .wtg-gallery');
+    if(gallery&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){
+      e.preventDefault();
+      selectGalleryPhoto(gallery,Number(gallery.dataset.galleryCurrent||0)+(e.key==='ArrowRight'?1:-1));
+    }
+  });
   $('location-pill').onclick=()=>openModal('location-modal');$('top-refresh').onclick=()=>{toast('Actualizando lugares...');loadPlaces(true)};$('top-business').onclick=()=>navigate('promocionar');$('side-promote').onclick=()=>navigate('promocionar');$('mobile-brand').onclick=()=>navigate('inicio');
   $('hero-explore').onclick=()=>navigate('explorar');$('home-see-all').onclick=()=>navigate('explorar');$('show-all-categories').onclick=()=>{state.category='todos';state.search='';$('home-categories').classList.remove('wtg-v8-expanded');navigate('explorar');};$('promo-banner-btn').onclick=()=>navigate('promocionar');
   $('alert-locate').onclick=()=>{if($('alert-locate').dataset.action==='retry'){loadPlaces(true)}else if($('alert-locate').dataset.action==='change'){openModal('location-modal')}else requestLocation()};
