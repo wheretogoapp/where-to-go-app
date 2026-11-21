@@ -232,3 +232,32 @@ test('Portada y Explorar ocultan fichas cartográficas sin fotos y exponen servi
   assert(code.includes('data-show-all-cats'));
   assert(code.includes('runGoogleBusinessSearch'));
 });
+
+
+test('Se pueden consultar varios sectores reales del mismo municipio sin repetir el centro',async()=>{
+  const {api,queries}=configuredBrowser();
+  const stages=api.scanStages();
+  assert.equal(stages.length,7);
+  assert(stages.some(s=>s.sector==='north'));
+  assert(stages.some(s=>s.sector==='east'));
+  const north=await api.nearby({lat:19.7934,lon:-70.6884,radius:12000,category:'todos',batch:'districts',sector:'north'});
+  assert.equal(north.status,'ok');
+  assert.equal(queries.length,10);
+  assert(queries.every(x=>x.locationRestriction.center.lat>19.7934));
+  assert(queries.every(x=>x.maxResultCount<=20));
+  queries.length=0;
+  const west=await api.nearby({lat:19.7934,lon:-70.6884,radius:12000,category:'todos',batch:'districts',sector:'west'});
+  assert.equal(west.status,'ok');
+  assert.equal(queries.length,10);
+  assert(queries.every(x=>x.locationRestriction.center.lng<-70.6884));
+});
+test('Al ampliar, fusionar por Place ID y mostrar solo fotos verificables de Google',()=>{
+  const code=fs.readFileSync(path.join(root,'app.js'),'utf8');
+  assert(code.includes("mergeGoogleListings("));
+  assert(code.includes("window.WTG_GOOGLE_PLACES.scanStages()"));
+  assert(code.includes("wtgGoogleStage++"));
+  assert(code.includes("existingIds.has(google.id)"));
+  assert(code.includes("if(!google.photo||!safeUrl(google.photo))continue"));
+  assert(code.includes("batch:'essentials'"));
+  assert(code.includes("data-google-more"));
+});
