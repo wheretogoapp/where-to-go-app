@@ -820,6 +820,21 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
       if(token!==state.loadingId)return;
       if(everyday?.places?.length)mergeGoogleListings(everyday,typeof localPlaces==='function'?localPlaces():localPlaces,'Google Maps · comercios y servicios');
     }
+    // Some natural attractions and local services lack a reliable Google primary
+    // type. When that exact category was requested, use at most one extra
+    // bounded text lookup; never run it for the general home feed.
+    if(state.category!=='todos'&&result?.status!=='error'&&
+       window.WTG_GOOGLE_PLACES?.searchCategory){
+      const category=state.category;
+      const named=await window.WTG_GOOGLE_PLACES.searchCategory({
+        category,lat:state.lat,lon:state.lon,radius:state.radius,
+        city:state.city+', '+(state.province||state.region)
+      });
+      if(token!==state.loadingId)return;
+      if(named?.places?.length)mergeGoogleListings(named,
+        typeof localPlaces==='function'?localPlaces():localPlaces,
+        'Lugares de '+catInfo(category).name);
+    }
     if(token===state.loadingId){void enrichIconicPuertoPlata(token);void enrichVisiblePhotoCards(token,6);}
   }catch(error){console.warn('Where to Go: Google Places no disponible en esta zona',String(error));}
 }
