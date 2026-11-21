@@ -72,14 +72,21 @@ function load(){
  if(!configured())return Promise.resolve(false);
  if(root.google?.maps?.importLibrary)return Promise.resolve(true);
  if(promise)return promise;
- promise=new Promise(resolve=>{
+ // A brief lost connection must not permanently poison this browser session.
+ // Keep requests deduplicated, but clear the promise after a failed script load.
+ const attempt=new Promise(resolve=>{
   const script=document.createElement('script');
   script.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(root.WTG_GOOGLE_MAPS_KEY)+'&v=weekly&loading=async';
   script.async=true;script.referrerPolicy='strict-origin-when-cross-origin';
-  script.onload=()=>resolve(!!root.google?.maps?.importLibrary);
-  script.onerror=()=>resolve(false);
+  script.onload=()=>{
+    const ok=!!root.google?.maps?.importLibrary;
+    if(!ok)script.remove();
+    resolve(ok);
+  };
+  script.onerror=()=>{script.remove();resolve(false)};
   document.head.append(script);
  });
+ promise=attempt.then(ok=>{if(!ok)promise=null;return ok});
  return promise;
 }
 // No se almacenan las fotos de Google. Las URLs se construyen para la sesión activa
