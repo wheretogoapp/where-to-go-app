@@ -329,7 +329,9 @@ test('Apertura móvil con logo, bienvenida, elección de ubicación y login',()=
   const main=fs.readFileSync(path.join(root,'app.js'),'utf8');
   for(const id of ['wtg-ob-splash','wtg-ob-welcome','wtg-ob-location','wtg-ob-start','wtg-ob-manual','wtg-ob-allow-gps'])
     assert(html.includes('id="'+id+'"'),id);
-  assert(html.includes('src="/onboarding.js?v=4"'));
+  assert.match(html,/src="\/onboarding\.js\?v=([6-9]|[1-9][0-9]+)"/,'El script de bienvenida debe usar una versión actualizada');
+  assert(html.includes('wtg-logo-hd.webp?v=1'),'El logo HD debe aparecer en el HTML');
+  assert(fs.statSync(path.join(root,'assets','wtg-logo-hd.webp')).size>100000,'El logo HD debe existir y no estar vacío');
   assert(html.includes('src="/auth.js?v=13"'));
   assert(html.includes('window.WTG_ONBOARDING_ENABLED=true'));
   assert(onboarding.includes("new Event('wtg-world-request-gps')"));
