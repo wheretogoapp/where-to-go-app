@@ -1,0 +1,94 @@
+name: Where to Go - WOW visual preview (isolated)
+on:
+  push:
+    branches:
+      - design/wow-premium-safe-preview
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Ensure preview does not modify app business logic
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('Where_to_Go_Proyecto_Completo/public/index.html').read_text()
+          style=Path('Where_to_Go_Proyecto_Completo/public/wow-premium-preview.css').read_text()
+          assert '/wow-premium-preview.css?v=1' in html
+          assert html.index('/wow-premium-preview.css?v=1')>html.index('/area-discovery.css?v=1')
+          assert style.count('{')==style.count('}'), 'Unbalanced CSS rules'
+          assert not any(term in style for term in ['@import','background-image:url(http','javascript:'])
+          for path in ['app.js','google-places-adapter.js','world-location.js','world-explorer.js','auth.js']:
+              assert Path('Where_to_Go_Proyecto_Completo/public',path).is_file(),path
+          print('Visual-only CSS loaded last; Maps, Places and app logic are unmodified in this change.')
+          PY
+      - name: Install headless mobile browser
+        run: |
+          npm install --no-save playwright
+          if command -v google-chrome >/dev/null 2>&1;then
+            echo "CHROME_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            npx playwright install chromium
+          fi
+      - name: Capture onboarding and home design at mobile and desktop sizes
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory Where_to_Go_Proyecto_Completo/public >/tmp/wow-preview-server.log 2>&1 &
+          sleep 2
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
+          const errors=[];
+          for(const [label,width,height,mobile] of [['iphone',390,844,true],['small',360,740,true],['desktop',1365,900,false]]){
+            const page=await browser.newPage({viewport:{width,height},isMobile:mobile,hasTouch:mobile,deviceScaleFactor:1,locale:'es-DO'});
+            page.on('pageerror',e=>errors.push(label+':'+e.message.slice(0,130)));
+            const response=await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded',timeout:40000});
+            if(response?.status()!==200)throw Error(label+' home '+response?.status());
+            const styles=await page.evaluate(async()=>{
+              const r=await fetch('/wow-premium-preview.css?v=1');
+              return {status:r.status,size:(await r.text()).length,
+                hero:!!document.querySelector('#view-inicio .hero'),
+                local:!!document.querySelector('#wtg-local-discovery'),
+                explore:!!document.querySelector('#view-explorar #explore-list'),
+                map:!!document.querySelector('#view-mapa #world-map')};
+            });
+            if(styles.status!==200||styles.size<8000||!styles.hero||!styles.local||!styles.explore||!styles.map)throw Error('Preview asset missing '+JSON.stringify(styles));
+            if(label==='iphone')await page.screenshot({path:'/tmp/wow-iphone-welcome.png'});
+            await page.evaluate(()=>{
+              document.getElementById('wtg-onboarding').hidden=true;
+              document.getElementById('auth-gate').hidden=true;
+              document.body.classList.remove('wtg-onboarding-active');
+              const initial=document.getElementById('view-inicio');
+              if(initial){initial.classList.add('active');initial.hidden=false;}
+            });
+            await page.waitForTimeout(900);
+            const layout=await page.evaluate(()=>({
+              width:innerWidth,htmlWidth:document.documentElement.scrollWidth,
+              heroRect:document.querySelector('#view-inicio .hero').getBoundingClientRect().toJSON(),
+              styleLinks:[...document.querySelectorAll('link[rel="stylesheet"]')].filter(x=>x.href.includes('wow-premium-preview.css')).length
+            }));
+            console.log('WOW_LAYOUT:',label,JSON.stringify(layout));
+            if(layout.styleLinks!==1||layout.heroRect.width<200)throw Error(label+' design not visible');
+            if(label==='iphone')await page.screenshot({path:'/tmp/wow-iphone-home.png',fullPage:true});
+            if(label==='desktop')await page.screenshot({path:'/tmp/wow-desktop-home.png',fullPage:true});
+            await page.close();
+          }
+          console.log('WOW_JS_ERRORS:',JSON.stringify(errors));
+          await browser.close();
+          JS
+      - name: Save preview screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: where-to-go-wow-visual-preview
+          path: |
+            /tmp/wow-iphone-welcome.png
+            /tmp/wow-iphone-home.png
+            /tmp/wow-desktop-home.png
+          if-no-files-found: ignore
