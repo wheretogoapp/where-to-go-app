@@ -142,6 +142,2015 @@ Object.assign(labels,{
   'Ir al inicio':['Go to home','Aller à l’accueil','Ir ao início','Zur Startseite','Vai alla home']
 });
 
+// Additional complete-screen translations: onboarding, search and geographic controls.
+Object.assign(labels, {
+  "Explora el mundo": [
+    "Explore the world",
+    "Explorez le monde",
+    "Explore o mundo",
+    "Entdecke die Welt",
+    "Esplora il mondo"
+  ],
+  "Tu próxima aventura comienza aquí.": [
+    "Your next adventure starts here.",
+    "Votre prochaine aventure commence ici.",
+    "Sua próxima aventura começa aqui.",
+    "Dein nächstes Abenteuer beginnt hier.",
+    "La tua prossima avventura inizia qui."
+  ],
+  "Descubre destinos increíbles, negocios y experiencias auténticas cerca de ti.": [
+    "Discover amazing destinations, businesses and authentic experiences near you.",
+    "Découvrez des destinations, des commerces et des expériences authentiques près de vous.",
+    "Descubra destinos incríveis, negócios e experiências autênticas perto de você.",
+    "Entdecke fantastische Reiseziele, Geschäfte und authentische Erlebnisse in deiner Nähe.",
+    "Scopri destinazioni incredibili, attività ed esperienze autentiche vicino a te."
+  ],
+  "Comenzar a descubrir": [
+    "Start exploring",
+    "Commencer à explorer",
+    "Começar a explorar",
+    "Jetzt entdecken",
+    "Inizia a esplorare"
+  ],
+  "Haz tu experiencia personal": [
+    "Personalize your experience",
+    "Personnalisez votre expérience",
+    "Personalize sua experiência",
+    "Personalisiere dein Erlebnis",
+    "Personalizza la tua esperienza"
+  ],
+  "¿A dónde quieres ir?": [
+    "Where would you like to go?",
+    "Où souhaitez-vous aller ?",
+    "Aonde você quer ir?",
+    "Wohin möchtest du reisen?",
+    "Dove vuoi andare?"
+  ],
+  "República Dominicana": [
+    "Dominican Republic",
+    "République dominicaine",
+    "República Dominicana",
+    "Dominikanische Republik",
+    "Repubblica Dominicana"
+  ],
+  "Permite tu ubicación para descubrir lugares reales cerca de ti. También puedes elegir cualquier destino manualmente.": [
+    "Allow location access to find real places nearby. You can also choose a destination manually.",
+    "Autorisez la localisation pour découvrir de vrais lieux à proximité. Vous pouvez aussi choisir une destination.",
+    "Permita o acesso à localização para encontrar lugares reais próximos. Também pode escolher um destino.",
+    "Erlaube den Standortzugriff, um echte Orte in deiner Nähe zu finden. Du kannst auch ein Ziel auswählen.",
+    "Consenti l'accesso alla posizione per trovare luoghi reali vicini. Puoi anche scegliere una destinazione."
+  ],
+  "Usar mi ubicación": [
+    "Use my location",
+    "Utiliser ma position",
+    "Usar minha localização",
+    "Meinen Standort verwenden",
+    "Usa la mia posizione"
+  ],
+  "Elegir país o ciudad": [
+    "Choose country or city",
+    "Choisir un pays ou une ville",
+    "Escolher país ou cidade",
+    "Land oder Stadt wählen",
+    "Scegli paese o città"
+  ],
+  "Continuar sin usar GPS": [
+    "Continue without GPS",
+    "Continuer sans GPS",
+    "Continuar sem GPS",
+    "Ohne GPS fortfahren",
+    "Continua senza GPS"
+  ],
+  "WHERE TO GO · DESCUBRE EL MUNDO": [
+    "WHERE TO GO · DISCOVER THE WORLD",
+    "WHERE TO GO · DÉCOUVREZ LE MONDE",
+    "WHERE TO GO · DESCUBRA O MUNDO",
+    "WHERE TO GO · ENTDECKE DIE WELT",
+    "WHERE TO GO · SCOPRI IL MONDO"
+  ],
+  "Cada lugar tiene una historia.": [
+    "Every place has a story.",
+    "Chaque lieu a une histoire.",
+    "Cada lugar tem uma história.",
+    "Jeder Ort hat eine Geschichte.",
+    "Ogni luogo ha una storia."
+  ],
+  "Paisajes auténticos de República Dominicana": [
+    "Authentic scenery of the Dominican Republic",
+    "Paysages authentiques de République dominicaine",
+    "Paisagens autênticas da República Dominicana",
+    "Authentische Landschaften der Dominikanischen Republik",
+    "Paesaggi autentici della Repubblica Dominicana"
+  ],
+  "TU PRÓXIMA AVENTURA COMIENZA AQUÍ": [
+    "YOUR NEXT ADVENTURE STARTS HERE",
+    "VOTRE PROCHAINE AVENTURE COMMENCE ICI",
+    "SUA PRÓXIMA AVENTURA COMEÇA AQUI",
+    "DEIN NÄCHSTES ABENTEUER BEGINNT HIER",
+    "LA TUA PROSSIMA AVVENTURA INIZIA QUI"
+  ],
+  "Descubre lugares que te encantarán.": [
+    "Discover places you'll love.",
+    "Découvrez des lieux que vous allez adorer.",
+    "Descubra lugares que você vai adorar.",
+    "Entdecke Orte, die du lieben wirst.",
+    "Scopri luoghi che amerai."
+  ],
+  "Inicia sesión para guardar favoritos y descubrir qué hacer cerca de ti.": [
+    "Sign in to save favorites and discover things to do near you.",
+    "Connectez-vous pour enregistrer vos favoris et découvrir quoi faire près de vous.",
+    "Entre para salvar favoritos e descobrir o que fazer perto de você.",
+    "Melde dich an, speichere Favoriten und entdecke Aktivitäten in deiner Nähe.",
+    "Accedi per salvare i preferiti e scoprire cosa fare vicino a te."
+  ],
+  "Continuar con correo": [
+    "Continue with email",
+    "Continuer avec un e-mail",
+    "Continuar com e-mail",
+    "Mit E-Mail fortfahren",
+    "Continua con email"
+  ],
+  "O CONTINÚA CON TU CORREO": [
+    "OR CONTINUE WITH EMAIL",
+    "OU CONTINUEZ AVEC VOTRE E-MAIL",
+    "OU CONTINUE COM SEU E-MAIL",
+    "ODER MIT E-MAIL FORTFAHREN",
+    "OPPURE CONTINUA CON EMAIL"
+  ],
+  "Google, Facebook, Apple y correo requieren conectar Supabase y habilitar cada proveedor.": [
+    "Google, Facebook, Apple and email sign-in require a configured Supabase connection.",
+    "La connexion via Google, Facebook, Apple ou e-mail nécessite une configuration Supabase.",
+    "O login com Google, Facebook, Apple ou e-mail requer uma conexão Supabase configurada.",
+    "Google-, Facebook-, Apple- und E-Mail-Anmeldung erfordern eine Supabase-Konfiguration.",
+    "L'accesso con Google, Facebook, Apple ed email richiede la configurazione di Supabase."
+  ],
+  "Tours y excursiones": [
+    "Tours and excursions",
+    "Visites et excursions",
+    "Passeios e excursões",
+    "Touren und Ausflüge",
+    "Tour ed escursioni"
+  ],
+  "¿Tienes un negocio?": [
+    "Own a business?",
+    "Vous avez une entreprise ?",
+    "Você tem um negócio?",
+    "Hast du ein Unternehmen?",
+    "Hai un'attività?"
+  ],
+  "Haz que más personas te descubran.": [
+    "Help more people discover you.",
+    "Faites-vous connaître auprès de plus de personnes.",
+    "Faça mais pessoas conhecerem você.",
+    "Lass mehr Menschen dich entdecken.",
+    "Fatti scoprire da più persone."
+  ],
+  "Quiero anunciarme": [
+    "Promote my business",
+    "Promouvoir mon entreprise",
+    "Anunciar meu negócio",
+    "Mein Unternehmen bewerben",
+    "Promuovi la mia attività"
+  ],
+  "Tu ubicación": [
+    "Your location",
+    "Votre position",
+    "Sua localização",
+    "Dein Standort",
+    "La tua posizione"
+  ],
+  "Google Places está temporalmente fuera de servicio": [
+    "Google Places is temporarily unavailable",
+    "Google Places est temporairement indisponible",
+    "O Google Places está temporariamente indisponível",
+    "Google Places ist vorübergehend nicht verfügbar",
+    "Google Places è temporaneamente non disponibile"
+  ],
+  "La búsqueda continúa con datos reales de OpenStreetMap.": [
+    "Search continues using real OpenStreetMap data.",
+    "La recherche continue avec les données réelles d’OpenStreetMap.",
+    "A busca continua com dados reais do OpenStreetMap.",
+    "Die Suche nutzt weiterhin echte OpenStreetMap-Daten.",
+    "La ricerca continua con dati reali di OpenStreetMap."
+  ],
+  "Reintentar Google": [
+    "Retry Google",
+    "Réessayer Google",
+    "Tentar Google novamente",
+    "Google erneut versuchen",
+    "Riprova Google"
+  ],
+  "Destino internacional": [
+    "International destination",
+    "Destination internationale",
+    "Destino internacional",
+    "Internationales Reiseziel",
+    "Destinazione internazionale"
+  ],
+  "Estamos preparando las fichas, fotografías icónicas y negocios verificados de esta ciudad o país. Aún no hay un catálogo publicado para esta ubicación.": [
+    "We are preparing listings, landmark photos and verified businesses for this destination. The directory is not yet available here.",
+    "Nous préparons les fiches, photos emblématiques et commerces vérifiés pour cette destination. Le catalogue n'est pas encore disponible.",
+    "Estamos preparando listagens, fotos icônicas e empresas verificadas para este destino. O catálogo ainda não está disponível.",
+    "Wir bereiten Einträge, Sehenswürdigkeitenfotos und geprüfte Unternehmen für dieses Reiseziel vor. Das Verzeichnis ist noch nicht verfügbar.",
+    "Stiamo preparando schede, foto dei luoghi e attività verificate per questa destinazione. Il catalogo non è ancora disponibile."
+  ],
+  "No utilizamos fotografías de otras ciudades ni mostramos negocios de República Dominicana como si estuvieran aquí.": [
+    "We never show photos or businesses from other cities as if they were here.",
+    "Nous ne présentons jamais des photos ou commerces d'autres villes comme s'ils étaient ici.",
+    "Não mostramos fotos ou negócios de outras cidades como se fossem daqui.",
+    "Wir zeigen niemals Fotos oder Unternehmen aus anderen Städten als lokale Ergebnisse.",
+    "Non mostriamo foto o attività di altre città come se fossero locali."
+  ],
+  "Cambiar país o ciudad": [
+    "Change country or city",
+    "Changer de pays ou de ville",
+    "Mudar país ou cidade",
+    "Land oder Stadt ändern",
+    "Cambia paese o città"
+  ],
+  "¿Qué hay cerca de ti": [
+    "What's near you",
+    "Que trouve-t-on près de vous",
+    "O que há perto de você",
+    "Was ist in deiner Nähe",
+    "Cosa c'è vicino a te"
+  ],
+  "Restaurantes, playas, bares y planes para disfrutar.": [
+    "Restaurants, beaches, bars and things to do.",
+    "Restaurants, plages, bars et activités à découvrir.",
+    "Restaurantes, praias, bares e passeios.",
+    "Restaurants, Strände, Bars und Erlebnisse.",
+    "Ristoranti, spiagge, bar e attività."
+  ],
+  "DESTINOS QUE INSPIRAN": [
+    "INSPIRING DESTINATIONS",
+    "DESTINATIONS INSPIRANTES",
+    "DESTINOS INSPIRADORES",
+    "INSPIRIERENDE REISEZIELE",
+    "DESTINAZIONI CHE ISPIRANO"
+  ],
+  "Comenzar a explorar": [
+    "Start exploring",
+    "Commencer à explorer",
+    "Começar a explorar",
+    "Erkundung starten",
+    "Inizia a esplorare"
+  ],
+  "EXPLORA TU ZONA": [
+    "EXPLORE YOUR AREA",
+    "EXPLOREZ VOTRE RÉGION",
+    "EXPLORE SUA REGIÃO",
+    "ENTDECKE DEINE UMGEBUNG",
+    "ESPLORA LA TUA ZONA"
+  ],
+  "DESCUBRE TU DESTINO": [
+    "DISCOVER YOUR DESTINATION",
+    "DÉCOUVREZ VOTRE DESTINATION",
+    "DESCUBRA SEU DESTINO",
+    "ENTDECKE DEIN REISEZIEL",
+    "SCOPRI LA TUA DESTINAZIONE"
+  ],
+  "Explora lugares auténticos": [
+    "Explore authentic places",
+    "Explorez des lieux authentiques",
+    "Explore lugares autênticos",
+    "Entdecke authentische Orte",
+    "Esplora luoghi autentici"
+  ],
+  "Fotografías y lugares de la zona seleccionada": [
+    "Photos and places in your selected area",
+    "Photos et lieux de la zone choisie",
+    "Fotos e lugares da região selecionada",
+    "Fotos und Orte in der gewählten Region",
+    "Foto e luoghi della zona selezionata"
+  ],
+  "DESCUBRE MÁS CERCA": [
+    "DISCOVER MORE NEARBY",
+    "DÉCOUVREZ PLUS PRÈS DE VOUS",
+    "DESCUBRA MAIS POR PERTO",
+    "MEHR IN DEINER NÄHE",
+    "SCOPRI ALTRO VICINO A TE"
+  ],
+  "Explora más zonas de tu destino": [
+    "Explore more areas of your destination",
+    "Explorez d'autres zones de votre destination",
+    "Explore mais áreas do seu destino",
+    "Entdecke weitere Gebiete deines Reiseziels",
+    "Esplora altre zone della tua destinazione"
+  ],
+  "Elige una dirección para conocer otros lugares cercanos.": [
+    "Choose a direction to discover more nearby places.",
+    "Choisissez une direction pour découvrir d'autres lieux à proximité.",
+    "Escolha uma direção para descobrir mais lugares próximos.",
+    "Wähle eine Richtung, um weitere Orte in der Nähe zu finden.",
+    "Scegli una direzione per scoprire altri luoghi vicini."
+  ],
+  "Las zonas son áreas aproximadas de búsqueda, no límites oficiales de barrios o sectores. Solo mostramos establecimientos geolocalizados.": [
+    "These areas are approximate search zones, not official neighborhood boundaries. Only geolocated places appear.",
+    "Ces zones de recherche sont approximatives et ne représentent pas des limites officielles. Seuls les lieux géolocalisés sont affichés.",
+    "Essas áreas de busca são aproximadas, não limites oficiais. Exibimos apenas estabelecimentos geolocalizados.",
+    "Diese Suchgebiete sind ungefähre Bereiche und keine offiziellen Stadtteilgrenzen. Es erscheinen nur geolokalisierte Orte.",
+    "Le zone di ricerca sono approssimative, non confini ufficiali. Mostriamo solo luoghi geolocalizzati."
+  ],
+  "Buscar destinos y establecimientos": [
+    "Search destinations and businesses",
+    "Rechercher des destinations et des commerces",
+    "Buscar destinos e estabelecimentos",
+    "Reiseziele und Unternehmen suchen",
+    "Cerca destinazioni e attività"
+  ],
+  "INSPIRACIÓN PARA TU PRÓXIMO VIAJE": [
+    "INSPIRATION FOR YOUR NEXT TRIP",
+    "INSPIRATION POUR VOTRE PROCHAIN VOYAGE",
+    "INSPIRAÇÃO PARA SUA PRÓXIMA VIAGEM",
+    "INSPIRATION FÜR DEINE NÄCHSTE REISE",
+    "ISPIRAZIONE PER IL PROSSIMO VIAGGIO"
+  ],
+  "Un mundo por descubrir": [
+    "A world to explore",
+    "Un monde à découvrir",
+    "Um mundo para explorar",
+    "Eine Welt voller Entdeckungen",
+    "Un mondo da scoprire"
+  ],
+  "Elige una provincia para conocer la fotografía, su autor y su licencia.": [
+    "Choose a province to see its photo, photographer and license.",
+    "Choisissez une province pour voir la photo, son auteur et sa licence.",
+    "Escolha uma província para ver a foto, o autor e a licença.",
+    "Wähle eine Provinz, um Foto, Urheber und Lizenz zu sehen.",
+    "Scegli una provincia per vedere la foto, l'autore e la licenza."
+  ]
+});
+
+// Main destinations, tours, transport, maps and account labels.
+Object.assign(labels, {
+  "Elige una provincia para explorar lugares reales alrededor de su ciudad de referencia. Si deseas otra zona, selecciona un municipio.": [
+    "Choose a province to explore real places near its main city. Select a municipality to explore another area.",
+    "Choisissez une province pour découvrir des lieux près de sa ville de référence. Choisissez une commune pour explorer ailleurs.",
+    "Escolha uma província para explorar lugares próximos da cidade de referência. Selecione um município para outra área.",
+    "Wähle eine Provinz, um Orte nahe der Referenzstadt zu entdecken. Für andere Gebiete eine Gemeinde wählen.",
+    "Scegli una provincia per trovare luoghi vicino alla città di riferimento. Per altre zone scegli un comune."
+  ],
+  "Al elegir una provincia se mostrarán lugares alrededor de una ciudad de referencia. No equivale a toda la provincia.": [
+    "Choosing a province shows places near a reference city, not the entire province.",
+    "La sélection d'une province affiche des lieux près d'une ville de référence, pas de toute la province.",
+    "Selecionar uma província mostra lugares próximos da cidade de referência, não de toda a província.",
+    "Bei der Auswahl einer Provinz werden Orte um eine Referenzstadt angezeigt, nicht die ganze Provinz.",
+    "Selezionando una provincia vedrai luoghi vicino a una città di riferimento, non dell'intera provincia."
+  ],
+  "Detectando tu ubicación": [
+    "Detecting your location",
+    "Localisation en cours",
+    "Detectando sua localização",
+    "Standort wird ermittelt",
+    "Rilevamento della posizione"
+  ],
+  "Permite la ubicación para descubrir restaurantes, bares, playas y servicios cercanos.": [
+    "Allow location access to discover nearby restaurants, bars, beaches and services.",
+    "Autorisez votre position pour trouver restaurants, bars, plages et services proches.",
+    "Permita a localização para descobrir restaurantes, bares, praias e serviços próximos.",
+    "Erlaube den Standortzugriff, um Restaurants, Bars, Strände und Dienste in der Nähe zu finden.",
+    "Consenti l'accesso alla posizione per trovare ristoranti, bar, spiagge e servizi vicini."
+  ],
+  "TU PRÓXIMA EXPERIENCIA": [
+    "YOUR NEXT EXPERIENCE",
+    "VOTRE PROCHAINE EXPÉRIENCE",
+    "SUA PRÓXIMA EXPERIÊNCIA",
+    "DEIN NÄCHSTES ERLEBNIS",
+    "LA TUA PROSSIMA ESPERIENZA"
+  ],
+  "¿Qué te gustaría descubrir?": [
+    "What would you like to discover?",
+    "Qu'aimeriez-vous découvrir ?",
+    "O que você gostaria de descobrir?",
+    "Was möchtest du entdecken?",
+    "Cosa vorresti scoprire?"
+  ],
+  "Todas las categorías ↓": [
+    "All categories ↓",
+    "Toutes les catégories ↓",
+    "Todas as categorias ↓",
+    "Alle Kategorien ↓",
+    "Tutte le categorie ↓"
+  ],
+  "Lugares con fotos cerca de ti": [
+    "Places with photos near you",
+    "Lieux avec photos près de vous",
+    "Lugares com fotos perto de você",
+    "Orte mit Fotos in deiner Nähe",
+    "Luoghi con foto vicino a te"
+  ],
+  "Consultando lugares…": [
+    "Looking up places…",
+    "Recherche des lieux…",
+    "Consultando lugares…",
+    "Orte werden gesucht…",
+    "Ricerca dei luoghi…"
+  ],
+  "Traslados privados y turísticos. Reserva por WhatsApp.": [
+    "Private and tourist transfers. Book via WhatsApp.",
+    "Transferts privés et touristiques. Réservez via WhatsApp.",
+    "Traslados privados e turísticos. Reserve pelo WhatsApp.",
+    "Private Fahrten und Touristentransfers. Buchung per WhatsApp.",
+    "Trasferimenti privati e turistici. Prenota su WhatsApp."
+  ],
+  "Reservar": [
+    "Book",
+    "Réserver",
+    "Reservar",
+    "Buchen",
+    "Prenota"
+  ],
+  "DESTINOS PARA DESCUBRIR": [
+    "DESTINATIONS TO DISCOVER",
+    "DESTINATIONS À DÉCOUVRIR",
+    "DESTINOS PARA DESCOBRIR",
+    "REISEZIELE ENTDECKEN",
+    "DESTINAZIONI DA SCOPRIRE"
+  ],
+  "Lugares con fotos reales vinculadas a su ficha · Google Maps, fuentes abiertas y fotografías autorizadas · Las búsquedas de Google se consultan por zona.": [
+    "Real place-specific photos from Google Maps, open sources and authorized photographs. Google searches are limited to your area.",
+    "Photos authentiques des lieux provenant de Google Maps, de sources ouvertes et de contenus autorisés. Les recherches Google sont locales.",
+    "Fotos reais vinculadas aos lugares, do Google Maps, fontes abertas e imagens autorizadas. As buscas Google são por região.",
+    "Echte ortsbezogene Fotos aus Google Maps, offenen Quellen und freigegebenen Bildern. Google-Suchen sind regional begrenzt.",
+    "Foto reali associate ai luoghi, da Google Maps, fonti aperte e immagini autorizzate. Le ricerche Google sono locali."
+  ],
+  "Establecimientos reales por ubicación. Las fichas sin imagen se muestran sin inventar fotos.": [
+    "Real places by location. Listings without photos never use invented images.",
+    "Lieux réels par emplacement. Les fiches sans photo n'utilisent jamais d'images inventées.",
+    "Estabelecimentos reais por localização. Fichas sem foto não usam imagens inventadas.",
+    "Echte Orte nach Standort. Einträge ohne Fotos zeigen keine erfundenen Bilder.",
+    "Luoghi reali per posizione. Le schede senza foto non usano immagini inventate."
+  ],
+  "WHERE TO GO · EXPERIENCIAS": [
+    "WHERE TO GO · EXPERIENCES",
+    "WHERE TO GO · EXPÉRIENCES",
+    "WHERE TO GO · EXPERIÊNCIAS",
+    "WHERE TO GO · ERLEBNISSE",
+    "WHERE TO GO · ESPERIENZE"
+  ],
+  "Las mejores aventuras empiezan aquí.": [
+    "The best adventures start here.",
+    "Les meilleures aventures commencent ici.",
+    "As melhores aventuras começam aqui.",
+    "Die besten Abenteuer beginnen hier.",
+    "Le migliori avventure iniziano qui."
+  ],
+  "Promociona tu gira, tour o excursión aquí": [
+    "Promote your tour or excursion here",
+    "Faites connaître votre visite ou excursion ici",
+    "Divulgue seu passeio ou excursão aqui",
+    "Bewirb hier deine Tour oder deinen Ausflug",
+    "Promuovi qui il tuo tour o la tua escursione"
+  ],
+  "Este espacio está disponible para organizadores de experiencias y excursiones. Sé de los primeros en publicar tu actividad.": [
+    "This space is for tour and experience organizers. Be among the first to list an activity.",
+    "Cet espace accueille les organisateurs d'activités et d'excursions. Soyez parmi les premiers à publier.",
+    "Este espaço é para organizadores de passeios e experiências. Seja um dos primeiros a publicar.",
+    "Dieser Bereich ist für Tour- und Erlebnisveranstalter. Veröffentliche als einer der Ersten dein Angebot.",
+    "Questo spazio è per gli organizzatori di esperienze ed escursioni. Pubblica la tua attività tra i primi."
+  ],
+  "por mes · por anuncio": [
+    "per month · per listing",
+    "par mois · par annonce",
+    "por mês · por anúncio",
+    "pro Monat · pro Anzeige",
+    "al mese · per annuncio"
+  ],
+  "Publicar mi tour o excursión": [
+    "List my tour or excursion",
+    "Publier ma visite ou excursion",
+    "Publicar meu passeio ou excursão",
+    "Tour oder Ausflug veröffentlichen",
+    "Pubblica il mio tour o la mia escursione"
+  ],
+  "La publicación requiere revisión y confirmación del pago. No se cobra automáticamente en esta versión.": [
+    "Listings require review and payment confirmation. No automatic charges are made in this version.",
+    "Les annonces nécessitent une vérification et une confirmation du paiement. Aucun prélèvement automatique dans cette version.",
+    "A publicação exige revisão e confirmação do pagamento. Não há cobrança automática nesta versão.",
+    "Einträge werden erst nach Prüfung und Zahlungsbestätigung veröffentlicht. In dieser Version erfolgt keine automatische Abbuchung.",
+    "La pubblicazione richiede verifica e conferma del pagamento. Nessun addebito automatico in questa versione."
+  ],
+  "Muévete con": [
+    "Travel with",
+    "Voyagez en toute",
+    "Viaje com",
+    "Unterwegs mit",
+    "Viaggia con"
+  ],
+  "confianza.": [
+    "confidence.",
+    "confiance.",
+    "confiança.",
+    "Vertrauen.",
+    "fiducia."
+  ],
+  "Explora operadores de taxis y transporte por provincia y municipio. Reservaciones directas con cada empresa.": [
+    "Explore taxi and transport operators by province and municipality. Book directly with each business.",
+    "Découvrez les taxis et transporteurs par province et commune. Réservez directement auprès des entreprises.",
+    "Explore operadores de táxi e transporte por província e município. Reserve diretamente com cada empresa.",
+    "Finde Taxi- und Transportunternehmen nach Provinz und Gemeinde. Buche direkt beim Anbieter.",
+    "Trova taxi e trasporti per provincia e comune. Prenota direttamente con ogni azienda."
+  ],
+  "DIRECTORIO DE TRANSPORTE": [
+    "TRANSPORT DIRECTORY",
+    "ANNUAIRE DES TRANSPORTS",
+    "DIRETÓRIO DE TRANSPORTE",
+    "TRANSPORTVERZEICHNIS",
+    "ELENCO DEI TRASPORTI"
+  ],
+  "Encuentra transporte en tu zona": [
+    "Find transport in your area",
+    "Trouvez un transport près de vous",
+    "Encontre transporte em sua região",
+    "Finde Verkehrsdienste in deiner Nähe",
+    "Trova trasporti nella tua zona"
+  ],
+  "Elegir provincia": [
+    "Choose a province",
+    "Choisir une province",
+    "Escolher província",
+    "Provinz wählen",
+    "Scegli provincia"
+  ],
+  "Toda la provincia": [
+    "Entire province",
+    "Toute la province",
+    "Toda a província",
+    "Gesamte Provinz",
+    "Tutta la provincia"
+  ],
+  "CONTACTO DIRECTO CON EL NEGOCIO": [
+    "CONTACT THE BUSINESS DIRECTLY",
+    "CONTACT DIRECT AVEC L'ENTREPRISE",
+    "CONTATO DIRETO COM A EMPRESA",
+    "UNTERNEHMEN DIREKT KONTAKTIEREN",
+    "CONTATTA DIRETTAMENTE L'ATTIVITÀ"
+  ],
+  "Operadores de transporte": [
+    "Transport operators",
+    "Opérateurs de transport",
+    "Operadores de transporte",
+    "Transportunternehmen",
+    "Operatori di trasporto"
+  ],
+  "Los operadores destacados incluidos manualmente aparecen con sus datos comerciales conocidos. No inventamos direcciones ni puntos de recogida. Los demás proveedores se agregarán después de verificar su registro.": [
+    "Featured operators display the business information we have verified. We do not invent addresses or pickup points. Other providers will be listed after verification.",
+    "Les transporteurs mis en avant affichent leurs informations vérifiées. Aucune adresse ni lieu de prise en charge n'est inventé. D'autres prestataires seront ajoutés après vérification.",
+    "Operadores em destaque mostram dados comerciais verificados. Não inventamos endereços ou pontos de embarque. Outros serão adicionados após verificação.",
+    "Vorgestellte Anbieter zeigen geprüfte Geschäftsdaten. Adressen und Abholorte werden nicht erfunden. Weitere Anbieter folgen nach Prüfung.",
+    "Gli operatori in evidenza mostrano dati commerciali verificati. Non inventiamo indirizzi o punti di raccolta. Altri saranno aggiunti dopo la verifica."
+  ],
+  "¿Tu empresa presta servicios de transporte?": [
+    "Does your business provide transport services?",
+    "Votre entreprise propose-t-elle des transports ?",
+    "Sua empresa presta serviços de transporte?",
+    "Bietet dein Unternehmen Transportdienste an?",
+    "La tua azienda offre servizi di trasporto?"
+  ],
+  "Prepara tu perfil para aparecer en el directorio de Where to Go.": [
+    "Prepare your profile to appear in the Where to Go directory.",
+    "Préparez votre profil pour figurer dans l'annuaire Where to Go.",
+    "Prepare seu perfil para aparecer no diretório do Where to Go.",
+    "Erstelle dein Profil für das Where to Go-Verzeichnis.",
+    "Prepara il tuo profilo per comparire nell'elenco di Where to Go."
+  ],
+  "Registrar mi servicio": [
+    "List my service",
+    "Inscrire mon service",
+    "Cadastrar meu serviço",
+    "Meinen Dienst eintragen",
+    "Registra il mio servizio"
+  ],
+  "VISUALIZA TU CIUDAD": [
+    "EXPLORE YOUR CITY ON THE MAP",
+    "EXPLOREZ VOTRE VILLE SUR LA CARTE",
+    "EXPLORE SUA CIDADE NO MAPA",
+    "DEINE STADT AUF DER KARTE",
+    "ESPLORA LA TUA CITTÀ SULLA MAPPA"
+  ],
+  "Explora puntos de interés y abre las direcciones en tu mapa favorito.": [
+    "Explore points of interest and get directions in your preferred map app.",
+    "Découvrez les lieux d'intérêt et ouvrez l'itinéraire dans votre application de cartes préférée.",
+    "Explore pontos de interesse e abra rotas no seu aplicativo de mapas.",
+    "Entdecke interessante Orte und öffne die Route in deiner bevorzugten Karten-App.",
+    "Esplora i punti d'interesse e apri le indicazioni nell'app di mappe che preferisci."
+  ],
+  "Centrar en mí": [
+    "Center on me",
+    "Me centrer",
+    "Centralizar em mim",
+    "Auf mich zentrieren",
+    "Centra su di me"
+  ],
+  "Lugares cercanos": [
+    "Nearby places",
+    "Lieux à proximité",
+    "Lugares próximos",
+    "Orte in der Nähe",
+    "Luoghi vicini"
+  ],
+  "TU COLECCIÓN PERSONAL": [
+    "YOUR PERSONAL COLLECTION",
+    "VOTRE COLLECTION PERSONNELLE",
+    "SUA COLEÇÃO PESSOAL",
+    "DEINE PERSÖNLICHE SAMMLUNG",
+    "LA TUA COLLEZIONE PERSONALE"
+  ],
+  "Guarda los lugares que quieres visitar y vuelve a encontrarlos fácilmente.": [
+    "Save places you want to visit and find them again easily.",
+    "Enregistrez les lieux à visiter et retrouvez-les facilement.",
+    "Salve lugares que deseja visitar e encontre-os facilmente depois.",
+    "Speichere Orte, die du besuchen möchtest, und finde sie später wieder.",
+    "Salva i luoghi che vuoi visitare e ritrovali facilmente."
+  ],
+  "TU ESPACIO COMO EMPRENDEDOR": [
+    "YOUR BUSINESS SPACE",
+    "VOTRE ESPACE ENTREPRENEUR",
+    "SEU ESPAÇO DE EMPREENDEDOR",
+    "DEIN UNTERNEHMENSBEREICH",
+    "IL TUO SPAZIO IMPRENDITORIALE"
+  ],
+  "Gestiona los registros guardados en este dispositivo, antes de publicarlos.": [
+    "Manage listings saved on this device before publication.",
+    "Gérez les fiches enregistrées sur cet appareil avant publication.",
+    "Gerencie os cadastros salvos neste dispositivo antes da publicação.",
+    "Verwalte auf diesem Gerät gespeicherte Einträge vor der Veröffentlichung.",
+    "Gestisci le registrazioni salvate su questo dispositivo prima di pubblicarle."
+  ],
+  "+ Registrar otro negocio": [
+    "+ Add another business",
+    "+ Ajouter une entreprise",
+    "+ Cadastrar outro negócio",
+    "+ Weiteres Unternehmen eintragen",
+    "+ Registra un'altra attività"
+  ],
+  "Hecho para descubrir el mundo 🌎 ·": [
+    "Made to discover the world 🌎 ·",
+    "Créé pour découvrir le monde 🌎 ·",
+    "Feito para descobrir o mundo 🌎 ·",
+    "Gemacht, um die Welt zu entdecken 🌎 ·",
+    "Creato per scoprire il mondo 🌎 ·"
+  ],
+  "Privacidad": [
+    "Privacy",
+    "Confidentialité",
+    "Privacidade",
+    "Datenschutz",
+    "Privacy"
+  ],
+  "Términos": [
+    "Terms",
+    "Conditions",
+    "Termos",
+    "Nutzungsbedingungen",
+    "Termini"
+  ],
+  "Negocios": [
+    "Businesses",
+    "Entreprises",
+    "Negócios",
+    "Unternehmen",
+    "Attività"
+  ],
+  "País": [
+    "Country",
+    "Pays",
+    "País",
+    "Land",
+    "Paese"
+  ],
+  "Ciudad": [
+    "City",
+    "Ville",
+    "Cidade",
+    "Stadt",
+    "Città"
+  ],
+  "Provincia / estado / región": [
+    "Province / state / region",
+    "Province / État / région",
+    "Província / estado / região",
+    "Provinz / Bundesland / Region",
+    "Provincia / stato / regione"
+  ],
+  "Todas las regiones": [
+    "All regions",
+    "Toutes les régions",
+    "Todas as regiões",
+    "Alle Regionen",
+    "Tutte le regioni"
+  ],
+  "Selecciona una ciudad": [
+    "Choose a city",
+    "Choisissez une ville",
+    "Escolha uma cidade",
+    "Stadt auswählen",
+    "Seleziona una città"
+  ],
+  "Selecciona un país para consultar sus ciudades disponibles.": [
+    "Choose a country to see available cities.",
+    "Choisissez un pays pour voir les villes disponibles.",
+    "Escolha um país para ver as cidades disponíveis.",
+    "Wähle ein Land, um verfügbare Städte zu sehen.",
+    "Scegli un paese per vedere le città disponibili."
+  ],
+  "Tu ubicación se detecta automáticamente si das permiso. También puedes elegir otro país, región o ciudad desde aquí.": [
+    "Your location is detected if you grant permission. You can also choose another country, region or city here.",
+    "Votre position est détectée si vous donnez l'autorisation. Vous pouvez aussi choisir un autre pays, une région ou une ville.",
+    "Sua localização é detectada se você permitir. Você também pode escolher outro país, região ou cidade.",
+    "Mit deiner Erlaubnis wird dein Standort ermittelt. Du kannst hier auch ein anderes Land, eine Region oder Stadt wählen.",
+    "La posizione viene rilevata con il tuo consenso. Puoi anche scegliere un altro paese, regione o città."
+  ],
+  "Continuar": [
+    "Continue",
+    "Continuer",
+    "Continuar",
+    "Weiter",
+    "Continua"
+  ],
+  "Categoría": [
+    "Category",
+    "Catégorie",
+    "Categoria",
+    "Kategorie",
+    "Categoria"
+  ],
+  "Tipo de aporte": [
+    "Contribution type",
+    "Type de contribution",
+    "Tipo de contribuição",
+    "Art des Beitrags",
+    "Tipo di contributo"
+  ],
+  "Falta un lugar": [
+    "Missing place",
+    "Lieu manquant",
+    "Lugar ausente",
+    "Fehlender Ort",
+    "Luogo mancante"
+  ],
+  "Fotografía real del lugar": [
+    "Real photo of the place",
+    "Photo authentique du lieu",
+    "Foto real do lugar",
+    "Echtes Foto des Ortes",
+    "Foto reale del luogo"
+  ],
+  "No lo sé": [
+    "I don't know",
+    "Je ne sais pas",
+    "Não sei",
+    "Ich weiß es nicht",
+    "Non lo so"
+  ],
+  "Radio de búsqueda": [
+    "Search radius",
+    "Rayon de recherche",
+    "Raio de busca",
+    "Suchradius",
+    "Raggio di ricerca"
+  ],
+  "Actualizar lugares": [
+    "Refresh places",
+    "Actualiser les lieux",
+    "Atualizar lugares",
+    "Orte aktualisieren",
+    "Aggiorna luoghi"
+  ]
+});
+
+// Monetization and account copy in the six supported UI languages.
+Object.assign(labels, {
+  "WHERE TO GO BUSINESS": [
+    "WHERE TO GO BUSINESS",
+    "WHERE TO GO ENTREPRISES",
+    "WHERE TO GO NEGÓCIOS",
+    "WHERE TO GO BUSINESS",
+    "WHERE TO GO BUSINESS"
+  ],
+  "Haz que el mundo": [
+    "Let the world",
+    "Faites en sorte que le monde",
+    "Faça o mundo",
+    "Lass die Welt",
+    "Fai in modo che il mondo"
+  ],
+  "descubra": [
+    "discover",
+    "découvre",
+    "descubra",
+    "entdeckt",
+    "scopra"
+  ],
+  "tu negocio.": [
+    "your business.",
+    "votre entreprise.",
+    "seu negócio.",
+    "dein Unternehmen.",
+    "la tua attività."
+  ],
+  "Conecta con personas que están buscando un lugar como el tuyo. Lanza tu perfil con transparencia y una propuesta medible.": [
+    "Connect with people looking for a business like yours. Publish a transparent, measurable listing.",
+    "Échangez avec les personnes qui cherchent une entreprise comme la vôtre. Publiez un profil transparent et mesurable.",
+    "Conecte-se com pessoas que procuram um negócio como o seu. Publique um perfil transparente e mensurável.",
+    "Erreiche Menschen, die ein Unternehmen wie deines suchen. Veröffentliche ein transparentes, messbares Profil.",
+    "Raggiungi persone che cercano un'attività come la tua. Pubblica un profilo trasparente e misurabile."
+  ],
+  "Registrar mi negocio": [
+    "List my business",
+    "Inscrire mon entreprise",
+    "Cadastrar meu negócio",
+    "Mein Unternehmen eintragen",
+    "Registra la mia attività"
+  ],
+  "CRECE CON NOSOTROS": [
+    "GROW WITH US",
+    "GRANDISSEZ AVEC NOUS",
+    "CRESÇA CONOSCO",
+    "WACHSE MIT UNS",
+    "CRESCI CON NOI"
+  ],
+  "Elige cómo destacar": [
+    "Choose how to stand out",
+    "Choisissez comment vous démarquer",
+    "Escolha como se destacar",
+    "Wähle, wie du dich hervorheben möchtest",
+    "Scegli come distinguerti"
+  ],
+  "Registro Básico": [
+    "Basic listing",
+    "Inscription de base",
+    "Cadastro básico",
+    "Basiseintrag",
+    "Registrazione base"
+  ],
+  "Para tener una ficha normal verificada dentro de tu categoría.": [
+    "For a standard verified listing in your category.",
+    "Pour une fiche standard vérifiée dans votre catégorie.",
+    "Para ter uma ficha padrão verificada na sua categoria.",
+    "Für einen regulären geprüften Eintrag in deiner Kategorie.",
+    "Per avere una scheda standard verificata nella tua categoria."
+  ],
+  "USD · pago único": [
+    "USD · one-time payment",
+    "USD · paiement unique",
+    "USD · pagamento único",
+    "USD · einmalige Zahlung",
+    "USD · pagamento unico"
+  ],
+  "Ficha en tu provincia y categoría": [
+    "Listing in your province and category",
+    "Fiche dans votre province et catégorie",
+    "Ficha na sua província e categoria",
+    "Eintrag in deiner Provinz und Kategorie",
+    "Scheda nella tua provincia e categoria"
+  ],
+  "Contacto y enlace al mapa verificado": [
+    "Contact details and verified map link",
+    "Coordonnées et lien cartographique vérifié",
+    "Contato e link do mapa verificado",
+    "Kontakt und geprüfter Kartenlink",
+    "Contatti e link alla mappa verificato"
+  ],
+  "Sin prioridad de publicidad": [
+    "No advertising priority",
+    "Sans priorité publicitaire",
+    "Sem prioridade de publicidade",
+    "Keine Anzeigenpriorität",
+    "Nessuna priorità pubblicitaria"
+  ],
+  "Se publica después del pago y aprobación": [
+    "Published after payment and approval",
+    "Publié après paiement et approbation",
+    "Publicado após pagamento e aprovação",
+    "Veröffentlichung nach Zahlung und Freigabe",
+    "Pubblicata dopo pagamento e approvazione"
+  ],
+  "Solicitar registro": [
+    "Request listing",
+    "Demander une inscription",
+    "Solicitar cadastro",
+    "Eintrag beantragen",
+    "Richiedi la registrazione"
+  ],
+  "Plan Destacado": [
+    "Featured plan",
+    "Formule mise en avant",
+    "Plano destaque",
+    "Hervorgehobenes Paket",
+    "Piano in evidenza"
+  ],
+  "Para que más personas de tu ciudad te encuentren.": [
+    "Help more people in your city find you.",
+    "Pour que davantage de personnes de votre ville vous trouvent.",
+    "Para que mais pessoas da sua cidade encontrem você.",
+    "Damit mehr Menschen in deiner Stadt dich finden.",
+    "Per farti trovare da più persone nella tua città."
+  ],
+  "USD / mes": [
+    "USD / month",
+    "USD / mois",
+    "USD / mês",
+    "USD / Monat",
+    "USD / mese"
+  ],
+  "Ficha del negocio con tus datos": [
+    "Business listing with your details",
+    "Fiche de l'entreprise avec vos coordonnées",
+    "Ficha do negócio com seus dados",
+    "Unternehmenseintrag mit deinen Angaben",
+    "Scheda dell'attività con i tuoi dati"
+  ],
+  "Prioridad en tu categoría dentro de la provincia": [
+    "Priority in your category within the province",
+    "Priorité dans votre catégorie au sein de la province",
+    "Prioridade na sua categoria na província",
+    "Priorität in deiner Kategorie innerhalb der Provinz",
+    "Priorità nella tua categoria nella provincia"
+  ],
+  "Enlace directo a WhatsApp y sitio web": [
+    "Direct WhatsApp and website links",
+    "Liens directs vers WhatsApp et le site web",
+    "Links diretos para WhatsApp e site",
+    "Direkte Links zu WhatsApp und Website",
+    "Link diretti a WhatsApp e sito web"
+  ],
+  "Solicitud y seguimiento del negocio": [
+    "Business request and follow-up",
+    "Demande et suivi de l'entreprise",
+    "Solicitação e acompanhamento do negócio",
+    "Anfrage und Nachverfolgung",
+    "Richiesta e monitoraggio dell'attività"
+  ],
+  "Elegir Destacado": [
+    "Choose Featured",
+    "Choisir Mise en avant",
+    "Escolher Destaque",
+    "Hervorgehoben wählen",
+    "Scegli In evidenza"
+  ],
+  "MÁS VISIBILIDAD": [
+    "MORE VISIBILITY",
+    "PLUS DE VISIBILITÉ",
+    "MAIS VISIBILIDADE",
+    "MEHR SICHTBARKEIT",
+    "MAGGIORE VISIBILITÀ"
+  ],
+  "Plan Premium": [
+    "Premium plan",
+    "Formule Premium",
+    "Plano Premium",
+    "Premium-Paket",
+    "Piano Premium"
+  ],
+  "Para negocios que quieren dar el siguiente paso.": [
+    "For businesses ready to grow.",
+    "Pour les entreprises prêtes à franchir une étape.",
+    "Para negócios prontos para crescer.",
+    "Für Unternehmen, die weiter wachsen möchten.",
+    "Per le attività pronte a crescere."
+  ],
+  "Incluye publicación del negocio": [
+    "Includes business listing",
+    "Comprend la fiche de l'entreprise",
+    "Inclui publicação do negócio",
+    "Unternehmenseintrag inklusive",
+    "Include la pubblicazione dell'attività"
+  ],
+  "Prioridad en su categoría": [
+    "Priority in its category",
+    "Priorité dans sa catégorie",
+    "Prioridade na categoria",
+    "Priorität in der Kategorie",
+    "Priorità nella categoria"
+  ],
+  "Espacio publicitario en la portada provincial": [
+    "Advertising space on the provincial home page",
+    "Espace publicitaire sur la page de la province",
+    "Espaço publicitário na página da província",
+    "Werbefläche auf der Provinzseite",
+    "Spazio pubblicitario sulla pagina provinciale"
+  ],
+  "Espacio para ofertas destacadas": [
+    "Space for featured offers",
+    "Espace pour les offres mises en avant",
+    "Espaço para ofertas em destaque",
+    "Platz für hervorgehobene Angebote",
+    "Spazio per le offerte in evidenza"
+  ],
+  "Elegir Premium": [
+    "Choose Premium",
+    "Choisir Premium",
+    "Escolher Premium",
+    "Premium wählen",
+    "Scegli Premium"
+  ],
+  "Programa Socios Fundadores · Propuesta de lanzamiento": [
+    "Founding Partners Program · Launch proposal",
+    "Programme Partenaires fondateurs · Proposition de lancement",
+    "Programa Parceiros Fundadores · Proposta de lançamento",
+    "Gründungspartner-Programm · Startangebot",
+    "Programma Partner fondatori · Proposta di lancio"
+  ],
+  "Destacado Fundador: US$200 por 12 meses": [
+    "Founding Featured: US$200 for 12 months",
+    "Mise en avant Fondateur : 200 USD pour 12 mois",
+    "Destaque Fundador: US$200 por 12 meses",
+    "Gründer-Hervorgehoben: 200 USD für 12 Monate",
+    "In evidenza Fondatore: 200 USD per 12 mesi"
+  ],
+  "Premium Fundador: US$300 por 12 meses": [
+    "Founding Premium: US$300 for 12 months",
+    "Premium Fondateur : 300 USD pour 12 mois",
+    "Premium Fundador: US$300 por 12 meses",
+    "Gründer-Premium: 300 USD für 12 Monate",
+    "Premium Fondatore: 300 USD per 12 mesi"
+  ],
+  "Incluye ficha y visibilidad según el plan; no garantiza ventas, visitas ni exclusividad.": [
+    "Includes the listing and visibility described by the plan; does not guarantee sales, visits or exclusivity.",
+    "Inclut la fiche et la visibilité prévues par l'offre ; aucune garantie de ventes, de visites ou d'exclusivité.",
+    "Inclui ficha e visibilidade conforme o plano; não garante vendas, visitas ou exclusividade.",
+    "Umfasst Eintrag und Sichtbarkeit gemäß Paket; keine Garantie für Verkäufe, Besuche oder Exklusivität.",
+    "Include scheda e visibilità secondo il piano; non garantisce vendite, visite o esclusività."
+  ],
+  "Oferta informativa: no se cobra ni se activa automáticamente.": [
+    "Informational offer: no automatic charge or activation.",
+    "Offre informative : aucun paiement ni activation automatiques.",
+    "Oferta informativa: sem cobrança nem ativação automática.",
+    "Unverbindliches Angebot: keine automatische Zahlung oder Aktivierung.",
+    "Offerta informativa: nessun addebito o attivazione automatica."
+  ],
+  "Importante:": [
+    "Important:",
+    "Important :",
+    "Importante:",
+    "Wichtig:",
+    "Importante:"
+  ],
+  "La solicitud no es un pago: solo activaremos fichas y anuncios después de confirmar el pago y aprobar el negocio.": [
+    "Submitting a request is not a payment. Listings and ads activate only after confirmed payment and approval.",
+    "Une demande n'est pas un paiement. Les fiches et annonces ne sont activées qu'après paiement confirmé et approbation.",
+    "Solicitar não é pagar. As fichas e anúncios serão ativados somente após confirmação do pagamento e aprovação.",
+    "Eine Anfrage ist keine Zahlung. Einträge und Anzeigen werden erst nach Zahlung und Freigabe aktiviert.",
+    "Una richiesta non è un pagamento. Le schede e gli annunci saranno attivati solo dopo il pagamento confermato e l'approvazione."
+  ],
+  "Las solicitudes se envían a Netlify Forms para revisión humana y coordinación del pago, si el formulario está activado en Netlify. Este panel conserva una copia local; las solicitudes no se publican ni se cobran automáticamente.": [
+    "Requests are sent to Netlify Forms for manual review and payment coordination, when enabled. This panel keeps a local copy; requests are not published or charged automatically.",
+    "Les demandes sont transmises à Netlify Forms pour vérification manuelle et coordination du paiement, si activé. Ce panneau conserve une copie locale ; aucune publication ni facturation automatique.",
+    "As solicitações vão para Netlify Forms para revisão e coordenação do pagamento, quando ativado. Este painel mantém uma cópia local; não há publicação nem cobrança automática.",
+    "Anfragen gehen bei aktivem Formular zur manuellen Prüfung und Zahlungsabstimmung an Netlify Forms. Dieses Panel speichert eine lokale Kopie; keine automatische Veröffentlichung oder Abbuchung.",
+    "Le richieste vengono inviate a Netlify Forms per la revisione e la gestione del pagamento, se abilitato. Questo pannello conserva una copia locale; nessuna pubblicazione o addebito automatico."
+  ],
+  "📍 Tu ubicación": [
+    "📍 Your location",
+    "📍 Votre position",
+    "📍 Sua localização",
+    "📍 Dein Standort",
+    "📍 La tua posizione"
+  ],
+  "Descubre el mundo": [
+    "Discover the world",
+    "Découvrez le monde",
+    "Descubra o mundo",
+    "Entdecke die Welt",
+    "Scopri il mondo"
+  ],
+  "Guardar favoritos": [
+    "Save favorites",
+    "Enregistrer les favoris",
+    "Salvar favoritos",
+    "Favoriten speichern",
+    "Salva preferiti"
+  ],
+  "Fotos": [
+    "Photos",
+    "Photos",
+    "Fotos",
+    "Fotos",
+    "Foto"
+  ],
+  "Fotografías": [
+    "Photos",
+    "Photos",
+    "Fotografias",
+    "Fotos",
+    "Fotografie"
+  ]
+});
+
+// Report-place and excursion registration forms.
+Object.assign(labels, {
+  "EXPLORA EL MUNDO": [
+    "EXPLORE THE WORLD",
+    "EXPLOREZ LE MONDE",
+    "EXPLORE O MUNDO",
+    "ENTDECKE DIE WELT",
+    "ESPLORA IL MONDO"
+  ],
+  "WHERE TO GO · EXPLORA EL MUNDO": [
+    "WHERE TO GO · EXPLORE THE WORLD",
+    "WHERE TO GO · EXPLOREZ LE MONDE",
+    "WHERE TO GO · EXPLORE O MUNDO",
+    "WHERE TO GO · ENTDECKE DIE WELT",
+    "WHERE TO GO · ESPLORA IL MONDO"
+  ],
+  "WHERE TO GO · REPÚBLICA DOMINICANA": [
+    "WHERE TO GO · DOMINICAN REPUBLIC",
+    "WHERE TO GO · RÉPUBLIQUE DOMINICAINE",
+    "WHERE TO GO · REPÚBLICA DOMINICANA",
+    "WHERE TO GO · DOMINIKANISCHE REPUBLIK",
+    "WHERE TO GO · REPUBBLICA DOMINICANA"
+  ],
+  "INSPIRACIÓN PARA TU PRÓXIMO VIAJE": [
+    "INSPIRATION FOR YOUR NEXT TRIP",
+    "INSPIRATION POUR VOTRE PROCHAIN VOYAGE",
+    "INSPIRAÇÃO PARA SUA PRÓXIMA VIAGEM",
+    "INSPIRATION FÜR DEINE NÄCHSTE REISE",
+    "ISPIRAZIONE PER IL PROSSIMO VIAGGIO"
+  ],
+  "Playas": [
+    "Beaches",
+    "Plages",
+    "Praias",
+    "Strände",
+    "Spiagge"
+  ],
+  "Cascadas": [
+    "Waterfalls",
+    "Cascades",
+    "Cachoeiras",
+    "Wasserfälle",
+    "Cascate"
+  ],
+  "Restaurantes": [
+    "Restaurants",
+    "Restaurants",
+    "Restaurantes",
+    "Restaurants",
+    "Ristoranti"
+  ],
+  "Hoteles": [
+    "Hotels",
+    "Hôtels",
+    "Hotéis",
+    "Hotels",
+    "Hotel"
+  ],
+  "Ríos": [
+    "Rivers",
+    "Rivières",
+    "Rios",
+    "Flüsse",
+    "Fiumi"
+  ],
+  "Atractivos": [
+    "Attractions",
+    "Attractions",
+    "Atrações",
+    "Sehenswürdigkeiten",
+    "Attrazioni"
+  ],
+  "Discotecas": [
+    "Nightclubs",
+    "Discothèques",
+    "Boates",
+    "Nachtclubs",
+    "Discoteche"
+  ],
+  "Bares": [
+    "Bars",
+    "Bars",
+    "Bares",
+    "Bars",
+    "Bar"
+  ],
+  "Cafeterías": [
+    "Cafés",
+    "Cafés",
+    "Cafeterias",
+    "Cafés",
+    "Caffetterie"
+  ],
+  "Transporte": [
+    "Transport",
+    "Transports",
+    "Transporte",
+    "Transport",
+    "Trasporti"
+  ],
+  "Tours": [
+    "Tours",
+    "Excursions",
+    "Passeios",
+    "Touren",
+    "Tour"
+  ],
+  "A 60 km": [
+    "Within 60 km",
+    "Dans un rayon de 60 km",
+    "Até 60 km",
+    "Im Umkreis von 60 km",
+    "Entro 60 km"
+  ],
+  "A 100 km": [
+    "Within 100 km",
+    "Dans un rayon de 100 km",
+    "Até 100 km",
+    "Im Umkreis von 100 km",
+    "Entro 100 km"
+  ],
+  "Cargando municipios...": [
+    "Loading municipalities...",
+    "Chargement des communes...",
+    "Carregando municípios...",
+    "Gemeinden werden geladen...",
+    "Caricamento comuni..."
+  ],
+  "Permiso de ubicación solo al usar el botón o si ya lo concediste antes. Requiere HTTPS. La búsqueda y geocodificación pueden enviar coordenadas a proveedores de mapas; no guardamos tu GPS en una cuenta.": [
+    "Location is requested only when you tap the button or previously granted permission. Requires HTTPS. Search and geocoding may send coordinates to map providers; we do not store your GPS location in an account.",
+    "La position n'est demandée qu'après action de votre part ou autorisation préalable. HTTPS requis. La recherche peut transmettre les coordonnées aux fournisseurs de cartes ; nous ne stockons pas votre GPS dans un compte.",
+    "A localização é solicitada apenas ao tocar no botão ou se já houver permissão. Requer HTTPS. Busca e geocodificação podem enviar coordenadas aos mapas; não guardamos seu GPS em uma conta.",
+    "Der Standort wird nur nach Tippen oder bestehender Berechtigung angefragt. HTTPS erforderlich. Suche und Geokodierung können Koordinaten an Kartenanbieter übermitteln; wir speichern deinen GPS-Standort nicht in einem Konto.",
+    "La posizione viene richiesta solo quando tocchi il pulsante o se hai già autorizzato. Richiede HTTPS. La ricerca può inviare coordinate ai fornitori di mappe; non salviamo il GPS nell'account."
+  ],
+  "Ayúdanos a completar Where to Go": [
+    "Help us improve Where to Go",
+    "Aidez-nous à enrichir Where to Go",
+    "Ajude a melhorar o Where to Go",
+    "Hilf uns, Where to Go zu verbessern",
+    "Aiutaci a migliorare Where to Go"
+  ],
+  "Proporciona información verificable. Nunca publicamos lugares ni imágenes sin revisar.": [
+    "Share verifiable information. We never publish places or photos without review.",
+    "Fournissez des informations vérifiables. Nous ne publions aucun lieu ou photo sans vérification.",
+    "Forneça informações verificáveis. Nunca publicamos locais ou fotos sem revisão.",
+    "Teile überprüfbare Angaben. Orte und Bilder veröffentlichen wir erst nach Prüfung.",
+    "Fornisci informazioni verificabili. Non pubblichiamo luoghi o foto senza verifica."
+  ],
+  "Nombre del lugar *": [
+    "Place name *",
+    "Nom du lieu *",
+    "Nome do lugar *",
+    "Name des Ortes *",
+    "Nome del luogo *"
+  ],
+  "Provincia *": [
+    "Province *",
+    "Province *",
+    "Província *",
+    "Provinz *",
+    "Provincia *"
+  ],
+  "Municipio o localidad *": [
+    "Municipality or town *",
+    "Commune ou localité *",
+    "Município ou localidade *",
+    "Gemeinde oder Ort *",
+    "Comune o località *"
+  ],
+  "Enlace a ubicación precisa (OSM, Waze o Maps)": [
+    "Link to precise location (OSM, Waze or Maps)",
+    "Lien vers l'emplacement exact (OSM, Waze ou Maps)",
+    "Link da localização exata (OSM, Waze ou Maps)",
+    "Link zum genauen Standort (OSM, Waze oder Maps)",
+    "Link alla posizione esatta (OSM, Waze o Maps)"
+  ],
+  "Subir una fotografía propia o autorizada (máximo 6 MB)": [
+    "Upload your own or authorized photo (max 6 MB)",
+    "Ajouter votre photo ou une photo autorisée (6 Mo max)",
+    "Enviar foto própria ou autorizada (máx. 6 MB)",
+    "Eigenes oder genehmigtes Foto hochladen (max. 6 MB)",
+    "Carica una foto propria o autorizzata (max 6 MB)"
+  ],
+  "O enlace a una fotografía autorizada": [
+    "Or link to an authorized photo",
+    "Ou lien vers une photo autorisée",
+    "Ou link para uma foto autorizada",
+    "Oder Link zu einem genehmigten Foto",
+    "Oppure link a una foto autorizzata"
+  ],
+  "Detalles para verificar": [
+    "Details for verification",
+    "Détails à vérifier",
+    "Detalhes para verificação",
+    "Angaben zur Prüfung",
+    "Dettagli da verificare"
+  ],
+  "Contacto para aclaraciones (opcional)": [
+    "Contact for follow-up (optional)",
+    "Contact pour précisions (facultatif)",
+    "Contato para esclarecimentos (opcional)",
+    "Kontakt für Rückfragen (optional)",
+    "Contatto per chiarimenti (facoltativo)"
+  ],
+  "Confirmo que mis datos son correctos y que tengo permiso para compartir la foto, si adjunto una.": [
+    "I confirm my details are accurate and I have permission to share any attached photo.",
+    "Je confirme l'exactitude des informations et avoir l'autorisation de partager la photo jointe.",
+    "Confirmo que os dados estão corretos e tenho permissão para compartilhar qualquer foto anexada.",
+    "Ich bestätige die Richtigkeit meiner Angaben und die Berechtigung zur Weitergabe angehängter Fotos.",
+    "Confermo che i dati sono corretti e di avere il permesso di condividere le foto allegate."
+  ],
+  "Se enviará a Netlify Forms para revisión; no se publica automáticamente. No subas fotos de niños ni información privada de terceros.": [
+    "Sent to Netlify Forms for review; not published automatically. Do not upload photos of children or others' private information.",
+    "Envoyé à Netlify Forms pour vérification ; aucune publication automatique. N'ajoutez pas de photos d'enfants ni de données privées de tiers.",
+    "Enviado ao Netlify Forms para revisão; sem publicação automática. Não envie fotos de crianças nem dados privados de terceiros.",
+    "An Netlify Forms zur Prüfung gesendet; keine automatische Veröffentlichung. Keine Kinderfotos oder privaten Daten Dritter hochladen.",
+    "Inviato a Netlify Forms per la verifica; nessuna pubblicazione automatica. Non caricare foto di minori o dati privati di terzi."
+  ],
+  "Enviar para revisión": [
+    "Submit for review",
+    "Envoyer pour vérification",
+    "Enviar para revisão",
+    "Zur Prüfung senden",
+    "Invia per la verifica"
+  ],
+  "Publica tu tour o excursión": [
+    "List your tour or excursion",
+    "Publiez votre visite ou excursion",
+    "Publique seu passeio ou excursão",
+    "Tour oder Ausflug veröffentlichen",
+    "Pubblica il tuo tour o la tua escursione"
+  ],
+  "US$10 mensuales por anuncio. Se publica únicamente tras verificación del organizador, revisión del contenido y pago confirmado.": [
+    "US$10 per month per listing. Published only after organizer verification, content review and payment confirmation.",
+    "10 USD par mois et par annonce. Publication uniquement après vérification de l'organisateur, examen du contenu et confirmation du paiement.",
+    "US$10 por mês por anúncio. Publicação apenas após verificação do organizador, revisão do conteúdo e confirmação do pagamento.",
+    "10 USD monatlich pro Eintrag. Veröffentlichung erst nach Veranstalterprüfung, Inhaltsprüfung und bestätigter Zahlung.",
+    "10 USD al mese per annuncio. Pubblicazione solo dopo verifica dell'organizzatore, revisione dei contenuti e conferma del pagamento."
+  ],
+  "Nombre de la excursión *": [
+    "Tour or excursion name *",
+    "Nom de la visite ou excursion *",
+    "Nome do passeio ou excursão *",
+    "Name der Tour oder des Ausflugs *",
+    "Nome del tour o dell'escursione *"
+  ],
+  "Nombre legal del organizador *": [
+    "Organizer's legal name *",
+    "Nom légal de l'organisateur *",
+    "Nome legal do organizador *",
+    "Rechtlicher Name des Veranstalters *",
+    "Nome legale dell'organizzatore *"
+  ],
+  "Teléfono / WhatsApp verificable *": [
+    "Verifiable phone / WhatsApp *",
+    "Téléphone / WhatsApp vérifiable *",
+    "Telefone / WhatsApp verificável *",
+    "Verifizierbares Telefon / WhatsApp *",
+    "Telefono / WhatsApp verificabile *"
+  ],
+  "Correo de contacto *": [
+    "Contact email *",
+    "E-mail de contact *",
+    "E-mail de contato *",
+    "Kontakt-E-Mail *",
+    "Email di contatto *"
+  ],
+  "País donde se realiza *": [
+    "Country where the activity takes place *",
+    "Pays où se déroule l'activité *",
+    "País onde a atividade ocorre *",
+    "Land, in dem die Aktivität stattfindet *",
+    "Paese in cui si svolge l'attività *"
+  ],
+  "Provincia / región donde se realiza *": [
+    "Province / region of the activity *",
+    "Province / région de l'activité *",
+    "Província / região da atividade *",
+    "Provinz / Region der Aktivität *",
+    "Provincia / regione dell'attività *"
+  ],
+  "Ciudad / municipio *": [
+    "City / municipality *",
+    "Ville / commune *",
+    "Cidade / município *",
+    "Stadt / Gemeinde *",
+    "Città / comune *"
+  ],
+  "Lugar exacto de salida *": [
+    "Exact departure location *",
+    "Lieu de départ exact *",
+    "Local exato de saída *",
+    "Genauer Abfahrtsort *",
+    "Punto di partenza esatto *"
+  ],
+  "Hora de salida *": [
+    "Departure time *",
+    "Heure de départ *",
+    "Horário de saída *",
+    "Abfahrtszeit *",
+    "Ora di partenza *"
+  ],
+  "Fecha de salida *": [
+    "Departure date *",
+    "Date de départ *",
+    "Data de saída *",
+    "Abfahrtsdatum *",
+    "Data di partenza *"
+  ],
+  "Destino o paradas *": [
+    "Destination or stops *",
+    "Destination ou arrêts *",
+    "Destino ou paradas *",
+    "Ziel oder Zwischenstopps *",
+    "Destinazione o tappe *"
+  ],
+  "Hora aproximada de regreso *": [
+    "Approximate return time *",
+    "Heure de retour approximative *",
+    "Horário aproximado de volta *",
+    "Ungefähre Rückkehrzeit *",
+    "Orario approssimativo di ritorno *"
+  ],
+  "Precio por persona *": [
+    "Price per person *",
+    "Prix par personne *",
+    "Preço por pessoa *",
+    "Preis pro Person *",
+    "Prezzo a persona *"
+  ],
+  "Cupos disponibles *": [
+    "Available spaces *",
+    "Places disponibles *",
+    "Vagas disponíveis *",
+    "Verfügbare Plätze *",
+    "Posti disponibili *"
+  ],
+  "Qué incluye *": [
+    "What's included *",
+    "Ce qui est inclus *",
+    "O que inclui *",
+    "Enthaltene Leistungen *",
+    "Cosa include *"
+  ],
+  "Qué NO incluye *": [
+    "What's NOT included *",
+    "Ce qui n'est PAS inclus *",
+    "O que NÃO inclui *",
+    "Nicht enthalten *",
+    "Cosa NON include *"
+  ],
+  "Descripción e itinerario *": [
+    "Description and itinerary *",
+    "Description et itinéraire *",
+    "Descrição e itinerário *",
+    "Beschreibung und Reiseverlauf *",
+    "Descrizione e itinerario *"
+  ],
+  "Política de cancelación y reembolso *": [
+    "Cancellation and refund policy *",
+    "Politique d'annulation et de remboursement *",
+    "Política de cancelamento e reembolso *",
+    "Stornierungs- und Erstattungsregeln *",
+    "Politica di cancellazione e rimborso *"
+  ],
+  "Información de seguridad, responsable y contacto de emergencia *": [
+    "Safety information, organizer and emergency contact *",
+    "Informations de sécurité, responsable et contact d'urgence *",
+    "Informações de segurança, responsável e contato de emergência *",
+    "Sicherheitsinformationen, Verantwortliche und Notfallkontakt *",
+    "Informazioni sulla sicurezza, responsabile e contatto d'emergenza *"
+  ],
+  "Hasta 5 fotografías propias o autorizadas *": [
+    "Up to 5 owned or authorized photos *",
+    "Jusqu'à 5 photos personnelles ou autorisées *",
+    "Até 5 fotos próprias ou autorizadas *",
+    "Bis zu 5 eigene oder genehmigte Fotos *",
+    "Fino a 5 foto proprie o autorizzate *"
+  ],
+  "Selecciona de 1 a 5 fotos, máximo 5 MB por foto. Las imágenes se revisan antes de publicar.": [
+    "Choose 1 to 5 photos, up to 5 MB each. Images are reviewed before publication.",
+    "Choisissez 1 à 5 photos de 5 Mo maximum chacune. Les images seront vérifiées avant publication.",
+    "Escolha de 1 a 5 fotos, máximo 5 MB cada. As imagens serão revisadas antes da publicação.",
+    "Wähle 1 bis 5 Fotos mit maximal 5 MB pro Foto. Bilder werden vor der Veröffentlichung geprüft.",
+    "Scegli da 1 a 5 foto, massimo 5 MB ciascuna. Le immagini saranno verificate prima della pubblicazione."
+  ],
+  "Confirmo que tengo autorización para ofrecer la actividad, que la información es correcta y que tengo derechos de uso sobre las fotografías.": [
+    "I confirm I am authorized to offer this activity, all information is accurate, and I have rights to use the photos.",
+    "Je confirme être autorisé à proposer cette activité, que les informations sont exactes et que je dispose des droits sur les photos.",
+    "Confirmo autorização para oferecer a atividade, que as informações estão corretas e que tenho direitos sobre as fotos.",
+    "Ich bestätige, dass ich die Aktivität anbieten darf, alle Angaben korrekt sind und ich die Bildrechte besitze.",
+    "Confermo di essere autorizzato a offrire l'attività, che le informazioni sono corrette e che ho i diritti sulle foto."
+  ],
+  "La solicitud no implica cobro ni publicación automática. Los anuncios solo se mostrarán en el país y provincia correspondientes, una vez exista la infraestructura de publicación y filtrado.": [
+    "Submitting a request does not trigger a charge or publication. Listings will appear only in the corresponding country and province once publishing and filtering are available.",
+    "L'envoi n'entraîne ni facturation ni publication automatique. Les annonces apparaîtront uniquement dans le pays et la province concernés, une fois l'infrastructure disponible.",
+    "O envio não gera cobrança nem publicação automática. Anúncios aparecerão apenas no país e província correspondentes quando a infraestrutura estiver disponível.",
+    "Eine Anfrage führt weder zu Abbuchung noch zur Veröffentlichung. Anzeigen erscheinen erst nach Bereitstellung der Infrastruktur im richtigen Land und der richtigen Provinz.",
+    "L'invio non comporta addebiti né pubblicazione automatica. Gli annunci appariranno solo nel paese e nella provincia corretti quando l'infrastruttura sarà disponibile."
+  ],
+  "Enviar solicitud para revisión": [
+    "Submit request for review",
+    "Envoyer la demande pour vérification",
+    "Enviar solicitação para revisão",
+    "Anfrage zur Prüfung senden",
+    "Invia la richiesta per la verifica"
+  ]
+});
+
+// Business submission, account, privacy and legal notices.
+Object.assign(labels, {
+  "Solicita tu registro empresarial": [
+    "Request a business listing",
+    "Demandez l'inscription de votre entreprise",
+    "Solicite o cadastro da sua empresa",
+    "Unternehmenseintrag beantragen",
+    "Richiedi la registrazione della tua attività"
+  ],
+  "Elige un plan. Solo se publicará la ficha tras revisión y confirmación del pago.": [
+    "Choose a plan. Your listing will be published only after review and confirmed payment.",
+    "Choisissez une formule. Votre fiche sera publiée uniquement après examen et confirmation du paiement.",
+    "Escolha um plano. A ficha será publicada apenas após revisão e confirmação do pagamento.",
+    "Wähle ein Paket. Dein Eintrag wird erst nach Prüfung und Zahlungsbestätigung veröffentlicht.",
+    "Scegli un piano. La scheda sarà pubblicata solo dopo verifica e conferma del pagamento."
+  ],
+  "Nombre del negocio *": [
+    "Business name *",
+    "Nom de l'entreprise *",
+    "Nome do negócio *",
+    "Name des Unternehmens *",
+    "Nome dell'attività *"
+  ],
+  "Categoría *": [
+    "Category *",
+    "Catégorie *",
+    "Categoria *",
+    "Kategorie *",
+    "Categoria *"
+  ],
+  "Dirección *": [
+    "Address *",
+    "Adresse *",
+    "Endereço *",
+    "Adresse *",
+    "Indirizzo *"
+  ],
+  "WhatsApp / teléfono *": [
+    "WhatsApp / phone *",
+    "WhatsApp / téléphone *",
+    "WhatsApp / telefone *",
+    "WhatsApp / Telefon *",
+    "WhatsApp / telefono *"
+  ],
+  "Enlace de Google Maps, Waze u OSM (opcional)": [
+    "Google Maps, Waze or OSM link (optional)",
+    "Lien Google Maps, Waze ou OSM (facultatif)",
+    "Link Google Maps, Waze ou OSM (opcional)",
+    "Google Maps-, Waze- oder OSM-Link (optional)",
+    "Link Google Maps, Waze o OSM (facoltativo)"
+  ],
+  "Enlace a una foto propia autorizada (opcional)": [
+    "Link to your own authorized photo (optional)",
+    "Lien vers votre photo autorisée (facultatif)",
+    "Link da sua foto autorizada (opcional)",
+    "Link zu eigenem genehmigtem Foto (optional)",
+    "Link a una foto autorizzata (facoltativo)"
+  ],
+  "Hasta cuatro enlaces a fotos adicionales autorizadas (uno por línea)": [
+    "Up to four links to additional authorized photos (one per line)",
+    "Jusqu'à quatre liens vers d'autres photos autorisées (un par ligne)",
+    "Até quatro links para fotos adicionais autorizadas (um por linha)",
+    "Bis zu vier Links zu weiteren genehmigten Fotos (einer pro Zeile)",
+    "Fino a quattro link a foto aggiuntive autorizzate (uno per riga)"
+  ],
+  "Plan deseado": [
+    "Preferred plan",
+    "Formule souhaitée",
+    "Plano desejado",
+    "Gewünschtes Paket",
+    "Piano desiderato"
+  ],
+  "Registro Básico · US$10 una vez": [
+    "Basic listing · US$10 once",
+    "Inscription de base · 10 USD une fois",
+    "Cadastro básico · US$10 uma vez",
+    "Basiseintrag · einmalig 10 USD",
+    "Registrazione base · 10 USD una tantum"
+  ],
+  "Destacado · US$30/mes": [
+    "Featured · US$30/month",
+    "Mise en avant · 30 USD/mois",
+    "Destaque · US$30/mês",
+    "Hervorgehoben · 30 USD/Monat",
+    "In evidenza · 30 USD/mese"
+  ],
+  "Premium · US$50/mes": [
+    "Premium · US$50/month",
+    "Premium · 50 USD/mois",
+    "Premium · US$50/mês",
+    "Premium · 50 USD/Monat",
+    "Premium · 50 USD/mese"
+  ],
+  "Descripción": [
+    "Description",
+    "Description",
+    "Descrição",
+    "Beschreibung",
+    "Descrizione"
+  ],
+  "Confirmo que soy propietario o representante autorizado y que puedo compartir estos datos para revisión.": [
+    "I confirm that I own or am authorized to represent this business and may submit these details for review.",
+    "Je confirme être propriétaire ou représentant autorisé et pouvoir transmettre ces informations pour examen.",
+    "Confirmo ser proprietário ou representante autorizado e poder enviar esses dados para revisão.",
+    "Ich bestätige, Inhaber oder bevollmächtigter Vertreter zu sein und diese Angaben zur Prüfung weitergeben zu dürfen.",
+    "Confermo di essere proprietario o rappresentante autorizzato e di poter condividere questi dati per la verifica."
+  ],
+  "Al enviar, el negocio se remite para revisión humana mediante Netlify Forms, si está activo. La solicitud no es un cobro: después de revisar el negocio, confirmaremos el precio y el pago. No se publica automáticamente; se guarda una copia local.": [
+    "If Netlify Forms is enabled, the request is sent for manual review. Submitting does not charge you; the price and payment are confirmed later. Nothing is published automatically, and a local copy is saved.",
+    "Si Netlify Forms est activé, la demande est envoyée pour vérification manuelle. Aucun paiement n'est effectué lors de l'envoi ; le tarif sera confirmé ensuite. Publication non automatique et copie locale conservée.",
+    "Se Netlify Forms estiver ativo, o pedido será enviado para revisão humana. O envio não gera cobrança; o preço e o pagamento serão confirmados depois. Nada é publicado automaticamente; uma cópia local é salva.",
+    "Ist Netlify Forms aktiviert, wird die Anfrage manuell geprüft. Das Absenden löst keine Zahlung aus; Preis und Zahlung werden später bestätigt. Keine automatische Veröffentlichung; eine lokale Kopie wird gespeichert.",
+    "Se Netlify Forms è attivo, la richiesta viene inviata per revisione manuale. L'invio non comporta addebiti; prezzo e pagamento saranno confermati successivamente. Nessuna pubblicazione automatica; viene salvata una copia locale."
+  ],
+  "Enviar solicitud de registro": [
+    "Submit listing request",
+    "Envoyer la demande d'inscription",
+    "Enviar solicitação de cadastro",
+    "Eintrag beantragen",
+    "Invia richiesta di registrazione"
+  ],
+  "Mi cuenta": [
+    "My account",
+    "Mon compte",
+    "Minha conta",
+    "Mein Konto",
+    "Il mio account"
+  ],
+  "Comprobando sesión…": [
+    "Checking your session…",
+    "Vérification de votre session…",
+    "Verificando sua sessão…",
+    "Sitzung wird geprüft…",
+    "Verifica della sessione…"
+  ],
+  "Mis lugares favoritos": [
+    "My favorite places",
+    "Mes lieux favoris",
+    "Meus lugares favoritos",
+    "Meine Lieblingsorte",
+    "I miei luoghi preferiti"
+  ],
+  "Reenviar confirmación de correo": [
+    "Resend email confirmation",
+    "Renvoyer l'e-mail de confirmation",
+    "Reenviar confirmação por e-mail",
+    "Bestätigungs-E-Mail erneut senden",
+    "Invia di nuovo l'email di conferma"
+  ],
+  "Cambiar contraseña por correo": [
+    "Change password by email",
+    "Modifier le mot de passe par e-mail",
+    "Alterar senha por e-mail",
+    "Passwort per E-Mail ändern",
+    "Modifica la password via email"
+  ],
+  "Privacidad y condiciones": [
+    "Privacy and terms",
+    "Confidentialité et conditions",
+    "Privacidade e condições",
+    "Datenschutz und Bedingungen",
+    "Privacy e condizioni"
+  ],
+  "Cerrar sesión": [
+    "Sign out",
+    "Se déconnecter",
+    "Sair da conta",
+    "Abmelden",
+    "Esci"
+  ],
+  "Ver pantalla de inicio de sesión": [
+    "Open sign-in screen",
+    "Afficher l'écran de connexion",
+    "Abrir tela de login",
+    "Anmeldebildschirm öffnen",
+    "Apri la schermata di accesso"
+  ],
+  "Privacidad y condiciones — versión de prueba": [
+    "Privacy and terms — preview version",
+    "Confidentialité et conditions — version de test",
+    "Privacidade e condições — versão de teste",
+    "Datenschutz und Bedingungen — Testversion",
+    "Privacy e condizioni — versione di prova"
+  ],
+  "Información que tratamos": [
+    "Information we process",
+    "Informations que nous traitons",
+    "Informações que tratamos",
+    "Daten, die wir verarbeiten",
+    "Dati che trattiamo"
+  ],
+  "Supabase gestiona tu correo y autenticación. Si aceptas la personalización, podemos guardar tus lugares vistos y favoritos vinculados a tu cuenta. Los proveedores de mapas pueden procesar búsquedas o ubicación cuando los utilizas.": [
+    "Supabase manages your email and authentication. With your consent, viewed places and favorites may be saved to your account. Map providers may process search or location data when used.",
+    "Supabase gère votre e-mail et votre authentification. Avec votre accord, les lieux consultés et favoris peuvent être liés à votre compte. Les fournisseurs de cartes peuvent traiter la recherche et la position lors de leur utilisation.",
+    "Supabase gerencia seu e-mail e autenticação. Com consentimento, lugares vistos e favoritos podem ser salvos em sua conta. Provedores de mapas podem processar buscas ou localização quando utilizados.",
+    "Supabase verwaltet E-Mail und Anmeldung. Mit Zustimmung können besuchte Orte und Favoriten dem Konto zugeordnet werden. Kartenanbieter können bei Nutzung Such- oder Standortdaten verarbeiten.",
+    "Supabase gestisce email e autenticazione. Con il consenso, luoghi visualizzati e preferiti possono essere salvati nell'account. I fornitori di mappe possono elaborare ricerche e posizione quando vengono utilizzati."
+  ],
+  "Control de tus datos": [
+    "Control of your data",
+    "Contrôle de vos données",
+    "Controle dos seus dados",
+    "Kontrolle über deine Daten",
+    "Controllo dei tuoi dati"
+  ],
+  "Puedes cerrar sesión y desactivar la personalización. Para solicitar acceso, corrección o eliminación de datos, necesitamos habilitar un canal de atención verificado antes del lanzamiento público.": [
+    "You can sign out and disable personalization. A verified support channel for requests to access, correct or delete data must be enabled before public launch.",
+    "Vous pouvez vous déconnecter et désactiver la personnalisation. Un canal de contact vérifié pour accéder, corriger ou supprimer les données doit être mis en place avant le lancement.",
+    "Você pode sair e desativar a personalização. Um canal de atendimento verificado para acessar, corrigir ou excluir dados deverá estar ativo antes do lançamento público.",
+    "Du kannst dich abmelden und die Personalisierung deaktivieren. Vor dem öffentlichen Start muss ein geprüfter Kontaktweg für Auskunft, Berichtigung oder Löschung bereitstehen.",
+    "Puoi uscire e disattivare la personalizzazione. Prima del lancio pubblico occorre un canale verificato per richiedere accesso, rettifica o cancellazione dei dati."
+  ],
+  "Condiciones de uso": [
+    "Terms of use",
+    "Conditions d'utilisation",
+    "Condições de uso",
+    "Nutzungsbedingungen",
+    "Condizioni d'uso"
+  ],
+  "Where to Go está en fase de prueba. Las fichas, fotos, horarios, precios y excursiones deben comprobarse con el proveedor. Ninguna excursión está certificada como segura por aparecer aquí. Los anuncios requieren revisión y pago confirmado antes de publicarse.": [
+    "Where to Go is in testing. Verify listings, photos, hours, prices and excursions with the provider. An excursion is not certified safe by appearing here. Ads require review and confirmed payment before publication.",
+    "Where to Go est en phase de test. Vérifiez les fiches, photos, horaires, prix et excursions auprès des prestataires. Une excursion n'est pas certifiée sûre du seul fait de sa présence. Les annonces nécessitent vérification et paiement confirmé.",
+    "Where to Go está em teste. Verifique fichas, fotos, horários, preços e excursões com o prestador. Aparecer aqui não certifica a segurança de uma excursão. Anúncios exigem revisão e pagamento confirmado.",
+    "Where to Go befindet sich in der Testphase. Prüfe Einträge, Fotos, Öffnungszeiten, Preise und Ausflüge beim Anbieter. Ein Eintrag ist keine Sicherheitszertifizierung. Anzeigen erfordern Prüfung und bestätigte Zahlung.",
+    "Where to Go è in fase di test. Verifica schede, foto, orari, prezzi ed escursioni con il fornitore. La presenza qui non certifica la sicurezza di un'escursione. Gli annunci richiedono revisione e pagamento confermato."
+  ],
+  "Aviso:": [
+    "Notice:",
+    "Avis :",
+    "Aviso:",
+    "Hinweis:",
+    "Avviso:"
+  ],
+  "este resumen provisional no sustituye una política legal definitiva ni constituye consentimiento automático para nuevos tratamientos.": [
+    "this provisional summary is not a final legal policy and does not constitute automatic consent to further data processing.",
+    "ce résumé provisoire ne remplace pas une politique juridique définitive et ne vaut pas consentement automatique à d'autres traitements.",
+    "este resumo provisório não substitui uma política jurídica definitiva nem representa consentimento automático para novos tratamentos.",
+    "diese vorläufige Zusammenfassung ersetzt keine endgültige Rechtserklärung und stellt keine automatische Einwilligung in weitere Datenverarbeitung dar.",
+    "questa sintesi provvisoria non sostituisce un'informativa legale definitiva né costituisce consenso automatico a ulteriori trattamenti."
+  ]
+});
+
+// Location selection and remaining dynamic interaction labels.
+Object.assign(labels, {
+  "TRANSPORTE · SOCIO FUNDADOR · PUERTO PLATA": [
+    "TRANSPORT · FOUNDING PARTNER · PUERTO PLATA",
+    "TRANSPORT · PARTENAIRE FONDATEUR · PUERTO PLATA",
+    "TRANSPORTE · PARCEIRO FUNDADOR · PUERTO PLATA",
+    "TRANSPORT · GRÜNDUNGSPARTNER · PUERTO PLATA",
+    "TRASPORTO · PARTNER FONDATORE · PUERTO PLATA"
+  ],
+  "WHERE TO GO · TRANSPORTE": [
+    "WHERE TO GO · TRANSPORT",
+    "WHERE TO GO · TRANSPORTS",
+    "WHERE TO GO · TRANSPORTE",
+    "WHERE TO GO · TRANSPORT",
+    "WHERE TO GO · TRASPORTI"
+  ],
+  "No llenar": [
+    "Do not fill in",
+    "Ne pas remplir",
+    "Não preencher",
+    "Nicht ausfüllen",
+    "Non compilare"
+  ],
+  "Selecciona una ciudad o municipio": [
+    "Choose a city or municipality",
+    "Choisissez une ville ou une commune",
+    "Escolha uma cidade ou município",
+    "Stadt oder Gemeinde auswählen",
+    "Scegli una città o un comune"
+  ],
+  "32 demarcaciones y 158 municipios disponibles. Elige una provincia y una ciudad para explorar.": [
+    "32 areas and 158 municipalities available. Choose a province and city to explore.",
+    "32 zones et 158 communes disponibles. Choisissez une province et une ville.",
+    "32 áreas e 158 municípios disponíveis. Escolha uma província e uma cidade.",
+    "32 Gebiete und 158 Gemeinden verfügbar. Wähle eine Provinz und Stadt.",
+    "32 aree e 158 comuni disponibili. Scegli una provincia e una città."
+  ],
+  "32 demarcaciones disponibles. Se está cargando el índice de los 158 municipios.": [
+    "32 areas available. Loading the index of 158 municipalities.",
+    "32 zones disponibles. Chargement de l'index des 158 communes.",
+    "32 áreas disponíveis. Carregando o índice de 158 municípios.",
+    "32 Gebiete verfügbar. Das Verzeichnis mit 158 Gemeinden wird geladen.",
+    "32 aree disponibili. Caricamento dell'elenco di 158 comuni."
+  ],
+  "Este país todavía no tiene regiones y ciudades precargadas.": [
+    "This country does not have preloaded regions and cities yet.",
+    "Ce pays n'a pas encore de régions ou de villes préchargées.",
+    "Este país ainda não tem regiões e cidades pré-carregadas.",
+    "Für dieses Land sind noch keine Regionen und Städte vorgeladen.",
+    "Questo paese non dispone ancora di regioni e città precaricate."
+  ],
+  "República Dominicana: elige la provincia y luego la ciudad o municipio.": [
+    "Dominican Republic: choose a province, then a city or municipality.",
+    "République dominicaine : choisissez une province, puis une ville ou commune.",
+    "República Dominicana: escolha a província, depois a cidade ou município.",
+    "Dominikanische Republik: Wähle zuerst die Provinz, dann die Stadt oder Gemeinde.",
+    "Repubblica Dominicana: scegli la provincia e poi la città o il comune."
+  ],
+  "Selecciona una ciudad para buscar lugares reales con Google Places.": [
+    "Choose a city to search for real places with Google Places.",
+    "Choisissez une ville pour rechercher des lieux réels avec Google Places.",
+    "Escolha uma cidade para buscar lugares reais no Google Places.",
+    "Wähle eine Stadt, um echte Orte mit Google Places zu suchen.",
+    "Scegli una città per cercare luoghi reali con Google Places."
+  ],
+  "Este país no tiene todavía un índice de ciudades verificadas. No se mostrarán ubicaciones inventadas.": [
+    "This country has no verified city index yet. No invented locations will be shown.",
+    "Ce pays n'a pas encore d'index de villes vérifiées. Aucun lieu inventé ne sera affiché.",
+    "Este país ainda não tem índice de cidades verificadas. Nenhuma localização inventada será exibida.",
+    "Für dieses Land gibt es noch kein geprüftes Stadtverzeichnis. Es werden keine erfundenen Orte angezeigt.",
+    "Questo paese non ha ancora un elenco verificato di città. Non mostreremo luoghi inventati."
+  ],
+  "Explorar destino en República Dominicana": [
+    "Explore destination in the Dominican Republic",
+    "Explorer une destination en République dominicaine",
+    "Explorar destino na República Dominicana",
+    "Reiseziel in der Dominikanischen Republik entdecken",
+    "Esplora destinazione nella Repubblica Dominicana"
+  ],
+  "Explorar destino seleccionado": [
+    "Explore selected destination",
+    "Explorer la destination choisie",
+    "Explorar destino selecionado",
+    "Gewähltes Reiseziel erkunden",
+    "Esplora la destinazione selezionata"
+  ],
+  "Selecciona una provincia y una ciudad para ver lugares cercanos.": [
+    "Choose a province and city to see nearby places.",
+    "Choisissez une province et une ville pour voir les lieux proches.",
+    "Escolha uma província e uma cidade para ver lugares próximos.",
+    "Wähle Provinz und Stadt, um Orte in der Nähe zu sehen.",
+    "Scegli una provincia e una città per vedere luoghi vicini."
+  ],
+  "Comprobando ubicación del destino…": [
+    "Checking destination location…",
+    "Vérification de l'emplacement…",
+    "Verificando a localização…",
+    "Standort des Reiseziels wird geprüft…",
+    "Verifica della posizione della destinazione…"
+  ],
+  "Esta ciudad todavía no tiene coordenadas comprobadas.": [
+    "This city does not have verified coordinates yet.",
+    "Cette ville n'a pas encore de coordonnées vérifiées.",
+    "Esta cidade ainda não tem coordenadas verificadas.",
+    "Für diese Stadt gibt es noch keine geprüften Koordinaten.",
+    "Questa città non ha ancora coordinate verificate."
+  ],
+  "Selecciona una provincia y un municipio válidos.": [
+    "Choose a valid province and municipality.",
+    "Choisissez une province et une commune valides.",
+    "Escolha uma província e um município válidos.",
+    "Wähle eine gültige Provinz und Gemeinde.",
+    "Scegli una provincia e un comune validi."
+  ],
+  "El localizador territorial no se cargó. Intenta actualizar la aplicación.": [
+    "Location data could not be loaded. Try refreshing the app.",
+    "Le service de localisation n'a pas pu se charger. Réactualisez l'application.",
+    "Os dados de localização não carregaram. Atualize o aplicativo.",
+    "Der Ortungsdienst konnte nicht geladen werden. Bitte App aktualisieren.",
+    "Impossibile caricare il servizio di localizzazione. Aggiorna l'app."
+  ],
+  "No se pudo seleccionar el destino.": [
+    "Could not select destination.",
+    "Impossible de choisir la destination.",
+    "Não foi possível selecionar o destino.",
+    "Reiseziel konnte nicht ausgewählt werden.",
+    "Impossibile selezionare la destinazione."
+  ],
+  "(precio normal US$360 por 12 meses).": [
+    "(regular price US$360 for 12 months).",
+    "(prix habituel 360 USD pour 12 mois).",
+    "(preço normal US$360 por 12 meses).",
+    "(regulärer Preis 360 USD für 12 Monate).",
+    "(prezzo normale 360 USD per 12 mesi)."
+  ],
+  "(precio normal US$600 por 12 meses). Cupos propuestos: 50 negocios inicialmente, ampliables a 100. El plazo empieza con el lanzamiento comercial, sujeto a contrato y fecha de activación confirmada.": [
+    "(regular price US$600 for 12 months). Proposed capacity: initially 50 businesses, expandable to 100. The period starts at commercial launch, subject to contract and confirmed activation date.",
+    "(prix habituel 600 USD pour 12 mois). Capacité envisagée : 50 entreprises au départ, extensible à 100. La période commence au lancement commercial, sous réserve du contrat et de la date d'activation confirmée.",
+    "(preço normal US$600 por 12 meses). Limite proposta: 50 negócios inicialmente, ampliável a 100. O prazo começa no lançamento comercial, sujeito a contrato e confirmação da ativação.",
+    "(regulärer Preis 600 USD für 12 Monate). Geplant sind zunächst 50 Unternehmen, ausbaubar auf 100. Die Laufzeit beginnt mit dem kommerziellen Start, vorbehaltlich Vertrag und bestätigtem Aktivierungsdatum.",
+    "(prezzo normale 600 USD per 12 mesi). Disponibilità proposta: 50 attività inizialmente, ampliabili a 100. Il periodo decorre dal lancio commerciale, secondo contratto e data di attivazione confermata."
+  ],
+  "Solicita información desde el formulario de registro, seleccionando el plan mensual equivalente, hasta habilitar el contrato de fundadores.": [
+    "Request information through the registration form using the corresponding monthly plan until the founding partner agreement is available.",
+    "Demandez des informations dans le formulaire en choisissant l'offre mensuelle correspondante, en attendant le contrat fondateur.",
+    "Solicite informações pelo formulário, escolhendo o plano mensal equivalente, até que o contrato de fundadores esteja disponível.",
+    "Fordere Informationen über das Anmeldeformular mit dem entsprechenden Monatspaket an, bis der Gründungspartnervertrag verfügbar ist.",
+    "Richiedi informazioni nel modulo scegliendo il piano mensile corrispondente, in attesa del contratto per i partner fondatori."
+  ],
+  "Registro Básico US$10 una sola vez; Destacado US$30/mes; Premium US$50/mes. Los planes mensuales incluyen el registro (no se añaden otros US$10).": [
+    "Basic listing US$10 once; Featured US$30/month; Premium US$50/month. Monthly plans include registration (no additional US$10 fee).",
+    "Inscription de base : 10 USD une fois ; Mise en avant : 30 USD/mois ; Premium : 50 USD/mois. Les abonnements comprennent l'inscription, sans 10 USD supplémentaires.",
+    "Cadastro básico US$10 uma vez; Destaque US$30/mês; Premium US$50/mês. Os planos mensais incluem o cadastro, sem taxa extra de US$10.",
+    "Basiseintrag einmalig 10 USD; Hervorgehoben 30 USD/Monat; Premium 50 USD/Monat. Monatspakete enthalten die Anmeldung, keine zusätzlichen 10 USD.",
+    "Registrazione base 10 USD una tantum; In evidenza 30 USD/mese; Premium 50 USD/mese. I piani mensili includono la registrazione senza altri 10 USD."
+  ]
+});
+
+// Place detail labels and the translated brand subtitle.
+Object.assign(labels, {
+  "A DÓNDE IR": [
+    "WHERE TO GO",
+    "OÙ ALLER",
+    "AONDE IR",
+    "WOHIN",
+    "DOVE ANDARE"
+  ],
+  "A dónde ir": [
+    "Where to go",
+    "Où aller",
+    "Aonde ir",
+    "Wohin",
+    "Dove andare"
+  ],
+  "Explorando lugares con fotografías": [
+    "Exploring places with photos",
+    "Découverte des lieux avec photos",
+    "Explorando lugares com fotos",
+    "Orte mit Fotos entdecken",
+    "Esplorazione di luoghi con foto"
+  ],
+  "Ver ubicación en Where to Go": [
+    "View location in Where to Go",
+    "Voir l'emplacement dans Where to Go",
+    "Ver localização no Where to Go",
+    "Standort in Where to Go anzeigen",
+    "Vedi la posizione su Where to Go"
+  ],
+  "Iniciar navegación": [
+    "Start navigation",
+    "Démarrer l'itinéraire",
+    "Iniciar navegação",
+    "Navigation starten",
+    "Avvia navigazione"
+  ],
+  "Llamar": [
+    "Call",
+    "Appeler",
+    "Ligar",
+    "Anrufen",
+    "Chiama"
+  ],
+  "Sitio web": [
+    "Website",
+    "Site web",
+    "Site",
+    "Website",
+    "Sito web"
+  ],
+  "Guardar lugar": [
+    "Save place",
+    "Enregistrer ce lieu",
+    "Salvar lugar",
+    "Ort speichern",
+    "Salva luogo"
+  ],
+  "Quitar favorito": [
+    "Remove favorite",
+    "Retirer des favoris",
+    "Remover favorito",
+    "Favorit entfernen",
+    "Rimuovi dai preferiti"
+  ],
+  "Buscar foto del negocio en Google": [
+    "Find business photo on Google",
+    "Chercher une photo du commerce sur Google",
+    "Buscar foto do negócio no Google",
+    "Unternehmensfoto auf Google suchen",
+    "Cerca foto dell'attività su Google"
+  ],
+  "Aportar foto verificada": [
+    "Submit verified photo",
+    "Proposer une photo vérifiée",
+    "Enviar foto verificada",
+    "Geprüftes Foto einreichen",
+    "Invia una foto verificata"
+  ],
+  "Ver ficha en Google Maps": [
+    "View on Google Maps",
+    "Voir sur Google Maps",
+    "Ver no Google Maps",
+    "Auf Google Maps ansehen",
+    "Vedi su Google Maps"
+  ],
+  "Ver detalles": [
+    "View details",
+    "Voir les détails",
+    "Ver detalhes",
+    "Details ansehen",
+    "Vedi dettagli"
+  ],
+  "Sin fotografía del lugar": [
+    "No photo of this place",
+    "Aucune photo de ce lieu",
+    "Sem foto deste lugar",
+    "Kein Foto dieses Ortes",
+    "Nessuna foto di questo luogo"
+  ]
+});
+
 // Category labels are stored with stable IDs; proper names and addresses are not translated.
 const categories={
 rios:['Rivers','Rivières','Rios','Flüsse','Fiumi'],balnearios:['Swimming spots','Baignades naturelles','Balneários','Badestellen','Luoghi balneari'],cascadas:['Waterfalls','Cascades','Cachoeiras','Wasserfälle','Cascate'],lagunas:['Lagoons','Lagunes','Lagoas','Lagunen','Lagune'],senderismo:['Hiking','Randonnées','Trilhas','Wandern','Escursionismo'],playas:['Beaches','Plages','Praias','Strände','Spiagge'],parques:['Parks','Parcs','Parques','Parks','Parchi'],atracciones:['Tourist attractions','Sites touristiques','Atrações turísticas','Sehenswürdigkeiten','Attrazioni turistiche'],entretenimiento:['Entertainment','Divertissement','Entretenimento','Unterhaltung','Intrattenimento'],infantil:['Kids activities','Activités enfants','Diversão infantil','Kinderaktivitäten','Attività per bambini'],piscinas:['Swimming pools','Piscines','Piscinas','Pools','Piscine'],restaurantes:['Restaurants','Restaurants','Restaurantes','Restaurants','Ristoranti'],bares:['Bars','Bars','Bares','Bars','Bar'],discotecas:['Nightclubs','Discothèques','Boates','Nachtclubs','Discoteche'],cafes:['Cafés','Cafés','Cafés','Cafés','Caffetterie'],heladerias:['Ice cream shops','Glaciers','Sorveterias','Eisdielen','Gelaterie'],panaderias:['Bakeries','Boulangeries','Padarias','Bäckereien','Panetterie'],pescaderias:['Fish shops','Poissonneries','Peixarias','Fischgeschäfte','Pescherie'],comidarapida:['Fast food','Restauration rapide','Fast food','Schnellimbiss','Fast food'],supermercados:['Supermarkets','Supermarchés','Supermercados','Supermärkte','Supermercati'],colmados:['Local grocery stores','Épiceries locales','Mercearias','Nachbarschaftsläden','Alimentari'],mercados:['Markets','Marchés','Mercados','Märkte','Mercati'],tiendas:['Shops & fashion','Magasins et mode','Lojas e moda','Geschäfte & Mode','Negozi e moda'],ferreterias:['Hardware stores','Quincailleries','Lojas de ferragens','Baumärkte','Ferramenta'],electrodomesticos:['Appliances','Électroménager','Eletrodomésticos','Haushaltsgeräte','Elettrodomestici'],tecnologia:['Technology','Technologie','Tecnologia','Technik','Tecnologia'],barberias:['Barbers','Barbiers','Barbearias','Barbershops','Barbieri'],salones:['Beauty salons','Salons de beauté','Salões de beleza','Schönheitssalons','Saloni di bellezza'],unas:['Nail salons','Ongleries','Salões de unhas','Nagelstudios','Centri unghie'],spas:['Spas & massage','Spas et massages','Spas e massagens','Spas & Massagen','Spa e massaggi'],gimnasios:['Gyms','Salles de sport','Academias','Fitnessstudios','Palestre'],hoteles:['Hotels','Hôtels','Hotéis','Hotels','Hotel'],resorts:['Resorts','Resorts','Resorts','Resorts','Resort'],villas:['Villas','Villas','Villas','Villen','Ville'],taxis:['Taxis & transport','Taxis et transport','Táxis e transporte','Taxis & Transport','Taxi e trasporti'],gasolineras:['Gas stations','Stations-service','Postos de combustível','Tankstellen','Distributori'],talleres:['Repair shops','Garages','Oficinas','Werkstätten','Officine'],lavaderos:['Car washes','Stations de lavage','Lava-rápidos','Autowaschanlagen','Autolavaggi'],farmacias:['Pharmacies','Pharmacies','Farmácias','Apotheken','Farmacie'],hospitales:['Hospitals & clinics','Hôpitaux et cliniques','Hospitais e clínicas','Krankenhäuser & Kliniken','Ospedali e cliniche'],odontologia:['Dentists','Dentistes','Dentistas','Zahnärzte','Dentisti'],veterinarias:['Veterinarians','Vétérinaires','Veterinários','Tierärzte','Veterinari'],mascotas:['Pet shops','Animaleries','Pet shops','Tierhandlungen','Negozi animali'],bancos:['Banks','Banques','Bancos','Banken','Banche'],cajeros:['ATMs','Distributeurs automatiques','Caixas eletrônicos','Geldautomaten','Bancomat'],lavanderias:['Laundries','Blanchisseries','Lavanderias','Wäschereien','Lavanderie'],servicios:['Professional services','Services professionnels','Serviços profissionais','Professionelle Dienstleistungen','Servizi professionali'],escuelas:['Schools','Écoles','Escolas','Schulen','Scuole'],iglesias:['Churches','Églises','Igrejas','Kirchen','Chiese'],deportes:['Sports','Sports','Esportes','Sport','Sport']
@@ -156,6 +2165,7 @@ const blockHeadings={
 };
 const originalText=new WeakMap();
 const lastRenderedText=new WeakMap();
+const originalAttributes=new WeakMap();
 function bestLanguage(){let saved='';try{saved=localStorage.getItem('wtg_ui_language')||''}catch{}if(codes.includes(saved))return saved;const opts=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'es']);for(const raw of opts){const lang=String(raw).toLowerCase().split('-')[0];if(codes.includes(lang))return lang;}return 'es'}
 let lang=bestLanguage();
 function t(str){const key=String(str??'');if(lang==='es')return key;const idx=codes.indexOf(lang)-1;return (labels[key]||blockHeadings[key])?.[idx]||key;}
@@ -165,14 +2175,73 @@ function dynamicText(text){
   const m=text.match(exp);if(m)return t(m[1])+' '+m[2]+': '+t(m[3]);
   // Translate UI labels even when they include decorative arrows/icons.
   // The place name itself is never translated.
-  const glyph=text.match(/^([✦★▤◈📷◎⌖🌐]+\s*)(.*)$/u);
+  const glyph=text.match(/^([✦★▤◈📷◎⌖🌐📍🌎🌍🧭✉♡🔐🚘]+\s*)(.*)$/u);
   const prefix=glyph?glyph[1]:'';
   let body=glyph?glyph[2]:text;
   const end=body.match(/^(.*?)(\s*[↗→↻])$/u);
   const suffix=end?end[2]:'';
   if(end)body=end[1];
+  // Translate changing result counts without translating names of places or cities.
+  const template=(pattern,forms)=>{
+    const match=body.match(pattern);if(!match)return null;
+    return (forms[codes.indexOf(lang)]||forms[0]).replace(/\{(\d+)\}/g,(_,n)=>match[Number(n)+1]||'');
+  };
+  const patterns=[
+    [/^(\d+) lugares con foto de (\d+) fichas · (.+?) · hasta (.+)$/,
+      ['{0} lugares con foto de {1} fichas · {2} · hasta {3}',
+       '{0} places with photos out of {1} listings · {2} · within {3}',
+       '{0} lieux avec photos sur {1} fiches · {2} · dans un rayon de {3}',
+       '{0} lugares com fotos de {1} fichas · {2} · até {3}',
+       '{0} Orte mit Fotos von {1} Einträgen · {2} · bis {3}',
+       '{0} luoghi con foto su {1} schede · {2} · entro {3}']],
+    [/^Mostrando (\d+) de (\d+) lugares$/,
+      ['Mostrando {0} de {1} lugares','Showing {0} of {1} places',
+       '{0} lieux affichés sur {1}','Mostrando {0} de {1} lugares',
+       '{0} von {1} Orten angezeigt','Mostrati {0} luoghi su {1}']],
+    [/^(\d+) con foto en esta zona · (\d+) Google Maps · (\d+) otras fuentes$/,
+      ['{0} con foto en esta zona · {1} Google Maps · {2} otras fuentes',
+       '{0} with photos nearby · {1} Google Maps · {2} other sources',
+       '{0} avec photos dans cette zone · {1} Google Maps · {2} autres sources',
+       '{0} com fotos nesta região · {1} Google Maps · {2} outras fontes',
+       '{0} mit Fotos in diesem Gebiet · {1} Google Maps · {2} andere Quellen',
+       '{0} con foto in zona · {1} Google Maps · {2} altre fonti']],
+    [/^(\d+) lugares para descubrir · (.+?) · hasta (.+)$/,
+      ['{0} lugares para descubrir · {1} · hasta {2}',
+       '{0} places to discover · {1} · within {2}',
+       '{0} lieux à découvrir · {1} · rayon de {2}',
+       '{0} lugares para descobrir · {1} · até {2}',
+       '{0} Orte zu entdecken · {1} · bis {2}',
+       '{0} luoghi da scoprire · {1} · entro {2}']],
+    [/^(\d+) fotos reales$/,
+      ['{0} fotos reales','{0} real photos','{0} photos authentiques',
+       '{0} fotos reais','{0} echte Fotos','{0} foto reali']],
+    [/^(\d+) ciudades de referencia disponibles\.$/,
+      ['{0} ciudades de referencia disponibles.','{0} reference cities available.',
+       '{0} villes de référence disponibles.','{0} cidades de referência disponíveis.',
+       '{0} Referenzstädte verfügbar.','{0} città di riferimento disponibili.']],
+    [/^Explorando (.+)$/,
+      ['Explorando {0}','Exploring {0}','Exploration de {0}',
+       'Explorando {0}','Erkunde {0}','Esplorando {0}']]
+  ];
+  for(const [pattern,forms] of patterns){
+    const result=template(pattern,forms);if(result!==null)return prefix+result+suffix;
+  }
   const localized=t(body);
   return prefix+localized+suffix;
+}
+function translateAttrs(el){
+  if(!el||el.nodeType!==1||el.matches?.('script,style,[data-no-translate]'))return;
+  const attrs=['placeholder','title','aria-label'];
+  let records=originalAttributes.get(el);
+  if(!records){records={};originalAttributes.set(el,records)}
+  for(const name of attrs){
+    const current=el.getAttribute?.(name);if(!current)continue;
+    let record=records[name];
+    if(!record||(current!==record.last&&current!==record.original))record={original:current,last:current};
+    const output=dynamicText(record.original);
+    if(output!==current)el.setAttribute(name,output);
+    record.last=output;records[name]=record;
+  }
 }
 function translateNode(node){
   if(!node)return;
@@ -196,8 +2265,8 @@ function translateNode(node){
   if(el.matches?.('script,style,textarea,[contenteditable]'))return;
   const walk=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let n;
   while((n=walk.nextNode()))process(n);
-  if(el.tagName==='INPUT'&&el.placeholder){const out=t(el.placeholder);if(out!==el.placeholder)el.placeholder=out;}
-  el.querySelectorAll?.('input[placeholder]').forEach(x=>{const out=t(x.placeholder);if(out!==x.placeholder)x.placeholder=out;});
+  translateAttrs(el);
+  el.querySelectorAll?.('[placeholder],[title],[aria-label]').forEach(translateAttrs);
 }
 let queued=false;const pending=new Set();
 function schedule(node){pending.add(node);if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;const nodes=[...pending];pending.clear();nodes.forEach(translateNode);});}

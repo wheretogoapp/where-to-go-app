@@ -1245,7 +1245,7 @@ function renderHome(){renderProvincePremium();renderLocalDiscovery();
  if(coverage)coverage.textContent=state.dataMode==='loading'?'Consultando lugares…':`${candidates.length} con foto en esta zona · ${googleCount} Google Maps · ${candidates.length-googleCount} otras fuentes`;
  const sorted=tourismSort(candidates).slice(0,12);
  // Keep image elements mounted if another provider update leaves the cards unchanged.
- const homeSignature=[state.dataMode,state.city,state.radius,...sorted.map(p=>
+ const homeSignature=[state.dataMode,state.city,state.radius,window.WTG_I18N?.lang||'es',...sorted.map(p=>
   [p.id,p.name,p.address,Math.round(p.distance),placeCoverUrl(p),
    state.favorites.includes(p.id)?'fav':'',placeGalleryPhotos(p).length].join('|'))].join('~');
  if(!list.dataset||list.dataset.wtgSignature!==homeSignature){
@@ -1291,7 +1291,7 @@ function renderExplore(){
     '<div class="wtg-more-explore wtg-auto-discovery" role="status" aria-live="polite">Descubriendo más lugares de esta zona…</div>':'';
 
   const exploreTarget=$('explore-list');
-  const exploreSignature=[state.dataMode,state.city,state.radius,state.category,state.search,
+  const exploreSignature=[state.dataMode,state.city,state.radius,state.category,state.search,window.WTG_I18N?.lang||'es',
     state.exploreLimit,wtgGoogleBusy?'busy':'idle',...shown.map(p=>
     [p.id,p.name,p.address,Math.round(p.distance),placeCoverUrl(p),
       state.favorites.includes(p.id)?'fav':'',placeGalleryPhotos(p).length].join('|'))].join('~');
