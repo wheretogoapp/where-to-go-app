@@ -10,6 +10,8 @@ on:
       - 'Where_to_Go_Proyecto_Completo/tests/premium-experience.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/tests/rd-national-coverage.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs'
+      - 'Where_to_Go_Proyecto_Completo/tests/traveler-profile.test.cjs'
+      - 'Where_to_Go_Proyecto_Completo/supabase/traveler-profile-v2.sql'
       - 'Where_to_Go_Proyecto_Completo/public/**'
 permissions:
   contents: read
@@ -51,6 +53,14 @@ jobs:
           grep -q 'id="wtg-area-discovery"' /tmp/where-to-go-pages/index.html
           test -s /tmp/where-to-go-pages/onboarding.js
           test -s /tmp/where-to-go-pages/onboarding.css
+          test -s /tmp/where-to-go-pages/traveler-profile.js
+          test -s /tmp/where-to-go-pages/traveler-profile.css
+          test -s /tmp/where-to-go-pages/assets/wtg-icon-180.png
+          test -s /tmp/where-to-go-pages/assets/wtg-icon-192.png
+          test -s /tmp/where-to-go-pages/assets/wtg-icon-512.png
+          grep -q 'id="wtg-traveler-profile"' /tmp/where-to-go-pages/index.html
+          grep -q '/where-to-go-app/traveler-profile.js' /tmp/where-to-go-pages/index.html
+          grep -q '/where-to-go-app/assets/wtg-icon-180.png' /tmp/where-to-go-pages/index.html
           test -s /tmp/where-to-go-pages/ux-polish.css
           grep -q 'id="wtg-onboarding"' /tmp/where-to-go-pages/index.html
           grep -q 'id="auth-email-reveal"' /tmp/where-to-go-pages/index.html
@@ -87,6 +97,9 @@ jobs:
           node --check /tmp/where-to-go-pages/language.js
           node --test Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs
           node --check /tmp/where-to-go-pages/onboarding.js
+          node --check /tmp/where-to-go-pages/traveler-profile.js
+          node --input-type=module --check < /tmp/where-to-go-pages/auth.js
+          node --test Where_to_Go_Proyecto_Completo/tests/traveler-profile.test.cjs
           node --check /tmp/where-to-go-pages/google-places-adapter.js
           node --test Where_to_Go_Proyecto_Completo/tests/google-places-browser.test.cjs
           node --test Where_to_Go_Proyecto_Completo/tests/premium-experience.test.cjs

@@ -26,6 +26,7 @@ def build(source,destination,prefix):
             data=json.loads(updated)
             data['start_url']=prefix+'/'
             data['scope']=prefix+'/'
+            data['id']=prefix+'/'
             updated=json.dumps(data,ensure_ascii=False,indent=2)
         if file.name=='app.js':
             # No Netlify Forms backend and no SW at this GitHub project subpath.

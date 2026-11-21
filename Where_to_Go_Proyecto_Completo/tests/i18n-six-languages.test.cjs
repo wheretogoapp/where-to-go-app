@@ -75,9 +75,9 @@ test('Cuando el resultado cambia, la traducción usa el nuevo valor y puede volv
 });
 test('Controles móviles de idioma y selector mundial tienen contraste y conservan destino',()=>{
  const html=source('index.html'),css=source('ux-polish.css'),world=source('world-explorer.js'),app=source('app.js');
- assert(html.includes('src="/language.js?v=7.0"'),'Publicar nueva versión de traducciones');
+ assert(html.includes('src="/language.js?v=7.1"'),'Publicar nueva versión de traducciones');
  assert(html.includes('href="/ux-polish.css?v=8"'),'Publicar selector de contraste');
- assert(html.includes('src="/app.js?v=25.6"'),'Refrescar tarjetas al cambiar el idioma');
+ assert(html.includes('src="/app.js?v=25.7"'),'Refrescar tarjetas al cambiar el idioma');
  assert(css.includes('.topbar #wtg-language-select'));
  assert(css.includes('background:#ffffff!important;color:#082d57!important'));
  assert(css.includes('.auth-shell #wtg-auth-language-select'));
