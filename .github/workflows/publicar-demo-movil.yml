@@ -39,6 +39,11 @@ jobs:
           test -s /tmp/where-to-go-pages/world-explorer.css
           test -s /tmp/where-to-go-pages/city-covers.js
           test -s /tmp/where-to-go-pages/world-geography.js
+          test -s /tmp/where-to-go-pages/native-mobile.css
+          test -s /tmp/where-to-go-pages/local-discovery.css
+          grep -q 'id="wtg-local-discovery"' /tmp/where-to-go-pages/index.html
+          grep -q 'A dónde ir' /tmp/where-to-go-pages/index.html
+          grep -q 'renderLocalDiscovery' /tmp/where-to-go-pages/app.js
           grep -q 'id="wtg-world-region"' /tmp/where-to-go-pages/index.html
           grep -q 'id="wtg-world-city"' /tmp/where-to-go-pages/index.html
           grep -q 'id="location-pill"' /tmp/where-to-go-pages/index.html
@@ -177,7 +182,7 @@ jobs:
               try:
                   with urllib.request.urlopen(urllib.request.Request(base,headers={'User-Agent':'WhereToGo-DeploymentCheck/1.0'}),timeout=20) as response:
                       body=response.read()
-                      if response.status==200 and all(x in body for x in (b'navy-gold-mobile.css',b'data-view="tours"',b'tours.js',b'id="location-pill"',b'world-explorer.js')):
+                      if response.status==200 and all(x in body for x in (b'navy-gold-mobile.css',b'data-view="tours"',b'tours.js',b'id="location-pill"',b'world-explorer.js',b'id="wtg-local-discovery"',b'local-discovery.css',b'native-mobile.css',b'A d\xc3\xb3nde ir')):
                           print('Aplicación publicada y verificada:',base)
                           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out:
                               out.write('### Aplicación publicada y comprobada\n'+base+'\n')
@@ -196,8 +201,9 @@ jobs:
           with urllib.request.urlopen(base+'app.js',timeout=20) as res:
               js=res.read().decode('utf-8')
               assert 'enrichDominicanGooglePlaces' in js,'Falta conexión Google con catálogo dominicano'
+              assert 'renderLocalDiscovery' in js,'No se publicó la portada de descubrimiento por destino'
               print('Google Places: integración RD publicada')
-          for asset in ('world-location.js','world-explorer.js','world-explorer.css','city-covers.js','world-geography.js'):
+          for asset in ('world-location.js','world-explorer.js','world-explorer.css','city-covers.js','world-geography.js','native-mobile.css','local-discovery.css'):
               with urllib.request.urlopen(base+asset,timeout=20) as response:
                   assert response.status==200 and len(response.read())>100,asset
                   print('ASSET MUNDIAL PUBLICADO:',asset)
