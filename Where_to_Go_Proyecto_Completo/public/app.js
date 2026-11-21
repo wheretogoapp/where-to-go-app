@@ -958,7 +958,10 @@ function navigate(view){if(!$("view-"+view))view='inicio';state.view=view;docume
   if(map&&!window.L)map.textContent='Preparando mapa de esta zona…';
   void ensureLeaflet().then(()=>{if(state.view==='mapa')renderMap()});
 }window.scrollTo({top:0,behavior:'instant'});try{history.replaceState(null,'',`#${view}`)}catch{}}
-function renderCategories(){const counts={};state.places.filter(hasCatalogPhoto).forEach(p=>{counts[p.cat]=(counts[p.cat]||0)+1;if(p.relatedTags)for(const tag of p.relatedTags)counts[tag]=(counts[tag]||0)+1});
+function renderCategories(){const counts={};
+  // Never fill the home screen with 50 category cards. The full directory
+  // belongs to Explore, while Home stays focused on nearby photo listings.
+  $('home-categories')?.classList.remove('wtg-v8-expanded');state.places.filter(hasCatalogPhoto).forEach(p=>{counts[p.cat]=(counts[p.cat]||0)+1;if(p.relatedTags)for(const tag of p.relatedTags)counts[tag]=(counts[tag]||0)+1});
   const shortcuts=document.querySelector('.wtg-v8-category-shortcuts');
   if(shortcuts&&shortcuts.dataset.wtgLoaded!=='yes'){
     shortcuts.innerHTML=WTG_QUICK_CATEGORIES.slice(0,4).map(id=>CATEGORY_BY_ID[id]).filter(Boolean)
@@ -1248,8 +1251,8 @@ function startup(){createProvinceControls();ensureProviderBanner();putNearbyResu
     const morePhotos=e.target.closest('[data-more-photo]');if(morePhotos){void enrichVisiblePhotoCards(state.loadingId,12);return}
     const googleMore=e.target.closest('[data-google-more]');if(googleMore){void loadMoreGoogleBusinesses();return}
     const allCategories=e.target.closest('[data-show-all-cats]');if(allCategories){
-      $('home-categories').classList.add('wtg-v8-expanded');
-      $('home-categories').scrollIntoView({behavior:'smooth',block:'start'});return
+      $('home-categories').classList.remove('wtg-v8-expanded');
+      state.category='todos';state.search='';navigate('explorar');return
     }
     const googlePhoto=e.target.closest('[data-fetch-google-photo]');if(googlePhoto){void fetchVerifiedGooglePhoto(googlePhoto.dataset.fetchGooglePhoto);return}
     const photo=e.target.closest('[data-photo-place]');if(photo){openReport(photo.dataset.photoPlace);return}
@@ -1272,7 +1275,7 @@ function startup(){createProvinceControls();ensureProviderBanner();putNearbyResu
   });
   $('overlay').addEventListener('click',closeModals);document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModals();if(e.key==='Enter'&&e.target.matches('[data-map-place]'))e.target.click()});
   $('location-pill').onclick=()=>openModal('location-modal');$('top-refresh').onclick=()=>{toast('Actualizando lugares...');loadPlaces(true)};$('top-business').onclick=()=>navigate('promocionar');$('side-promote').onclick=()=>navigate('promocionar');$('mobile-brand').onclick=()=>navigate('inicio');
-  $('hero-explore').onclick=()=>navigate('explorar');$('home-see-all').onclick=()=>navigate('explorar');$('show-all-categories').onclick=()=>{const grid=$('home-categories');const expanded=grid.classList.toggle('wtg-v8-expanded');$('show-all-categories').textContent=expanded?'Ver menos categorías ↑':'Todas las categorías ↓';if(expanded)grid.scrollIntoView({block:'start',behavior:'smooth'});};$('promo-banner-btn').onclick=()=>navigate('promocionar');
+  $('hero-explore').onclick=()=>navigate('explorar');$('home-see-all').onclick=()=>navigate('explorar');$('show-all-categories').onclick=()=>{state.category='todos';state.search='';$('home-categories').classList.remove('wtg-v8-expanded');navigate('explorar');};$('promo-banner-btn').onclick=()=>navigate('promocionar');
   $('alert-locate').onclick=()=>{if($('alert-locate').dataset.action==='retry'){loadPlaces(true)}else if($('alert-locate').dataset.action==='change'){openModal('location-modal')}else requestLocation()};
   $('use-live-location').onclick=requestLocation;$('province-select').onchange=refreshMunicipalitySelect;$('municipality-select').onchange=()=>{$('municipality-go').disabled=!$('municipality-select').value};$('municipality-go').onclick=selectMunicipality;$('municipal-retry').onclick=()=>{ $('municipal-retry').hidden=true;loadMunicipalities()};$('business-cta').onclick=()=>openRegister('basico');$('home-see-taxis').onclick=()=>navigate('taxis');$('taxi-register').onclick=()=>{openRegister('basico');$('business-category').value='taxis'};$('add-another-business').onclick=()=>openRegister('basico');$('explore-map').onclick=()=>navigate('mapa');
   $('recenter-map').onclick=()=>{if(state.map)state.map.setView([state.lat,state.lon],13)};
