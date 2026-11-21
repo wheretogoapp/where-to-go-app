@@ -75,6 +75,8 @@ jobs:
           grep -q 'id="wtg-world-dialog"' /tmp/where-to-go-pages/index.html
           ! grep -q 'id="wtg-world-open"' /tmp/where-to-go-pages/index.html
           test -s /tmp/where-to-go-pages/assets/wtg-brand.svg
+          test -s /tmp/where-to-go-pages/assets/wtg-logo-hd.webp
+          grep -q '/where-to-go-app/assets/wtg-logo-hd.webp' /tmp/where-to-go-pages/index.html
           grep -q 'data-view="tours"' /tmp/where-to-go-pages/index.html
           grep -q 'data-social="google"' /tmp/where-to-go-pages/index.html
           grep -q 'data-social="apple"' /tmp/where-to-go-pages/index.html
