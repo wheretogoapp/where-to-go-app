@@ -9,7 +9,7 @@ const langs={es:'Español',en:'English',fr:'Français',pt:'Português',de:'Deuts
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const now=()=>new Date().toISOString();
 const stamp=s=>{try{return new Intl.DateTimeFormat(undefined,{year:'numeric',month:'short',day:'numeric'}).format(new Date(s))}catch{return ''}};
-const empty=()=>({v:2,updatedAt:now(),name:'',city:'',theme:'dark',language:localStorage.getItem('wtg_ui_language')||'es',historyEnabled:false,explored:[],visited:[],trips:[]});
+const empty=()=>({v:2,updatedAt:new Date(0).toISOString(),name:'',city:'',theme:'dark',language:localStorage.getItem('wtg_ui_language')||'es',historyEnabled:false,explored:[],visited:[],trips:[]});
 const defaults={user:null,client:null,tab:'home',cloud:'local',pending:null,installPrompt:null,lastOpen:'',lastOpenAt:0};
 const active={...defaults};
 const names=new Map();
@@ -57,7 +57,7 @@ async function fetchCloud(){
   if(result.error)throw result.error;
   if(active.user?.id!==who||cloudVersion!==version)return;
   const remote=result.data?.data;
-  if(remote?.v===2 && (Date.parse(remote.updatedAt||0)>Date.parse(state.updatedAt||0))){
+  if(remote?.v===2 && Array.isArray(remote.visited)&&Array.isArray(remote.explored)&&Array.isArray(remote.trips) && (Date.parse(remote.updatedAt||0)>Date.parse(state.updatedAt||0))){
    state={...empty(),...remote};
    try{localStorage.setItem(storageKey(),JSON.stringify(cloudData()))}catch{}
    applyPreferences();render();
@@ -264,7 +264,11 @@ document.querySelectorAll('[data-profile-open]').forEach(btn=>btn.addEventListen
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden)close()});
 window.matchMedia?.('(prefers-color-scheme: light)')?.addEventListener?.('change',()=>{if(state.theme==='auto')applyPreferences()});
 window.addEventListener('wtg-personalization-changed',event=>{
- state.historyEnabled=!!event.detail?.enabled;put();
+ const enabled=!!event.detail?.enabled;
+ if(state.historyEnabled===enabled)return;
+ state.historyEnabled=enabled;
+ if(active.cloud==='connecting'){render();return}
+ put();
 });
 window.WTG_PROFILE={open,close,setSession,markVisited,recordOpen,addToTrip,refresh:render,get snapshot(){return cloudData()}};
 state=read();applyPreferences();
