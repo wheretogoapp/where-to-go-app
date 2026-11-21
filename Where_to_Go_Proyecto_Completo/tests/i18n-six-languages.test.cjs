@@ -59,7 +59,7 @@ test('Los 6 idiomas traducen navegación, formularios y selector de forma revers
   assert.equal(nodes[2].nodeValue,'Paseo de Doña Blanca','No cambiar nombres reales');
   assert.equal(attrs.placeholder,strings[2],code+' búsqueda');
   assert.equal(saved.get('wtg_ui_language'),code);
-  assert.notEqual(api.t('Elige cómo destacar'),'Elige cómo destacar',code==='es'?undefined:'Texto comercial sin traducir');
+  if(code!=='es')assert.notEqual(api.t('Elige cómo destacar'),'Elige cómo destacar',code+' texto comercial');
  }
 });
 test('Cuando el resultado cambia, la traducción usa el nuevo valor y puede volver al español',()=>{
@@ -86,5 +86,5 @@ test('Controles móviles de idioma y selector mundial tienen contraste y conserv
  assert(world.includes('country.value=selectedCountry'));
  assert(world.includes('if(selectedCity)city.value=selectedCity'));
  assert(app.includes("const homeSignature=[state.dataMode,state.city,state.radius,window.WTG_I18N?.lang||'es'"));
- assert(app.includes("state.exploreLimit,wtgGoogleBusy?'busy':'idle'")==false || app.includes("state.exploreLimit,wtgGoogleBusy?'busy':'idle'"),"No cambiar exploración por i18n");
+ assert(app.includes("window.WTG_I18N?.lang||'es'"),'La tarjeta debe actualizarse al cambiar el idioma');
 });
