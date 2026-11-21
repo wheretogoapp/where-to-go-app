@@ -170,7 +170,7 @@ const state = {
   view:'inicio', lat:wtgSavedArea?.lat??19.7934, lon:wtgSavedArea?.lon??-70.6884,
   city:wtgSavedArea?.city||'Puerto Plata',region:wtgSavedArea?.region||'República Dominicana',
   mode:wtgSavedArea?.mode||'demo', gpsAccuracy:null, places:[], catalog:[], remotePlaces:[], showUnpictured:false,
-  dataMode:'loading', dataError:'', category:'todos', radius:12000, search:'', googleEnabled:false, googleIssue:'',
+  dataMode:'loading', dataError:'', category:'todos', radius:wtgSavedArea?.province==='Puerto Plata'?30000:12000, search:'', googleEnabled:false, googleIssue:'',
   province:wtgSavedArea?.province||'Puerto Plata', placesProvider:'osm',
   favorites:loadJSON('wtg_favorites',[]), favoritePlaces:loadJSON('wtg_favorite_places',[]), businesses:loadJSON('wtg_businesses',[]),
   map:null, markers:[], loadingId:0, modal:null, toastTimeout:null, exploreLimit:80
@@ -1716,7 +1716,7 @@ window.addEventListener('wtg-world-return-pilot',event=>{
     state.lat=19.7934;state.lon=-70.6884;state.city='Puerto Plata';
     state.region='Puerto Plata';state.province='Puerto Plata';
   }
-  state.mode='municipio';state.category='todos';state.search='';state.radius=12000;
+  state.mode='municipio';state.category='todos';state.search='';state.radius=state.province==='Puerto Plata'?30000:12000;
   state.exploreLimit=80;rememberManualLocation();
   if($('taxi-province')&&state.province){$('taxi-province').value=state.province;updateTaxiMunicipios();}
   navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));
@@ -1734,7 +1734,7 @@ window.addEventListener('wtg-world-selected',event=>{
   state.city=selection.city||selection.countryName||country;
   state.region=country==='DO'?(selection.region||'República Dominicana'):(selection.region||selection.countryName||country);
   state.province=country==='DO'?canonicalProvince(selection.region):'';
-  state.category='todos';state.search='';state.radius=12000;state.exploreLimit=80;
+  state.category='todos';state.search='';state.radius=country==='DO'&&state.province==='Puerto Plata'?30000:12000;state.exploreLimit=80;
   state.places=[];state.remotePlaces=[];state.catalog=[];
   state.dataMode='loading';state.dataError='Buscando negocios y lugares del destino seleccionado…';
   if(country==='DO'&&selection.coordinates)rememberManualLocation();
