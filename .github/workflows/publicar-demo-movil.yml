@@ -7,6 +7,7 @@ on:
       - '.github/workflows/publicar-demo-movil.yml'
       - 'Where_to_Go_Proyecto_Completo/tools/build_pages_preview.py'
       - 'Where_to_Go_Proyecto_Completo/tests/google-places-browser.test.cjs'
+      - 'Where_to_Go_Proyecto_Completo/tests/premium-experience.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/public/**'
 permissions:
   contents: read
@@ -77,6 +78,7 @@ jobs:
           node --check /tmp/where-to-go-pages/onboarding.js
           node --check /tmp/where-to-go-pages/google-places-adapter.js
           node --test Where_to_Go_Proyecto_Completo/tests/google-places-browser.test.cjs
+          node --test Where_to_Go_Proyecto_Completo/tests/premium-experience.test.cjs
           node --check /tmp/where-to-go-pages/world-location.js
           node --check /tmp/where-to-go-pages/world-explorer.js
           grep -q 'wtg-world-selected' /tmp/where-to-go-pages/app.js
