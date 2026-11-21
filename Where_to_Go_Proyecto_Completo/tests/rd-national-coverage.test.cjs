@@ -269,3 +269,18 @@ test('Google descubre primero atractivos turísticos y conserva servicios en fil
  assert(google.includes("barberias:['barber_shop']"));
  assert(google.includes("farmacias:['pharmacy']"));
 });
+
+
+test('Puerto Plata conserva 30 km al recargar y al cambiar desde el selector mundial',()=>{
+ const app=source('app.js');
+ assert(app.includes("radius:wtgSavedArea?.province==='Puerto Plata'?30000:12000"),
+   'Recargar Villa Montellano no debe volver silenciosamente a 12 km');
+ assert(app.includes("state.radius=country==='DO'&&state.province==='Puerto Plata'?30000:12000"),
+   'El selector mundial debe conservar 30 km en Puerto Plata');
+ assert(app.includes("state.radius=state.province==='Puerto Plata'?30000:12000"),
+   'Regresar al piloto de Puerto Plata no debe restablecer 12 km');
+ assert(app.includes("state.radius=selected.provincia==='Puerto Plata'?30000:12000"),
+   'El selector municipal debe conservar el radio provincial');
+ assert(app.includes("state.radius=(c.name==='Las Terrenas'||c.name==='Puerto Plata')?30000:12000"),
+   'El selector de ciudades debe conservar el radio especial de Puerto Plata');
+});
