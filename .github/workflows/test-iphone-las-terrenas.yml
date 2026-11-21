@@ -1,4 +1,4 @@
-name: Where to Go - prueba real iPhone Las Terrenas
+name: Where to Go - prueba emulada de iPhone Las Terrenas
 on:
   workflow_dispatch:
   workflow_run:
@@ -45,5 +45,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: where-to-go-las-terrenas-iphone
-          path: /tmp/where-to-go-iphone-results.png
+          path: |
+            /tmp/where-to-go-iphone-results.png
+            /tmp/where-to-go-iphone-home.png
           if-no-files-found: ignore
