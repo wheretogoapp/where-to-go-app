@@ -65,6 +65,8 @@ jobs:
                 if(raw.mapsReadyAfterFourSeconds){
                   const puerto=await timeout(api.nearby({lat:19.7934,lon:-70.6884,radius:12000,category:'playas'}));
                   raw.puerto={status:puerto.status,count:(puerto.places||[]).length,photos:(puerto.places||[]).filter(p=>!!p.photo).length,failures:puerto.failures??null};
+                  const santiago=await timeout(api.nearby({lat:19.4517,lon:-70.697,radius:12000,category:'restaurantes'}));
+                  raw.santiago={status:santiago.status,count:(santiago.places||[]).length,photos:(santiago.places||[]).filter(p=>!!p.photo).length,failures:santiago.failures??null};
                 }
               }
               try{const r=await fetch('/where-to-go-app/data/release.json',{cache:'no-store'});if(r.ok)raw.release=(await r.json()).commit;}catch{}
@@ -76,5 +78,7 @@ jobs:
             console.log('GOOGLE_JS_ERROR_CODES:',JSON.stringify(googleErrors));
             console.log('FAILED_GOOGLE_HOSTS:',JSON.stringify([...failedHosts]));
             console.log('APP_JS_ERROR_TYPES:',JSON.stringify(jsErrors.slice(0,8)));
+            if(!info.scriptLoaded||info.puerto?.status!=='ok'||info.puerto.count<1||info.santiago?.status!=='ok'||info.santiago.count<1)
+              throw Error('El adaptador no recuperó resultados reales de Google Places en dos provincias');
           }finally{await browser.close();}
           JS
