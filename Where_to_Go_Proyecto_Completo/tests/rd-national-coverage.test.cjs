@@ -141,3 +141,29 @@ test('La búsqueda fotográfica funciona por municipio o sector visitado, con l�
  assert(app.includes("void enrichPhotographedDestinations(token);"));
  assert(app.includes("navigate(c.name==='Las Terrenas'?'explorar':'inicio')"));
 });
+
+test('Las 32 portadas tienen fotografía real, fuente, autor y licencia',()=>{
+ const window={};vm.runInNewContext(source('province-heroes.js'),{window});
+ const heroes=window.WTG_PROVINCE_HEROES;
+ assert.equal(Object.keys(heroes).length,32);
+ for(const [province,hero] of Object.entries(heroes)){
+   assert(hero.photo.startsWith('https://'),province+' sin portada publicada');
+   assert(hero.source.startsWith('https://'),province+' sin fuente');
+   assert(hero.author&&hero.license,province+' sin atribución y licencia');
+ }
+});
+
+test('Las fotografías del atlas no se atribuyen a negocios y solo se usan cerca de su provincia',()=>{
+ const atlas=source('photo-atlas.js');
+ const home=source('experience.js');
+ assert(atlas.includes('function scenesForLocation({lat,lon,province,radius=12000,max=6}'));
+ assert(atlas.includes('photo.province===province'));
+ assert(atlas.includes('distance(lat,lon,photo.lat,photo.lon)<=radiusM'));
+ assert(atlas.includes('scenicTitle.test('));
+ assert(atlas.includes("kind:'geotagged-scenery'"));
+ assert(atlas.includes('window.WTG_PHOTO_ATLAS={refresh:refreshNearbyStrip,scenesForLocation}'));
+ assert(home.includes("window.WTG_PHOTO_ATLAS?.scenesForLocation?.({"));
+ assert(home.includes("[...iconic,...localReal,...scenic,...slides]"));
+ assert(home.includes("window.addEventListener('wtg-photo-atlas-ready',update)"));
+ assert(!source('app.js').includes('scenesForLocation({lat:p.lat'),'No asignar paisajes a fichas ajenas');
+});
