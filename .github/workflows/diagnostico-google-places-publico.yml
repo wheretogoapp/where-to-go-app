@@ -46,16 +46,25 @@ jobs:
           try {
             const res=await page.goto(process.env.SITE,{waitUntil:'domcontentloaded',timeout:45000});
             await page.waitForFunction(()=>!!window.WTG_GOOGLE_PLACES,{timeout:20000});
+            const googleResponses=[];
+            page.on('response',res=>{
+              try{const host=new URL(res.url()).hostname;if(/maps.googleapis.com|maps.gstatic.com/.test(host))googleResponses.push({host,status:res.status()})}catch{}
+            });
             const info=await page.evaluate(async()=>{
               const api=window.WTG_GOOGLE_PLACES;
-              const raw={configured:api.configured()};
+              const raw={configured:api.configured(),initialMapsReady:!!window.google?.maps?.importLibrary};
               const timeout=promise=>Promise.race([promise,new Promise(resolve=>setTimeout(()=>resolve({status:'timeout',places:[]}),40000))]);
               if(raw.configured){
-                const puerto=await timeout(api.nearby({lat:19.7934,lon:-70.6884,radius:12000,category:'playas'}));
-                raw.puerto={status:puerto.status,count:(puerto.places||[]).length,photos:(puerto.places||[]).filter(p=>!!p.photo).length,failures:puerto.failures??null};
-                if(puerto.status!=='error'&&puerto.status!=='unconfigured'&&puerto.status!=='timeout'){
-                  const santiago=await timeout(api.nearby({lat:19.4517,lon:-70.697,radius:12000,category:'parques'}));
-                  raw.santiago={status:santiago.status,count:(santiago.places||[]).length,photos:(santiago.places||[]).filter(p=>!!p.photo).length,failures:santiago.failures??null};
+                raw.scriptLoaded=await api.loadScript();
+                raw.mapsReadyAfterScript=!!window.google?.maps?.importLibrary;
+                await new Promise(resolve=>setTimeout(resolve,4000));
+                raw.mapsReadyAfterFourSeconds=!!window.google?.maps?.importLibrary;
+                raw.googleNamespace=!!window.google;
+                raw.mapsNamespace=!!window.google?.maps;
+                raw.scriptElements=[...document.querySelectorAll('script[src]')].filter(s=>s.src.includes('maps.googleapis.com/maps/api/js')).length;
+                if(raw.mapsReadyAfterFourSeconds){
+                  const puerto=await timeout(api.nearby({lat:19.7934,lon:-70.6884,radius:12000,category:'playas'}));
+                  raw.puerto={status:puerto.status,count:(puerto.places||[]).length,photos:(puerto.places||[]).filter(p=>!!p.photo).length,failures:puerto.failures??null};
                 }
               }
               try{const r=await fetch('/where-to-go-app/data/release.json',{cache:'no-store'});if(r.ok)raw.release=(await r.json()).commit;}catch{}
@@ -63,6 +72,7 @@ jobs:
             });
             console.log('PUBLIC_HTTP:',res?.status());
             console.log('GOOGLE_DIAGNOSTIC:',JSON.stringify(info));
+            console.log('GOOGLE_NETWORK_STATUS:',JSON.stringify(googleResponses));
             console.log('GOOGLE_JS_ERROR_CODES:',JSON.stringify(googleErrors));
             console.log('FAILED_GOOGLE_HOSTS:',JSON.stringify([...failedHosts]));
             console.log('APP_JS_ERROR_TYPES:',JSON.stringify(jsErrors.slice(0,8)));
