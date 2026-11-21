@@ -1142,11 +1142,11 @@ function renderExplore(){
   const googleStages=window.WTG_GOOGLE_PLACES?.scanStages?.()||[];
   const stage=googleStages[wtgGoogleStage];
   const googleMore=window.WTG_GOOGLE_PLACES?.configured()&&state.category==='todos'&&state.dataMode==='live'&&stage?
-    `<div class="wtg-more-explore"><button type="button" data-google-more="yes" ${wtgGoogleBusy?'disabled':''}>✦ ${wtgGoogleBusy?'Buscando más lugares…':'Descubrir más negocios y lugares ('+(wtgGoogleStage+1)+'/'+googleStages.length+')'}</button></div>`:'';
+    `<div class="wtg-more-explore wtg-discover-more"><button type="button" data-google-more="yes" ${wtgGoogleBusy?'disabled':''}>✦ ${wtgGoogleBusy?'Buscando más lugares…':'Descubrir más negocios y lugares ('+(wtgGoogleStage+1)+'/'+googleStages.length+')'}</button></div>`:'';
   $('explore-list').innerHTML=state.dataMode==='loading'&&!arr.length?
     '<div class="loading-state"><span class="spinner"></span><div>Buscando lugares reales de esta zona...</div></div>':
-    arr.length?googleMore+shown.map(placeCard).join('')+
-     (arr.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${arr.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+findMore:
+    arr.length?shown.map(placeCard).join('')+
+     (arr.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${arr.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+googleMore+findMore:
     googleMore+emptyBlock('Todavía no hay resultados para esta selección','Cambiar zona','location')+findMore;
   $('filter-categories').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.category));
   $('distance-select').value=String(state.radius);
