@@ -920,6 +920,325 @@ Object.assign(labels, {
   ]
 });
 
+// Monetization and account copy in the six supported UI languages.
+Object.assign(labels, {
+  "WHERE TO GO BUSINESS": [
+    "WHERE TO GO BUSINESS",
+    "WHERE TO GO ENTREPRISES",
+    "WHERE TO GO NEGÓCIOS",
+    "WHERE TO GO BUSINESS",
+    "WHERE TO GO BUSINESS"
+  ],
+  "Haz que el mundo": [
+    "Let the world",
+    "Faites en sorte que le monde",
+    "Faça o mundo",
+    "Lass die Welt",
+    "Fai in modo che il mondo"
+  ],
+  "descubra": [
+    "discover",
+    "découvre",
+    "descubra",
+    "entdeckt",
+    "scopra"
+  ],
+  "tu negocio.": [
+    "your business.",
+    "votre entreprise.",
+    "seu negócio.",
+    "dein Unternehmen.",
+    "la tua attività."
+  ],
+  "Conecta con personas que están buscando un lugar como el tuyo. Lanza tu perfil con transparencia y una propuesta medible.": [
+    "Connect with people looking for a business like yours. Publish a transparent, measurable listing.",
+    "Échangez avec les personnes qui cherchent une entreprise comme la vôtre. Publiez un profil transparent et mesurable.",
+    "Conecte-se com pessoas que procuram um negócio como o seu. Publique um perfil transparente e mensurável.",
+    "Erreiche Menschen, die ein Unternehmen wie deines suchen. Veröffentliche ein transparentes, messbares Profil.",
+    "Raggiungi persone che cercano un'attività come la tua. Pubblica un profilo trasparente e misurabile."
+  ],
+  "Registrar mi negocio": [
+    "List my business",
+    "Inscrire mon entreprise",
+    "Cadastrar meu negócio",
+    "Mein Unternehmen eintragen",
+    "Registra la mia attività"
+  ],
+  "CRECE CON NOSOTROS": [
+    "GROW WITH US",
+    "GRANDISSEZ AVEC NOUS",
+    "CRESÇA CONOSCO",
+    "WACHSE MIT UNS",
+    "CRESCI CON NOI"
+  ],
+  "Elige cómo destacar": [
+    "Choose how to stand out",
+    "Choisissez comment vous démarquer",
+    "Escolha como se destacar",
+    "Wähle, wie du dich hervorheben möchtest",
+    "Scegli come distinguerti"
+  ],
+  "Registro Básico": [
+    "Basic listing",
+    "Inscription de base",
+    "Cadastro básico",
+    "Basiseintrag",
+    "Registrazione base"
+  ],
+  "Para tener una ficha normal verificada dentro de tu categoría.": [
+    "For a standard verified listing in your category.",
+    "Pour une fiche standard vérifiée dans votre catégorie.",
+    "Para ter uma ficha padrão verificada na sua categoria.",
+    "Für einen regulären geprüften Eintrag in deiner Kategorie.",
+    "Per avere una scheda standard verificata nella tua categoria."
+  ],
+  "USD · pago único": [
+    "USD · one-time payment",
+    "USD · paiement unique",
+    "USD · pagamento único",
+    "USD · einmalige Zahlung",
+    "USD · pagamento unico"
+  ],
+  "Ficha en tu provincia y categoría": [
+    "Listing in your province and category",
+    "Fiche dans votre province et catégorie",
+    "Ficha na sua província e categoria",
+    "Eintrag in deiner Provinz und Kategorie",
+    "Scheda nella tua provincia e categoria"
+  ],
+  "Contacto y enlace al mapa verificado": [
+    "Contact details and verified map link",
+    "Coordonnées et lien cartographique vérifié",
+    "Contato e link do mapa verificado",
+    "Kontakt und geprüfter Kartenlink",
+    "Contatti e link alla mappa verificato"
+  ],
+  "Sin prioridad de publicidad": [
+    "No advertising priority",
+    "Sans priorité publicitaire",
+    "Sem prioridade de publicidade",
+    "Keine Anzeigenpriorität",
+    "Nessuna priorità pubblicitaria"
+  ],
+  "Se publica después del pago y aprobación": [
+    "Published after payment and approval",
+    "Publié après paiement et approbation",
+    "Publicado após pagamento e aprovação",
+    "Veröffentlichung nach Zahlung und Freigabe",
+    "Pubblicata dopo pagamento e approvazione"
+  ],
+  "Solicitar registro": [
+    "Request listing",
+    "Demander une inscription",
+    "Solicitar cadastro",
+    "Eintrag beantragen",
+    "Richiedi la registrazione"
+  ],
+  "Plan Destacado": [
+    "Featured plan",
+    "Formule mise en avant",
+    "Plano destaque",
+    "Hervorgehobenes Paket",
+    "Piano in evidenza"
+  ],
+  "Para que más personas de tu ciudad te encuentren.": [
+    "Help more people in your city find you.",
+    "Pour que davantage de personnes de votre ville vous trouvent.",
+    "Para que mais pessoas da sua cidade encontrem você.",
+    "Damit mehr Menschen in deiner Stadt dich finden.",
+    "Per farti trovare da più persone nella tua città."
+  ],
+  "USD / mes": [
+    "USD / month",
+    "USD / mois",
+    "USD / mês",
+    "USD / Monat",
+    "USD / mese"
+  ],
+  "Ficha del negocio con tus datos": [
+    "Business listing with your details",
+    "Fiche de l'entreprise avec vos coordonnées",
+    "Ficha do negócio com seus dados",
+    "Unternehmenseintrag mit deinen Angaben",
+    "Scheda dell'attività con i tuoi dati"
+  ],
+  "Prioridad en tu categoría dentro de la provincia": [
+    "Priority in your category within the province",
+    "Priorité dans votre catégorie au sein de la province",
+    "Prioridade na sua categoria na província",
+    "Priorität in deiner Kategorie innerhalb der Provinz",
+    "Priorità nella tua categoria nella provincia"
+  ],
+  "Enlace directo a WhatsApp y sitio web": [
+    "Direct WhatsApp and website links",
+    "Liens directs vers WhatsApp et le site web",
+    "Links diretos para WhatsApp e site",
+    "Direkte Links zu WhatsApp und Website",
+    "Link diretti a WhatsApp e sito web"
+  ],
+  "Solicitud y seguimiento del negocio": [
+    "Business request and follow-up",
+    "Demande et suivi de l'entreprise",
+    "Solicitação e acompanhamento do negócio",
+    "Anfrage und Nachverfolgung",
+    "Richiesta e monitoraggio dell'attività"
+  ],
+  "Elegir Destacado": [
+    "Choose Featured",
+    "Choisir Mise en avant",
+    "Escolher Destaque",
+    "Hervorgehoben wählen",
+    "Scegli In evidenza"
+  ],
+  "MÁS VISIBILIDAD": [
+    "MORE VISIBILITY",
+    "PLUS DE VISIBILITÉ",
+    "MAIS VISIBILIDADE",
+    "MEHR SICHTBARKEIT",
+    "MAGGIORE VISIBILITÀ"
+  ],
+  "Plan Premium": [
+    "Premium plan",
+    "Formule Premium",
+    "Plano Premium",
+    "Premium-Paket",
+    "Piano Premium"
+  ],
+  "Para negocios que quieren dar el siguiente paso.": [
+    "For businesses ready to grow.",
+    "Pour les entreprises prêtes à franchir une étape.",
+    "Para negócios prontos para crescer.",
+    "Für Unternehmen, die weiter wachsen möchten.",
+    "Per le attività pronte a crescere."
+  ],
+  "Incluye publicación del negocio": [
+    "Includes business listing",
+    "Comprend la fiche de l'entreprise",
+    "Inclui publicação do negócio",
+    "Unternehmenseintrag inklusive",
+    "Include la pubblicazione dell'attività"
+  ],
+  "Prioridad en su categoría": [
+    "Priority in its category",
+    "Priorité dans sa catégorie",
+    "Prioridade na categoria",
+    "Priorität in der Kategorie",
+    "Priorità nella categoria"
+  ],
+  "Espacio publicitario en la portada provincial": [
+    "Advertising space on the provincial home page",
+    "Espace publicitaire sur la page de la province",
+    "Espaço publicitário na página da província",
+    "Werbefläche auf der Provinzseite",
+    "Spazio pubblicitario sulla pagina provinciale"
+  ],
+  "Espacio para ofertas destacadas": [
+    "Space for featured offers",
+    "Espace pour les offres mises en avant",
+    "Espaço para ofertas em destaque",
+    "Platz für hervorgehobene Angebote",
+    "Spazio per le offerte in evidenza"
+  ],
+  "Elegir Premium": [
+    "Choose Premium",
+    "Choisir Premium",
+    "Escolher Premium",
+    "Premium wählen",
+    "Scegli Premium"
+  ],
+  "Programa Socios Fundadores · Propuesta de lanzamiento": [
+    "Founding Partners Program · Launch proposal",
+    "Programme Partenaires fondateurs · Proposition de lancement",
+    "Programa Parceiros Fundadores · Proposta de lançamento",
+    "Gründungspartner-Programm · Startangebot",
+    "Programma Partner fondatori · Proposta di lancio"
+  ],
+  "Destacado Fundador: US$200 por 12 meses": [
+    "Founding Featured: US$200 for 12 months",
+    "Mise en avant Fondateur : 200 USD pour 12 mois",
+    "Destaque Fundador: US$200 por 12 meses",
+    "Gründer-Hervorgehoben: 200 USD für 12 Monate",
+    "In evidenza Fondatore: 200 USD per 12 mesi"
+  ],
+  "Premium Fundador: US$300 por 12 meses": [
+    "Founding Premium: US$300 for 12 months",
+    "Premium Fondateur : 300 USD pour 12 mois",
+    "Premium Fundador: US$300 por 12 meses",
+    "Gründer-Premium: 300 USD für 12 Monate",
+    "Premium Fondatore: 300 USD per 12 mesi"
+  ],
+  "Incluye ficha y visibilidad según el plan; no garantiza ventas, visitas ni exclusividad.": [
+    "Includes the listing and visibility described by the plan; does not guarantee sales, visits or exclusivity.",
+    "Inclut la fiche et la visibilité prévues par l'offre ; aucune garantie de ventes, de visites ou d'exclusivité.",
+    "Inclui ficha e visibilidade conforme o plano; não garante vendas, visitas ou exclusividade.",
+    "Umfasst Eintrag und Sichtbarkeit gemäß Paket; keine Garantie für Verkäufe, Besuche oder Exklusivität.",
+    "Include scheda e visibilità secondo il piano; non garantisce vendite, visite o esclusività."
+  ],
+  "Oferta informativa: no se cobra ni se activa automáticamente.": [
+    "Informational offer: no automatic charge or activation.",
+    "Offre informative : aucun paiement ni activation automatiques.",
+    "Oferta informativa: sem cobrança nem ativação automática.",
+    "Unverbindliches Angebot: keine automatische Zahlung oder Aktivierung.",
+    "Offerta informativa: nessun addebito o attivazione automatica."
+  ],
+  "Importante:": [
+    "Important:",
+    "Important :",
+    "Importante:",
+    "Wichtig:",
+    "Importante:"
+  ],
+  "La solicitud no es un pago: solo activaremos fichas y anuncios después de confirmar el pago y aprobar el negocio.": [
+    "Submitting a request is not a payment. Listings and ads activate only after confirmed payment and approval.",
+    "Une demande n'est pas un paiement. Les fiches et annonces ne sont activées qu'après paiement confirmé et approbation.",
+    "Solicitar não é pagar. As fichas e anúncios serão ativados somente após confirmação do pagamento e aprovação.",
+    "Eine Anfrage ist keine Zahlung. Einträge und Anzeigen werden erst nach Zahlung und Freigabe aktiviert.",
+    "Una richiesta non è un pagamento. Le schede e gli annunci saranno attivati solo dopo il pagamento confermato e l'approvazione."
+  ],
+  "Las solicitudes se envían a Netlify Forms para revisión humana y coordinación del pago, si el formulario está activado en Netlify. Este panel conserva una copia local; las solicitudes no se publican ni se cobran automáticamente.": [
+    "Requests are sent to Netlify Forms for manual review and payment coordination, when enabled. This panel keeps a local copy; requests are not published or charged automatically.",
+    "Les demandes sont transmises à Netlify Forms pour vérification manuelle et coordination du paiement, si activé. Ce panneau conserve une copie locale ; aucune publication ni facturation automatique.",
+    "As solicitações vão para Netlify Forms para revisão e coordenação do pagamento, quando ativado. Este painel mantém uma cópia local; não há publicação nem cobrança automática.",
+    "Anfragen gehen bei aktivem Formular zur manuellen Prüfung und Zahlungsabstimmung an Netlify Forms. Dieses Panel speichert eine lokale Kopie; keine automatische Veröffentlichung oder Abbuchung.",
+    "Le richieste vengono inviate a Netlify Forms per la revisione e la gestione del pagamento, se abilitato. Questo pannello conserva una copia locale; nessuna pubblicazione o addebito automatico."
+  ],
+  "📍 Tu ubicación": [
+    "📍 Your location",
+    "📍 Votre position",
+    "📍 Sua localização",
+    "📍 Dein Standort",
+    "📍 La tua posizione"
+  ],
+  "Descubre el mundo": [
+    "Discover the world",
+    "Découvrez le monde",
+    "Descubra o mundo",
+    "Entdecke die Welt",
+    "Scopri il mondo"
+  ],
+  "Guardar favoritos": [
+    "Save favorites",
+    "Enregistrer les favoris",
+    "Salvar favoritos",
+    "Favoriten speichern",
+    "Salva preferiti"
+  ],
+  "Fotos": [
+    "Photos",
+    "Photos",
+    "Fotos",
+    "Fotos",
+    "Foto"
+  ],
+  "Fotografías": [
+    "Photos",
+    "Photos",
+    "Fotografias",
+    "Fotos",
+    "Fotografie"
+  ]
+});
+
 // Category labels are stored with stable IDs; proper names and addresses are not translated.
 const categories={
 rios:['Rivers','Rivières','Rios','Flüsse','Fiumi'],balnearios:['Swimming spots','Baignades naturelles','Balneários','Badestellen','Luoghi balneari'],cascadas:['Waterfalls','Cascades','Cachoeiras','Wasserfälle','Cascate'],lagunas:['Lagoons','Lagunes','Lagoas','Lagunen','Lagune'],senderismo:['Hiking','Randonnées','Trilhas','Wandern','Escursionismo'],playas:['Beaches','Plages','Praias','Strände','Spiagge'],parques:['Parks','Parcs','Parques','Parks','Parchi'],atracciones:['Tourist attractions','Sites touristiques','Atrações turísticas','Sehenswürdigkeiten','Attrazioni turistiche'],entretenimiento:['Entertainment','Divertissement','Entretenimento','Unterhaltung','Intrattenimento'],infantil:['Kids activities','Activités enfants','Diversão infantil','Kinderaktivitäten','Attività per bambini'],piscinas:['Swimming pools','Piscines','Piscinas','Pools','Piscine'],restaurantes:['Restaurants','Restaurants','Restaurantes','Restaurants','Ristoranti'],bares:['Bars','Bars','Bares','Bars','Bar'],discotecas:['Nightclubs','Discothèques','Boates','Nachtclubs','Discoteche'],cafes:['Cafés','Cafés','Cafés','Cafés','Caffetterie'],heladerias:['Ice cream shops','Glaciers','Sorveterias','Eisdielen','Gelaterie'],panaderias:['Bakeries','Boulangeries','Padarias','Bäckereien','Panetterie'],pescaderias:['Fish shops','Poissonneries','Peixarias','Fischgeschäfte','Pescherie'],comidarapida:['Fast food','Restauration rapide','Fast food','Schnellimbiss','Fast food'],supermercados:['Supermarkets','Supermarchés','Supermercados','Supermärkte','Supermercati'],colmados:['Local grocery stores','Épiceries locales','Mercearias','Nachbarschaftsläden','Alimentari'],mercados:['Markets','Marchés','Mercados','Märkte','Mercati'],tiendas:['Shops & fashion','Magasins et mode','Lojas e moda','Geschäfte & Mode','Negozi e moda'],ferreterias:['Hardware stores','Quincailleries','Lojas de ferragens','Baumärkte','Ferramenta'],electrodomesticos:['Appliances','Électroménager','Eletrodomésticos','Haushaltsgeräte','Elettrodomestici'],tecnologia:['Technology','Technologie','Tecnologia','Technik','Tecnologia'],barberias:['Barbers','Barbiers','Barbearias','Barbershops','Barbieri'],salones:['Beauty salons','Salons de beauté','Salões de beleza','Schönheitssalons','Saloni di bellezza'],unas:['Nail salons','Ongleries','Salões de unhas','Nagelstudios','Centri unghie'],spas:['Spas & massage','Spas et massages','Spas e massagens','Spas & Massagen','Spa e massaggi'],gimnasios:['Gyms','Salles de sport','Academias','Fitnessstudios','Palestre'],hoteles:['Hotels','Hôtels','Hotéis','Hotels','Hotel'],resorts:['Resorts','Resorts','Resorts','Resorts','Resort'],villas:['Villas','Villas','Villas','Villen','Ville'],taxis:['Taxis & transport','Taxis et transport','Táxis e transporte','Taxis & Transport','Taxi e trasporti'],gasolineras:['Gas stations','Stations-service','Postos de combustível','Tankstellen','Distributori'],talleres:['Repair shops','Garages','Oficinas','Werkstätten','Officine'],lavaderos:['Car washes','Stations de lavage','Lava-rápidos','Autowaschanlagen','Autolavaggi'],farmacias:['Pharmacies','Pharmacies','Farmácias','Apotheken','Farmacie'],hospitales:['Hospitals & clinics','Hôpitaux et cliniques','Hospitais e clínicas','Krankenhäuser & Kliniken','Ospedali e cliniche'],odontologia:['Dentists','Dentistes','Dentistas','Zahnärzte','Dentisti'],veterinarias:['Veterinarians','Vétérinaires','Veterinários','Tierärzte','Veterinari'],mascotas:['Pet shops','Animaleries','Pet shops','Tierhandlungen','Negozi animali'],bancos:['Banks','Banques','Bancos','Banken','Banche'],cajeros:['ATMs','Distributeurs automatiques','Caixas eletrônicos','Geldautomaten','Bancomat'],lavanderias:['Laundries','Blanchisseries','Lavanderias','Wäschereien','Lavanderie'],servicios:['Professional services','Services professionnels','Serviços profissionais','Professionelle Dienstleistungen','Servizi professionali'],escuelas:['Schools','Écoles','Escolas','Schulen','Scuole'],iglesias:['Churches','Églises','Igrejas','Kirchen','Chiese'],deportes:['Sports','Sports','Esportes','Sport','Sport']
