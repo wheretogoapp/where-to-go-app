@@ -171,8 +171,14 @@
       credit:p.source==='google'?'Google Maps · fotografía vinculada al lugar':
         (p.photoAttribution||'Fotografía del lugar')
     })) : [];
-    const identity=name+'|'+[...iconic,...localReal].map(p=>p.title+'@'+p.image).join('|');
-    const combined=[...iconic,...localReal,...slides].filter((item,index,array)=>
+    // These are separately credited photos of the local landscape, never
+    // represented as photos of a hotel, restaurant or other establishment.
+    const scenic=typeof state!=='undefined'&&name?
+      (window.WTG_PHOTO_ATLAS?.scenesForLocation?.({
+        lat:state.lat,lon:state.lon,province:name,radius:state.radius,max:6
+      })||[]):[];
+    const identity=name+'|'+[...iconic,...localReal,...scenic].map(p=>p.title+'@'+p.image).join('|');
+    const combined=[...iconic,...localReal,...scenic,...slides].filter((item,index,array)=>
       !brokenPhotos.has(item.image)&&array.findIndex(other=>other.image===item.image)===index);
     updateSet('hero',combined,'hero:'+identity);
     updateSet('auth',combined,'auth:'+identity);
@@ -184,6 +190,7 @@
     updateButtons();
   }
   function init(){
+    window.addEventListener('wtg-photo-atlas-ready',update);
     for(const [key,prefix] of [['hero','wtg-hero'],['auth','wtg-auth'],['spotlight','wtg-spotlight'],['premium','wtg-premium']]){
       $(prefix+'-prev')?.addEventListener('click',()=>advance(key,-1));
       $(prefix+'-next')?.addEventListener('click',()=>advance(key,1));
