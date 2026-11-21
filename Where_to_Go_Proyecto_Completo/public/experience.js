@@ -154,8 +154,23 @@
        image:p.photo,source:p.googleUri||p.googlePhotoMapUrl||p.sourceUrl||'',
        credit:p.source==='google'?'Google Maps · fotografía del lugar':(p.photoAttribution||'Fotografía del lugar')
     })) : [];
-    const identity=name+'|'+iconic.map(p=>p.title+'@'+p.image).join('|');
-    const combined=[...iconic,...slides].filter((item,index,array)=>
+    // Generic international fallback: show real, geolocated, photo-backed
+    // tourist places from the selected city instead of a Dominican backdrop.
+    const localReal=typeof state!=='undefined' ? state.places.filter(p=>
+      p&&p.nameKnown!==false&&Number.isFinite(p.distance)&&
+      p.distance<=Math.min(state.radius,15000)&&validUrl(p.photo||'')&&
+      ['atracciones','playas','cascadas','parques','senderismo','hoteles','resorts','entretenimiento'].includes(p.cat)
+    ).slice().sort((a,b)=>{
+      const scenic=x=>['atracciones','playas','cascadas','parques'].includes(x.cat)?0:1;
+      return scenic(a)-scenic(b)||a.distance-b.distance;
+    }).slice(0,6).map(p=>({
+      title:p.name,place:(state.city==='Cerca de mí'?name:state.city)+' · '+state.region,
+      image:p.photo,source:p.googleUri||p.googlePhotoMapUrl||p.sourceUrl||'',
+      credit:p.source==='google'?'Google Maps · fotografía vinculada al lugar':
+        (p.photoAttribution||'Fotografía del lugar')
+    })) : [];
+    const identity=name+'|'+[...iconic,...localReal].map(p=>p.title+'@'+p.image).join('|');
+    const combined=[...iconic,...localReal,...slides].filter((item,index,array)=>
       array.findIndex(other=>other.image===item.image)===index);
     updateSet('hero',combined,'hero:'+identity);
     updateSet('auth',combined,'auth:'+identity);
