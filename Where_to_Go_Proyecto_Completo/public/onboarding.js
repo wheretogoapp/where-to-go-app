@@ -127,12 +127,8 @@
      manual=false;root.hidden=false;showFallback();
    }
  });
- // If a real prior manual choice exists, show its accurate regional image
- // while GPS is still pending; never claim a guessed location as GPS.
- try{
-   const saved=JSON.parse(localStorage.getItem('wtg_last_selected_location_v1')||'null');
-   if(saved?.province)applyCover(saved.province);
- }catch{}
+ // Wait for verified GPS/country before presenting location-specific imagery.
+ // A previous city can be stale when the traveler opens the app elsewhere.
  splash.hidden=false;welcome.hidden=true;locationStep.hidden=true;root.dataset.step='splash';
  // Request iOS native location permission while the mark is assembling.
  setTimeout(requestNativeLocation,100);
