@@ -1253,6 +1253,7 @@ const blockHeadings={
 };
 const originalText=new WeakMap();
 const lastRenderedText=new WeakMap();
+const originalAttributes=new WeakMap();
 function bestLanguage(){let saved='';try{saved=localStorage.getItem('wtg_ui_language')||''}catch{}if(codes.includes(saved))return saved;const opts=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'es']);for(const raw of opts){const lang=String(raw).toLowerCase().split('-')[0];if(codes.includes(lang))return lang;}return 'es'}
 let lang=bestLanguage();
 function t(str){const key=String(str??'');if(lang==='es')return key;const idx=codes.indexOf(lang)-1;return (labels[key]||blockHeadings[key])?.[idx]||key;}
@@ -1270,6 +1271,20 @@ function dynamicText(text){
   if(end)body=end[1];
   const localized=t(body);
   return prefix+localized+suffix;
+}
+function translateAttrs(el){
+  if(!el||el.nodeType!==1||el.matches?.('script,style,[data-no-translate]'))return;
+  const attrs=['placeholder','title','aria-label'];
+  let records=originalAttributes.get(el);
+  if(!records){records={};originalAttributes.set(el,records)}
+  for(const name of attrs){
+    const current=el.getAttribute?.(name);if(!current)continue;
+    let record=records[name];
+    if(!record||(current!==record.last&&current!==record.original))record={original:current,last:current};
+    const output=dynamicText(record.original);
+    if(output!==current)el.setAttribute(name,output);
+    record.last=output;records[name]=record;
+  }
 }
 function translateNode(node){
   if(!node)return;
@@ -1293,8 +1308,8 @@ function translateNode(node){
   if(el.matches?.('script,style,textarea,[contenteditable]'))return;
   const walk=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let n;
   while((n=walk.nextNode()))process(n);
-  if(el.tagName==='INPUT'&&el.placeholder){const out=t(el.placeholder);if(out!==el.placeholder)el.placeholder=out;}
-  el.querySelectorAll?.('input[placeholder]').forEach(x=>{const out=t(x.placeholder);if(out!==x.placeholder)x.placeholder=out;});
+  translateAttrs(el);
+  el.querySelectorAll?.('[placeholder],[title],[aria-label]').forEach(translateAttrs);
 }
 let queued=false;const pending=new Set();
 function schedule(node){pending.add(node);if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;const nodes=[...pending];pending.clear();nodes.forEach(translateNode);});}
