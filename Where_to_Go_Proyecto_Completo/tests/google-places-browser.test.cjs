@@ -295,3 +295,24 @@ test('Cada sector usa una región de búsqueda menor que el radio completo',asyn
  const shifted=queries[0].locationRestriction.center.lng;
  assert(shifted>-70.6884);
 });
+
+test('Cobertura territorial: 32 demarcaciones, 158 municipios y nueve municipios de Puerto Plata',()=>{
+  const entries=JSON.parse(fs.readFileSync(path.join(root,'data','municipios-rd.json'),'utf8'));
+  assert.equal(entries.length,158);
+  const provinces=new Set(entries.map(p=>p.provincia));
+  assert.equal(provinces.size,32);
+  assert.equal(new Set(entries.map(p=>p.provincia+'|'+p.municipio)).size,158);
+  for(const name of ['Puerto Plata','Santiago','Distrito Nacional','La Altagracia','Samaná','La Romana'])
+    assert(provinces.has(name),name);
+  const pp=entries.filter(p=>p.provincia==='Puerto Plata').map(p=>p.municipio);
+  assert.equal(pp.length,9);
+  for(const name of ['Puerto Plata','Sosúa','Imbert','Altamira','Guananico','Luperón','Los Hidalgos','Villa Isabela','Villa Montellano'])
+    assert(pp.includes(name),name);
+  const selector=fs.readFileSync(path.join(root,'world-explorer.js'),'utf8');
+  const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
+  assert(selector.includes("fetch('/data/municipios-rd.json'"));
+  assert(selector.includes("country.value==='DO'"));
+  assert(app.includes('district-cabarete'));
+  assert(app.includes('zone-puntacana'));
+  assert(app.includes('zone-bavaro'));
+});
