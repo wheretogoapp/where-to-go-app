@@ -9,6 +9,7 @@ on:
       - 'Where_to_Go_Proyecto_Completo/tests/google-places-browser.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/tests/premium-experience.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/tests/rd-national-coverage.test.cjs'
+      - 'Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/public/**'
 permissions:
   contents: read
@@ -80,6 +81,8 @@ jobs:
       - name: Comprobar que 32 zonas tienen directorio real y JavaScript válido
         run: |
           node --check /tmp/where-to-go-pages/app.js
+          node --check /tmp/where-to-go-pages/language.js
+          node --test Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs
           node --check /tmp/where-to-go-pages/onboarding.js
           node --check /tmp/where-to-go-pages/google-places-adapter.js
           node --test Where_to_Go_Proyecto_Completo/tests/google-places-browser.test.cjs
