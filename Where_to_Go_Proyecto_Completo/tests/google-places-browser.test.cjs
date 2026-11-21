@@ -342,3 +342,28 @@ test('El carrusel retira fotos que fallan',()=>{
  const src=fs.readFileSync(path.join(root,'experience.js'),'utf8');
  assert(src.includes("s.items=s.items.filter(item=>item.id!==x.id)"));
 });
+
+test('Primera búsqueda espera la inicialización asíncrona real de Maps después de script.onload',async()=>{
+ const window={WTG_GOOGLE_MAPS_KEY:'AIzaTestKeyForBrowserOnly1234567890'};
+ let appended=0,removed=0;
+ const document={
+   createElement:()=>({remove:()=>{removed++}}),
+   head:{append:script=>{
+     appended++;
+     setTimeout(()=>script.onload(),0);
+     // Google Maps JS can initialize AFTER onload when loading=async.
+     setTimeout(()=>{window.google={maps:{importLibrary:async()=>({Place:{
+       searchNearby:async()=>({places:[]})
+     }})}}},250);
+   }}
+ };
+ vm.runInNewContext(adapter,{window,document,console,setTimeout,clearTimeout,Date});
+ const api=window.WTG_GOOGLE_PLACES;
+ const [first,second]=await Promise.all([api.loadScript(),api.loadScript()]);
+ assert.equal(first,true,'No declarar Google desactivado antes de que la biblioteca esté lista');
+ assert.equal(second,true);
+ assert.equal(appended,1,'Las llamadas simultáneas deben compartir el mismo script');
+ assert.equal(removed,0,'No retirar el script que sigue inicializándose');
+ const response=await api.nearby({lat:19.7934,lon:-70.6884,category:'playas'});
+ assert.equal(response.status,'empty');
+});

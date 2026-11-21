@@ -72,18 +72,42 @@ function load(){
  if(!configured())return Promise.resolve(false);
  if(root.google?.maps?.importLibrary)return Promise.resolve(true);
  if(promise)return promise;
- // A brief lost connection must not permanently poison this browser session.
- // Keep requests deduplicated, but clear the promise after a failed script load.
+ // loading=async means the Maps script onload event can arrive BEFORE
+ // google.maps.importLibrary exists. The first search used to return
+ // "unconfigured" in every province; changing the radius later worked only
+ // because Google finished initializing in the meantime.
+ // Wait for the actual API to be ready, with a bounded timeout and one shared
+ // in-flight promise. No paid Places request is made during this wait.
  const attempt=new Promise(resolve=>{
   const script=document.createElement('script');
+  let finished=false;
+  let deadline=0;
+  let pollTimer=null;
+  let safetyTimer=null;
+  const ready=()=>!!root.google?.maps?.importLibrary;
+  const finish=ok=>{
+   if(finished)return;
+   finished=true;
+   if(pollTimer!==null)clearTimeout(pollTimer);
+   if(safetyTimer!==null)clearTimeout(safetyTimer);
+   if(!ok)script.remove();
+   resolve(ok);
+  };
+  const checkReady=()=>{
+   if(ready()){finish(true);return;}
+   if(Date.now()>=deadline){finish(false);return;}
+   pollTimer=setTimeout(checkReady,100);
+  };
   script.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(root.WTG_GOOGLE_MAPS_KEY)+'&v=weekly&loading=async';
   script.async=true;script.referrerPolicy='strict-origin-when-cross-origin';
   script.onload=()=>{
-    const ok=!!root.google?.maps?.importLibrary;
-    if(!ok)script.remove();
-    resolve(ok);
+   if(ready()){finish(true);return;}
+   deadline=Date.now()+10000;
+   checkReady();
   };
-  script.onerror=()=>{script.remove();resolve(false)};
+  script.onerror=()=>finish(false);
+  // Also recover from a script whose onload event never fires.
+  safetyTimer=setTimeout(()=>finish(ready()),15000);
   document.head.append(script);
  });
  promise=attempt.then(ok=>{if(!ok)promise=null;return ok});
