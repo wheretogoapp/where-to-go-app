@@ -1065,9 +1065,14 @@ function matches(p){return placeMatchesCategory(p,state.category)&&(!state.searc
 function renderExplore(){
   // Every named, geolocated business in the area is searchable inside this app.
   // A missing photo does not erase a real establishment from Explore.
-  const arr=sortByDistance(state.places.filter(p=>matches(p)&&
+  const arr=state.places.filter(p=>matches(p)&&
     p.nameKnown!==false&&String(p.name||'').trim()&&
-    (state.category!=='todos'||!!state.search||(!['escuelas','iglesias'].includes(p.cat)&&isTouristDiscovery(p)))));
+    (state.category!=='todos'||!!state.search||!['escuelas','iglesias'].includes(p.cat)));
+  // Photo-first relevance: Google with a real linked photo, then other photographed
+  // listings, then authentic no-photo directory records. Nearby within each tier.
+  const priority=p=>p.source==='google'&&hasCatalogPhoto(p)?0:
+    hasCatalogPhoto(p)?1:p.source==='google'?2:3;
+  arr.sort((a,b)=>priority(a)-priority(b)||a.distance-b.distance);
   $('explore-count').textContent=state.dataMode==='loading'?'...':arr.length;
   const withPhoto=arr.filter(hasCatalogPhoto).length;
   $('explore-context').textContent=`${arr.length} lugares · ${withPhoto} con fotografía · ${state.city} · hasta ${distance(state.radius)}`;
@@ -1191,25 +1196,62 @@ async function selectMunicipality(){
 // Resolve the city for the GPS coordinates. This is called ONLY after a real
 // device-location permission has been granted (never for manually selected cities).
 async function resolveCurrentCity(lat,lon){
-  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),7000);
+  // Resolve the country before querying businesses: GPS may point anywhere
+  // in the world. Never apply the Dominican catalogue to another country.
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),8500);
   try{
     const url=`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&localityLanguage=es`;
-    const res=await fetch(url,{signal:ctrl.signal});if(!res.ok)return;
+    const res=await fetch(url,{signal:ctrl.signal});
+    if(!res.ok)throw Error('No se pudo identificar el país');
     const data=await res.json();
-    if(state.mode!=='gps'||state.lat!==lat||state.lon!==lon)return;
+    if(state.mode!=='gps'||state.lat!==lat||state.lon!==lon)return false;
+    const country=String(data.countryCode||'').trim().toUpperCase();
+    if(!/^[A-Z]{2}$/.test(country))throw Error('País de la ubicación sin verificar');
     const city=String(data.city||data.locality||data.principalSubdivision||'').trim();
-    const country=String(data.countryName||'').trim();
-    if(city){state.city=city;state.province=canonicalProvince(data.principalSubdivision)||String(data.principalSubdivision||'').trim();state.region=state.province?(state.province+' · '+(data.countryCode||'RD')):country||'Ubicación actual';renderAll()}
-  }catch{/* Live GPS searching still works without reverse geocoding. */}
-  finally{clearTimeout(timer)}
+    state.city=city||'Cerca de mí';
+    state.province=country==='DO'?(canonicalProvince(data.principalSubdivision)||String(data.principalSubdivision||'').trim()):'';
+    state.region=String(data.principalSubdivision||data.countryName||country).trim();
+    window.WTG_ACTIVE_COUNTRY=country;
+    window.WTG_ACTIVE_HAS_COORDINATES=true;
+    window.WTG_ACTIVE_DESTINATION=[state.city,state.region].filter(Boolean).join(' · ');
+    window.WTG_EXPERIENCE?.update?.();
+    renderAll();
+    return true;
+  }catch(error){
+    console.warn('Ubicación detectada, país pendiente de verificar:',String(error));
+    state.dataMode='live';state.dataError='No pudimos identificar el país a partir del GPS. Selecciona una ciudad para buscar negocios correctos.';
+    window.WTG_ACTIVE_COUNTRY='';window.WTG_ACTIVE_HAS_COORDINATES=false;
+    renderAll();
+    return false;
+  }finally{clearTimeout(timer)}
 }
 // Many mobile browsers require a tap before requesting precise location.
 function showFirstLocationChoice(){if(!state.modal)openModal('location-modal')}
-function requestLocation(){if(!window.isSecureContext){toast('La ubicación requiere HTTPS. Abre la URL segura de Netlify, no un archivo local.');openModal('location-modal');return;}if(!('geolocation' in navigator)){toast('Este navegador no admite ubicación. Elige un municipio.');openModal('location-modal');return;}
-  toast('Solicitando permiso para usar tu ubicación...');navigator.geolocation.getCurrentPosition(pos=>{
-    state.lat=pos.coords.latitude;state.lon=pos.coords.longitude;state.gpsAccuracy=Number.isFinite(pos.coords.accuracy)?pos.coords.accuracy:null;state.mode='gps';state.city='Cerca de mí';state.province='';state.region='Ubicación actual';state.category='todos';state.search='';state.radius=12000;closeModals();toast('¡Ubicación detectada! Mostrando lugares de menor a mayor distancia.');loadPlaces();resolveCurrentCity(state.lat,state.lon);window.dispatchEvent(new CustomEvent('wtg-location-success',{detail:{lat:state.lat,lon:state.lon}}));
-  },e=>{const msg=e.code===1?'Chrome no tiene permiso de ubicación. Permítelo en la configuración del sitio o elige tu municipio.':e.code===2?'El teléfono no pudo localizarte. Activa Ubicación en el iPhone o elige un municipio.':'La ubicación no respondió. Inténtalo otra vez o elige municipio.';toast(msg);if(state.mode==='pending'){state.dataMode='live';renderAll();}if(!state.modal)openModal('location-modal');window.dispatchEvent(new CustomEvent('wtg-location-error',{detail:{code:e.code}}));},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+function requestLocation(){
+  // The browser/OS owns the permission popup. We never draw a fake alert.
+  if(!window.isSecureContext||!navigator.geolocation){
+    window.dispatchEvent(new CustomEvent('wtg-location-error',{detail:{code:0,reason:'unsupported'}}));
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    state.lat=pos.coords.latitude;state.lon=pos.coords.longitude;
+    state.gpsAccuracy=Number.isFinite(pos.coords.accuracy)?pos.coords.accuracy:null;
+    state.mode='gps';state.city='Cerca de mí';state.province='';state.region='Ubicación actual';
+    state.category='todos';state.search='';state.radius=12000;
+    closeModals();
+    const identified=await resolveCurrentCity(state.lat,state.lon);
+    if(identified){
+      void loadPlaces();
+      window.dispatchEvent(new CustomEvent('wtg-location-success',{detail:{lat:state.lat,lon:state.lon,country:window.WTG_ACTIVE_COUNTRY,city:state.city,province:state.province}}));
+    }else{
+      window.dispatchEvent(new CustomEvent('wtg-location-error',{detail:{code:0,reason:'country-unverified'}}));
+    }
+  },error=>{
+    if(state.mode==='pending'){state.dataMode='live';renderAll();}
+    window.dispatchEvent(new CustomEvent('wtg-location-error',{detail:{code:error.code}}));
+  },{enableHighAccuracy:false,timeout:13500,maximumAge:180000});
 }
+
 function renderMap(){if(window.WTG_GOOGLE_PLACES?.configured()||state.placesProvider==='google'){void renderGoogleMapLinks();return;}$('map-help').textContent='Mapa: © OpenStreetMap contributors · Leaflet. Las coordenadas pueden representar el centro de un área.';const arr=sortByDistance(state.places.filter(p=>p.source!=='google'&&hasCatalogPhoto(p)&&placeMatchesCategory(p,state.category)&&(state.category!=='todos'||isVisibleBusiness(p))&&p.distance<=state.radius));$('map-count').textContent=arr.length;$('map-places').innerHTML=arr.length?arr.slice(0,85).map(p=>`<div class="map-place" role="button" tabindex="0" data-map-place="${esc(p.id)}"><span class="map-emoji">${catInfo(p.cat).emoji}</span><div><strong>${esc(p.name)}</strong><small>${catInfo(p.cat).name} · ${distance(p.distance)}</small></div></div>`).join(''):'<div style="padding:20px;font-size:12px;color:#8aa1ac">Sin lugares cargados. Prueba ampliar la zona.</div>';
   const mapElement=$('world-map');if(typeof window.L==='undefined'){mapElement.innerHTML='<div class="map-fallback"><div><b>🗺️ Mapa no disponible</b>Se requiere conexión a internet para cargar el mapa. Puedes abrir los lugares desde las fichas.</div></div>';return;}
   if(!state.map){mapElement.innerHTML='';state.map=L.map('world-map',{zoomControl:true}).setView([state.lat,state.lon],13);L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',maxZoom:19}).addTo(state.map)}
