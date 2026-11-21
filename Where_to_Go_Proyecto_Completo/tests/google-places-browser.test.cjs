@@ -329,7 +329,7 @@ test('Apertura móvil con logo, bienvenida, elección de ubicación y login',()=
   const main=fs.readFileSync(path.join(root,'app.js'),'utf8');
   for(const id of ['wtg-ob-splash','wtg-ob-welcome','wtg-ob-location','wtg-ob-start','wtg-ob-manual','wtg-ob-allow-gps'])
     assert(html.includes('id="'+id+'"'),id);
-  assert(html.includes('src="/onboarding.js?v=3"'));
+  assert(html.includes('src="/onboarding.js?v=4"'));
   assert(html.includes('src="/auth.js?v=13"'));
   assert(html.includes('window.WTG_ONBOARDING_ENABLED=true'));
   assert(onboarding.includes("new Event('wtg-world-request-gps')"));
