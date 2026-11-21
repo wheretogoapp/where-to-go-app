@@ -38,6 +38,7 @@
       if(typeof prior?.province==='string' && window.WTG_PROVINCE_HEROES?.[prior.province])province=prior.province;
     }catch{}
     cover(province);
+    if(province==='Puerto Plata')description.textContent='Imagen de ejemplo · Puerto Plata · República Dominicana';
   }
   function showStep(target){
     splash.hidden=target!=='splash';
@@ -47,7 +48,7 @@
     const focus=target==='welcome'?$('wtg-ob-start'):target==='location'?$('wtg-ob-allow-gps'):null;
     focus?.focus({preventScroll:true});
   }
-  function complete(){
+  function complete(shouldLoad=true){
     if(completed)return;
     completed=true;
     waitingForSelection=false;
@@ -55,6 +56,7 @@
     document.body.classList.remove('wtg-onboarding-active');
     try{localStorage.setItem('wtg_onboarding_seen_v1','yes')}catch{}
     window.WTG_EXPERIENCE?.update?.();
+    if(shouldLoad&&typeof loadPlaces==='function')void loadPlaces();
     window.dispatchEvent(new CustomEvent('wtg-onboarding-finished'));
   }
   function manualSelect(){
@@ -94,7 +96,7 @@
       const province=typeof provinceFromCity==='function'?provinceFromCity():null;
       if(province)cover(province);
     }catch{}
-    complete();
+    complete(false);
   });
   window.addEventListener('wtg-location-error',()=>{
     if(completed)return;
@@ -105,7 +107,7 @@
   });
   window.addEventListener('wtg-world-selected',()=>{
     if(!waitingForSelection||completed)return;
-    complete();
+    complete(false);
   });
   $('wtg-world-close')?.addEventListener('click',()=>{
     if(completed||!waitingForSelection)return;
