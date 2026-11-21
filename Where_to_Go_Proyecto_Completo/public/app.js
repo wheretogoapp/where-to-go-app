@@ -1438,7 +1438,9 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
   void Promise.allSettled([loadApprovedFreeBusinesses(),loadApprovedSponsors()]).then(()=>{
     if(state.dataMode==='live'&&state.places.length)applyNearby(state.remotePlaces,state.dataError);
   });
-  if(state.mode!=='pending')void loadPlaces();
+  // Do not spend paid Google Places requests behind the opening screen.
+  // Begin discovery only after the visitor chooses a destination or resumes.
+  if(state.mode!=='pending'&&!window.WTG_ONBOARDING_ENABLED)void loadPlaces();
   // La bienvenida pide ubicación solo después de un toque explícito.
   if(window.WTG_ONBOARDING_ENABLED){if(window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')renderAll();return;}
   if(window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO'){renderAll();return;}
