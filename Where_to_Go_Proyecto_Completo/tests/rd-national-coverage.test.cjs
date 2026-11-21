@@ -88,3 +88,56 @@ test('Zonas norte/sur/este/oeste se desplazan desde el municipio real sin altera
  api.refresh();
  assert.equal(nodes['wtg-area-discovery'].hidden,true,'No fingir zonas dominicanas en otro país');
 });
+
+test('El catálogo visual prioriza fotografías auténticas en cualquier provincia sin ocultar definitivamente fichas sin foto',()=>{
+ const app=source('app.js');
+ const first=app.indexOf('function renderExplore(){'),last=app.indexOf('\nfunction renderFavorites(){',first);
+ assert(first>=0&&last>first);
+ const code=app.slice(first,last);
+ const nodes=new Map();
+ const $=id=>{
+   if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',
+     querySelectorAll:()=>[]});
+   return nodes.get(id);
+ };
+ const places=[
+   {id:'osm-1',name:'Negocio sin imagen',cat:'restaurantes',source:'osm',distance:200,photo:''},
+   {id:'google-1',name:'Lugar con foto Google',cat:'atracciones',source:'google',distance:1300,photo:'https://example.com/exact-photo.jpg'},
+   {id:'osm-2',name:'Playa con foto propia',cat:'playas',source:'osm',distance:600,photo:'https://example.com/real-place.jpg'},
+   {id:'google-2',name:'Negocio Google sin foto',cat:'restaurantes',source:'google',distance:90,photo:''}
+ ];
+ const state={places,category:'todos',search:'',showUnpictured:false,exploreLimit:80,
+   dataMode:'live',city:'Santiago de los Caballeros',radius:12000};
+ const vmContext={state,$,window:{WTG_GOOGLE_PLACES:{configured:()=>false}},
+   wtgPhotoBudget:0,wtgPhotoMatching:false,wtgGoogleStage:0,wtgGoogleBusy:false,
+   candidatesForGooglePhoto:()=>[],matches:()=>true,hasCatalogPhoto:p=>!!p.photo,
+   distance:n=>String(n),placeCard:p=>p.name+'|',emptyBlock:()=>'',console};
+ vm.runInNewContext(code,vmContext);
+ vm.runInNewContext('renderExplore()',vmContext);
+ const firstView=$('explore-list').innerHTML;
+ assert(firstView.includes('Lugar con foto Google'));
+ assert(firstView.includes('Playa con foto propia'));
+ assert(!firstView.includes('Negocio sin imagen'));
+ assert(!firstView.includes('Negocio Google sin foto'));
+ assert(firstView.indexOf('Lugar con foto Google')<firstView.indexOf('Playa con foto propia'));
+ assert(firstView.includes('Ver también 2 lugares sin fotografía'));
+ state.showUnpictured=true;
+ vm.runInNewContext('renderExplore()',vmContext);
+ assert($('explore-list').innerHTML.includes('Negocio sin imagen'));
+ assert($('explore-list').innerHTML.includes('Negocio Google sin foto'));
+ assert($('explore-list').innerHTML.includes('Mostrar solo lugares con fotos'));
+ state.showUnpictured=false;
+ places.forEach(p=>p.photo='');
+ vm.runInNewContext('renderExplore()',vmContext);
+ assert($('explore-list').innerHTML.includes('Negocio sin imagen'),'Si Google no tiene fotos, nunca presentar una ciudad como vacía');
+});
+
+test('La búsqueda fotográfica funciona por municipio o sector visitado, con límites de consultas pagadas',()=>{
+ const app=source('app.js');
+ assert(app.includes('async function enrichPhotographedDestinations(token)'));
+ assert(app.includes("wtgNationalPhotoLookups.size>=24"));
+ assert(app.includes("query:'lugares turísticos y atractivos para visitar en '+city+', '+province+', República Dominicana'"));
+ assert(app.includes("haversine(state.lat,state.lon,p.lat,p.lon)<=state.radius+100"));
+ assert(app.includes("void enrichPhotographedDestinations(token);"));
+ assert(app.includes("navigate(c.name==='Las Terrenas'?'explorar':'inicio')"));
+});
