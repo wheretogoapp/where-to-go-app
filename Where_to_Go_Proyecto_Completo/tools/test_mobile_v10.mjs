@@ -12,21 +12,22 @@ const context=await browser.newContext({
   permissions:['geolocation'],locale:'es-DO'
 });
 const page=await context.newPage();
+// The test grants a simulated GPS permission and fixes the geocoder reply,
+// so it validates the mobile UI without assuming external geocoder uptime.
+await page.route('https://api.bigdatacloud.net/data/reverse-geocode-client**',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({countryCode:'DO',countryName:'República Dominicana',principalSubdivision:'Samaná',city:'Las Terrenas',locality:'Las Terrenas'})}));
 const errors=[];
 page.on('pageerror',error=>errors.push(String(error)));
 const isPublic=site.startsWith('https://wheretogoapp.github.io/');
 try{
   await page.goto(site,{waitUntil:'domcontentloaded',timeout:45000});
   await page.waitForSelector('#wtg-onboarding',{timeout:10000});
-  await page.waitForSelector('#wtg-ob-welcome:not([hidden])',{timeout:18000});
-  assert(await page.locator('#wtg-ob-start').isVisible(),'La bienvenida no tiene botón Comenzar');
-  assert((await page.locator('#wtg-ob-splash').count())===1,'No se publicó la apertura con logo');
-  assert((await page.locator('#wtg-ob-welcome').textContent()).includes('próxima aventura'),'La bienvenida no muestra la experiencia turística');
-  await page.locator('#wtg-ob-start').click();
-  await page.waitForSelector('#wtg-ob-location:not([hidden])',{timeout:8000});
-  assert(await page.locator('#wtg-ob-allow-gps').isVisible(),'Falta el permiso voluntario de ubicación');
-  await page.locator('#wtg-ob-allow-gps').click();
+  assert((await page.locator('#wtg-ob-splash').count())===1,'No se publicó la entrada con logo');
+  assert((await page.locator('.wtg-ob-fragment').count())===4,'El logo no se forma por fragmentos originales');
+  assert((await page.locator('#wtg-ob-splash .wtg-ob-plane').count())===0,'El avioncito antiguo debe desaparecer');
+  // Auto GPS: no press on any custom permission button. Chromium is pre-granted
+  // and iOS on real devices will display its own system prompt when allowed.
   await page.waitForFunction(()=>typeof state!=='undefined'&&state.mode==='gps'&&document.getElementById('wtg-onboarding').hidden,null,{timeout:30000});
+  assert(await page.locator('#auth-gate').isVisible(),'Tras detectar GPS debe mostrarse el acceso');
   await page.waitForFunction(()=>typeof window.WTG_auth==='object',null,{timeout:15000});
   // Real OAuth is never faked in tests. The existing explicit demo option
   // lets us inspect the app without inventing a signed-in account.
@@ -52,7 +53,7 @@ try{
       authGone:document.getElementById('auth-gate').hidden
     };
   });
-  assert.equal(first.mode,'gps','El GPS de prueba no se aplicó tras pulsar permiso');
+  assert.equal(first.mode,'gps','El GPS de prueba no se aplicó automáticamente');
   assert(first.places>=20,'El catálogo local no cargó ni veinte fichas reales');
   assert(first.splashGone&&first.authGone,'Una pantalla de entrada bloquea el uso de la app');
   assert(first.heroHeight>100,'La portada de destino está oculta');
