@@ -239,3 +239,48 @@
 @media (prefers-reduced-motion:reduce){
  #view-inicio #home-list>.place-card,#view-explorar #explore-list>.place-card{transition:none}
 }
+
+
+/* High-contrast language controls on navy backgrounds.
+   Keep native select behavior; language names remain readable in the picker. */
+.topbar .wtg-language-control{
+ display:inline-flex!important;align-items:center!important;gap:3px!important;
+ background:#fff8e8!important;border:1.5px solid #efc56c!important;
+ border-radius:17px!important;color:#082d57!important;
+ padding:5px 6px!important;box-shadow:0 3px 10px #0019344d!important;
+ min-width:0!important
+}
+.topbar .wtg-language-control>span[aria-hidden]{color:#103865!important}
+.topbar #wtg-language-select,.auth-shell #wtg-auth-language-select{
+ color-scheme:light!important;appearance:auto!important;
+ background:#ffffff!important;color:#082d57!important;
+ border:1px solid #d7b771!important;border-radius:9px!important;
+ font-weight:800!important;font-size:13px!important;
+ height:34px!important;min-height:34px!important;padding:4px 3px!important
+}
+.topbar #wtg-language-select option,.auth-shell #wtg-auth-language-select option{
+ color:#082d57!important;background:#fff!important;font-weight:650!important
+}
+.topbar #wtg-language-select:focus-visible,.auth-shell #wtg-auth-language-select:focus-visible{
+ outline:3px solid #efb73b!important;outline-offset:2px!important
+}
+.auth-shell .wtg-auth-language{color:#eff7ff!important}
+.auth-shell .wtg-auth-language label{color:#f8e7bf!important}
+.auth-shell #wtg-auth-language-select{min-width:144px!important;padding:6px 9px!important}
+@media(max-width:820px){
+ .topbar .wtg-language-control{max-width:90px!important;flex:0 0 auto!important}
+ .topbar #wtg-language-select{min-width:0!important;width:62px!important;
+  max-width:62px!important;font-size:12px!important}
+}
+@media(max-width:380px){
+ .topbar .wtg-language-control{padding:4px!important}
+ .topbar #wtg-language-select{width:54px!important;max-width:54px!important}
+}
+/* The old decorative title was a fixed Spanish CSS string and ignored UI language. */
+@media(max-width:769px){
+ html:lang(en) #view-inicio .wtg-v8-home-tools:before{content:"DISCOVER YOUR NEXT ADVENTURE"!important}
+ html:lang(fr) #view-inicio .wtg-v8-home-tools:before{content:"DÉCOUVREZ VOTRE PROCHAINE AVENTURE"!important}
+ html:lang(pt) #view-inicio .wtg-v8-home-tools:before{content:"DESCUBRA SUA PRÓXIMA AVENTURA"!important}
+ html:lang(de) #view-inicio .wtg-v8-home-tools:before{content:"ENTDECKE DEIN NÄCHSTES ABENTEUER"!important}
+ html:lang(it) #view-inicio .wtg-v8-home-tools:before{content:"SCOPRI LA TUA PROSSIMA AVVENTURA"!important}
+}
