@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="/local-discovery.css?v=4" />
   <link rel="stylesheet" href="/category-motion.css?v=1" />
   <link rel="stylesheet" href="/onboarding.css?v=2" />
-  <link rel="stylesheet" href="/ux-polish.css?v=3" />
+  <link rel="stylesheet" href="/ux-polish.css?v=4" />
   <script>window.WTG_ONBOARDING_ENABLED=true;</script>
 
 
@@ -161,8 +161,7 @@
 
         <section class="view" id="view-explorar" aria-labelledby="explore-title">
           <div class="page-intro"><div class="mini-eyebrow">TU PRÓXIMO DESCUBRIMIENTO</div><h1 id="explore-title">Explorar lugares <span class="gradient-star">✳</span></h1><p>Encuentra experiencias increíbles cerca de ti o en cualquier ciudad.</p></div>
-          <div class="filter-panel"><div class="searchbar"><span class="search-icon">⌕</span><input id="search-input" type="search" placeholder="Buscar restaurantes, playas, hoteles, nombres..." autocomplete="off" aria-label="Buscar lugares"><button id="clear-search" class="clear-search" title="Borrar búsqueda">×</button></div>
-          <button type="button" id="google-search-submit" class="wtg-google-search-submit">⌕ Buscar más lugares</button>
+          <div class="filter-panel"><div class="searchbar"><span class="search-icon">⌕</span><input id="search-input" type="search" placeholder="Buscar restaurantes, playas, hoteles, nombres..." autocomplete="off" aria-label="Buscar lugares"><button id="clear-search" class="clear-search" title="Borrar búsqueda">×</button><button type="button" id="google-search-submit" class="wtg-google-search-submit" aria-label="Buscar lugares dentro de Where to Go">Buscar</button></div>
           <div class="filter-row"><div class="filter-chips" id="filter-categories"></div><select id="distance-select" aria-label="Radio de búsqueda"><option value="2000">A 2 km</option><option value="5000">A 5 km</option><option value="12000" selected>A 12 km</option><option value="20000">A 20 km</option><option value="30000">A 30 km</option><option value="60000">A 60 km</option><option value="100000">A 100 km</option></select></div></div>
           <div class="section-heading explorer-result-heading"><div><h2>Resultados <span class="result-count" id="explore-count"></span></h2><p id="explore-context">Buscando lugares cercanos...</p></div><button id="explore-map" class="outline-btn">▤ Ver en mapa</button></div>
           <div id="explore-list" class="place-grid explore-grid"></div>
