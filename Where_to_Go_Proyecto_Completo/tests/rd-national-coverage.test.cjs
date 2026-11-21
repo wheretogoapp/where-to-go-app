@@ -110,8 +110,9 @@ test('El catálogo visual prioriza fotografías auténticas en cualquier provinc
    {id:'osm-3',name:'Hotel con foto',cat:'hoteles',source:'osm',distance:1000,photo:'https://example.com/hotel.jpg'}
  ];
  const state={places,category:'todos',search:'',showUnpictured:false,exploreLimit:80,
-   dataMode:'live',city:'Santiago de los Caballeros',radius:12000};
- const vmContext={state,$,window:{WTG_GOOGLE_PLACES:{configured:()=>false}},
+   dataMode:'live',city:'Santiago de los Caballeros',province:'Santiago',radius:12000};
+ // renderExplore is executed alone here, so supply the province helper normally provided by app.js.
+ const vmContext={state,$,provinceFromCity:()=>state.province,window:{WTG_GOOGLE_PLACES:{configured:()=>false}},
    wtgPhotoBudget:0,wtgPhotoMatching:false,wtgGoogleStage:0,wtgGoogleBusy:false,
    candidatesForGooglePhoto:()=>[],matches:()=>true,hasCatalogPhoto:p=>!!p.photo,
    tourismRank:p=>['atracciones','playas'].includes(p.cat)?0:3,
@@ -133,6 +134,16 @@ test('El catálogo visual prioriza fotografías auténticas en cualquier provinc
  assert(!firstView.includes('Descubrir más negocios y lugares'));
  assert(!firstView.includes('Buscar fotos de más establecimientos'));
  assert.equal($('explore-count').textContent,5);
+ // The 30 km expansion prompt must appear only for a narrow Puerto Plata search.
+ state.city='Puerto Plata';state.province='Puerto Plata';state.radius=12000;
+ vm.runInNewContext('renderExplore()',vmContext);
+ assert($('explore-list').innerHTML.includes('data-expand-puerto-plata="yes"'),
+   'Puerto Plata debe ofrecer ampliar de 12 a 30 km cuando aparecen pocas fotos');
+ state.radius=30000;
+ vm.runInNewContext('renderExplore()',vmContext);
+ assert(!$('explore-list').innerHTML.includes('data-expand-puerto-plata="yes"'),
+   'No pedir ampliar si ya se está buscando a 30 km');
+ state.city='Santiago de los Caballeros';state.province='Santiago';state.radius=12000;
  assert(app.includes('state.places.filter(p=>p.distance<=state.radius+100&&isVisibleBusiness(p));'),
    'Inicio debe incluir negocios fotografiados de todas las categorías');
  state.category='restaurantes';

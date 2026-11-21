@@ -121,7 +121,8 @@ try{
     assert.equal(chosen.view,'inicio','Todas las ciudades deben abrir portada turística');
     assert(chosen.homeTitle.includes(city),'No cambió el título de la portada');
     assert(chosen.areaShown&&chosen.areaTitle.includes(city),'Sin selector sectorial para '+city);
-    assert.equal(chosen.radius,12000,'El radio por municipio no debe mostrar lugares de zonas lejanas');
+    assert.equal(chosen.radius,city==='Puerto Plata'?30000:12000,
+      'Puerto Plata usa 30 km para ampliar cobertura; los demás municipios mantienen 12 km');
     console.log('SAME APP EXPERIENCE:',JSON.stringify(chosen));
   }
   // Exercise ALL provincial hubs, not just the showcase in Las Terrenas.
