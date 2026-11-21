@@ -961,7 +961,7 @@ function navigate(view){if(!$("view-"+view))view='inicio';state.view=view;docume
 function renderCategories(){const counts={};state.places.filter(hasCatalogPhoto).forEach(p=>{counts[p.cat]=(counts[p.cat]||0)+1;if(p.relatedTags)for(const tag of p.relatedTags)counts[tag]=(counts[tag]||0)+1});
   const shortcuts=document.querySelector('.wtg-v8-category-shortcuts');
   if(shortcuts&&shortcuts.dataset.wtgLoaded!=='yes'){
-    shortcuts.innerHTML=WTG_QUICK_CATEGORIES.map(id=>CATEGORY_BY_ID[id]).filter(Boolean)
+    shortcuts.innerHTML=WTG_QUICK_CATEGORIES.slice(0,4).map(id=>CATEGORY_BY_ID[id]).filter(Boolean)
       .map(cat=>`<button type="button" data-cat="${esc(cat.id)}" aria-label="Explorar ${esc(cat.name)}"><span aria-hidden="true">${cat.emoji}</span><strong>${esc(cat.name)}</strong></button>`).join('')+
       '<button type="button" class="wtg-all-categories" data-show-all-cats="yes"><span>⊞</span><strong>Ver todas</strong></button>';
     if(!document.querySelector('#wtg-category-bar-title')){
@@ -1000,6 +1000,9 @@ function renderHome(){renderProvincePremium();
  const list=$('home-list');
  const candidates=state.places.filter(p=>p.distance<=state.radius+100&&isVisibleBusiness(p));
  $('home-count').textContent=state.dataMode==='loading'?'...':candidates.length;
+ const googleCount=candidates.filter(p=>p.source==='google').length;
+ const coverage=document.getElementById('wtg-coverage-counts');
+ if(coverage)coverage.textContent=state.dataMode==='loading'?'Consultando lugares…':`${candidates.length} con foto en esta zona · ${googleCount} Google Maps · ${candidates.length-googleCount} otras fuentes`;
  const googleFirst=sortByDistance(candidates.filter(p=>p.source==='google')).slice(0,8);
  const selected=new Set(googleFirst.map(p=>p.id));
  const sorted=[...googleFirst,...sortByDistance(candidates.filter(p=>!selected.has(p.id)))].slice(0,12);
@@ -1019,7 +1022,8 @@ function renderExplore(){
   const arr=sortByDistance(state.places.filter(p=>matches(p)&&hasCatalogPhoto(p)&&
     (state.category!=='todos'||!!state.search||isVisibleBusiness(p))));
   $('explore-count').textContent=state.dataMode==='loading'?'...':arr.length;
-  $('explore-context').textContent='Negocios con fotografía del lugar · '+state.city+' · hasta '+distance(state.radius);
+  const googleVisible=arr.filter(p=>p.source==='google').length;
+  $('explore-context').textContent=`${arr.length} con fotografía · ${googleVisible} Google Maps · ${arr.length-googleVisible} otras fuentes · ${state.city} · hasta ${distance(state.radius)}`;
   const shown=arr.slice(0,state.exploreLimit||80);
   const findMore=window.WTG_GOOGLE_PLACES?.configured()&&wtgPhotoBudget>0&&candidatesForGooglePhoto().length&&!wtgPhotoMatching?
     '<div class="wtg-more-explore"><button type="button" data-more-photo="yes">📷 Buscar fotos de más establecimientos</button></div>':'';
