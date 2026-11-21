@@ -28,7 +28,7 @@ function profileHarness(){
   WTG_I18N:{change(){}},WTG_auth:{setPersonalization:async()=>{}}
  };
  const document={
-  getElementById:node,documentElement:{dataset:{}},
+  getElementById:node,addEventListener(){},documentElement:{dataset:{}},
   querySelector:()=>null,querySelectorAll:()=>[],
   body:{classList:{add(){},remove(){}}}
  };
