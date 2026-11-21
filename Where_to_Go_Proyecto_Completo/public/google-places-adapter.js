@@ -48,7 +48,10 @@ const SCAN_STAGES=[
   {batch:'extra',sector:'south-west',name:'Comercios del suroeste'},
   {batch:'tourism',sector:'center',name:'Playas, hoteles, gastronomía y turismo'},
   {batch:'tourism',sector:'east',name:'Destinos y turismo del este'},
-  {batch:'tourism',sector:'west',name:'Destinos y turismo del oeste'}
+  {batch:'tourism',sector:'west',name:'Destinos y turismo del oeste'},
+  {batch:'essentials',sector:'south',name:'Servicios cotidianos del sur'},
+  {batch:'essentials',sector:'north-east',name:'Comercios del noreste'},
+  {batch:'essentials',sector:'south-west',name:'Comercios del suroeste'}
 ];
 function shiftedCenter(lat,lon,radius,sector='center'){
   // Sector searches focus on different neighborhoods, instead of repeatedly
