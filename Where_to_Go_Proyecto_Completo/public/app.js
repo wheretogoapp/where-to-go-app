@@ -766,27 +766,42 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
 // Explorar físicamente otros sectores del municipio. Una pulsación consulta
 // solo un sector y reúne las fotos en memoria de esta pantalla.
 async function loadMoreGoogleBusinesses(){
-  if(wtgGoogleBusy||state.category!=='todos'||!window.WTG_GOOGLE_PLACES?.configured())return;
-  const stages=window.WTG_GOOGLE_PLACES.scanStages();
-  if(wtgGoogleStage>=stages.length)return;
-  const stage=stages[wtgGoogleStage];
-  const token=state.loadingId;
-  wtgGoogleBusy=true;
-  renderExplore();
-  toast('Google Maps: buscando '+stage.name.toLowerCase()+'…');
-  try{
-    const result=await window.WTG_GOOGLE_PLACES.nearby({
-      lat:state.lat,lon:state.lon,radius:state.radius,
-      category:'todos',batch:stage.batch,sector:stage.sector
-    });
-    if(token!==state.loadingId)return;
-    wtgGoogleStage++;
-    const summary=mergeGoogleListings(result,state.remotePlaces,'Google Maps · '+stage.name);
-    toast(summary.added||summary.photosLinked?
-      'Añadimos '+summary.added+' fichas con fotografía; '+summary.photosLinked+' fotos asociadas a negocios existentes.':
-      'Sector consultado. No encontramos otras fotos verificables aquí.');
-  }catch(error){console.warn('Google Places: sector no disponible',String(error));if(token===state.loadingId)wtgGoogleStage++;}
-  finally{wtgGoogleBusy=false;if(token===state.loadingId)renderExplore();}
+ if(wtgGoogleBusy||state.category!=='todos'||!window.WTG_GOOGLE_PLACES?.configured())return;
+ const stages=window.WTG_GOOGLE_PLACES.scanStages();
+ if(wtgGoogleStage>=stages.length)return;
+ const token=state.loadingId;
+ wtgGoogleBusy=true;
+ let added=0,linked=0,completed=0,failed=0;
+ renderExplore();
+ try{
+   // Cada toque explora hasta tres sectores diferentes, sin descargarlos
+   // ni almacenarlos en una base propia. 30 consultas como máximo por toque.
+   for(let part=0;part<3&&wtgGoogleStage<stages.length;part++){
+     if(token!==state.loadingId)break;
+     const stage=stages[wtgGoogleStage];
+     toast('Google Maps: ampliando '+stage.name.toLowerCase()+'…');
+     let result;
+     try{
+       result=await window.WTG_GOOGLE_PLACES.nearby({
+         lat:state.lat,lon:state.lon,radius:state.radius,category:'todos',
+         batch:stage.batch,sector:stage.sector
+       });
+     }catch(error){console.warn('Sector Google Maps no disponible',String(error));failed++;}
+     if(token!==state.loadingId)break;
+     wtgGoogleStage++;completed++;
+     if(result?.status==='error'){failed++;continue;}
+     if(result?.places?.length){
+       const summary=mergeGoogleListings(result,state.remotePlaces,'Google Maps · '+stage.name);
+       added+=summary.added;linked+=summary.photosLinked;
+     }
+   }
+   if(token===state.loadingId){
+     toast(added||linked?
+       'Google: '+added+' negocios nuevos con foto y '+linked+' fotos vinculadas · '+completed+' sectores.':
+       'Consultamos '+completed+' sectores. No aparecieron nuevas fotografías verificadas.'+
+         (failed?' Algunas consultas no respondieron.':''));
+   }
+ }finally{wtgGoogleBusy=false;if(token===state.loadingId)renderExplore();}
 }
 async function runGoogleBusinessSearch(){
  const query=String(state.search||'').trim();
