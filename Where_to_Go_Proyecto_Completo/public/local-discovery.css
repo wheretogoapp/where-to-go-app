@@ -12,3 +12,8 @@
 .wtg-local-card-caption strong{font-size:16px;line-height:1.15}
 .wtg-local-card-caption small{font-size:11px;color:#e5edf8}
 @media(max-width:820px){.wtg-local-cards{grid-auto-columns:65%;gap:10px}.wtg-local-card{min-height:235px}.wtg-local-discovery{margin:14px 0 18px}}
+
+/* Each successfully loaded hero photograph fades into the next. */
+#view-inicio .hero-art.wtg-hero-image-ready{animation:wtg-hero-reveal .85s ease-out both}
+@keyframes wtg-hero-reveal{from{opacity:.35;filter:brightness(.7);transform:scale(1.015)}to{opacity:1;filter:brightness(1);transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){#view-inicio .hero-art.wtg-hero-image-ready{animation:none!important}}
