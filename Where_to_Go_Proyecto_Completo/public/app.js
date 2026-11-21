@@ -675,9 +675,16 @@ async function loadPlaces(force=false){
   keys.sort((a,b)=>tileDistance(a)-tileDistance(b));
   const unique=new Map();
   let next=0,finished=0;
+  let googleStarted=false;
   const total=keys.length;
   const publish=complete=>{
     if(token!==state.loadingId)return;
+    // Consultar Google en paralelo desde el primer bloque de datos: no esperar
+    // a descargar todo el catálogo local. No se realizan consultas adicionales.
+    if(!googleStarted&&(finished>=4||complete)){
+      googleStarted=true;
+      void enrichDominicanGooglePlaces(token,()=>[...unique.values()]);
+    }
     if(!unique.size&&!complete)return;
     const msg=complete?`Lugares dentro de ${distance(state.radius)} · ${wtgFailedCells.size?'Algunos bloques sin cargar; pulsa Actualizar':'Catálogo actualizado'}`:'Ampliando los resultados cercanos…';
     applyNearby([...unique.values()],msg);
@@ -698,9 +705,8 @@ async function loadPlaces(force=false){
   }));
   if(token!==state.loadingId)return;
   publish(true);
-  // La versión de GitHub Pages no ejecuta funciones de Netlify. Consultar
-  // directamente con la clave pública restringida que inyecta GitHub Actions.
-  void enrichDominicanGooglePlaces(token,[...unique.values()]);
+  // La búsqueda de Google ya comenzó en publish(), durante la carga local.
+  // GitHub Actions incorpora la clave de navegador restringida al publicar.
 }
 
 // Complementar RD sin sustituir las fichas cartográficas ni bloquear su carga.
@@ -750,7 +756,7 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
       lat:state.lat,lon:state.lon,radius:state.radius,category:state.category,batch:'main'
     });
     if(token!==state.loadingId||window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')return;
-    if(result?.places?.length)mergeGoogleListings(result,localPlaces,'Google Maps · búsqueda principal');
+    if(result?.places?.length)mergeGoogleListings(result,typeof localPlaces==='function'?localPlaces():localPlaces,'Google Maps · búsqueda principal');
     // Las cinco clases de comercios cotidianos se consultan también en Inicio,
     // únicamente en la vista general. No se realiza un rastreo nacional.
     if(state.category==='todos'&&result?.status!=='error'){
@@ -758,7 +764,7 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
         lat:state.lat,lon:state.lon,radius:state.radius,category:'todos',batch:'essentials'
       });
       if(token!==state.loadingId)return;
-      if(everyday?.places?.length)mergeGoogleListings(everyday,localPlaces,'Google Maps · comercios y servicios');
+      if(everyday?.places?.length)mergeGoogleListings(everyday,typeof localPlaces==='function'?localPlaces():localPlaces,'Google Maps · comercios y servicios');
     }
     if(token===state.loadingId)void enrichVisiblePhotoCards(token,6);
   }catch(error){console.warn('Where to Go: Google Places no disponible en esta zona',String(error));}
