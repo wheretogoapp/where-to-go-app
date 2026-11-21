@@ -12,6 +12,7 @@ on:
       - 'Where_to_Go_Proyecto_Completo/public/**'
 permissions:
   contents: read
+  actions: read
   pages: write
   deployments: write
   id-token: write
@@ -125,6 +126,32 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: /tmp/where-to-go-pages
+      - name: Esperar que GitHub registre el paquete de Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json, os, time, urllib.request
+          url=('https://api.github.com/repos/'+os.environ['GITHUB_REPOSITORY']
+               +'/actions/runs/'+os.environ['GITHUB_RUN_ID']
+               +'/artifacts?name=github-pages&per_page=50')
+          headers={'Accept':'application/vnd.github+json',
+                   'Authorization':'Bearer '+os.environ['GH_TOKEN'],
+                   'User-Agent':'WhereToGo-Pages-ArtifactReady'}
+          for attempt in range(15):
+              with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=20) as response:
+                  artifacts=json.load(response).get('artifacts',[])
+              matches=[a for a in artifacts if a.get('name')=='github-pages' and not a.get('expired')]
+              if len(matches)==1:
+                  print('Paquete GitHub Pages visible en API:',matches[0]['id'])
+                  time.sleep(4) # permitir propagación antes de deploy-pages
+                  break
+              if len(matches)>1:
+                  raise SystemExit('Paquetes github-pages duplicados; usar una ejecución nueva, no un reintento del mismo run.')
+              print('Esperando paquete publicado en API:',attempt+1)
+              if attempt==14:raise SystemExit('GitHub no registró el paquete a tiempo')
+              time.sleep(4)
+          PY
       - name: Liberar despliegue anterior bloqueado de GitHub Pages
         env:
           GH_TOKEN: ${{ github.token }}
