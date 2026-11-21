@@ -1069,6 +1069,7 @@ function renderProvincePremium(){
 }
 const wtgFailedLocalPhotos=new Set();
 function startDestinationRotation(rail){
+ if(rail.dataset.wtgCarousel==='yes')return;
  rail.addEventListener('error',event=>{
    const img=event.target;
    if(img?.tagName!=='IMG')return;
@@ -1080,7 +1081,6 @@ function startDestinationRotation(rail){
      if(section)section.hidden=true;
    }
  },true);
- if(rail.dataset.wtgCarousel==='yes')return;
  rail.dataset.wtgCarousel='yes';
  let holdUntil=0;
  const hold=()=>{holdUntil=Date.now()+12000};
