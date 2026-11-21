@@ -33,9 +33,11 @@ function init(){
    const regions=[...new Set(list.map(p=>p.region).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
    region.replaceChildren(new Option('Todas las regiones',''),...regions.map(x=>new Option(x,x)));
    if(regions.includes(previousRegion))region.value=previousRegion;
-   const filtered=list.filter(p=>!region.value||p.region===region.value)
+   // Choosing a province first prevents ambiguous municipality names
+   // from resolving to the wrong territory in the nationwide directory.
+   const filtered=(country.value==='DO'&&!region.value?[]:list.filter(p=>!region.value||p.region===region.value))
       .sort((a,b)=>a.city.localeCompare(b.city,'es'));
-   city.replaceChildren(new Option('Selecciona una ciudad o municipio',''),...filtered.map(p=>new Option(p.city,p.city)));
+   city.replaceChildren(new Option(country.value==='DO'&&!region.value?'Primero elige una provincia':'Selecciona una ciudad o municipio',''),...filtered.map(p=>new Option(p.city,p.city)));
    if(filtered.some(p=>p.city===previousCity))city.value=previousCity;
    if(geoNote){
      geoNote.textContent=country.value==='DO'
