@@ -894,35 +894,12 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
       lat:state.lat,lon:state.lon,radius:state.radius,category:state.category,batch:'main'
     });
     if(token!==state.loadingId||window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')return;
-    const firstFailed=result?.status==='error'||result?.status==='unconfigured';
-    if(result?.places?.length)mergeGoogleListings(result,typeof localPlaces==='function'?localPlaces():localPlaces,'Google Maps · búsqueda principal');
-    // Puerto Plata: recuperar automáticamente los primeros resultados si la
-    // búsqueda amplia ofrece 5 fotos o menos. El turista conserva su radio
-    // visible (12/30 km); esta única consulta focal de 2 km equivale al
-    // refresco manual que antes era necesario. No afecta a otras ciudades.
-    // Solo se hace una vez por ejecución de loadPlaces y con el límite de
-    // tipos ya impuesto por el adaptador de Google (sin rastreo continuo).
-    const puertoPlataSparse=state.category==='todos'&&state.radius>2000&&
-      provinceFromCity()==='Puerto Plata'&&
-      haversine(state.lat,state.lon,19.7934,-70.6884)<=9000&&
-      state.places.filter(p=>p.distance<=state.radius+100&&hasCatalogPhoto(p)).length<=5;
-    let focusedRecovered=false;
-    if(puertoPlataSparse){
-      const focused=await window.WTG_GOOGLE_PLACES.nearby({
-        lat:state.lat,lon:state.lon,radius:2000,category:'todos',batch:'main'
-      });
-      if(token!==state.loadingId)return;
-      if(focused?.places?.length){
-        mergeGoogleListings(focused,typeof localPlaces==='function'?localPlaces():localPlaces,
-          'Google Maps · primera carga cercana de Puerto Plata');
-        focusedRecovered=true;
-      }
-    }
-    if(firstFailed&&!focusedRecovered){
+    if(result?.status==='error'||result?.status==='unconfigured'){
       state.googleIssue='Proveedor de resultados temporalmente no disponible. Puedes reintentar.';
       updateProviderNotice();
       return;
     }
+    if(result?.places?.length)mergeGoogleListings(result,typeof localPlaces==='function'?localPlaces():localPlaces,'Google Maps · búsqueda principal');
     // Las cinco clases de comercios cotidianos se consultan también en Inicio,
     // únicamente en la vista general. No se realiza un rastreo nacional.
     if(state.category==='todos'&&state.mode!=='sector'&&result?.status!=='error'){
