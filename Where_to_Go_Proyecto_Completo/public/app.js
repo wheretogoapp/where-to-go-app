@@ -169,7 +169,7 @@ const wtgSavedArea=savedManualLocation();
 const state = {
   view:'inicio', lat:wtgSavedArea?.lat??19.7934, lon:wtgSavedArea?.lon??-70.6884,
   city:wtgSavedArea?.city||'Puerto Plata',region:wtgSavedArea?.region||'República Dominicana',
-  mode:wtgSavedArea?.mode||'demo', gpsAccuracy:null, places:[], catalog:[], remotePlaces:[],
+  mode:wtgSavedArea?.mode||'demo', gpsAccuracy:null, places:[], catalog:[], remotePlaces:[], showUnpictured:false,
   dataMode:'loading', dataError:'', category:'todos', radius:12000, search:'', googleEnabled:false, googleIssue:'',
   province:wtgSavedArea?.province||'Puerto Plata', placesProvider:'osm',
   favorites:loadJSON('wtg_favorites',[]), favoritePlaces:loadJSON('wtg_favorite_places',[]), businesses:loadJSON('wtg_businesses',[]),
@@ -808,6 +808,41 @@ async function enrichIconicPuertoPlata(token){
  mergeGoogleListings({places:rows},state.remotePlaces,'Sitios emblemáticos de Puerto Plata');
 }
 
+// A single optional photo-rich tourism discovery lookup per visited destination.
+// It is NOT a national crawler; no Google photos are saved for later sessions.
+const wtgNationalPhotoLookups=new Set();
+async function enrichPhotographedDestinations(token){
+  if(token!==state.loadingId||state.category!=='todos'||state.mode==='sector'||
+     !window.WTG_GOOGLE_PLACES?.searchText||
+     !window.WTG_GOOGLE_PLACES.configured()||
+     (window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO'))return;
+  const current=state.places.filter(p=>isTouristDiscovery(p)&&hasCatalogPhoto(p)&&
+    p.distance<=state.radius+100).length;
+  if(current>=6)return;
+  const province=provinceFromCity();
+  const city=String(state.city||'').trim();
+  if(!city||!province||state.mode==='demo')return;
+  const lookupKey=[province,city,Math.round(state.lat*100),Math.round(state.lon*100)].join('|');
+  if(wtgNationalPhotoLookups.has(lookupKey))return;
+  wtgNationalPhotoLookups.add(lookupKey);
+  try{
+    // One text lookup after the normal nearby batches, only in a photo-poor
+    // destination. The query describes the selected REAL city/province.
+    const response=await window.WTG_GOOGLE_PLACES.searchText({
+      query:'lugares turísticos y atractivos para visitar en '+city+', '+province+', República Dominicana',
+      lat:state.lat,lon:state.lon,radius:state.radius
+    });
+    if(token!==state.loadingId)return;
+    const verified=(response.places||[]).filter(p=>safeUrl(p.photo)&&
+      haversine(state.lat,state.lon,p.lat,p.lon)<=state.radius+100);
+    if(verified.length){
+      mergeGoogleListings({places:verified},state.remotePlaces,
+        'Fotografías reales de '+city+' · Google Maps');
+    }
+  }catch(error){
+    console.warn('Búsqueda visual del municipio no disponible',String(error));
+  }
+}
 // Mostrar Google desde el primer lote sin bloquear el catálogo local.
 async function enrichDominicanGooglePlaces(token,localPlaces){
   if(!window.WTG_GOOGLE_PLACES?.configured())return;
@@ -846,7 +881,7 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
         typeof localPlaces==='function'?localPlaces():localPlaces,
         'Lugares de '+catInfo(category).name);
     }
-    if(token===state.loadingId){if(state.mode!=='sector')void enrichIconicPuertoPlata(token);void enrichVisiblePhotoCards(token,6);}
+    if(token===state.loadingId){if(state.mode!=='sector'){void enrichIconicPuertoPlata(token);void enrichPhotographedDestinations(token);}void enrichVisiblePhotoCards(token,6);}
   }catch(error){console.warn('Where to Go: Google Places no disponible en esta zona',String(error));}
 }
 // Explorar físicamente otros sectores del municipio. Una pulsación consulta
@@ -1174,8 +1209,19 @@ function renderExplore(){
   arr.sort((a,b)=>priority(a)-priority(b)||a.distance-b.distance);
   $('explore-count').textContent=state.dataMode==='loading'?'...':arr.length;
   const withPhoto=arr.filter(hasCatalogPhoto).length;
-  $('explore-context').textContent=`${arr.length} lugares · ${withPhoto} con fotografía · ${state.city} · hasta ${distance(state.radius)}`;
-  const shown=arr.slice(0,state.exploreLimit||80);
+  $('explore-context').textContent=`${withPhoto} con foto · ${arr.length} lugares registrados · ${state.city} · hasta ${distance(state.radius)}`;
+  // On the general discovery page, lead with photographed places for ALL
+  // cities, as the Las Terrenas experience did. Unphotographed records remain
+  // available through a clearly labelled opt-in, never silently discarded.
+  const photographed=arr.filter(hasCatalogPhoto);
+  const photoFirst=state.category==='todos'&&!state.search&&!state.showUnpictured;
+  const display=photoFirst&&photographed.length?photographed:arr;
+  const hiddenWithoutPhoto=arr.length-display.length;
+  const shown=display.slice(0,state.exploreLimit||80);
+  const missingPhotoToggle=state.category==='todos'&&!state.search&&arr.length>photographed.length?
+    '<div class="wtg-more-explore wtg-unpictured-toggle"><button type="button" data-toggle-unpictured="yes">'+
+      (state.showUnpictured?'Mostrar solo lugares con fotos':
+        'Ver también '+(arr.length-photographed.length)+' lugares sin fotografía')+'</button></div>':'';
   const findMore=window.WTG_GOOGLE_PLACES?.configured()&&wtgPhotoBudget>0&&candidatesForGooglePhoto().length&&!wtgPhotoMatching?
     '<div class="wtg-more-explore"><button type="button" data-more-photo="yes">📷 Buscar fotos de más establecimientos</button></div>':'';
   const googleStages=window.WTG_GOOGLE_PLACES?.scanStages?.()||[];
@@ -1185,7 +1231,7 @@ function renderExplore(){
   $('explore-list').innerHTML=state.dataMode==='loading'&&!arr.length?
     '<div class="loading-state"><span class="spinner"></span><div>Buscando lugares reales de esta zona...</div></div>':
     arr.length?shown.map(placeCard).join('')+
-     (arr.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${arr.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+googleMore+findMore:
+     (display.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${display.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+missingPhotoToggle+googleMore+findMore:
     googleMore+emptyBlock('Todavía no hay resultados para esta selección','Cambiar zona','location')+findMore;
   $('filter-categories').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.category));
   $('distance-select').value=String(state.radius);
@@ -1478,6 +1524,7 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
     const c=e.target.closest('[data-cat]');if(c){if(c.dataset.cat==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=c.dataset.cat;state.search='';const expand=state.mode!=='gps'&&state.radius<30000;if(expand)state.radius=30000;navigate('explorar');void loadPlaces();return}
     const f=e.target.closest('[data-filter]');if(f){if(f.dataset.filter==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=f.dataset.filter;const expand=state.mode!=='gps'&&state.category!=='todos'&&state.radius<30000;if(expand)state.radius=30000;void loadPlaces();return}
     const more=e.target.closest('[data-more-explore]');if(more){state.exploreLimit=(state.exploreLimit||80)+80;renderExplore();return}
+    const unpictured=e.target.closest('[data-toggle-unpictured]');if(unpictured){state.showUnpictured=!state.showUnpictured;state.exploreLimit=80;renderExplore();return}
     const morePhotos=e.target.closest('[data-more-photo]');if(morePhotos){void enrichVisiblePhotoCards(state.loadingId,12);return}
     const googleMore=e.target.closest('[data-google-more]');if(googleMore){void loadMoreGoogleBusinesses();return}
     const allCategories=e.target.closest('[data-show-all-cats]');if(allCategories){
