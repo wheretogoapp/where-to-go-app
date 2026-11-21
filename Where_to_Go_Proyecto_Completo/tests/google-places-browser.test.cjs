@@ -159,7 +159,7 @@ test('Galerías de Google incluyen varias fotos del mismo negocio y créditos',a
  const code=fs.readFileSync(path.join(root,'app.js'),'utf8');
  assert(code.includes('p.googlePhotos'));
  assert(code.includes('googlePhotos:p.photos||[]'));
- assert(code.includes("if(!url||!source||!attribution||seen.has(url))continue"));
+ assert(code.includes("if(!url||wtgUnavailableImageUrls.has(url)||!source||!attribution||seen.has(url))continue"));
 });
 
 test('Nombres con un pequeño error ortográfico se revisan con control geográfico',()=>{
