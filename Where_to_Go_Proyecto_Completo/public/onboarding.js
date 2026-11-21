@@ -140,5 +140,5 @@
      // Permission dialog may still be open; show only the logo until resolved.
      splash.hidden=false;
    }
- },reduced?200:1750);
+ },reduced?200:2100);
 })();
