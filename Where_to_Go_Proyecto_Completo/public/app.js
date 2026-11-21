@@ -155,6 +155,12 @@ function savedManualLocation(){
     return o;
   }catch{return null}
 }
+function activateDominicanDestination(){
+  window.WTG_ACTIVE_COUNTRY='DO';
+  window.WTG_ACTIVE_HAS_COORDINATES=true;
+  window.WTG_ACTIVE_DESTINATION='';
+  try{sessionStorage.removeItem('wtg_world_selection')}catch{}
+}
 function rememberManualLocation(){
   if(!['city','municipio'].includes(state.mode))return;
   try{localStorage.setItem('wtg_last_selected_location_v1',JSON.stringify({lat:state.lat,lon:state.lon,city:state.city,province:state.province,region:state.region,mode:state.mode}))}catch{}
@@ -1231,6 +1237,7 @@ function renderCities(){
 }
 function selectProvinceHub(province){
   const hub=WTG_PROVINCE_HUBS[province];if(!hub)return;
+  activateDominicanDestination();
   state.city=hub.city;state.province=province;state.region=province+' · República Dominicana';
   state.lat=hub.lat;state.lon=hub.lon;state.mode='city';
   state.category='todos';state.search='';state.radius=30000;state.exploreLimit=80;
@@ -1240,7 +1247,7 @@ function selectProvinceHub(province){
   toast('Mostrando lugares alrededor de '+hub.city+', '+province+'. Puedes elegir otro municipio.');
   navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));void loadPlaces();
 }
-function selectCity(name){const c=CITIES.find(x=>x.name===name);if(!c)return;state.city=c.name;state.province=['Puerto Plata','Sosúa','Cabarete'].includes(c.name)?'Puerto Plata':c.name==='La Romana'?'La Romana':['Punta Cana','Bávaro','Verón–Punta Cana'].includes(c.name)?'La Altagracia':c.name==='Santiago de los Caballeros'?'Santiago':['Las Terrenas','El Limón'].includes(c.name)?'Samaná':c.name==='Santo Domingo de Guzmán'?'Distrito Nacional':'';state.region=c.region;state.lat=c.lat;state.lon=c.lon;state.mode='city';state.category='todos';state.search='';state.radius=30000;state.exploreLimit=80;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));toast(`Explorando ${c.name} 🌎`);loadPlaces();}
+function selectCity(name){const c=CITIES.find(x=>x.name===name);if(!c)return;activateDominicanDestination();state.city=c.name;state.province=['Puerto Plata','Sosúa','Cabarete'].includes(c.name)?'Puerto Plata':c.name==='La Romana'?'La Romana':['Punta Cana','Bávaro','Verón–Punta Cana'].includes(c.name)?'La Altagracia':c.name==='Santiago de los Caballeros'?'Santiago':['Las Terrenas','El Limón'].includes(c.name)?'Samaná':c.name==='Santo Domingo de Guzmán'?'Distrito Nacional':'';state.region=c.region;state.lat=c.lat;state.lon=c.lon;state.mode='city';state.category='todos';state.search='';state.radius=30000;state.exploreLimit=80;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));toast(`Explorando ${c.name} 🌎`);loadPlaces();}
 function loadCachedMunicipalities(){try{const v=JSON.parse(localStorage.getItem('wtg_municipalities_v2')||'null');return Array.isArray(v)&&v.length===158?v:[]}catch{return[]}}
 async function loadMunicipalities(){
   municipalities=loadCachedMunicipalities();if(municipalities.length){updateTaxiMunicipios();refreshMunicipalitySelect();return}
@@ -1282,7 +1289,7 @@ async function selectMunicipality(){
     if(!match)throw Error('No se pudo comprobar la provincia del municipio en el mapa. Para evitar mostrar lugares de otro sitio, utiliza GPS o prueba más tarde.');
     const lat=Number(match.lat),lon=Number(match.lon);
     if(!Number.isFinite(lat)||!Number.isFinite(lon)||lat<17||lat>21||lon< -73||lon> -67)throw Error('Coordenadas fuera de República Dominicana');
-    state.lat=lat;state.lon=lon;state.city=selected.municipio;state.province=selected.provincia;state.region=selected.provincia+' · RD';state.mode='municipio';state.category='todos';state.search='';state.radius=12000;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));toast(`Explorando ${selected.municipio}, ${selected.provincia}`);loadPlaces();
+    activateDominicanDestination();state.lat=lat;state.lon=lon;state.city=selected.municipio;state.province=selected.provincia;state.region=selected.provincia+' · RD';state.mode='municipio';state.category='todos';state.search='';state.radius=12000;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));toast(`Explorando ${selected.municipio}, ${selected.provincia}`);loadPlaces();
   }catch(e){toast(e.message||'No fue posible localizar el municipio.');$('municipal-status').textContent='No se cambió de ciudad: ubicación sin verificar.'}
   finally{btn.disabled=false;btn.textContent='Explorar este municipio →'}
 }
