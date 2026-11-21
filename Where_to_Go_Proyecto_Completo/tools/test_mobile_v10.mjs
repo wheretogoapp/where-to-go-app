@@ -98,6 +98,44 @@ try{
   assert(await page.locator('#world-map').count(),'La aplicación no contiene mapa');
   console.log('IN-APP PLACE DETAIL AND MAP: OK');
 
+  // Every predefined Dominican city must receive the SAME home experience;
+  // Las Terrenas is not a privileged route. All checks remain quota-free.
+  const citiesToCheck=[
+    ['Puerto Plata','Puerto Plata'],['Santiago de los Caballeros','Santiago'],
+    ['Santo Domingo de Guzmán','Distrito Nacional'],['La Romana','La Romana'],
+    ['Punta Cana','La Altagracia'],['Cabarete','Puerto Plata'],
+    ['Bávaro','La Altagracia']
+  ];
+  for(const [city,expectedProvince] of citiesToCheck){
+    const chosen=await page.evaluate(city=>{
+      selectCity(city);
+      const area=document.getElementById('wtg-area-discovery');
+      return {city:state.city,province:provinceFromCity(),view:state.view,
+        homeTitle:document.getElementById('wtg-local-title')?.textContent||'',
+        areaTitle:document.getElementById('wtg-area-title')?.textContent||'',
+        areaShown:!!area&&!area.hidden,
+        radius:state.radius};
+    },city);
+    assert.equal(chosen.city,city);
+    assert.equal(chosen.province,expectedProvince,'La ciudad muestra la provincia equivocada');
+    assert.equal(chosen.view,'inicio','Todas las ciudades deben abrir portada turística');
+    assert(chosen.homeTitle.includes(city),'No cambió el título de la portada');
+    assert(chosen.areaShown&&chosen.areaTitle.includes(city),'Sin selector sectorial para '+city);
+    assert.equal(chosen.radius,12000,'El radio por municipio no debe mostrar lugares de zonas lejanas');
+    console.log('SAME APP EXPERIENCE:',JSON.stringify(chosen));
+  }
+  const region=await page.evaluate(()=>{
+    selectProvinceHub('Pedernales');
+    return {city:state.city,province:provinceFromCity(),view:state.view,
+      area:document.getElementById('wtg-area-title')?.textContent,
+      radius:state.radius};
+  });
+  assert.equal(region.province,'Pedernales');
+  assert.equal(region.view,'inicio');
+  assert(region.area?.includes(region.city));
+  assert.equal(region.radius,30000);
+  console.log('PROVINCE HUB:',JSON.stringify(region));
+
   await page.evaluate(()=>selectCity('Las Terrenas'));
   await page.waitForFunction(()=>state.city==='Las Terrenas'&&provinceFromCity()==='Samaná'&&state.dataMode==='live',null,{timeout:75000});
   const destination=await page.evaluate(()=>({
