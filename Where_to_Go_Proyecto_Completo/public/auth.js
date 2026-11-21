@@ -63,6 +63,7 @@ async function setPersonalization(value){
 function handleUser(user){
   currentUser=user||null;
   const avatar=document.getElementById('top-business');if(avatar)avatar.textContent=user?(user.email||'WT').slice(0,2).toUpperCase():'WT';
+  window.WTG_PROFILE?.setSession?.(currentUser,client);
   if(user){demoMode=false;closeGate();loadProfile();}
   else if(!demoMode && settings.requireLogin!==false)openGate();
 }
@@ -70,6 +71,17 @@ window.WTG_auth={
   get user(){return currentUser;},
   get demo(){return demoMode;},
   get available(){return !!client;},
+  get consented(){return !!currentProfile?.personalization_opt_in;},
+  setPersonalization,
+  async syncFavorite(place_id,added){
+    if(!client||!currentUser||typeof place_id!=='string'||place_id.length>250)return;
+    try{
+      const request=added?client.from('favorites').upsert({user_id:currentUser.id,place_id},{onConflict:'user_id,place_id'}):
+        client.from('favorites').delete().eq('user_id',currentUser.id).eq('place_id',place_id);
+      const {error:e}=await request;
+      if(e)console.warn('Favorito guardado en este dispositivo; la nube no está disponible.');
+    }catch{console.warn('No se pudo sincronizar el favorito.')}
+  },
   async recordView(place_id,category){
     if(!client||!currentUser||!currentProfile?.personalization_opt_in)return;
     if(typeof place_id!=='string'||place_id.length>250)return;
@@ -79,7 +91,7 @@ window.WTG_auth={
   showLogin(){demoMode=false;openGate();},
   async signOut(){
     if(client){await client.auth.signOut();currentUser=null;}
-    demoMode=false;openGate();
+    demoMode=false;window.WTG_PROFILE?.setSession?.(null,null);openGate();
   }
 };
 document.querySelectorAll('[data-social]').forEach(button=>button.addEventListener('click',()=>social(button.dataset.social)));
@@ -93,12 +105,12 @@ emailReveal?.addEventListener('click',()=>{
   emailReveal.setAttribute('aria-expanded',String(!panel.hidden));
   if(!panel.hidden)document.getElementById('auth-email')?.focus({preventScroll:true});
 });
-demo.addEventListener('click',()=>{if(settings.allowDemo===false)return;demoMode=true;showMessage('');closeGate()});
+demo.addEventListener('click',()=>{if(settings.allowDemo===false)return;demoMode=true;window.WTG_PROFILE?.setSession?.(null,null);showMessage('');closeGate()});
 document.getElementById('auth-consent').addEventListener('change',e=>setPersonalization(e.target.checked));
 const account=document.getElementById('wtg-account'),legal=document.getElementById('wtg-legal');
 const accountMsg=document.getElementById('wtg-account-message');
 function accountMessage(value){accountMsg.textContent=value;}
-function openAccount(){if(!currentUser){demoMode=false;openGate();return;}document.getElementById('wtg-account-email').textContent=currentUser.email||'Usuario';document.getElementById('wtg-account-status').textContent=currentUser.email_confirmed_at?'Correo confirmado ✓':'Correo pendiente de confirmación';accountMessage('');account.hidden=false;document.getElementById('wtg-account-close').focus();}
+function openAccount(){if(window.WTG_PROFILE?.open){window.WTG_PROFILE.open();return;}if(!currentUser){demoMode=false;openGate();return;}document.getElementById('wtg-account-email').textContent=currentUser.email||'Usuario';document.getElementById('wtg-account-status').textContent=currentUser.email_confirmed_at?'Correo confirmado ✓':'Correo pendiente de confirmación';accountMessage('');account.hidden=false;document.getElementById('wtg-account-close').focus();}
 document.getElementById('top-business').addEventListener('click',e=>{e.stopImmediatePropagation();openAccount()},true);
 document.getElementById('wtg-account-close').addEventListener('click',()=>account.hidden=true);
 document.getElementById('wtg-legal-close').addEventListener('click',()=>legal.hidden=true);
@@ -120,7 +132,7 @@ if(!settings.supabaseUrl||!settings.supabaseAnonKey){
   document.getElementById('auth-email-form').hidden=false;
   document.querySelector('.auth-optin').hidden=false;
   note.textContent='Modo de prueba: el registro con Google, Apple, Facebook o correo se habilita al conectar Supabase. No se guardan cuentas reales todavía.';
-  if(settings.requireLogin===false){demoMode=true;closeGate()}
+  if(settings.requireLogin===false){demoMode=true;window.WTG_PROFILE?.setSession?.(null,null);closeGate()}
 }else{
   note.textContent='Conexión segura administrada por Supabase. Tu ubicación precisa no se guarda en el perfil.';
   try{
