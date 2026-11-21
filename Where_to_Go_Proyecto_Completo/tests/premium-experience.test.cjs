@@ -59,7 +59,7 @@ test('La pantalla de acceso y la ubicación son reales, no un diálogo falso',()
 
 test('El paquete móvil prefiere archivos nuevos y conserva navegación fuera de línea',()=>{
  const sw=read('service-worker.js');
- assert(sw.includes("where-to-go-shell-v12-destination-discovery"));
+ assert(/where-to-go-shell-v\d+-/.test(sw),'La caché móvil debe tener versión para invalidar recursos antiguos');
  assert(sw.includes("cache:'no-store'"));
  assert(sw.includes("'/onboarding.js'"));
  assert(sw.includes("'/local-discovery.css'"));
