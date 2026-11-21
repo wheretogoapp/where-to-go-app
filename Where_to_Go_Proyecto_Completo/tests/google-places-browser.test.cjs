@@ -238,7 +238,7 @@ test('Portada y Explorar ocultan fichas cartográficas sin fotos y exponen servi
 test('Se pueden consultar varios sectores reales del mismo municipio sin repetir el centro',async()=>{
   const {api,queries}=configuredBrowser();
   const stages=api.scanStages();
-  assert.equal(stages.length,10);
+  assert.equal(stages.length,13);
   assert(stages.some(s=>s.batch==='tourism'));
   assert(stages.some(s=>s.sector==='north'));
   assert(stages.some(s=>s.sector==='east'));
@@ -315,4 +315,15 @@ test('Cobertura territorial: 32 demarcaciones, 158 municipios y nueve municipios
   assert(app.includes('district-cabarete'));
   assert(app.includes('zone-puntacana'));
   assert(app.includes('zone-bavaro'));
+});
+
+test('La portada muestra cuatro categorías y cuenta fuentes por zona',()=>{
+ const src=fs.readFileSync(path.join(root,'app.js'),'utf8');
+ assert(src.includes('WTG_QUICK_CATEGORIES.slice(0,4)'));
+ assert(src.includes("candidates.filter(p=>p.source==='google').length"));
+ assert(src.includes("arr.filter(p=>p.source==='google').length"));
+});
+test('El carrusel retira fotos que fallan',()=>{
+ const src=fs.readFileSync(path.join(root,'experience.js'),'utf8');
+ assert(src.includes("s.items=s.items.filter(item=>item.id!==x.id)"));
 });
