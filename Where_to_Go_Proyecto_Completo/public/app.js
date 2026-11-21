@@ -1237,7 +1237,8 @@ async function renderGoogleMapLinks(){
     node.innerHTML='<div class="map-fallback">El mapa interactivo no está configurado en esta publicación. Puedes explorar los negocios y abrir sus fichas dentro de la app.</div>';
     return;
   }
-  node.textContent='Cargando mapa interactivo…';
+  // Do not clear a previously mounted Google map while refreshing place markers.
+  if(!wtgEmbeddedGoogleMap||wtgEmbeddedGoogleMap.getDiv()!==node)node.textContent='Cargando mapa interactivo…';
   try{
     const loaded=await window.WTG_GOOGLE_PLACES.loadScript();
     if(!loaded||token!==wtgMapRenderToken||state.view!=='mapa')return;
