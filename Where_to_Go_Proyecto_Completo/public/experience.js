@@ -15,8 +15,9 @@
     it:{intro:'Scopri luoghi straordinari ed esperienze autentiche vicino a te.',photo:'Foto',license:'Vedi licenza e autore',original:'Foto originale',missing:'Foto verificata in attesa',address:'Luogo individuato sulla mappa',discover:'Scopri questo luogo ↗'}
   };
   const translate=(k)=>(L[window.WTG_I18N?.lang]||L.es)[k];
-  const commons = name => 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(name) + '?width=1400';
+  const commons = name => 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(name) + '?width=2200';
   const PP = [
+    {title:'Malecón y Fortaleza San Felipe',place:'Malecón de Puerto Plata · Centro histórico',image:commons('FortalezaPOP.jpg'),source:'https://commons.wikimedia.org/wiki/File:FortalezaPOP.jpg',credit:'SantiKbrera · CC BY-SA 3.0'},
     {title:'Puerto Plata desde el cielo', place:'Puerto Plata · Costa Norte', image:commons('Aerial view of Puerto Plata, June 2023.jpg'), source:'https://commons.wikimedia.org/wiki/File:Aerial_view_of_Puerto_Plata,_June_2023.jpg', credit:'Jusunx · CC BY-SA 4.0'},
     {title:'Fortaleza San Felipe', place:'Puerto Plata · Centro histórico', image:commons('Fortaleza de San Felipe DR 2.jpg'), source:'https://commons.wikimedia.org/wiki/File:Fortaleza_de_San_Felipe_DR_2.jpg', credit:'CareAhLine · CC0'},
     {title:'27 Charcos de Damajagua', place:'Imbert · Puerto Plata', image:commons('Damajagua Waterfall.jpg'), source:'https://commons.wikimedia.org/wiki/File:Damajagua_Waterfall.jpg', credit:'Funcheta · CC BY-SA 4.0'},
@@ -24,8 +25,8 @@
   ];
   const nationalNames=['Puerto Plata','Santiago','La Altagracia','La Romana','Samaná','Pedernales','Distrito Nacional','Barahona'];
   const stateSlider = {
-    hero:{items:[], index:0, paused:reduced, signature:'', delay:7000},
-    auth:{items:[], index:0, paused:reduced, signature:'', delay:7000},
+    hero:{items:[], index:0, paused:reduced, signature:'', delay:4800},
+    auth:{items:[], index:0, paused:reduced, signature:'', delay:5300},
     spotlight:{items:[], index:0, paused:reduced, signature:'', delay:8500},
     premium:{items:[], index:0, paused:reduced, signature:'', delay:9000}
   };
@@ -63,7 +64,29 @@
     const note=document.querySelector('.hero .hero-coordinate span');
     const credit=document.querySelector('.hero-credit');
     if(!art||!title)return;
-    art.style.backgroundImage = validUrl(x.image)?`url("${x.image.replace(/"/g,'%22')}")`:'';
+    // Prevent visibly broken or unrelated images from occupying the hero.
+    if(!validUrl(x.image)){s.items.splice(s.index,1);s.index%=Math.max(1,s.items.length);if(s.items.length)applyHero();return;}
+    const signature=x.image;
+    if(art.dataset.wtgImage!==signature){
+      art.dataset.wtgImage=signature;
+      const candidate=new Image();
+      candidate.onload=()=>{
+        if(art.dataset.wtgImage!==signature)return;
+        art.style.backgroundImage=`url("${signature.replace(/"/g,'%22')}")`;
+        art.classList.remove('wtg-hero-image-ready');
+        void art.offsetWidth;
+        art.classList.add('wtg-hero-image-ready');
+      };
+      candidate.onerror=()=>{
+        if(art.dataset.wtgImage!==signature)return;
+        s.items=s.items.filter(item=>item.image!==signature);
+        s.index%=Math.max(1,s.items.length);
+        art.dataset.wtgImage='';
+        if(s.items.length)applyHero();
+        else art.style.backgroundImage='none';
+      };
+      candidate.src=signature;
+    }
     art.style.backgroundPosition='center';
     title.replaceChildren(document.createTextNode(x.title));
     const subtitle=document.querySelector('.hero .hero-content p');
@@ -119,8 +142,23 @@
   }
   function update(){
     const name=region();const slides=slideSet(name);
-    updateSet('hero',slides,'hero:'+name);
-    updateSet('auth',slides,'auth:'+name);
+    // Use real business-linked place photographs for the selected location,
+    // not stock images or landmarks from another province.
+    const iconic=typeof state!=='undefined' ? state.places.filter(p=>
+       p&&p.nameKnown!==false&&Number.isFinite(p.distance)&&
+       p.distance<=Math.min(state.radius,16000)&&validUrl(p.photo||'')&&
+       (p.source==='google'||p.googlePhotoMapUrl||p.source==='editorial')&&
+       /malec[oó]n|sombrillas|do[ñn]a blanca|telef[eé]rico|monumento|fortaleza|parque central|plaza independencia|paseo/i.test(p.name)
+    ).slice().sort((a,b)=>a.distance-b.distance).slice(0,6).map(p=>({
+       title:p.name,place:(state.city==='Cerca de mí'?name:state.city)+' · '+(state.region||''),
+       image:p.photo,source:p.googleUri||p.googlePhotoMapUrl||p.sourceUrl||'',
+       credit:p.source==='google'?'Google Maps · fotografía del lugar':(p.photoAttribution||'Fotografía del lugar')
+    })) : [];
+    const identity=name+'|'+iconic.map(p=>p.title+'@'+p.image).join('|');
+    const combined=[...iconic,...slides].filter((item,index,array)=>
+      array.findIndex(other=>other.image===item.image)===index);
+    updateSet('hero',combined,'hero:'+identity);
+    updateSet('auth',combined,'auth:'+identity);
     const eligible=typeof state!=='undefined'?state.places.filter(p=>isTouristDiscovery(p)&&!!validUrl(p.photo||'')&&p.distance<=state.radius+100).slice().sort((a,b)=>a.distance-b.distance):[];
     updateSet('spotlight',eligible.slice(0,24),'spotlight:'+name+'|'+eligible.map(p=>p.id).join(','));
     const nodes=[...document.querySelectorAll('[data-premium-slide]')];
