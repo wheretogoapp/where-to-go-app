@@ -265,6 +265,8 @@
 <section id="wtg-account" class="wtg-account" role="dialog" aria-modal="true" aria-labelledby="wtg-account-title" hidden>
 <div class="wtg-account-card"><div class="wtg-account-head"><h2 id="wtg-account-title">Mi cuenta</h2><button type="button" id="wtg-account-close" aria-label="Cerrar cuenta">✕</button></div>
 <p id="wtg-account-status">Comprobando sesión…</p><p id="wtg-account-email"></p>
+<div class="wtg-profile-identity" aria-label="Datos de tu cuenta"><div class="wtg-profile-avatar" aria-hidden="true">👤</div><div><strong>Tu espacio personal</strong><small>Favoritos, seguridad y preferencias</small></div></div>
+<div class="wtg-theme-settings"><div><strong>🎨 Apariencia</strong><small>Elige cómo quieres ver Where to Go</small></div><div class="wtg-theme-choices" role="group" aria-label="Apariencia de la aplicación"><button type="button" data-wtg-theme="system" aria-pressed="true">Automático</button><button type="button" data-wtg-theme="light" aria-pressed="false">☀ Claro</button><button type="button" data-wtg-theme="dark" aria-pressed="false">☾ Oscuro</button></div></div>
 <div class="wtg-account-actions"><button type="button" id="wtg-account-favorites">♡ Mis lugares favoritos</button><button type="button" id="wtg-account-resend">✉ Reenviar confirmación de correo</button><button type="button" id="wtg-account-reset">🔐 Cambiar contraseña por correo</button><button type="button" id="wtg-account-privacy">Privacidad y condiciones</button><button type="button" id="wtg-account-signout">Cerrar sesión</button><button type="button" id="wtg-account-login">Ver pantalla de inicio de sesión</button></div>
 <p id="wtg-account-message" role="status"></p></div></section>
 <section id="wtg-legal" class="wtg-account" role="dialog" aria-modal="true" aria-labelledby="wtg-legal-title" hidden><div class="wtg-account-card"><div class="wtg-account-head"><h2 id="wtg-legal-title">Privacidad y condiciones — versión de prueba</h2><button type="button" id="wtg-legal-close" aria-label="Cerrar">✕</button></div>
@@ -279,6 +281,7 @@
   <link rel="stylesheet" href="/account.css?v=1" />
   <!-- WOW visual preview: last stylesheet, isolated from production. -->
   <link rel="stylesheet" href="/wow-premium-preview.css?v=1" />
+  <link rel="stylesheet" href="/wow-theme-profile.css?v=1" />
   <script defer src="/language.js?v=7.0"></script>
   <script defer src="/province-heroes.js?v=10.0"></script>
   <script defer src="/config.js?v=6"></script>
@@ -296,6 +299,7 @@
   <script defer src="/world-v8.js?v=12.0"></script>
   <script defer src="/photo-atlas.js?v=13.0"></script>
   <script defer src="/tours.js?v=1"></script>
+  <script defer src="/wow-theme-profile.js?v=1"></script>
   <script type="module" src="/auth.js?v=13"></script>
 </body>
 </html>
