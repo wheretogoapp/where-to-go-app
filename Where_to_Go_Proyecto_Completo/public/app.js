@@ -998,7 +998,28 @@ function renderProvincePremium(){
     return `<article class="wtg-provincial-premium" data-premium-slide="${i}" ${i?'hidden':''}><div class="premium-marker">PUBLICIDAD · PREMIUM · ${esc(prov)}</div><div><strong>${esc(x.name)}</strong><small>${esc(cat.name)} · ${esc(x.province)}</small></div>${source?`<a target="_blank" rel="noopener noreferrer" href="${esc(source)}">Ver negocio ↗</a>`:''}</article>`;
   }).join('');
 }
-function renderHome(){renderProvincePremium();
+function renderLocalDiscovery(){
+ const section=document.getElementById('wtg-local-discovery');
+ const rail=document.getElementById('wtg-local-cards');
+ if(!section||!rail)return;
+ const city=state.city==='Cerca de mí'?(provinceFromCity()||'tu zona'):state.city;
+ const title=document.getElementById('wtg-local-title');
+ const subtitle=document.getElementById('wtg-local-subtitle');
+ if(title)title.textContent='Descubre '+city;
+ if(subtitle)subtitle.textContent='Lugares reales con fotografías de '+city;
+ // Only use geolocated, genuinely photographed places from the selected area.
+ // No generic stock images or photos from another province.
+ const photographed=sortByDistance(state.places.filter(p=>
+   p.distance<=state.radius+100&&hasCatalogPhoto(p)&&
+   (['playas','atracciones','parques','cascadas','rios','balnearios','restaurantes','hoteles'].includes(p.cat))
+ )).slice(0,8);
+ rail.innerHTML=photographed.map(p=>`<button type="button" class="wtg-local-card" data-place="${esc(p.id)}" aria-label="Descubrir ${esc(p.name)}">
+   <img loading="lazy" src="${esc(safeUrl(p.photo||placeGalleryPhotos(p)[0]?.url||''))}" alt="Fotografía de ${esc(p.name)}" referrerpolicy="${p.source==='google'?'strict-origin-when-cross-origin':'no-referrer'}">
+   <span class="wtg-local-card-caption"><strong>${esc(p.name)}</strong><small>${esc(catInfo(p.cat).name)} · ${distance(p.distance)}</small></span>
+ </button>`).join('');
+ section.hidden=!photographed.length;
+}
+function renderHome(){renderProvincePremium();renderLocalDiscovery();
  const teaser=document.querySelector('.taxi-teaser');
  if(teaser)teaser.hidden=!(state.province==='Puerto Plata'||['Puerto Plata','Sosúa','Cabarete'].includes(state.city));
  const list=$('home-list');
