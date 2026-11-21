@@ -58,17 +58,9 @@ function init(){
  function normalize(value){return String(value||'').toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
  async function geoLocateMunicipality(place){
    if(Number.isFinite(place?.lat)&&Number.isFinite(place?.lon))return {lat:place.lat,lon:place.lon};
-   if(!place?.city||!place.region)throw Error('Selecciona una ciudad o una provincia válida.');
-   const query=place.city+', '+place.region+', República Dominicana';
-   const url='https://nominatim.openstreetmap.org/search?format=json&limit=5&addressdetails=1&countrycodes=do&q='+encodeURIComponent(query);
-   const res=await fetch(url,{headers:{'Accept-Language':'es'}});
-   if(!res.ok)throw Error('No se pudo comprobar la ubicación del municipio.');
-   const candidates=await res.json();
-   const match=candidates.find(p=>normalize(p.display_name).includes(normalize(place.region)));
-   const lat=Number(match?.lat),lon=Number(match?.lon);
-   if(!match||!Number.isFinite(lat)||!Number.isFinite(lon)||lat<17||lat>21||lon< -73||lon> -67)
-     throw Error('No pudimos verificar este municipio en su provincia. Prueba otra ciudad o utiliza GPS.');
-   return {lat,lon};
+   if(!place?.city||!place.region)throw Error('Selecciona una provincia y un municipio válidos.');
+   if(!window.WTG_MUNICIPAL_GEOCODER?.locate)throw Error('El localizador territorial no se cargó. Intenta actualizar la aplicación.');
+   return window.WTG_MUNICIPAL_GEOCODER.locate({city:place.city,province:place.region});
  }
  function update(){
    updateCities();
