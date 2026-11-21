@@ -167,3 +167,29 @@ test('Las fotografías del atlas no se atribuyen a negocios y solo se usan cerca
  assert(home.includes("window.addEventListener('wtg-photo-atlas-ready',update)"));
  assert(!source('app.js').includes('scenesForLocation({lat:p.lat'),'No asignar paisajes a fichas ajenas');
 });
+
+test('Si una foto Google falla, usa la siguiente imagen auténtica de ese mismo lugar',()=>{
+ const app=source('app.js');
+ const start=app.indexOf('function placeCoverUrl(');
+ const end=app.indexOf('function isVisibleBusiness(',start);
+ assert(start>=0&&end>start);
+ const broken=new Set();
+ const p={photo:'https://example.com/failed.jpg',photos:[
+   {url:'https://example.com/second-real-photo.jpg',
+     source:'https://maps.google.com/place/123',attribution:'Autor del lugar'}]};
+ const ctx={wtgUnavailableImageUrls:broken,
+   safeUrl:u=>/^https:\/\//.test(u||'')?u:'',
+   placeGalleryPhotos:row=>row.photos||[],
+   console};
+ ctx.place=p;
+ vm.runInNewContext(app.slice(start,end),ctx);
+ assert.equal(vm.runInNewContext('placeCoverUrl(place)',ctx),
+   'https://example.com/failed.jpg');
+ broken.add('https://example.com/failed.jpg');
+ assert.equal(vm.runInNewContext('placeCoverUrl(place)',ctx),
+   'https://example.com/second-real-photo.jpg');
+ broken.add('https://example.com/second-real-photo.jpg');
+ assert.equal(vm.runInNewContext('placeCoverUrl(place)',ctx),'');
+ assert(app.includes('coverPhoto=placeCoverUrl(p)'));
+ assert(app.includes("const src=placeCoverUrl(p);"));
+});
