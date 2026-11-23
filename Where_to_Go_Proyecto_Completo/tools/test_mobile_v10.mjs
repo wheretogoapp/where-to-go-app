@@ -341,6 +341,26 @@ try{
   });
   assert(Object.values(isolation).every(Boolean),'No se aislaron los favoritos y borradores de cuentas distintas');
   console.log('ACCOUNT ISOLATION OK:',JSON.stringify(isolation));
+  // The staff portal is public HTML but its data is strictly private.
+  // A guest must never see the review tables, even with a direct admin URL.
+  const guestAdmin=await context.newPage();
+  try{
+    const adminUrl=new URL('admin.html',site).href;
+    const response=await guestAdmin.goto(adminUrl,{waitUntil:'domcontentloaded',timeout:30000});
+    assert.equal(response?.status(),200,'El portal privado debe responder sin exponer datos');
+    await guestAdmin.waitForFunction(()=>{
+      const s=document.getElementById('review-auth-status')?.textContent||'';
+      return s&&!s.includes('Comprobando que tienes acceso');
+    },null,{timeout:25000});
+    const guard=await guestAdmin.evaluate(()=>({
+      adminHidden:document.getElementById('review-app').hidden,
+      loginVisible:!document.getElementById('review-auth').hidden,
+      message:document.getElementById('review-auth-status').textContent
+    }));
+    assert(guard.adminHidden&&guard.loginVisible&&/inicia sesión|permisos|no disponible/i.test(guard.message),
+      'El portal de administración expuso controles al invitado');
+    console.log('PRIVATE ADMIN GUEST ACCESS DENIED OK');
+  }finally{await guestAdmin.close()}
   if(isPublic)console.log('GOOGLE KEY: deployment workflow separately checks the public restricted key; CI blocks paid Places requests.');
   await page.screenshot({path:'/tmp/where-to-go-iphone-results.png',fullPage:false});
   console.log('MOBILE E2E OK:',JSON.stringify({first,explorer,destination,scriptErrors:errors.slice(0,4)}));
