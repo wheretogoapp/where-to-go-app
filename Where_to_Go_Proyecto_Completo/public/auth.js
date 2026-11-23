@@ -41,7 +41,7 @@ async function importLocalFavorites(){
   catch(e){console.warn('Favoritos sin sincronizar:',e?.message)}
 }
 async function loginEmail(create){
-  if(!client){showMessage('El registro real necesita una conexión de Supabase. Puedes probar la demo sin guardar una cuenta.');return;}
+  if(!client){showMessage('No es posible crear una cuenta ahora. Puedes explorar sin guardar una cuenta.');return;}
   if(busy)return;
   const email=document.getElementById('auth-email').value.trim();const password=document.getElementById('auth-password').value;
   if(!email||password.length<6){showMessage('Escribe un correo válido y una contraseña de al menos 6 caracteres.');return;}
@@ -54,7 +54,7 @@ async function loginEmail(create){
   finally{busy=false;}
 }
 async function social(provider){
-  if(!client){showMessage('El acceso con '+provider+' estará disponible al configurar Supabase y el proveedor. En esta versión puedes explorar la demo.');return;}
+  if(!client){showMessage('El acceso con '+provider+' no está disponible ahora. Prueba con tu correo o explora sin iniciar sesión.');return;}
   if(busy)return;busy=true;showMessage('');
   try{
     const {error:e}=await client.auth.signInWithOAuth({provider,options:{redirectTo:location.origin+location.pathname}});
@@ -148,7 +148,7 @@ recoveryForm?.addEventListener('submit',async event=>{
  const pass=document.getElementById('wtg-new-password')?.value||'';
  const confirm=document.getElementById('wtg-confirm-password')?.value||'';
  if(pass.length<8||pass!==confirm)return recoveryMessage.textContent='Usa al menos 8 caracteres e introduce la misma contraseña dos veces.';
- if(!client)return recoveryMessage.textContent='Supabase no está conectado.';
+ if(!client)return recoveryMessage.textContent='El servicio de cuentas no está disponible.';
  const button=recoveryForm.querySelector('button[type="submit"]');button.disabled=true;
  try{
   const {error:e}=await client.auth.updateUser({password:pass});
@@ -181,10 +181,10 @@ if(!settings.supabaseUrl||!settings.supabaseAnonKey){
   document.querySelector('.auth-divider').hidden=false;
   document.getElementById('auth-email-form').hidden=false;
   document.querySelector('.auth-optin').hidden=false;
-  note.textContent='Modo de prueba: el registro con Google, Apple, Facebook o correo se habilita al conectar Supabase. No se guardan cuentas reales todavía.';
+  note.textContent='Modo de prueba: las cuentas todavía no están disponibles. Puedes explorar sin registrarte.';
   if(settings.requireLogin===false){demoMode=true;window.WTG_PROFILE?.setSession?.(null,null);closeGate()}
 }else{
-  note.textContent='Conexión segura administrada por Supabase. Tu ubicación precisa no se guarda en el perfil.';
+  note.textContent='Tu cuenta está protegida. Tu ubicación precisa no se guarda en el perfil.';
   try{
     const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
     client=createClient(settings.supabaseUrl,settings.supabaseAnonKey,{auth:{detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
@@ -218,5 +218,5 @@ if(!settings.supabaseUrl||!settings.supabaseAnonKey){
     if(restored&&/(?:^#|&)access_token=/.test(location.hash)){
       history.replaceState(history.state,'',location.pathname+location.search);
     }
-  }catch(e){note.textContent='No se pudo conectar con el sistema de cuentas. Revisa la configuración de Supabase.';showMessage('Error de autenticación: '+(e.message||'proveedor no disponible'));}
+  }catch(e){note.textContent='No se pudo conectar con tu cuenta. Inténtalo más tarde.';showMessage('Error de autenticación: '+(e.message||'proveedor no disponible'));}
 }
