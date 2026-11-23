@@ -95,3 +95,10 @@ test('Eliminar cuenta registra una solicitud sin borrar usuarios desde el navega
  assert.equal(calls.insert[0].table,'account_deletion_requests');
  assert.doesNotMatch(js,/deleteUser\(/);
 });
+
+test('Nunca permitir TRUNCATE, UPDATE ni DELETE a usuarios autenticados en solicitudes comerciales',()=>{
+ assert.match(sql,/revoke all privileges on table[\s\S]*?from public, anon, authenticated;/i,
+  'La migración debe revocar permisos por defecto que RLS no protege, como TRUNCATE');
+ assert.match(sql,/grant select, insert on table[\s\S]*?to authenticated;/i,
+  'Los clientes deben disponer únicamente de SELECT e INSERT');
+});

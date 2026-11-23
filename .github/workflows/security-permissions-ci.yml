@@ -1,0 +1,42 @@
+name: Where to Go - Proteger permisos comerciales (RLS)
+on:
+  push:
+    branches:
+      - security/revoke-public-default-table-grants-20261123
+      - main
+  pull_request:
+    branches: [main]
+    paths:
+      - 'Where_to_Go_Proyecto_Completo/supabase/**'
+      - 'Where_to_Go_Proyecto_Completo/tests/commercial-submissions.test.cjs'
+      - '.github/workflows/security-permissions-ci.yml'
+permissions:
+  contents: read
+jobs:
+  restricted-grants:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Comprobar formularios y cliente sin secretos
+        run: |
+          node --check Where_to_Go_Proyecto_Completo/public/commercial-submissions.js
+          node --test Where_to_Go_Proyecto_Completo/tests/commercial-submissions.test.cjs
+      - name: Verificar privilegios mínimos y RLS documentados
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('Where_to_Go_Proyecto_Completo/supabase/commercial-submissions-v1.sql')
+          s=p.read_text()
+          assert 'revoke all privileges on table' in s
+          assert 'from public, anon, authenticated;' in s
+          assert 'grant select, insert on table' in s
+          assert 'to authenticated;' in s
+          for name in ('business_submissions','tour_submissions','place_reports','account_deletion_requests'):
+              assert 'public.'+name in s
+              assert 'alter table public.'+name+' enable row level security;' in s
+          print('PERMISOS_MINIMOS_Y_RLS_OK')
+          PY
