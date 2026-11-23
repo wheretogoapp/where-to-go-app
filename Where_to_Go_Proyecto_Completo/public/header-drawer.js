@@ -2,8 +2,8 @@
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
-const drawer=$('wtg-main-drawer'),shade=$('wtg-main-drawer-backdrop'),brand=$('mobile-brand');
-if(!drawer||!shade||!brand)return;
+const drawer=$('wtg-main-drawer'),shade=$('wtg-main-drawer-backdrop'),menuButton=$('wtg-mobile-menu-trigger');
+if(!drawer||!shade||!menuButton)return;
 let previousFocus=null;
 function open(){
  if(!drawer.hidden)return;
@@ -11,21 +11,20 @@ function open(){
  window.WTG_PROFILE?.close?.();
  drawer.hidden=false;shade.hidden=false;
  document.body.classList.add('wtg-drawer-open');
- brand.setAttribute('aria-expanded','true');
+ menuButton.setAttribute('aria-expanded','true');
  $('wtg-drawer-close')?.focus({preventScroll:true});
 }
 function close(){
  if(drawer.hidden)return;
  drawer.hidden=true;shade.hidden=true;
  document.body.classList.remove('wtg-drawer-open');
- brand.setAttribute('aria-expanded','false');
+ menuButton.setAttribute('aria-expanded','false');
  if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});
 }
-brand.addEventListener('click',event=>{
- // The old brand handler navigated to Inicio. Override it without changing app.js.
- event.preventDefault();event.stopImmediatePropagation();
+menuButton.addEventListener('click',event=>{
+ event.preventDefault();
  drawer.hidden?open():close();
-},true);
+});
 $('wtg-drawer-close').addEventListener('click',close);
 shade.addEventListener('click',close);
 drawer.addEventListener('click',event=>{

@@ -84,7 +84,8 @@
 
     <div class="main-shell">
       <header class="topbar">
-        <button id="mobile-brand" class="mobile-brand" type="button" aria-label="Abrir menú principal" aria-controls="wtg-main-drawer" aria-expanded="false"><span class="mobile-brand-icon"><img src="/assets/wtg-logo-hd.webp?v=1" width="34" height="34" alt=""></span><span class="wtg-mobile-brand-text"><strong>Where to Go<span class="brand-dot">.</span></strong><small>A dónde ir</small></span><span class="wtg-header-menu-glyph" aria-hidden="true">☰</span></button>
+        <button type="button" id="wtg-mobile-menu-trigger" class="wtg-mobile-menu-trigger" aria-label="Abrir menú principal" aria-controls="wtg-main-drawer" aria-expanded="false"><span aria-hidden="true">☰</span></button>
+        <button id="mobile-brand" class="mobile-brand" type="button" aria-label="Volver al inicio"><span class="mobile-brand-icon"><img src="/assets/wtg-logo-hd.webp?v=1" width="34" height="34" alt=""></span><span class="wtg-mobile-brand-text"><strong>Where to Go<span class="brand-dot">.</span></strong><small>A dónde ir</small></span></button>
         <div class="topbar-left"><span class="breadcrumb">Descubre el mundo</span><span class="crumb-separator">/</span><strong id="current-page-label">Inicio</strong></div>
         <div class="topbar-actions"><label class="wtg-language-control" for="wtg-language-select"><span aria-hidden="true">🌐</span> <span class="visually-hidden">Idioma / Language</span><select id="wtg-language-select" aria-label="Idioma / Language"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option></select></label>
           <button class="location-pill" id="location-pill" title="Detectar o cambiar país, región y ciudad" aria-haspopup="dialog" aria-controls="wtg-world-dialog"><span class="pin-icon">⌖</span><span class="location-pill-text" id="location-label">Tu ubicación</span><span class="chevron">⌄</span></button>
@@ -363,7 +364,7 @@
   <link rel="stylesheet" href="/three-screens-premium.css?v=1" />
   <link rel="stylesheet" href="/mobile-ui-repair.css?v=1" />
   <link rel="stylesheet" href="/five-tab-profile-hub.css?v=1" />
-  <link rel="stylesheet" href="/header-drawer.css?v=1" />
+  <link rel="stylesheet" href="/header-drawer.css?v=2" />
   <script defer src="/language.js?v=7.3"></script>
   <script defer src="/province-heroes.js?v=10.0"></script>
   <script defer src="/config.js?v=6"></script>
@@ -382,7 +383,7 @@
   <script defer src="/photo-atlas.js?v=13.0"></script>
   <script defer src="/tours.js?v=1"></script>
   <script defer src="/traveler-profile.js?v=3"></script>
-  <script defer src="/header-drawer.js?v=1"></script>
+  <script defer src="/header-drawer.js?v=2"></script>
   <script type="module" src="/auth.js?v=14"></script>
 </body>
 </html>

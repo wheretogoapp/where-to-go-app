@@ -1,0 +1,94 @@
+name: Where to Go - Menú izquierda antes del logo (móvil)
+on:
+  push:
+    branches:
+      - fix/top-left-menu-before-logo-20261123
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  header:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validar JS e integridad de encabezado
+        run: |
+          node --check Where_to_Go_Proyecto_Completo/public/header-drawer.js
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('Where_to_Go_Proyecto_Completo/public')
+          h=(p/'index.html').read_text()
+          header=h.split('<header class="topbar">',1)[1].split('</header>',1)[0]
+          assert header.index('id="wtg-mobile-menu-trigger"')<header.index('id="mobile-brand"')
+          assert 'src="/assets/wtg-logo-hd.webp?v=1"' in header
+          assert 'aria-label="Volver al inicio"' in header
+          assert 'aria-controls="wtg-main-drawer"' in header
+          assert 'header-drawer.js?v=2' in h and 'header-drawer.css?v=2' in h
+          assert len(__import__('re').findall(r'class="mobile-tab(?:\s|")',h.split('<nav class="mobile-tabbar"',1)[1].split('</nav>',1)[0]))==5
+          print('PASS: hamburger first at far left, original logo unchanged and five bottom tabs preserved')
+          PY
+      - name: Instalar navegador móvil de pruebas
+        run: |
+          npm install --no-save playwright
+          if command -v google-chrome >/dev/null 2>&1;then
+            echo "CHROME_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            npx playwright install chromium
+          fi
+      - name: Comprobar orden visual, clic y espacio en 360 y 390 px
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory Where_to_Go_Proyecto_Completo/public >/tmp/wtg-header-server.log 2>&1 &
+          sleep 2
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
+          for(const width of [390,360]){
+            const p=await browser.newPage({viewport:{width,height:844},isMobile:true,hasTouch:true,locale:'es-DO'});
+            const failures=[];
+            p.on('pageerror',e=>failures.push(String(e.message).slice(0,125)));
+            await p.route('https://maps.googleapis.com/**',r=>r.abort());
+            await p.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded',timeout:45000});
+            await p.waitForFunction(()=>!!window.WTG_MAIN_MENU&&typeof navigate==='function',{timeout:19000});
+            await p.evaluate(()=>{
+              for(const id of ['wtg-onboarding','auth-gate']){
+                const e=document.getElementById(id);if(e){e.hidden=true;e.style.setProperty('display','none','important')}
+              }
+              document.body.classList.remove('wtg-onboarding-active');
+            });
+            const layout=await p.evaluate(()=>{
+              const rect=q=>{const r=document.querySelector(q).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,width:r.width,height:r.height}};
+              return {menu:rect('#wtg-mobile-menu-trigger'),logo:rect('#mobile-brand'),
+                language:rect('.topbar .wtg-language-control'),location:rect('.topbar .location-pill'),
+                width:innerWidth,bodyWidth:document.documentElement.scrollWidth,
+                navTabs:document.querySelectorAll('.mobile-tabbar .mobile-tab').length};
+            });
+            console.log('HEADER_POSITION',width,JSON.stringify(layout));
+            if(!(layout.menu.left<layout.logo.left&&layout.menu.right<=layout.logo.left+3&&
+                 layout.logo.right<layout.language.left+4&&layout.location.right<=width+2&&
+                 layout.navTabs===5&&layout.menu.width>=30&&layout.menu.left>=0))
+              throw Error('Menu not in left corner or header overflows: '+JSON.stringify(layout));
+            await p.screenshot({path:'/tmp/wtg-menu-left-'+width+'.png'});
+            await p.locator('#wtg-mobile-menu-trigger').click();
+            const drawer=await p.evaluate(()=>({open:!document.getElementById('wtg-main-drawer').hidden,
+              expanded:document.getElementById('wtg-mobile-menu-trigger').getAttribute('aria-expanded')}));
+            if(!drawer.open||drawer.expanded!=='true')throw Error('Left menu does not open: '+JSON.stringify(drawer));
+            await p.locator('#wtg-drawer-close').click();
+            if(!(await p.evaluate(()=>document.getElementById('wtg-main-drawer').hidden)))throw Error('Drawer does not close');
+            await p.locator('#mobile-brand').click();
+            if((await p.evaluate(()=>state.view))!=='inicio')throw Error('Logo home action changed');
+            console.log('MENU_LEFT_QA_PASS',width,JSON.stringify({layout,errors:failures.slice(0,3)}));
+            await p.close();
+          }
+          await browser.close();
+          JS
+      - name: Capturas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: donde-va-menu-izquierda
+          path: /tmp/wtg-menu-left-*.png
+          if-no-files-found: ignore
