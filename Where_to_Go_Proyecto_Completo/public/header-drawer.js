@@ -17,7 +17,7 @@ const groups=[
 const categorySearch=$('wtg-drawer-category-search');
 const categoryList=$('wtg-drawer-category-list');
 function normalize(s){
- return String(s||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLocaleLowerCase();
+ return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase();
 }
 function filterCategories(){
  if(!categoryList)return;
