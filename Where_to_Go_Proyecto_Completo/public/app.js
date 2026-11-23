@@ -1119,7 +1119,7 @@ function navigate(view){if(!$("view-"+view))view='inicio';state.view=view;docume
   if(map&&!window.L)map.textContent='Preparando mapa de esta zona…';
   if(window.WTG_GOOGLE_PLACES?.configured())renderMap();
   else void ensureLeaflet().then(()=>{if(state.view==='mapa')renderMap()});
-}window.scrollTo({top:0,behavior:'instant'});try{history.replaceState(null,'',`#${view}`)}catch{}}
+}window.scrollTo({top:0,behavior:'instant'});try{if(!/(?:^#|[&#])(?:access_token|refresh_token|error|error_description|code)=/.test(location.hash))history.replaceState(null,'',`#${view}`)}catch{}}
 function startCategoryRotation(rail){
  if(rail.dataset.wtgRotating==='yes')return;
  rail.dataset.wtgRotating='yes';
