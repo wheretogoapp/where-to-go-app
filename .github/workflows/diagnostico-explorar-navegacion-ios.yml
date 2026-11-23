@@ -56,13 +56,27 @@ jobs:
             });
             await p.waitForTimeout(11000);
             const before=await p.evaluate(()=>({view:state.view,total:state.places.length,withPhoto:state.places.filter(hasCatalogPhoto).length,ready:document.readyState,hash:location.hash}));
+            // A local no-cost fixture stresses the first 24-card batch even
+            // when Maps is disabled (Google calls are blocked in this test).
+            await p.evaluate(()=>{
+              const examples=state.places.filter(hasCatalogPhoto).slice(0,5);
+              if(!examples.length)throw Error('No photographed local fixture available');
+              const extra=Array.from({length:65},(_,i)=>({
+                ...examples[i%examples.length],
+                id:'qa-visible-place-'+i,
+                name:examples[i%examples.length].name+' (test '+i+')',
+                distance:700+i
+              }));
+              state.places.push(...extra);
+            });
+
             const selector=label==='hero'?'#hero-explore':label==='tab'?'.mobile-tabbar [data-view="explorar"]':'.sidebar [data-view="explorar"]';
             if(label==='sidebar')await p.evaluate(selector=>document.querySelector(selector).click(),selector);
             else await p.locator(selector).click({timeout:20000});
             await p.waitForTimeout(2000);
             const after=await p.evaluate(()=>({view:state.view,hash:location.hash,count:document.querySelectorAll('#explore-list .place-card').length,htmlLength:document.getElementById('explore-list').innerHTML.length,loading:state.dataMode,bodyWidth:document.documentElement.scrollWidth,jsHeap:performance.memory?.usedJSHeapSize||null}));
             console.log('EXPLORE_FIXED_TEST',label,JSON.stringify({before,after,loads,events:events.slice(-12)}));
-            if(after.view!=='explorar'||after.count>24||loads>1||events.some(e=>e==='BROWSER_CRASH'))
+            if(after.view!=='explorar'||after.count!==24||loads>1||events.some(e=>e==='BROWSER_CRASH'))
               throw Error(label+' first Explore navigation was not stable or not progressive');
             const more=p.locator('#explore-list [data-more-explore]');
             if(after.count===24){
