@@ -329,12 +329,12 @@ Object.assign(labels, {
     "ODER MIT E-MAIL FORTFAHREN",
     "OPPURE CONTINUA CON EMAIL"
   ],
-  "Google, Facebook, Apple y correo requieren conectar Supabase y habilitar cada proveedor.": [
-    "Google, Facebook, Apple and email sign-in require a configured Supabase connection.",
-    "La connexion via Google, Facebook, Apple ou e-mail nécessite une configuration Supabase.",
-    "O login com Google, Facebook, Apple ou e-mail requer uma conexão Supabase configurada.",
-    "Google-, Facebook-, Apple- und E-Mail-Anmeldung erfordern eine Supabase-Konfiguration.",
-    "L'accesso con Google, Facebook, Apple ed email richiede la configurazione di Supabase."
+  "Elige cómo entrar a tu cuenta de Where to Go.": [
+    "Choose how to sign in to your Where to Go account.",
+    "Choisissez comment accéder à votre compte Where to Go.",
+    "Escolha como entrar na sua conta Where to Go.",
+    "Wähle, wie du dich bei Where to Go anmeldest.",
+    "Scegli come accedere al tuo account Where to Go."
   ],
   "Tours y excursiones": [
     "Tours and excursions",
@@ -371,26 +371,26 @@ Object.assign(labels, {
     "Dein Standort",
     "La tua posizione"
   ],
-  "Google Places está temporalmente fuera de servicio": [
-    "Google Places is temporarily unavailable",
-    "Google Places est temporairement indisponible",
-    "O Google Places está temporariamente indisponível",
-    "Google Places ist vorübergehend nicht verfügbar",
-    "Google Places è temporaneamente non disponibile"
+  "Algunas búsquedas están temporalmente limitadas": [
+    "Some searches are temporarily limited",
+    "Certaines recherches sont temporairement limitées",
+    "Algumas buscas estão temporariamente limitadas",
+    "Einige Suchfunktionen sind vorübergehend eingeschränkt",
+    "Alcune ricerche sono temporaneamente limitate"
   ],
-  "La búsqueda continúa con datos reales de OpenStreetMap.": [
-    "Search continues using real OpenStreetMap data.",
-    "La recherche continue avec les données réelles d’OpenStreetMap.",
-    "A busca continua com dados reais do OpenStreetMap.",
-    "Die Suche nutzt weiterhin echte OpenStreetMap-Daten.",
-    "La ricerca continua con dati reali di OpenStreetMap."
+  "Seguimos mostrando los lugares disponibles en tu zona.": [
+    "We continue showing available places in your area.",
+    "Nous continuons d'afficher les lieux disponibles dans votre région.",
+    "Continuamos mostrando locais disponíveis na sua região.",
+    "Wir zeigen weiterhin verfügbare Orte in deiner Nähe.",
+    "Continuiamo a mostrare i luoghi disponibili nella tua zona."
   ],
-  "Reintentar Google": [
-    "Retry Google",
-    "Réessayer Google",
-    "Tentar Google novamente",
-    "Google erneut versuchen",
-    "Riprova Google"
+  "Reintentar búsqueda": [
+    "Retry search",
+    "Réessayer la recherche",
+    "Tentar busca novamente",
+    "Suche erneut versuchen",
+    "Riprova la ricerca"
   ],
   "Destino internacional": [
     "International destination",
@@ -1247,12 +1247,12 @@ Object.assign(labels, {
     "Eine Anfrage ist keine Zahlung. Einträge und Anzeigen werden erst nach Zahlung und Freigabe aktiviert.",
     "Una richiesta non è un pagamento. Le schede e gli annunci saranno attivati solo dopo il pagamento confermato e l'approvazione."
   ],
-  "Las solicitudes se envían a Netlify Forms para revisión humana y coordinación del pago, si el formulario está activado en Netlify. Este panel conserva una copia local; las solicitudes no se publican ni se cobran automáticamente.": [
-    "Requests are sent to Netlify Forms for manual review and payment coordination, when enabled. This panel keeps a local copy; requests are not published or charged automatically.",
-    "Les demandes sont transmises à Netlify Forms pour vérification manuelle et coordination du paiement, si activé. Ce panneau conserve une copie locale ; aucune publication ni facturation automatique.",
-    "As solicitações vão para Netlify Forms para revisão e coordenação do pagamento, quando ativado. Este painel mantém uma cópia local; não há publicação nem cobrança automática.",
-    "Anfragen gehen bei aktivem Formular zur manuellen Prüfung und Zahlungsabstimmung an Netlify Forms. Dieses Panel speichert eine lokale Kopie; keine automatische Veröffentlichung oder Abbuchung.",
-    "Le richieste vengono inviate a Netlify Forms per la revisione e la gestione del pagamento, se abilitato. Questo pannello conserva una copia locale; nessuna pubblicazione o addebito automatico."
+  "Las solicitudes se envían para revisión humana cuando el formulario está disponible. Este panel conserva una copia local; no se publican ni se cobran automáticamente.": [
+    "Requests are sent for human review when the form is available. This panel keeps a local copy; requests are not automatically published or charged.",
+    "Les demandes sont envoyées pour examen humain lorsque le formulaire est disponible. Une copie locale est conservée ; aucune publication ni facturation automatique.",
+    "As solicitações são enviadas para análise humana quando o formulário está disponível. Uma cópia local é mantida; não há publicação ou cobrança automática.",
+    "Anträge werden bei Verfügbarkeit des Formulars zur manuellen Prüfung gesendet. Eine lokale Kopie bleibt erhalten; keine automatische Veröffentlichung oder Abbuchung.",
+    "Le richieste vengono inviate alla revisione umana quando il modulo è disponibile. Una copia locale viene conservata; nessuna pubblicazione o addebito automatico."
   ],
   "📍 Tu ubicación": [
     "📍 Your location",
@@ -1503,12 +1503,12 @@ Object.assign(labels, {
     "Ich bestätige die Richtigkeit meiner Angaben und die Berechtigung zur Weitergabe angehängter Fotos.",
     "Confermo che i dati sono corretti e di avere il permesso di condividere le foto allegate."
   ],
-  "Se enviará a Netlify Forms para revisión; no se publica automáticamente. No subas fotos de niños ni información privada de terceros.": [
-    "Sent to Netlify Forms for review; not published automatically. Do not upload photos of children or others' private information.",
-    "Envoyé à Netlify Forms pour vérification ; aucune publication automatique. N'ajoutez pas de photos d'enfants ni de données privées de tiers.",
-    "Enviado ao Netlify Forms para revisão; sem publicação automática. Não envie fotos de crianças nem dados privados de terceiros.",
-    "An Netlify Forms zur Prüfung gesendet; keine automatische Veröffentlichung. Keine Kinderfotos oder privaten Daten Dritter hochladen.",
-    "Inviato a Netlify Forms per la verifica; nessuna pubblicazione automatica. Non caricare foto di minori o dati privati di terzi."
+  "El envío requiere confirmación del sistema. Las solicitudes no se publican automáticamente. No subas fotos de niños ni información privada de terceros.": [
+    "Submission requires confirmation. Requests are not published automatically. Do not upload photos of children or others' private information.",
+    "L'envoi nécessite une confirmation. Les demandes ne sont pas publiées automatiquement. Ne téléversez pas de photos d'enfants ou de données privées de tiers.",
+    "O envio exige confirmação. As solicitações não são publicadas automaticamente. Não envie fotos de crianças ou dados privados de terceiros.",
+    "Das Absenden erfordert eine Bestätigung. Anträge werden nicht automatisch veröffentlicht. Keine Kinderfotos oder privaten Daten Dritter hochladen.",
+    "L'invio richiede conferma. Le richieste non sono pubblicate automaticamente. Non caricare foto di minori o dati privati di terzi."
   ],
   "Enviar para revisión": [
     "Submit for review",
@@ -1892,12 +1892,12 @@ Object.assign(labels, {
     "Daten, die wir verarbeiten",
     "Dati che trattiamo"
   ],
-  "Supabase gestiona tu correo y autenticación. Si aceptas la personalización, podemos guardar tus lugares vistos y favoritos vinculados a tu cuenta. Los proveedores de mapas pueden procesar búsquedas o ubicación cuando los utilizas.": [
-    "Supabase manages your email and authentication. With your consent, viewed places and favorites may be saved to your account. Map providers may process search or location data when used.",
-    "Supabase gère votre e-mail et votre authentification. Avec votre accord, les lieux consultés et favoris peuvent être liés à votre compte. Les fournisseurs de cartes peuvent traiter la recherche et la position lors de leur utilisation.",
-    "Supabase gerencia seu e-mail e autenticação. Com consentimento, lugares vistos e favoritos podem ser salvos em sua conta. Provedores de mapas podem processar buscas ou localização quando utilizados.",
-    "Supabase verwaltet E-Mail und Anmeldung. Mit Zustimmung können besuchte Orte und Favoriten dem Konto zugeordnet werden. Kartenanbieter können bei Nutzung Such- oder Standortdaten verarbeiten.",
-    "Supabase gestisce email e autenticazione. Con il consenso, luoghi visualizzati e preferiti possono essere salvati nell'account. I fornitori di mappe possono elaborare ricerche e posizione quando vengono utilizzati."
+  "Usamos un servicio de cuentas para iniciar sesión. Si aceptas la personalización, podemos guardar tus lugares vistos y favoritos vinculados a tu cuenta. Consulta nuestra Política de privacidad para conocer los proveedores involucrados.": [
+    "We use an account service for sign-in. With your consent, viewed places and favorites may be linked to your account. See our Privacy Policy for the providers involved.",
+    "Nous utilisons un service de compte pour la connexion. Avec votre accord, lieux consultés et favoris peuvent être liés à votre compte. Consultez notre Politique de confidentialité pour les fournisseurs concernés.",
+    "Usamos um serviço de contas para login. Com seu consentimento, locais vistos e favoritos podem ser vinculados à sua conta. Consulte nossa Política de Privacidade para saber quais fornecedores estão envolvidos.",
+    "Wir nutzen einen Kontodienst für die Anmeldung. Mit deiner Einwilligung können angesehene Orte und Favoriten mit deinem Konto verknüpft werden. Anbieter sind in der Datenschutzerklärung genannt.",
+    "Utilizziamo un servizio account per l'accesso. Con il tuo consenso, luoghi visualizzati e preferiti possono essere collegati al tuo account. Consulta l'Informativa sulla privacy per i fornitori coinvolti."
   ],
   "Control de tus datos": [
     "Control of your data",
