@@ -1272,7 +1272,9 @@ function renderExplore(){
   // A missing photo does not erase a real establishment from Explore.
   const arr=state.places.filter(p=>matches(p)&&
     p.nameKnown!==false&&String(p.name||'').trim()&&
-    !['escuelas','iglesias'].includes(p.cat));
+    // Keep schools/churches out of default tourist discovery but show them
+    // when the user explicitly chooses those categories from the menu.
+    (state.category!=='todos'||!['escuelas','iglesias'].includes(p.cat)));
   // Photo-first relevance: Google with a real linked photo, then other photographed
   // listings, then authentic no-photo directory records. Nearby within each tier.
   const priority=p=>p.source==='google'&&hasCatalogPhoto(p)?0:
