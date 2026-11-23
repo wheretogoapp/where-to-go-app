@@ -272,6 +272,42 @@ try{
     assert(!(await page.evaluate(()=>state.exploreShowAll)),'Debe poder volver a la selección fotográfica');
     console.log('OPTIONAL FULL DIRECTORY OK');
   }
+  // The upper-left menu must expose every real Explore category (51 today),
+  // including those intentionally omitted from default tourist discovery.
+  await page.locator('#wtg-mobile-menu-trigger').click();
+  assert(await page.locator('#wtg-drawer-categories').evaluate(el=>el.open),
+    'El apartado de categorías debe aparecer desplegado al abrir el menú');
+  const categoryAudit=await page.evaluate(()=>({
+    expected:CATEGORIES.length,
+    actual:document.querySelectorAll('#wtg-drawer-category-list [data-cat]:not([data-cat="todos"])').length,
+    groups:document.querySelectorAll('#wtg-drawer-category-list .wtg-drawer-category-group').length,
+    present:[...document.querySelectorAll('#wtg-drawer-category-list [data-cat]')].map(el=>el.dataset.cat)
+  }));
+  assert.equal(categoryAudit.actual,categoryAudit.expected,'Faltan categorías en el menú lateral');
+  assert.equal(new Set(categoryAudit.present).size,categoryAudit.actual+1,'Hay categorías duplicadas');
+  for(const id of ['playas','restaurantes','hoteles','taxis','escuelas','iglesias']){
+    assert(categoryAudit.present.includes(id),'No aparece '+id+' en el menú');
+  }
+  await page.locator('#wtg-drawer-category-search').fill('rios');
+  assert(await page.locator('#wtg-drawer-category-list [data-cat="rios"]').isVisible(),
+    'El buscador no encuentra Ríos sin acento');
+  await page.locator('#wtg-drawer-category-search').fill('playas');
+  await page.locator('#wtg-drawer-category-list [data-cat="playas"]').click();
+  const selected=await page.evaluate(()=>({
+    category:state.category,view:state.view,drawerClosed:document.getElementById('wtg-main-drawer').hidden
+  }));
+  assert.deepEqual(selected,{category:'playas',view:'explorar',drawerClosed:true},
+    'Una categoría del menú debe abrir Explorar con ese filtro');
+  await page.locator('#wtg-mobile-menu-trigger').click();
+  await page.locator('#wtg-drawer-category-search').fill('taxis');
+  await page.locator('#wtg-drawer-category-list [data-cat="taxis"]').click();
+  assert.equal(await page.evaluate(()=>state.view),'taxis',
+    'Taxis debe abrir el directorio de transporte');
+  await page.locator('#wtg-mobile-menu-trigger').click();
+  await page.locator('#wtg-drawer-category-search').fill('');
+  await page.locator('#wtg-drawer-category-list [data-cat="todos"]').click();
+  assert.equal(await page.evaluate(()=>state.category),'todos');
+  console.log('FULL MOBILE DRAWER CATEGORIES OK:',JSON.stringify(categoryAudit));
   if(isPublic)console.log('GOOGLE KEY: deployment workflow separately checks the public restricted key; CI blocks paid Places requests.');
   await page.screenshot({path:'/tmp/where-to-go-iphone-results.png',fullPage:false});
   console.log('MOBILE E2E OK:',JSON.stringify({first,explorer,destination,scriptErrors:errors.slice(0,4)}));
