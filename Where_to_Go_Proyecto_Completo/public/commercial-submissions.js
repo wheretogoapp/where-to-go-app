@@ -90,6 +90,34 @@ async function listTours(){
  if(error)throw databaseError(error);
  return data||[];
 }
+async function submitReport(details,file){
+ const {db,user}=session();
+ if(!details?.nombre||!details?.provincia||!details?.localidad)
+  throw Error('Indica el nombre y la ubicación correcta del lugar.');
+ const photo=file||null;
+ if(photo&&(photo.size<=0||photo.size>6*1024*1024||
+     !['image/jpeg','image/png','image/webp'].includes(photo.type)))
+  throw Error('La fotografía debe ser JPG, PNG o WebP hasta 6 MB.');
+ let photo_path=null;
+ try{
+  if(photo){
+   const ext=({'image/jpeg':'jpg','image/png':'png','image/webp':'webp'})[photo.type];
+   photo_path=user.id+'/'+(crypto.randomUUID?.()||Date.now())+'.'+ext;
+   const {error}=await db.storage.from('wtg-place-reports').upload(photo_path,photo,
+    {contentType:photo.type,upsert:false});
+   if(error)throw databaseError(error);
+  }
+  const {data,error}=await db.from('place_reports').insert({
+   user_id:user.id,details,photo_path
+  }).select('id,status').single();
+  if(error)throw databaseError(error);
+  if(!data?.id)throw Error('No se confirmó la recepción del reporte.');
+  return data;
+ }catch(e){
+  if(photo_path)try{await db.storage.from('wtg-place-reports').remove([photo_path])}catch{}
+  throw e;
+ }
+}
 async function requestAccountDeletion(){
  const {db,user}=session();
  const {data:existing,error:readError}=await db.from('account_deletion_requests')
@@ -102,5 +130,5 @@ async function requestAccountDeletion(){
  if(!data?.id)throw Error('No se confirmó la solicitud.');
  return {alreadyPending:false,id:data.id};
 }
-window.WTG_SUBMISSIONS=Object.freeze({submitBusiness,listBusinesses,submitTour,listTours,requestAccountDeletion});
+window.WTG_SUBMISSIONS=Object.freeze({submitBusiness,listBusinesses,submitTour,listTours,submitReport,requestAccountDeletion});
 })();
