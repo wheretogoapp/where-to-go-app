@@ -172,10 +172,25 @@ const state = {
   mode:wtgSavedArea?.mode||'demo', gpsAccuracy:null, places:[], catalog:[], remotePlaces:[], showUnpictured:false,
   dataMode:'loading', dataError:'', category:'todos', radius:wtgSavedArea?.province==='Puerto Plata'?30000:12000, search:'', googleEnabled:false, googleIssue:'',
   province:wtgSavedArea?.province||'Puerto Plata', placesProvider:'osm',
-  favorites:loadJSON('wtg_favorites',[]), favoritePlaces:loadJSON('wtg_favorite_places',[]), businesses:loadJSON('wtg_businesses',[]),
+  favorites:loadScoped('wtg_favorites',null), favoritePlaces:loadScoped('wtg_favorite_places',null), businesses:loadScoped('wtg_businesses',null),
   map:null, markers:[], loadingId:0, modal:null, toastTimeout:null, exploreLimit:80
 };
 function loadJSON(key,def){try{const v=JSON.parse(localStorage.getItem(key));return Array.isArray(v)?v:def}catch{return def}}
+// A signed-in user's saved lists must never reuse another account's browser data.
+// Legacy keys are preserved ONLY as guest data; never imported into a new account.
+function scopedKey(base,userId){return base+'_'+(userId?'user_'+String(userId):'guest')}
+function loadScoped(base,userId){
+ const key=scopedKey(base,userId);
+ const fallback=userId?[]:loadJSON(base,[]);
+ const list=loadJSON(key,fallback);
+ // Google Places details/photos must not be stored as a copied permanent listing.
+ return base==='wtg_favorite_places'?list.filter(p=>p&&p.source!=='google'):list;
+}
+function saveScoped(base,data){
+ const id=window.WTG_auth?.user?.id||null;
+ const safe=base==='wtg_favorite_places'?data.filter(p=>p&&p.source!=='google'):data;
+ return saveJSON(scopedKey(base,id),safe);
+}
 function saveJSON(key,data){try{localStorage.setItem(key,JSON.stringify(data));return true}catch{toast('No se pudo guardar en este dispositivo.');return false}}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function haversine(lat1,lon1,lat2,lon2){const r=Math.PI/180, a=Math.sin((lat2-lat1)*r/2)**2+Math.cos(lat1*r)*Math.cos(lat2*r)*Math.sin((lon2-lon1)*r/2)**2;return 6371000*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
@@ -1335,14 +1350,38 @@ function renderFavorites(){
  const saved=[...state.favoritePlaces];
  for(const p of current)if(!saved.some(x=>x.id===p.id))saved.push(p);
  const arr=saved.map(p=>({...p,distance:haversine(state.lat,state.lon,p.lat,p.lon)}));const pending=state.favorites.filter(id=>!saved.some(p=>p.id===id)).length;const reminder=pending?`<div class="empty-state"><span class="empty-emoji">☁</span><h3>${pending} favoritos guardados</h3><p>Abre Explorar y visita la zona de esos lugares para volver a cargar sus fichas.</p><button data-empty="explore">Explorar lugares →</button></div>`:'';$('favorite-list').innerHTML=arr.length?arr.map(placeCard).join('')+reminder:pending?reminder:`<div class="empty-state"><span class="empty-emoji">💚</span><h3>¡Aquí comienza tu lista!</h3><p>Cuando encuentres un lugar especial, toca el corazón para guardarlo. Los favoritos se guardan en este dispositivo.</p><button data-empty="explore">Explorar lugares →</button></div>`}
+window.addEventListener('wtg-auth-session',event=>{
+ const userId=event.detail?.userId||null;
+ if((window.WTG_auth?.user?.id||null)!==userId)return;
+ state.favorites=loadScoped('wtg_favorites',userId);
+ state.favoritePlaces=loadScoped('wtg_favorite_places',userId);
+ state.businesses=loadScoped('wtg_businesses',userId);
+ renderFavorites();
+ if(state.view==='mis-negocios'){renderMyBusinesses();if(userId)void refreshMyBusinessSubmissions();}
+ window.WTG_PROFILE?.refresh?.();
+});
 window.addEventListener('wtg-cloud-favorites',event=>{
+ const userId=window.WTG_auth?.user?.id||null;
+ if(!userId||event.detail?.userId!==userId)return;
  const ids=(event.detail?.placeIds||[]).filter(id=>typeof id==='string'&&id.length<=250);
  if(!ids.length)return;
  state.favorites=Array.from(new Set([...state.favorites,...ids]));
- saveJSON('wtg_favorites',state.favorites);
+ saveScoped('wtg_favorites',state.favorites);
  renderFavorites();window.WTG_PROFILE?.refresh?.();
 });
-function toggleFavorite(id){const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);if(!p)return;const has=state.favorites.includes(id);state.favorites=has?state.favorites.filter(x=>x!==id):[...state.favorites,id];state.favoritePlaces=has?state.favoritePlaces.filter(x=>x.id!==id):[...state.favoritePlaces,p];saveJSON('wtg_favorites',state.favorites);saveJSON('wtg_favorite_places',state.favoritePlaces);window.WTG_auth?.syncFavorite?.(id,!has);window.WTG_PROFILE?.refresh?.();toast(has?'Eliminado de favoritos':'Guardado en tus favoritos ♥');renderAll();}
+function toggleFavorite(id){
+ const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);
+ if(!p)return;
+ const has=state.favorites.includes(id);
+ state.favorites=has?state.favorites.filter(x=>x!==id):[...state.favorites,id];
+ state.favoritePlaces=has?state.favoritePlaces.filter(x=>x.id!==id):
+   (p.source==='google'?state.favoritePlaces:[...state.favoritePlaces,p]);
+ saveScoped('wtg_favorites',state.favorites);
+ saveScoped('wtg_favorite_places',state.favoritePlaces);
+ window.WTG_auth?.syncFavorite?.(id,!has);
+ window.WTG_PROFILE?.refresh?.();
+ toast(has?'Eliminado de favoritos':'Guardado en tus favoritos ♥');renderAll();
+}
 function renderAll(){if(!wtgProvincePreview)updateProvinceHero();updateProviderNotice();renderCategories();renderHome();renderExplore();renderFavorites();if(state.view==='mapa')renderMap();renderTaxis();$('location-label').textContent=(window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')?('📍 '+(window.WTG_ACTIVE_DESTINATION||window.WTG_ACTIVE_COUNTRY)):state.mode==='gps'?`📍 ${state.city==='Cerca de mí'?'Mi GPS':state.city}`:state.mode==='pending'?'📍 Activar ubicación':`📍 ${state.city}`;window.WTG_EXPERIENCE?.update?.();window.WTG_AREA_DISCOVERY?.refresh?.();window.WTG_PILOT?.refresh?.();window.WTG_PHOTO_ATLAS?.refresh?.();}
 function openPlace(id){window.WTG_auth?.recordView?.(id, state.places.find(p=>p.id===id)?.cat||"atracciones");const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);if(!p)return;window.WTG_PROFILE?.recordOpen?.(p);
   const c=catInfo(p.cat),fav=state.favorites.includes(id),website=safeUrl(p.website),phone=normalizedPhone(p.phone),photoTotal=placeGalleryPhotos(p).length;
@@ -1677,7 +1716,7 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
     const place=e.target.closest('[data-place]');if(place){openPlace(place.dataset.place);return}
     const city=e.target.closest('[data-city]');if(city){selectCity(city.dataset.city);return}
     const promo=e.target.closest('[data-open-register],.choose-plan');if(promo){openRegister(promo.dataset.plan||promo.dataset.openRegister||'basico');return}
-    const rem=e.target.closest('[data-remove-business]');if(rem){if(confirm('¿Quieres eliminar esta ficha de prueba de este dispositivo?')){const idx=Number(rem.dataset.removeBusiness);if(!Number.isInteger(idx)||idx<0||state.businesses[idx]?.cloudStored)return;state.businesses.splice(idx,1);saveJSON('wtg_businesses',state.businesses.filter(x=>!x.cloudStored));renderMyBusinesses();toast('Ficha eliminada.')}return}
+    const rem=e.target.closest('[data-remove-business]');if(rem){if(confirm('¿Quieres eliminar esta ficha de prueba de este dispositivo?')){const idx=Number(rem.dataset.removeBusiness);if(!Number.isInteger(idx)||idx<0||state.businesses[idx]?.cloudStored)return;state.businesses.splice(idx,1);saveScoped('wtg_businesses',state.businesses.filter(x=>!x.cloudStored));renderMyBusinesses();toast('Ficha eliminada.')}return}
     const internalMap=e.target.closest('[data-internal-map]');if(internalMap){wtgPendingMapPlace=internalMap.dataset.internalMap;closeModals();navigate('mapa');return}
     const mp=e.target.closest('[data-map-place]');if(mp){const place=state.places.find(x=>x.id===mp.dataset.mapPlace);if(wtgEmbeddedGoogleMap&&place){wtgEmbeddedGoogleMap.panTo({lat:place.lat,lng:place.lon});wtgEmbeddedGoogleMap.setZoom(16);openPlace(place.id);return}const p=state.places.find(x=>x.id===mp.dataset.mapPlace);if(p&&state.map){state.map.setView([p.lat,p.lon],15);state.markers.find(m=>m.getLatLng&&Math.abs(m.getLatLng().lat-p.lat)<.00001&&Math.abs(m.getLatLng().lng-p.lon)<.00001)?.openPopup()}return}
     const empty=e.target.closest('[data-empty]');if(empty){if(empty.dataset.empty==='radius'){$('distance-select').value='30000';state.radius=30000;loadPlaces()}else if(empty.dataset.empty==='explore')navigate('explorar');else openModal('location-modal');return}
