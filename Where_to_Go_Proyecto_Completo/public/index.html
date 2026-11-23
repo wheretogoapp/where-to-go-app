@@ -208,7 +208,7 @@
       <footer class="site-footer"><span>Where to Go <span class="brand-dot">.</span> A dónde ir</span><span>Hecho para descubrir el mundo 🌎 · <a href="/privacidad.html">Privacidad</a> · <a href="/terminos.html">Términos</a></span></footer>
     </div>
 
-    <nav class="mobile-tabbar" aria-label="Navegación móvil"><button class="mobile-tab active" data-view="inicio"><span>⌂</span><small>Inicio</small></button><button class="mobile-tab" data-view="explorar"><span>◈</span><small>Explorar</small></button><button class="mobile-tab" data-view="mapa"><span>♧</span><small>Mapa</small></button><button class="mobile-tab" data-view="favoritos"><span>♡</span><small>Favoritos</small></button><button class="mobile-tab" data-view="tours"><span>🧭</span><small>Tours</small></button><button type="button" class="mobile-tab" data-view="promocionar" aria-label="Promocionar mi negocio"><span>✦</span><small>Negocios</small></button><button type="button" class="mobile-tab" data-profile-open aria-label="Abrir mi perfil"><span>♙</span><small>Perfil</small></button></nav>
+    <nav class="mobile-tabbar" aria-label="Navegación móvil"><button type="button" class="mobile-tab active" data-view="inicio"><span>⌂</span><small>Inicio</small></button><button type="button" class="mobile-tab" data-view="explorar"><span>◈</span><small>Explorar</small></button><button type="button" class="mobile-tab" data-view="mapa"><span>♧</span><small>Mapa</small></button><button type="button" class="mobile-tab" data-view="tours"><span>🧭</span><small>Tours</small></button><button type="button" class="mobile-tab" data-profile-open aria-label="Abrir mi perfil"><span>♙</span><small>Perfil</small></button></nav>
 
     <div id="overlay" class="overlay" hidden></div>
     <section id="place-modal" class="sheet place-sheet" role="dialog" aria-modal="true" aria-labelledby="place-modal-title" hidden><button class="modal-close" data-close aria-label="Cerrar">×</button><div id="place-modal-body"></div></section>
@@ -288,7 +288,7 @@
   </nav>
   <div class="wtg-profile-body">
    <section data-profile-panel="home"><h3>Tu mundo, a tu manera 🌎</h3><p>Aquí se reúne todo lo que guardas para tus próximas aventuras: favoritos, lugares visitados y viajes.</p>
-    <div class="wtg-profile-cta"><button type="button" class="wtg-profile-primary" id="wtg-profile-favorites">♡ Ver mis favoritos</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-install">📲 Instalar Where to Go</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-signin">🔐 Iniciar sesión o cambiar cuenta</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-logout">Cerrar sesión</button></div>
+    <div class="wtg-profile-quickmenu"><h4>Accesos rápidos</h4><div class="wtg-profile-quickgrid"><button type="button" id="wtg-profile-favorites" class="wtg-profile-quick"><span aria-hidden="true">♡</span><strong>Mis favoritos</strong></button><button type="button" id="wtg-profile-trips-quick" class="wtg-profile-quick"><span aria-hidden="true">🧳</span><strong>Mis viajes</strong></button><button type="button" id="wtg-profile-business" class="wtg-profile-quick"><span aria-hidden="true">✦</span><strong>Promocionar mi negocio</strong></button><button type="button" id="wtg-profile-account-quick" class="wtg-profile-quick"><span aria-hidden="true">⚙</span><strong>Ajustes</strong></button><a class="wtg-profile-quick" href="/privacidad.html" target="_blank" rel="noopener"><span aria-hidden="true">🔒</span><strong>Política de privacidad</strong></a><a class="wtg-profile-quick" href="/terminos.html" target="_blank" rel="noopener"><span aria-hidden="true">▤</span><strong>Términos y condiciones</strong></a></div></div><div class="wtg-profile-cta"><button type="button" class="wtg-profile-secondary" id="wtg-profile-install">📲 Instalar Where to Go</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-signin">🔐 Iniciar sesión o cambiar cuenta</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-logout">Cerrar sesión</button></div>
     <p class="wtg-profile-note">Ver un lugar no confirma que lo hayas visitado. Puedes marcarlo como visitado desde su ficha. El historial de lugares explorados solo se guarda si lo activas en Ajustes.</p>
    </section>
    <section data-profile-panel="visited" hidden><h3>Mis lugares visitados 📍</h3><p>Solo lugares que marcaste como visitados; no comprobamos tu ubicación física.</p><div id="wtg-profile-visited"></div>
@@ -334,7 +334,8 @@
   <!-- Independent UI enhancement: Inicio, Explorar, Mi perfil. No application logic changed. -->
   <link rel="stylesheet" href="/three-screens-premium.css?v=1" />
   <link rel="stylesheet" href="/mobile-ui-repair.css?v=1" />
-  <script defer src="/language.js?v=7.2"></script>
+  <link rel="stylesheet" href="/five-tab-profile-hub.css?v=1" />
+  <script defer src="/language.js?v=7.3"></script>
   <script defer src="/province-heroes.js?v=10.0"></script>
   <script defer src="/config.js?v=6"></script>
   <script defer src="/google-places-key.js?v=2"></script>
@@ -351,7 +352,7 @@
   <script defer src="/world-v8.js?v=12.0"></script>
   <script defer src="/photo-atlas.js?v=13.0"></script>
   <script defer src="/tours.js?v=1"></script>
-  <script defer src="/traveler-profile.js?v=2"></script>
+  <script defer src="/traveler-profile.js?v=3"></script>
   <script type="module" src="/auth.js?v=14"></script>
 </body>
 </html>

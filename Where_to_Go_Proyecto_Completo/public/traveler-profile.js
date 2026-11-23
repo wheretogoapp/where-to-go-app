@@ -252,7 +252,18 @@ root.addEventListener('click',event=>{
  const btn=event.target.closest('button');if(!btn)return;
  if(btn.id==='wtg-profile-close'||btn.dataset.profileClose!==undefined){close();return}
  if(btn.dataset.profileTab){active.tab=btn.dataset.profileTab;$('wtg-profile-settings').dataset.loaded='no';render();return}
- if(btn.id==='wtg-profile-favorites'){close();document.querySelector('[data-view="favoritos"].mobile-tab')?.click();return}
+ if(btn.id==='wtg-profile-favorites'||btn.id==='wtg-profile-business'){
+  // Favorites and Business move into the profile hub, but their original
+  // full-size screens remain available with all their existing functions.
+  const destination=btn.id==='wtg-profile-favorites'?'favoritos':'promocionar';
+  close();
+  if(typeof navigate==='function')navigate(destination);
+  return;
+ }
+ if(btn.id==='wtg-profile-account-quick'||btn.id==='wtg-profile-trips-quick'){
+  active.tab=btn.id==='wtg-profile-account-quick'?'settings':'trips';
+  $('wtg-profile-settings').dataset.loaded='no';render();return;
+ }
  if(btn.id==='wtg-profile-add-trip'){
   const input=$('wtg-profile-new-trip'),title=input.value.trim().slice(0,80);
   if(!title){tell('Escribe el nombre del viaje.');input.focus();return}

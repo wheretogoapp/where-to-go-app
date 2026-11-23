@@ -1,0 +1,151 @@
+name: Where to Go - Barra de cinco, Perfil y precios (preview)
+on:
+  push:
+    branches:
+      - design/five-tabs-profile-hub-prices-20261123
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  premium-mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Comprobar funciones protegidas y sintaxis
+        run: |
+          node --check Where_to_Go_Proyecto_Completo/public/traveler-profile.js
+          node --check Where_to_Go_Proyecto_Completo/public/language.js
+          node --test Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs
+          node --test Where_to_Go_Proyecto_Completo/tests/traveler-profile.test.cjs
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          base='6af496f0a0ddaff973baf4807373e1964395509b'
+          p=Path('Where_to_Go_Proyecto_Completo/public')
+          protected=['app.js','google-places-adapter.js','world-location.js','auth.js','world-explorer.js',
+                     'photo-atlas.js','tours.js','municipality-geocoder.js']
+          changed=subprocess.check_output(['git','diff','--name-only',base,'HEAD'],text=True).splitlines()
+          for name in protected:
+              assert not any(path.endswith('/public/'+name) for path in changed),'Protected file changed: '+name
+          html=(p/'index.html').read_text()
+          nav=html.split('<nav class="mobile-tabbar"',1)[1].split('</nav>',1)[0]
+          assert nav.count('class="mobile-tab')==5,nav
+          assert 'data-view="promocionar"' not in nav and 'data-view="favoritos"' not in nav
+          assert 'data-view="tours"' in nav and 'data-profile-open' in nav
+          assert 'href="/privacidad.html"' in html and 'href="/terminos.html"' in html
+          assert 'id="wtg-profile-business"' in html and 'id="wtg-profile-favorites"' in html
+          css=(p/'five-tab-profile-hub.css').read_text()
+          assert css.count('{')==css.count('}')
+          print('PASS: five tabs and traveler hub, protected data/auth/map code identical')
+          PY
+      - name: Instalar navegador
+        run: |
+          npm install --no-save playwright
+          if command -v google-chrome >/dev/null 2>&1;then
+            echo "CHROME_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            npx playwright install chromium
+          fi
+      - name: Cinco pestañas, precios y accesos del perfil en móvil
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory Where_to_Go_Proyecto_Completo/public >/tmp/five-tab-server.log 2>&1 &
+          sleep 2
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright';
+          const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
+          for(const [label,width,height] of [['iphone',390,844],['compact',360,740]]){
+            const p=await browser.newPage({viewport:{width,height},isMobile:true,hasTouch:true,deviceScaleFactor:1,locale:'es-DO'});
+            const errors=[];let loads=0;
+            p.on('pageerror',e=>errors.push(e.message.slice(0,110)));
+            p.on('domcontentloaded',()=>loads++);
+            await p.route('https://maps.googleapis.com/**',r=>r.abort());
+            await p.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded',timeout:45000});
+            await p.waitForFunction(()=>!!window.WTG_PROFILE&&!!window.WTG_I18N&&typeof navigate==='function',{timeout:20000});
+            await p.evaluate(()=>{
+              for(const id of ['wtg-onboarding','auth-gate']){
+                const el=document.getElementById(id);el.hidden=true;
+                el.style.setProperty('display','none','important');
+              }
+              document.body.classList.remove('wtg-onboarding-active');
+            });
+            const menu=await p.evaluate(()=>{
+              const els=[...document.querySelectorAll('.mobile-tabbar .mobile-tab')];
+              return {titles:els.map(e=>e.querySelector('small')?.textContent),profileLink:!!document.getElementById('wtg-profile-business'),
+                 navWidth:document.querySelector('.mobile-tabbar').getBoundingClientRect().width,
+                 buttonWidths:els.map(x=>Math.round(x.getBoundingClientRect().width))}
+            });
+            if(menu.titles.join(',')!=='Inicio,Explorar,Mapa,Tours,Perfil'||menu.buttonWidths.some(w=>w<55))
+              throw Error('Five-tab navigation incorrect: '+JSON.stringify(menu));
+            await p.locator('.mobile-tabbar [data-profile-open]').click();
+            const overlay=await p.evaluate(()=>{
+              const profile=document.getElementById('wtg-traveler-profile'),nav=document.querySelector('.mobile-tabbar');
+              return {profileBottom:profile.getBoundingClientRect().bottom,
+                  navTop:nav.getBoundingClientRect().top,
+                  quickItems:document.querySelectorAll('.wtg-profile-quickgrid .wtg-profile-quick').length,
+                  privacy:!!profile.querySelector('a[href="/privacidad.html"]'),
+                  terms:!!profile.querySelector('a[href="/terminos.html"]')};
+            });
+            if(overlay.profileBottom>overlay.navTop+2||overlay.quickItems!==6||!overlay.privacy||!overlay.terms)
+              throw Error('Profile menu trapped navigation or omitted legal links: '+JSON.stringify(overlay));
+            await p.screenshot({path:'/tmp/five-'+label+'-profile.png'});
+            await p.locator('#wtg-profile-account-quick').click();
+            if(!(await p.evaluate(()=>!document.querySelector('#wtg-profile-settings').hidden)))
+              throw Error('Settings inaccessible');
+            await p.locator('[data-profile-tab="home"]').click();
+            await p.locator('#wtg-profile-business').click();
+            const business=await p.evaluate(()=>{
+              const cards=[...document.querySelectorAll('#view-promocionar .plans-grid .plan')];
+              return {opened:document.getElementById('view-promocionar').classList.contains('active'),
+                profileClosed:document.getElementById('wtg-traveler-profile').hidden,
+                plans:cards.map(c=>{
+                  const amount=c.querySelector('.plan-price strong');
+                  const cs=getComputedStyle(amount),head=getComputedStyle(c.querySelector('h3'));
+                  return {amount:amount.textContent,foreground:cs.color,fill:cs.webkitTextFillColor,
+                    bg:getComputedStyle(c).backgroundColor,heading:head.color,fontSize:cs.fontSize}
+                })}
+            });
+            console.log('BUSINESS_PLAN_CONTRAST',label,JSON.stringify(business));
+            if(!business.opened||!business.profileClosed||business.plans.map(x=>x.amount).join(',')!=='$10,$30,$50')
+              throw Error('Business profile navigation broken');
+            for(const plan of business.plans){
+              if(plan.foreground==='rgb(255, 255, 255)'||plan.fill==='rgb(255, 255, 255)'||
+                parseFloat(plan.fontSize)<35||plan.bg==='rgba(0, 0, 0, 0)')
+                throw Error('Invisible price: '+JSON.stringify(plan));
+            }
+            await p.screenshot({path:'/tmp/five-'+label+'-business.png',fullPage:true});
+            await p.locator('.mobile-tabbar [data-profile-open]').click();
+            await p.locator('#wtg-profile-favorites').click();
+            if(!(await p.evaluate(()=>document.getElementById('view-favoritos').classList.contains('active')&&
+              document.getElementById('wtg-traveler-profile').hidden)))
+              throw Error('Favorites menu no longer opens original saved places');
+            await p.locator('.mobile-tabbar [data-profile-open]').click();
+            await p.locator('#wtg-profile-trips-quick').click();
+            if(!(await p.evaluate(()=>!document.querySelector('[data-profile-panel="trips"]').hidden)))
+              throw Error('Trips shortcut broken');
+            for(const lang of ['en','fr','pt','de','it','es']){
+              await p.evaluate(lang=>window.WTG_I18N.change(lang,false),lang);
+              await p.locator('[data-profile-tab="home"]').click();
+              await p.waitForTimeout(120);
+              const phrase=await p.locator('.wtg-profile-quickmenu h4').textContent();
+              console.log('HUB_TRANSLATION',label,lang,phrase);
+              if(lang!=='es'&&phrase==='Accesos rápidos')throw Error('Untranslated menu header in '+lang);
+            }
+            if(loads!==1)throw Error('Navigation unexpectedly reloaded page');
+            console.log('FIVE_TAB_QA_PASS',label,JSON.stringify({menu,overlay,errors:errors.slice(0,4),loads}));
+            await p.close();
+          }
+          await browser.close();
+          JS
+      - name: Guardar capturas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: where-to-go-five-tab-price-preview
+          path: /tmp/five-*.png
+          if-no-files-found: ignore
