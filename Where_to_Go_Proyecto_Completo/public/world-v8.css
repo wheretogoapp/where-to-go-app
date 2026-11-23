@@ -377,3 +377,39 @@ button,a,select,input {touch-action:manipulation}
   .place-card.wtg-no-photo .card-open{padding:5px 7px}
   .place-card.wtg-no-photo .wtg-photo-label{font-size:10px!important}
 }
+
+
+/* Acceso: cristal realmente translúcido para que las portadas auténticas se vean detrás.
+   Mantener contraste legible sin tapar el paisaje con un panel azul opaco. */
+.auth-gate::before{
+  background-image:linear-gradient(180deg,rgba(0,18,40,.25),rgba(0,20,45,.18)),var(--wtg-auth-background)!important;
+  filter:saturate(1.12)!important;
+}
+.auth-gate::after{
+  background:linear-gradient(0deg,rgba(1,13,30,.38),transparent 72%)!important;
+  pointer-events:none;
+}
+.auth-gate .auth-shell{
+  background:linear-gradient(145deg,rgba(5,27,57,.34),rgba(2,16,37,.27))!important;
+  border:1px solid rgba(255,255,255,.38)!important;
+  -webkit-backdrop-filter:blur(7px) saturate(115%)!important;
+  backdrop-filter:blur(7px) saturate(115%)!important;
+  box-shadow:0 18px 54px rgba(0,8,23,.27),inset 0 1px rgba(255,255,255,.16)!important;
+}
+.auth-gate .auth-shell .auth-social{
+  background:rgba(7,26,53,.31)!important;
+  border-color:rgba(255,255,255,.56)!important;
+  text-shadow:0 1px 5px rgba(0,0,0,.48);
+}
+.auth-gate .auth-shell h1,
+.auth-gate .auth-shell p,
+.auth-gate .auth-shell .auth-brand{
+  text-shadow:0 2px 9px rgba(0,7,22,.85);
+}
+@media(max-width:600px){
+  .auth-gate .auth-shell{
+    background:linear-gradient(155deg,rgba(5,25,55,.32),rgba(3,19,42,.23))!important;
+    -webkit-backdrop-filter:blur(5px) saturate(110%)!important;
+    backdrop-filter:blur(5px) saturate(110%)!important;
+  }
+}
