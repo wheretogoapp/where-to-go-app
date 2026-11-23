@@ -1,6 +1,8 @@
 name: Where to Go - prueba emulada de iPhone Las Terrenas
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '15 11 * * *'  # 07:15 en RD; prueba sin consumir cuota de Google Places
   workflow_run:
     workflows: ['Where to Go - Vista móvil alternativa sin Netlify']
     types: [completed]
