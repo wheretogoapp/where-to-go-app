@@ -79,6 +79,8 @@ window.WTG_auth={
   get user(){return currentUser;},
   get demo(){return demoMode;},
   get available(){return !!client;},
+  // The browser receives only the public-key client; RLS protects user data.
+  get database(){return client;},
   get consented(){return currentProfile?!!currentProfile.personalization_opt_in:null;},
   setPersonalization,
   async syncFavorite(place_id,added){
@@ -127,6 +129,46 @@ document.getElementById('wtg-account-favorites').addEventListener('click',()=>{a
 document.getElementById('wtg-account-login')?.addEventListener('click',()=>{account.hidden=true;demoMode=false;openGate()});
 document.getElementById('wtg-account-signout').addEventListener('click',async()=>{try{await window.WTG_auth.signOut();account.hidden=true;accountMessage('')}catch(e){accountMessage('No se pudo cerrar sesión: '+e.message)}});
 document.getElementById('wtg-account-resend').addEventListener('click',async()=>{if(!client||!currentUser?.email)return accountMessage('Inicia sesión primero.');try{const {error:e}=await client.auth.resend({type:'signup',email:currentUser.email,options:{emailRedirectTo:location.origin+location.pathname}});if(e)throw e;accountMessage('Si la cuenta necesita confirmación, recibirás un correo.')}catch(e){accountMessage('No se pudo reenviar: '+e.message)}});
+const recoveryDialog=document.getElementById('wtg-recovery-dialog');
+const recoveryForm=document.getElementById('wtg-recovery-form');
+const recoveryMessage=document.getElementById('wtg-recovery-message');
+function showRecovery(){if(!recoveryDialog)return;recoveryDialog.hidden=false;recoveryMessage.textContent='Escribe tu nueva contraseña para completar la recuperación.';recoveryForm?.querySelector('input')?.focus();}
+document.getElementById('auth-forgot')?.addEventListener('click',async()=>{
+ const email=document.getElementById('auth-email')?.value.trim();
+ if(!email||!email.includes('@'))return showMessage('Escribe primero tu correo para recuperar la contraseña.');
+ if(!client)return showMessage('No hay conexión con el sistema de cuentas.');
+ try{
+  const {error:e}=await client.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+  if(e)throw e;
+  showMessage('Si esa cuenta existe, recibirás un enlace para cambiar la contraseña.');
+ }catch(e){showMessage('No se pudo solicitar la recuperación: '+String(e.message||'error').slice(0,160))}
+});
+recoveryForm?.addEventListener('submit',async event=>{
+ event.preventDefault();
+ const pass=document.getElementById('wtg-new-password')?.value||'';
+ const confirm=document.getElementById('wtg-confirm-password')?.value||'';
+ if(pass.length<8||pass!==confirm)return recoveryMessage.textContent='Usa al menos 8 caracteres e introduce la misma contraseña dos veces.';
+ if(!client)return recoveryMessage.textContent='Supabase no está conectado.';
+ const button=recoveryForm.querySelector('button[type="submit"]');button.disabled=true;
+ try{
+  const {error:e}=await client.auth.updateUser({password:pass});
+  if(e)throw e;
+  recoveryForm.reset();
+  recoveryMessage.textContent='Contraseña actualizada correctamente.';
+  setTimeout(()=>{recoveryDialog.hidden=true;},900);
+ }catch(e){recoveryMessage.textContent='No se pudo actualizar: '+String(e.message||'Error').slice(0,180)}
+ finally{button.disabled=false}
+});
+document.getElementById('wtg-recovery-close')?.addEventListener('click',()=>{recoveryDialog.hidden=true});
+document.getElementById('wtg-profile-delete-account')?.addEventListener('click',async()=>{
+ if(!currentUser)return showMessage('Inicia sesión para solicitar la eliminación de la cuenta.');
+ if(!confirm('¿Quieres solicitar la eliminación de tu cuenta y tus datos? Esta solicitud requiere revisión; NO elimina inmediatamente tu cuenta.'))return;
+ const notice=document.getElementById('wtg-profile-message');
+ try{
+  const receipt=await window.WTG_SUBMISSIONS.requestAccountDeletion();
+  notice.textContent=receipt.alreadyPending?'Ya hay una solicitud de eliminación pendiente.':'Solicitud de eliminación registrada. Recibirás seguimiento; tu cuenta aún está activa.';
+ }catch(e){notice.textContent='No se envió la solicitud. '+String(e.message||'Error').slice(0,180)}
+});
 document.getElementById('wtg-account-reset').addEventListener('click',async()=>{if(!client||!currentUser?.email)return accountMessage('Inicia sesión primero.');try{const {error:e}=await client.auth.resetPasswordForEmail(currentUser.email,{redirectTo:location.origin+location.pathname});if(e)throw e;accountMessage('Si la cuenta existe, recibirás instrucciones por correo. Para establecer una contraseña nueva se necesita completar el flujo de recuperación.')}catch(e){accountMessage('No se pudo solicitar: '+e.message)}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){account.hidden=true;legal.hidden=true}});
 
@@ -146,7 +188,7 @@ if(!settings.supabaseUrl||!settings.supabaseAnonKey){
   try{
     const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
     client=createClient(settings.supabaseUrl,settings.supabaseAnonKey,{auth:{detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
-    client.auth.onAuthStateChange((event,session)=>{handleUser(session?.user||null);});
+    client.auth.onAuthStateChange((event,session)=>{handleUser(session?.user||null);if(event==='PASSWORD_RECOVERY')setTimeout(showRecovery,0);});
     const {data,error:e}=await client.auth.getSession();
     if(e)throw e;
     handleUser(data.session?.user||null);
