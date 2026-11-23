@@ -576,7 +576,7 @@ function googleCategory(row,chosen){if(chosen!=='todos')return chosen;return GOO
 async function loadGooglePlaces(force=false){
   const id=++state.loadingId,lat=state.lat,lon=state.lon,radius=state.radius,category=state.category;
   // Los resultados verificados del catálogo se ven INMEDIATAMENTE.
-  applyNearby([], 'Comprobando fichas adicionales en Google Places…');
+  applyNearby([], 'Comprobando lugares adicionales…');
   const params=new URLSearchParams({lat:String(lat),lon:String(lon),radius:String(radius),category,city:`${state.city}, ${state.region}`});
   if(state.search)params.set('search',state.search);
   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),6500);
@@ -596,7 +596,7 @@ async function loadGooglePlaces(force=false){
   }catch(e){
     if(id!==state.loadingId)return;
     state.googleEnabled=false;
-    state.googleIssue='Google Places no está disponible: '+String(e.message||'permiso denegado').slice(0,160);
+    state.googleIssue='La búsqueda de lugares no está disponible: '+String(e.message||'permiso denegado').slice(0,160);
     state.placesProvider='osm';
     applyNearby([], 'Mostrando destinos locales; buscando otras fichas…');
     toast('Google no respondió. Se muestran primero los destinos cercanos verificados.');
@@ -701,7 +701,7 @@ async function loadPlaces(force=false){
     state.remotePlaces=[];state.places=[];state.catalog=[];state.dataMode='loading';
     state.dataError='Buscando lugares en el destino seleccionado…';renderAll();
     if(!window.WTG_GOOGLE_PLACES?.configured()){
-      state.dataMode='live';state.dataError='Lugares disponibles al activar Google Places. La selección de país y ciudad funciona sin la API.';renderAll();return;
+      state.dataMode='live';state.dataError='La búsqueda de lugares todavía no está disponible en este destino. Puedes cambiar de país o ciudad.';renderAll();return;
     }
     if(!window.WTG_ACTIVE_HAS_COORDINATES){state.dataMode='live';state.dataError='Selecciona una ciudad para buscar negocios reales en este país.';renderAll();return;}
     const response=await window.WTG_GOOGLE_PLACES.nearby({lat:state.lat,lon:state.lon,radius:state.radius,category:state.category});
@@ -709,7 +709,7 @@ async function loadPlaces(force=false){
     const typeToCategory={restaurant:'restaurantes',cafe:'cafes',bar:'bares',lodging:'hoteles',tourist_attraction:'atracciones',museum:'atracciones',park:'parques',supermarket:'supermercados',pharmacy:'farmacias',bank:'bancos',gas_station:'gasolineras',amusement_park:'entretenimiento',movie_theater:'entretenimiento',taxi_stand:'taxis'};
     const places=response.places.map(p=>({...p,cat:p.types.map(t=>typeToCategory[t]).find(Boolean)||'atracciones',distance:haversine(state.lat,state.lon,p.lat,p.lon),nameKnown:true,photo:p.photo||'',photoAttributions:p.photoAttributions||[],googleUri:p.mapUrl,googleDirections:p.mapUrl,detailsLoaded:true}));
     state.places=places;state.remotePlaces=places;state.placesProvider='google';state.dataMode='live';
-    state.dataError=response.status==='error'?'Google Places no respondió. Comprueba API, restricciones y facturación.':places.length?'Resultados de Google Places para el destino seleccionado.':'No hay resultados disponibles para esta zona.';
+    state.dataError=response.status==='error'?'No pudimos completar la búsqueda. Inténtalo nuevamente.':places.length?'Lugares disponibles en el destino seleccionado.':'No hay resultados disponibles para esta zona.';
     renderAll();return;
   }
   const token=++state.loadingId;
@@ -1081,7 +1081,7 @@ function ensureProviderBanner(){
   box.setAttribute('role','status');
   box.setAttribute('aria-live','polite');
   box.style.cssText='display:flex;gap:14px;align-items:center;justify-content:space-between;margin:14px 22px;padding:14px;border:1px solid #e6c88c;border-radius:14px;background:#fff7e8;color:#584017;flex-wrap:wrap';
-  box.innerHTML='<div style="flex:1;min-width:200px"><strong style="display:block;font-size:14px">Google Places no está disponible</strong><small id="provider-notice-desc" style="font-size:12px;line-height:1.5;display:block">Buscando lugares reales en OpenStreetMap.</small></div><button id="retry-google-provider" type="button" style="border:1px solid #caa75c;background:#fff;color:#584017;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer">Reintentar Google ↻</button>';
+  box.innerHTML='<div style="flex:1;min-width:200px"><strong style="display:block;font-size:14px">Google Places no está disponible</strong><small id="provider-notice-desc" style="font-size:12px;line-height:1.5;display:block">Buscando lugares reales disponibles.</small></div><button id="retry-google-provider" type="button" style="border:1px solid #caa75c;background:#fff;color:#584017;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer">Reintentar Google ↻</button>';
   const main=$('main-content');
   if(main)main.parentNode.insertBefore(box,main);
 }
@@ -1090,7 +1090,7 @@ function updateProviderNotice(){
   const banner=$('provider-banner');if(!banner)return;
   banner.hidden=!state.googleIssue;
   if(state.googleIssue){
-    $('provider-notice-desc').textContent='Google Places respondió con un error. Where to Go buscará datos reales en OpenStreetMap mientras resolvemos la configuración. La cobertura depende del proveedor.';
+    $('provider-notice-desc').textContent='No pudimos completar una de las búsquedas. Seguiremos mostrando los lugares disponibles; la cobertura puede variar por zona.';
   }
 }
 function viewTitle(id){return {inicio:'Inicio',explorar:'Explorar lugares',mapa:'Mapa interactivo',favoritos:'Mis favoritos',promocionar:'Promocionar', 'mis-negocios':'Mis negocios',taxis:'Taxis y transporte',tours:'Tours y excursiones',piloto:'Destinos con fotos',negocioDemo:'Presentar a un negocio',atlas:'Fotos reales de RD'}[id]||'Inicio'}
