@@ -188,9 +188,35 @@ if(!settings.supabaseUrl||!settings.supabaseAnonKey){
   try{
     const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
     client=createClient(settings.supabaseUrl,settings.supabaseAnonKey,{auth:{detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
-    client.auth.onAuthStateChange((event,session)=>{handleUser(session?.user||null);if(event==='PASSWORD_RECOVERY')setTimeout(showRecovery,0);});
+    // The URL fragment may contain a freshly returned Google OAuth session.
+    // Do not issue Supabase queries synchronously inside onAuthStateChange.
+    client.auth.onAuthStateChange((event,session)=>{
+      setTimeout(()=>{
+        if(session?.user)handleUser(session.user);
+        else if(event==='SIGNED_OUT'||(event==='INITIAL_SESSION'&&!currentUser))handleUser(null);
+        if(event==='PASSWORD_RECOVERY')showRecovery();
+      },0);
+    });
     const {data,error:e}=await client.auth.getSession();
     if(e)throw e;
-    handleUser(data.session?.user||null);
+    let restored=data.session||null;
+    // Fallback for browsers whose OAuth fragment survived the redirect but
+    // was not automatically consumed. Never persist tokens ourselves.
+    if(!restored&&location.hash.startsWith('#')){
+      const callback=new URLSearchParams(location.hash.slice(1));
+      const access_token=callback.get('access_token');
+      const refresh_token=callback.get('refresh_token');
+      if(access_token&&refresh_token){
+        const recovery=await client.auth.setSession({access_token,refresh_token});
+        if(recovery.error)throw recovery.error;
+        restored=recovery.data.session||null;
+      }
+    }
+    handleUser(restored?.user||null);
+    // Remove sensitive OAuth credentials from the address bar only AFTER
+    // Supabase has confirmed the authenticated session.
+    if(restored&&/(?:^#|&)access_token=/.test(location.hash)){
+      history.replaceState(history.state,'',location.pathname+location.search);
+    }
   }catch(e){note.textContent='No se pudo conectar con el sistema de cuentas. Revisa la configuración de Supabase.';showMessage('Error de autenticación: '+(e.message||'proveedor no disponible'));}
 }
