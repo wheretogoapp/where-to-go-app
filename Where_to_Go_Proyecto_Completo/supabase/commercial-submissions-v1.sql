@@ -89,6 +89,54 @@ create policy "Tour applicants remove their own private photos" on storage.objec
     and (storage.foldername(name))[1] = (select auth.uid())::text
   );
 
+-- Corrections and authorized place photos are also private, not Netlify-only.
+create table if not exists public.place_reports (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  details jsonb not null,
+  photo_path text,
+  status text not null default 'pending' check (status in ('pending','reviewing','accepted','rejected')),
+  created_at timestamptz not null default now(),
+  constraint place_report_details_object check (jsonb_typeof(details)='object'),
+  constraint place_report_details_limit check (octet_length(details::text)<=12000)
+);
+create index if not exists place_reports_owner_time_idx on public.place_reports(user_id,created_at desc);
+alter table public.place_reports enable row level security;
+revoke all on public.place_reports from anon;
+grant select,insert on public.place_reports to authenticated;
+drop policy if exists "Travelers see own place reports" on public.place_reports;
+create policy "Travelers see own place reports" on public.place_reports
+  for select to authenticated using (user_id=(select auth.uid()));
+drop policy if exists "Travelers send own place reports" on public.place_reports;
+create policy "Travelers send own place reports" on public.place_reports
+  for insert to authenticated with check (
+    user_id=(select auth.uid()) and status='pending'
+    and (photo_path is null or photo_path like ((select auth.uid())::text||'/%'))
+  );
+insert into storage.buckets (id,name,public,file_size_limit,allowed_mime_types)
+values ('wtg-place-reports','wtg-place-reports',false,6291456,
+        array['image/jpeg','image/png','image/webp'])
+on conflict (id) do update set
+ public=excluded.public,file_size_limit=excluded.file_size_limit,allowed_mime_types=excluded.allowed_mime_types;
+drop policy if exists "Traveler uploads own report photo" on storage.objects;
+create policy "Traveler uploads own report photo" on storage.objects
+  for insert to authenticated with check (
+    bucket_id='wtg-place-reports' and
+    (storage.foldername(name))[1]=(select auth.uid())::text
+  );
+drop policy if exists "Traveler reads own report photo" on storage.objects;
+create policy "Traveler reads own report photo" on storage.objects
+  for select to authenticated using (
+    bucket_id='wtg-place-reports' and
+    (storage.foldername(name))[1]=(select auth.uid())::text
+  );
+drop policy if exists "Traveler deletes own report photo" on storage.objects;
+create policy "Traveler deletes own report photo" on storage.objects
+  for delete to authenticated using (
+    bucket_id='wtg-place-reports' and
+    (storage.foldername(name))[1]=(select auth.uid())::text
+  );
+
 -- User-visible account deletion request; administrator processing is still required.
 -- A request does not itself delete auth.users (requires a protected server action).
 create table if not exists public.account_deletion_requests (
