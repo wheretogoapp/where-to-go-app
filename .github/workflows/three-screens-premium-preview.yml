@@ -1,0 +1,160 @@
+name: Where to Go - Tres pantallas premium (preview aislado)
+on:
+  push:
+    branches:
+      - design/three-screens-premium-20261123
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preview-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Comprobar que no se tocó la lógica de provincias, Google y cuentas
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          base='7611c5718de1f0ec1311e21f2ce688dc7ff4bdf6'
+          changes=set(subprocess.check_output(['git','diff','--name-only',base,'HEAD'],text=True).splitlines())
+          allowed={
+              '.github/workflows/three-screens-premium-preview.yml',
+              'Where_to_Go_Proyecto_Completo/public/three-screens-premium.css',
+              'Where_to_Go_Proyecto_Completo/public/index.html'
+          }
+          assert changes<=allowed, 'Unexpected files changed: '+str(changes-allowed)
+          p=Path('Where_to_Go_Proyecto_Completo/public')
+          html=(p/'index.html').read_text()
+          css=(p/'three-screens-premium.css').read_text()
+          assert html.count('/three-screens-premium.css?v=1')==1
+          assert html.index('/three-screens-premium.css?v=1')>html.index('/traveler-profile.css?v=1')
+          assert css.count('{')==css.count('}'), 'Unbalanced CSS declarations'
+          assert '@import' not in css and 'url(http' not in css
+          for file in ('app.js','google-places-adapter.js','auth.js','traveler-profile.js','world-location.js',
+                       'world-explorer.js','municipality-geocoder.js','photo-atlas.js'):
+              a=(p/file).read_bytes()
+              old=subprocess.check_output(['git','show',base+':Where_to_Go_Proyecto_Completo/public/'+file])
+              assert a==old, 'Protected logic changed: '+file
+          for asset in ('privacidad.html','terminos.html','onboarding.css','traveler-profile.css'):
+              assert (p/asset).is_file(), asset
+          print('PASS: only visual CSS, reference in index, and preview QA; all protected logic identical')
+          PY
+      - name: Instalar navegador de pruebas visuales
+        run: |
+          npm install --no-save playwright
+          if command -v google-chrome >/dev/null 2>&1; then
+            echo "CHROME_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            npx playwright install chromium
+          fi
+      - name: Revisar Inicio, Explorar y Perfil en móvil y escritorio
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory Where_to_Go_Proyecto_Completo/public >/tmp/three-screen-server.log 2>&1 &
+          sleep 2
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright';
+          import fs from 'node:fs';
+          const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
+          const sizes=[['iphone',390,844,true],['small',360,740,true],['desktop',1320,850,false]];
+          const notes=[];
+          for(const [label,width,height,mobile] of sizes){
+            const page=await browser.newPage({viewport:{width,height},isMobile:mobile,hasTouch:mobile,locale:'es-DO',deviceScaleFactor:1});
+            const errors=[];
+            page.on('pageerror',e=>errors.push(String(e.message).slice(0,130)));
+            const r=await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded',timeout:45000});
+            if(r?.status()!==200)throw Error(label+' document unavailable');
+            const required=await page.evaluate(async()=>{
+              const names=['three-screens-premium.css?v=1','traveler-profile.js?v=1','privacidad.html','terminos.html'];
+              return Object.fromEntries(await Promise.all(names.map(async n=>[n,(await fetch('/'+n)).status])));
+            });
+            if(Object.values(required).some(s=>s!==200))throw Error(label+' missing asset '+JSON.stringify(required));
+            await page.waitForTimeout(900);
+            const diag=await page.evaluate(()=>{
+              const profile=document.querySelector('#wtg-traveler-profile');
+              return {
+                hero:!!document.querySelector('#view-inicio .hero'),
+                discover:!!document.querySelector('#wtg-local-cards'),
+                filters:!!document.querySelector('#view-explorar #filter-categories'),
+                googleSearch:!!document.querySelector('#google-search-submit'),
+                map:!!document.querySelector('#world-map'),
+                radius:!!document.querySelector('#distance-select'),
+                profile:!!profile,profileTabs:profile?.querySelectorAll('[data-profile-tab]').length,
+                accountScript:!!document.querySelector('script[src*="auth.js"]')
+              };
+            });
+            if(!diag.hero||!diag.discover||!diag.filters||!diag.googleSearch||!diag.map||!diag.radius||!diag.profile||diag.profileTabs!==4||!diag.accountScript)
+              throw Error(label+' missing main functionality '+JSON.stringify(diag));
+            await page.evaluate(()=>{
+              document.getElementById('wtg-onboarding').hidden=true;
+              document.getElementById('wtg-onboarding').style.setProperty('display','none','important');
+              document.getElementById('auth-gate').hidden=true;
+              document.getElementById('auth-gate').style.setProperty('display','none','important');
+              document.body.classList.remove('wtg-onboarding-active');
+              const views=document.querySelectorAll('#main-content .view');
+              views.forEach(v=>{v.classList.remove('active');v.hidden=true;});
+              const home=document.getElementById('view-inicio');
+              home.hidden=false;home.classList.add('active');
+            });
+            await page.waitForTimeout(300);
+            await page.screenshot({path:'/tmp/three-'+label+'-inicio.png'});
+            await page.evaluate(()=>{
+              document.getElementById('view-inicio').classList.remove('active');
+              document.getElementById('view-inicio').hidden=true;
+              const e=document.getElementById('view-explorar');e.hidden=false;e.classList.add('active');
+            });
+            await page.screenshot({path:'/tmp/three-'+label+'-explorar.png'});
+            for(const mode of ['dark','light']){
+              const v=await page.evaluate(mode=>{
+                document.documentElement.dataset.wtgTheme=mode;
+                const panel=document.querySelector('#view-explorar .filter-panel');
+                return {background:getComputedStyle(panel).backgroundColor,
+                  gradient:getComputedStyle(panel).backgroundImage,
+                  color:getComputedStyle(document.querySelector('#view-explorar #search-input')).color};
+              },mode);
+              if(!v.gradient.includes('gradient'))throw Error(label+' '+mode+' theme missing '+JSON.stringify(v));
+              await page.screenshot({path:'/tmp/three-'+label+'-explorar-'+mode+'.png'});
+            }
+            await page.evaluate(()=>{
+              const p=document.getElementById('wtg-traveler-profile');
+              p.hidden=false;document.body.classList.add('wtg-profile-open');
+              const t=p.querySelector('[data-profile-tab="settings"]');
+              p.querySelectorAll('[data-profile-tab]').forEach(x=>{x.classList.remove('selected');x.setAttribute('aria-selected',String(x===t))});
+              t.classList.add('selected');
+              p.querySelectorAll('[data-profile-panel]').forEach(x=>x.hidden=x.dataset.profilePanel!=='settings');
+            });
+            await page.screenshot({path:'/tmp/three-'+label+'-perfil.png'});
+            const layout=await page.evaluate(()=>{
+              const profile=document.getElementById('wtg-traveler-profile');
+              return {
+                bodyWidth:document.documentElement.scrollWidth,
+                viewport:document.documentElement.clientWidth,
+                visibleProfile:!profile.hidden,
+                profileSettings:!document.querySelector('[data-profile-panel="settings"]').hidden,
+                profileTheme:!!document.querySelector('#wtg-profile-theme-input'),
+                privacy:!!document.querySelector('#wtg-traveler-profile a[href="/privacidad.html"]'),
+                mobileTabs:document.querySelectorAll('.mobile-tabbar .mobile-tab').length
+              };
+            });
+            if(!layout.visibleProfile||!layout.profileSettings||!layout.profileTheme||!layout.privacy||layout.mobileTabs!==6)
+              throw Error(label+' broken profile '+JSON.stringify(layout));
+            if(layout.bodyWidth>layout.viewport+85)notes.push(label+' wide page existing shell: '+JSON.stringify(layout));
+            console.log('VISUAL PASS',label,JSON.stringify({layout,required,jsErrors:errors.slice(0,3)}));
+            await page.close();
+          }
+          console.log('RESPONSIVE NOTES:',JSON.stringify(notes));
+          await browser.close();
+          JS
+      - name: Guardar capturas de la rama de pruebas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: where-to-go-three-screens-preview
+          path: /tmp/three-*.png
+          if-no-files-found: ignore
