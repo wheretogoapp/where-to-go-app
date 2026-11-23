@@ -308,6 +308,39 @@ try{
   await page.locator('#wtg-drawer-category-list [data-cat="todos"]').click();
   assert.equal(await page.evaluate(()=>state.category),'todos');
   console.log('FULL MOBILE DRAWER CATEGORIES OK:',JSON.stringify(categoryAudit));
+  // Synthetic identities only; this test must NEVER authenticate or modify a real account.
+  const isolation=await page.evaluate(()=>{
+    const account=window.WTG_auth;
+    const original=Object.getOwnPropertyDescriptor(account,'user');
+    let identity=null;
+    Object.defineProperty(account,'user',{configurable:true,get:()=>identity});
+    const notify=()=>window.dispatchEvent(new CustomEvent('wtg-auth-session',{detail:{userId:identity?.id||null}}));
+    try{
+      const place=state.places.find(p=>p&&typeof p.id==='string'&&p.id.length<250);
+      if(!place)throw Error('Falta lugar para probar favoritos por cuenta');
+      identity={id:'qa-isolated-a'};notify();
+      if(state.favorites.length)throw Error('Cuenta A recibió favoritos de otra cuenta');
+      toggleFavorite(place.id);
+      const aFavorite=state.favorites.includes(place.id);
+      state.businesses=[{name:'Negocio privado de A',cloudStored:false}];
+      saveScoped('wtg_businesses',state.businesses);
+      identity={id:'qa-isolated-b'};notify();
+      const bPrivate=state.favorites.length===0&&state.businesses.length===0;
+      identity={id:'qa-isolated-a'};notify();
+      const aRestored=state.favorites.includes(place.id)&&state.businesses.some(b=>b.name==='Negocio privado de A');
+      const keys={
+        a:localStorage.getItem('wtg_favorites_user_qa-isolated-a'),
+        b:localStorage.getItem('wtg_favorites_user_qa-isolated-b'),
+        draftA:localStorage.getItem('wtg_businesses_user_qa-isolated-a')
+      };
+      return {aFavorite,bPrivate,aRestored,keysOk:!!keys.a&&!keys.b&&!!keys.draftA};
+    }finally{
+      Object.defineProperty(account,'user',original);
+      notify();
+    }
+  });
+  assert(Object.values(isolation).every(Boolean),'No se aislaron los favoritos y borradores de cuentas distintas');
+  console.log('ACCOUNT ISOLATION OK:',JSON.stringify(isolation));
   if(isPublic)console.log('GOOGLE KEY: deployment workflow separately checks the public restricted key; CI blocks paid Places requests.');
   await page.screenshot({path:'/tmp/where-to-go-iphone-results.png',fullPage:false});
   console.log('MOBILE E2E OK:',JSON.stringify({first,explorer,destination,scriptErrors:errors.slice(0,4)}));
