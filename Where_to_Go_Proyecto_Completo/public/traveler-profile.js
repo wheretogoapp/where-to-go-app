@@ -161,14 +161,33 @@ function render(){
  }
  renderStatus();
 }
+let profilePreviousMobileView='inicio';
 function open(tab){
  if(typeof tab==='string')active.tab=tab;
+ const prior=document.querySelector('.mobile-tabbar [data-view].active');
+ if(prior)profilePreviousMobileView=prior.dataset.view||'inicio';
  root.hidden=false;document.body.classList.add('wtg-profile-open');
+ // Keep the fixed navigation visible and indicate the selected profile tab.
+ document.querySelectorAll('.mobile-tabbar [data-view]').forEach(button=>button.classList.remove('active'));
+ document.querySelectorAll('.mobile-tabbar [data-profile-open]').forEach(button=>{
+  button.classList.add('active');
+  button.setAttribute('aria-current','page');
+ });
  $('wtg-profile-settings').dataset.loaded='no';
  render();
  $('wtg-profile-close')?.focus({preventScroll:true});
 }
-function close(){root.hidden=true;document.body.classList.remove('wtg-profile-open')}
+function close(){
+ root.hidden=true;document.body.classList.remove('wtg-profile-open');
+ document.querySelectorAll('.mobile-tabbar [data-profile-open]').forEach(button=>{
+  button.classList.remove('active');button.removeAttribute('aria-current');
+ });
+ // The app's regular click handler will select a destination on the next
+ // event phase. Restore the previous destination when using the X button.
+ if(!document.querySelector('.mobile-tabbar [data-view].active')){
+  document.querySelector('.mobile-tabbar [data-view="'+profilePreviousMobileView+'"]')?.classList.add('active');
+ }
+}
 function assignToTrip(place,tripId){
  const trip=state.trips.find(t=>t.id===tripId);
  if(!trip||!place)return;
@@ -261,6 +280,17 @@ root.addEventListener('click',event=>{
  if(btn.id==='wtg-profile-logout'){close();void window.WTG_auth?.signOut?.();return}
 });
 document.querySelectorAll('[data-profile-open]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();open()}));
+// Mobile navigation remains usable while the profile is open. Close the
+// profile before the existing app click handler switches to the chosen view.
+// No authentication, visited history or save workflow is modified.
+document.addEventListener('click',event=>{
+ if(root.hidden)return;
+ const nav=event.target.closest?.('.mobile-tabbar [data-view]');
+ if(!nav)return;
+ profilePreviousMobileView=nav.dataset.view||'inicio';
+ close();
+},true);
+
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden)close()});
 window.matchMedia?.('(prefers-color-scheme: light)')?.addEventListener?.('change',()=>{if(state.theme==='auto')applyPreferences()});
 window.addEventListener('wtg-personalization-changed',event=>{

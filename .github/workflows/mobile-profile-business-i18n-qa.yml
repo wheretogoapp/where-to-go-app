@@ -1,0 +1,151 @@
+name: Where to Go - Perfil, Negocios, Contraste e Idiomas (preview)
+on:
+  push:
+    branches:
+      - fix/mobile-profile-promotions-i18n-20261123
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  profile-and-mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verificar JavaScript y enlaces CSS
+        run: |
+          node --check Where_to_Go_Proyecto_Completo/public/language.js
+          node --check Where_to_Go_Proyecto_Completo/public/traveler-profile.js
+          node --check Where_to_Go_Proyecto_Completo/public/app.js
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('Where_to_Go_Proyecto_Completo/public')
+          html=(p/'index.html').read_text()
+          css=(p/'mobile-ui-repair.css').read_text()
+          assert html.count('data-view="promocionar" aria-label="Promocionar mi negocio"')==1
+          assert 'mobile-ui-repair.css?v=1' in html
+          assert 'language.js?v=7.2' in html
+          assert 'traveler-profile.js?v=2' in html
+          assert css.count('{')==css.count('}'), 'CSS braces malformed'
+          promo=html.split('id="view-promocionar"',1)[1].split('id="view-mis-negocios"',1)[0]
+          for price in ('<strong>$10</strong>','<strong>$30</strong>','<strong>$50</strong>'):
+              assert price in promo, 'Business promotion tier missing: '+price
+          assert 'pago único' in promo and 'USD / mes' in promo
+          print('Protected business prices, seven tabs and versioned language assets present')
+          PY
+      - name: Probar traducciones con el conjunto existente
+        run: |
+          node --test Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs
+      - name: Instalar Chromium de prueba
+        run: |
+          npm install --no-save playwright
+          if command -v google-chrome >/dev/null 2>&1;then
+            echo "CHROME_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            npx playwright install chromium
+          fi
+      - name: Probar barra persistente, promociones, detalles e idiomas
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory Where_to_Go_Proyecto_Completo/public >/tmp/mobileqa-http.log 2>&1 &
+          sleep 2
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright';
+          const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
+          const locales=['en','fr','pt','de','it','es'];
+          for(const [name,width,height] of [['iphone',390,844],['compact',360,740]]){
+            const page=await browser.newPage({viewport:{width,height},isMobile:true,hasTouch:true,deviceScaleFactor:1,locale:'es-DO'});
+            const failures=[],pageLoads=[];
+            page.on('pageerror',e=>failures.push(e.message.slice(0,100)));
+            page.on('domcontentloaded',()=>pageLoads.push('loaded'));
+            await page.route(/https:\/\/maps\.googleapis\.com\/.*/,route=>route.abort());
+            await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded',timeout:40000});
+            await page.waitForFunction(()=>!!window.WTG_PROFILE&&!!window.WTG_I18N&&typeof navigate==='function',{timeout:20000});
+            await page.evaluate(()=>{
+              const ob=document.getElementById('wtg-onboarding');
+              ob.hidden=true;ob.style.setProperty('display','none','important');
+              const gate=document.getElementById('auth-gate');
+              gate.hidden=true;gate.style.setProperty('display','none','important');
+              document.body.classList.remove('wtg-onboarding-active');
+            });
+            await page.locator('.mobile-tabbar [data-profile-open]').click();
+            const profile=await page.evaluate(()=>{
+              const root=document.getElementById('wtg-traveler-profile');
+              const bar=document.querySelector('.mobile-tabbar');
+              const r=root.getBoundingClientRect(),n=bar.getBoundingClientRect();
+              const business=document.querySelector('.mobile-tabbar [data-view="promocionar"]');
+              const hit=document.elementFromPoint(n.left+n.width/2,n.top+27);
+              return {profileVisible:!root.hidden,profileBottom:r.bottom,barTop:n.top,
+                count:bar.querySelectorAll('.mobile-tab').length,
+                activeProfile:!!bar.querySelector('[data-profile-open].active'),
+                navAboveProfile:Number(getComputedStyle(bar).zIndex)>Number(getComputedStyle(root).zIndex),
+                hitTab:!!hit?.closest('.mobile-tabbar'),
+                hasBusiness:!!business};
+            });
+            console.log('PROFILE_NAV',name,JSON.stringify(profile));
+            if(!profile.profileVisible||!profile.activeProfile||profile.count!==7||!profile.hasBusiness||!profile.navAboveProfile||!profile.hitTab||profile.profileBottom>profile.barTop+3)
+              throw Error('Profile blocked mobile navigation: '+JSON.stringify(profile));
+            await page.screenshot({path:'/tmp/profile-'+name+'.png'});
+            await page.locator('.mobile-tabbar [data-view="promocionar"]').click();
+            const promo=await page.evaluate(()=>({
+              hiddenProfile:document.getElementById('wtg-traveler-profile').hidden,
+              activeBusiness:document.getElementById('view-promocionar').classList.contains('active'),
+              prices:[...document.querySelectorAll('#view-promocionar .plan-price strong')].map(x=>x.textContent.trim()),
+              barCount:document.querySelectorAll('.mobile-tabbar .mobile-tab').length
+            }));
+            console.log('BUSINESS_NAV',name,JSON.stringify(promo));
+            if(!promo.hiddenProfile||!promo.activeBusiness||promo.prices.join(',')!=='$10,$30,$50'||promo.barCount!==7)
+              throw Error('Promotion page not accessible from mobile: '+JSON.stringify(promo));
+            await page.screenshot({path:'/tmp/business-'+name+'.png'});
+            await page.locator('.mobile-tabbar [data-view="explorar"]').click();
+            await page.evaluate(()=>{
+              document.getElementById('explore-list').innerHTML='<article class="place-card"><div class="place-body"><div class="place-footer"><span class="distance-badge">↗ 3 km</span><button class="card-open">Ver detalles →</button></div></div></article>';
+            });
+            const color=await page.evaluate(()=>{
+              const btn=document.querySelector('#view-explorar #explore-list .card-open');
+              const s=getComputedStyle(btn);
+              return {color:s.color,fill:s.webkitTextFillColor,opacity:s.opacity,fontSize:s.fontSize,
+                bg:s.backgroundImage,minHeight:s.minHeight};
+            });
+            console.log('DETAIL_CONTRAST',name,JSON.stringify(color));
+            if(!color.color.includes('16, 45, 70')||color.opacity!=='1'||!color.bg.includes('gradient'))
+              throw Error('Detail action text still not readable: '+JSON.stringify(color));
+            await page.screenshot({path:'/tmp/explore-'+name+'.png'});
+            await page.locator('.mobile-tabbar [data-profile-open]').click();
+            const original=await page.evaluate(()=>document.getElementById('wtg-profile-sync').textContent);
+            if(!original.includes('dispositivo'))throw Error('Expected Spanish sync text: '+original);
+            for(const lang of locales){
+              await page.evaluate(lang=>window.WTG_I18N.change(lang,false),lang);
+              await page.waitForTimeout(260);
+              const snap=await page.evaluate(()=>({
+                lang:document.documentElement.lang,
+                business:document.querySelector('.mobile-tabbar [data-view="promocionar"] small').textContent,
+                sync:document.getElementById('wtg-profile-sync').textContent,
+                profileBrand:document.querySelector('.wtg-profile-brand').textContent.trim(),
+                button:document.getElementById('wtg-profile-install').textContent
+              }));
+              console.log('SIX_LANGUAGE',name,lang,JSON.stringify(snap));
+              if(snap.lang!==lang||lang!=='es'&&(snap.sync===original||snap.profileBrand.includes('MI ESPACIO')))
+                throw Error('Untranslated profile in '+lang+': '+JSON.stringify(snap));
+            }
+            await page.locator('.mobile-tabbar [data-view="inicio"]').click();
+            if(!(await page.evaluate(()=>document.getElementById('wtg-traveler-profile').hidden)))
+              throw Error('Profile still blocks Inicio tab');
+            if(pageLoads.length!==1)throw Error('Unwanted reload switching mobile tabs');
+            console.log('UI_QA_PASS',name,'languages=6', 'business-prices=10/30/50', 'seven-tabs=ok');
+            await page.close();
+          }
+          await browser.close();
+          JS
+      - name: Guardar capturas de las pantallas verificadas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: where-to-go-profile-business-contrast-preview
+          path: |
+            /tmp/profile-*.png
+            /tmp/business-*.png
+            /tmp/explore-*.png
+          if-no-files-found: ignore

@@ -2203,6 +2203,416 @@ Object.assign(labels, {
   ]
 });
 
+
+// Additional translated interface actions, profile status and business navigation.
+Object.assign(labels, {
+  "WHERE TO GO · MI ESPACIO": [
+    "WHERE TO GO · MY SPACE",
+    "WHERE TO GO · MON ESPACE",
+    "WHERE TO GO · MEU ESPAÇO",
+    "WHERE TO GO · MEIN BEREICH",
+    "WHERE TO GO · IL MIO SPAZIO"
+  ],
+  "Preparando tu perfil…": [
+    "Preparing your profile…",
+    "Préparation de votre profil…",
+    "Preparando seu perfil…",
+    "Dein Profil wird vorbereitet…",
+    "Preparazione del tuo profilo…"
+  ],
+  "Guardado en este dispositivo. La sincronización entre equipos necesita activar la tabla privada de perfil en Supabase.": [
+    "Saved on this device. Syncing across devices requires enabling the private profile table in Supabase.",
+    "Enregistré sur cet appareil. La synchronisation nécessite d’activer la table privée des profils dans Supabase.",
+    "Salvo neste dispositivo. Para sincronizar entre aparelhos, é necessário ativar a tabela privada de perfis no Supabase.",
+    "Auf diesem Gerät gespeichert. Für die Synchronisierung muss die private Profiltabelle in Supabase aktiviert werden.",
+    "Salvato su questo dispositivo. La sincronizzazione richiede l’attivazione della tabella privata dei profili in Supabase."
+  ],
+  "Modo invitado · Los datos de este perfil permanecen en este dispositivo.": [
+    "Guest mode · Profile data stays on this device.",
+    "Mode invité · Les données du profil restent sur cet appareil.",
+    "Modo visitante · Os dados do perfil ficam neste dispositivo.",
+    "Gastmodus · Die Profildaten bleiben auf diesem Gerät.",
+    "Modalità ospite · I dati del profilo restano su questo dispositivo."
+  ],
+  "Cuenta conectada · Tu perfil de viajes se sincroniza con Supabase.": [
+    "Account connected · Your travel profile syncs with Supabase.",
+    "Compte connecté · Votre profil de voyage est synchronisé avec Supabase.",
+    "Conta conectada · Seu perfil de viagens é sincronizado com o Supabase.",
+    "Konto verbunden · Dein Reiseprofil wird mit Supabase synchronisiert.",
+    "Account collegato · Il tuo profilo viaggi si sincronizza con Supabase."
+  ],
+  "Conectando el perfil de viajes con tu cuenta…": [
+    "Connecting your travel profile to your account…",
+    "Connexion de votre profil de voyage au compte…",
+    "Conectando seu perfil de viagens à conta…",
+    "Dein Reiseprofil wird mit deinem Konto verbunden…",
+    "Collegamento del profilo viaggi al tuo account…"
+  ],
+  "No se pudo guardar en este dispositivo. Revisa el espacio disponible.": [
+    "Could not save on this device. Check available storage.",
+    "Enregistrement impossible sur cet appareil. Vérifiez l’espace disponible.",
+    "Não foi possível salvar neste dispositivo. Verifique o espaço disponível.",
+    "Speichern nicht möglich. Prüfe den verfügbaren Speicherplatz.",
+    "Impossibile salvare su questo dispositivo. Controlla lo spazio disponibile."
+  ],
+  "Los favoritos y viajes que guardas explícitamente son independientes del historial automático. Los datos de los lugares de Google se almacenan únicamente mediante sus identificadores, sin copiar fichas completas.": [
+    "Favorites and trips you save are separate from automatic history. Google places are stored by their identifiers only, without copying full listings.",
+    "Les favoris et voyages enregistrés sont distincts de l’historique automatique. Seuls les identifiants des lieux Google sont conservés, sans copier les fiches complètes.",
+    "Favoritos e viagens salvos são independentes do histórico automático. Locais do Google são guardados apenas por identificador, sem copiar fichas completas.",
+    "Gespeicherte Favoriten und Reisen sind vom automatischen Verlauf getrennt. Google-Orte werden nur anhand ihrer Kennungen gespeichert, ohne vollständige Einträge zu kopieren.",
+    "Preferiti e viaggi salvati sono separati dalla cronologia automatica. I luoghi Google vengono conservati solo tramite identificatori, senza copiare le schede complete."
+  ],
+  "Ver mis favoritos": [
+    "View my favorites",
+    "Voir mes favoris",
+    "Ver meus favoritos",
+    "Meine Favoriten ansehen",
+    "Vedi i miei preferiti"
+  ],
+  "Mis lugares favoritos": [
+    "My favorite places",
+    "Mes lieux favoris",
+    "Meus lugares favoritos",
+    "Meine Lieblingsorte",
+    "I miei luoghi preferiti"
+  ],
+  "Instalar Where to Go": [
+    "Install Where to Go",
+    "Installer Where to Go",
+    "Instalar Where to Go",
+    "Where to Go installieren",
+    "Installa Where to Go"
+  ],
+  "Iniciar sesión o cambiar cuenta": [
+    "Sign in or switch account",
+    "Se connecter ou changer de compte",
+    "Entrar ou trocar de conta",
+    "Anmelden oder Konto wechseln",
+    "Accedi o cambia account"
+  ],
+  "Reenviar confirmación de correo": [
+    "Resend email confirmation",
+    "Renvoyer l’e-mail de confirmation",
+    "Reenviar confirmação por e-mail",
+    "Bestätigungs-E-Mail erneut senden",
+    "Invia di nuovo l’e-mail di conferma"
+  ],
+  "Cambiar contraseña por correo": [
+    "Reset password by email",
+    "Réinitialiser le mot de passe par e-mail",
+    "Redefinir senha por e-mail",
+    "Passwort per E-Mail zurücksetzen",
+    "Reimposta password via e-mail"
+  ],
+  "Crear viaje": [
+    "Create trip",
+    "Créer un voyage",
+    "Criar viagem",
+    "Reise erstellen",
+    "Crea viaggio"
+  ],
+  "Continuar con correo": [
+    "Continue with email",
+    "Continuer par e-mail",
+    "Continuar com e-mail",
+    "Mit E-Mail fortfahren",
+    "Continua con e-mail"
+  ],
+  "Explorar demostración sin cuenta": [
+    "Explore demo without an account",
+    "Explorer la démo sans compte",
+    "Explorar demonstração sem conta",
+    "Demo ohne Konto erkunden",
+    "Esplora la demo senza account"
+  ],
+  "Usar mi ubicación": [
+    "Use my location",
+    "Utiliser ma position",
+    "Usar minha localização",
+    "Meinen Standort verwenden",
+    "Usa la mia posizione"
+  ],
+  "Usar mi ubicación actual": [
+    "Use my current location",
+    "Utiliser ma position actuelle",
+    "Usar minha localização atual",
+    "Meinen aktuellen Standort verwenden",
+    "Usa la mia posizione attuale"
+  ],
+  "Elegir país o ciudad": [
+    "Choose country or city",
+    "Choisir un pays ou une ville",
+    "Escolher país ou cidade",
+    "Land oder Stadt auswählen",
+    "Scegli paese o città"
+  ],
+  "Idioma / Language": [
+    "Language",
+    "Langue",
+    "Idioma",
+    "Sprache",
+    "Lingua"
+  ],
+  "Quiero anunciarme": [
+    "I want to advertise",
+    "Je veux faire de la publicité",
+    "Quero anunciar",
+    "Ich möchte werben",
+    "Voglio fare pubblicità"
+  ],
+  "Reintentar Google": [
+    "Retry Google",
+    "Réessayer Google",
+    "Tentar novamente o Google",
+    "Google erneut versuchen",
+    "Riprova Google"
+  ],
+  "DESTINOS QUE INSPIRAN": [
+    "INSPIRING DESTINATIONS",
+    "DESTINATIONS INSPIRANTES",
+    "DESTINOS INSPIRADORES",
+    "INSPIRIERENDE REISEZIELE",
+    "DESTINAZIONI CHE ISPIRANO"
+  ],
+  "DESCUBRE MÁS CERCA": [
+    "DISCOVER NEARBY",
+    "DÉCOUVREZ À PROXIMITÉ",
+    "DESCUBRA PERTO",
+    "IN DER NÄHE ENTDECKEN",
+    "SCOPRI NEI DINTORNI"
+  ],
+  "INSPIRACIÓN PARA TU PRÓXIMO VIAJE": [
+    "INSPIRATION FOR YOUR NEXT TRIP",
+    "DE L’INSPIRATION POUR VOTRE PROCHAIN VOYAGE",
+    "INSPIRAÇÃO PARA SUA PRÓXIMA VIAGEM",
+    "INSPIRATION FÜR DEINE NÄCHSTE REISE",
+    "ISPIRAZIONE PER IL TUO PROSSIMO VIAGGIO"
+  ],
+  "DESTINOS PARA DESCUBRIR": [
+    "DESTINATIONS TO DISCOVER",
+    "DESTINATIONS À DÉCOUVRIR",
+    "DESTINOS PARA DESCOBRIR",
+    "REISEZIELE ZUM ENTDECKEN",
+    "DESTINAZIONI DA SCOPRIRE"
+  ],
+  "EXPLORA EL MUNDO": [
+    "EXPLORE THE WORLD",
+    "EXPLOREZ LE MONDE",
+    "EXPLORE O MUNDO",
+    "ENTDECKE DIE WELT",
+    "ESPLORA IL MONDO"
+  ],
+  "Explorar lugares": [
+    "Explore places",
+    "Explorer les lieux",
+    "Explorar lugares",
+    "Orte erkunden",
+    "Esplora luoghi"
+  ],
+  "Elegir municipio": [
+    "Choose municipality",
+    "Choisir une commune",
+    "Escolher município",
+    "Gemeinde auswählen",
+    "Scegli comune"
+  ],
+  "Explorar transporte": [
+    "Explore transportation",
+    "Explorer les transports",
+    "Explorar transporte",
+    "Transportangebote entdecken",
+    "Esplora i trasporti"
+  ],
+  "Ver más lugares": [
+    "See more places",
+    "Voir plus de lieux",
+    "Ver mais lugares",
+    "Weitere Orte anzeigen",
+    "Vedi altri luoghi"
+  ],
+  "Promocionar negocio": [
+    "Promote a business",
+    "Promouvoir une entreprise",
+    "Promover um negócio",
+    "Unternehmen bewerben",
+    "Promuovi un’attività"
+  ],
+  "Promocionar mi negocio": [
+    "Promote my business",
+    "Promouvoir mon entreprise",
+    "Promover meu negócio",
+    "Mein Unternehmen bewerben",
+    "Promuovi la mia attività"
+  ],
+  "Ver en mapa": [
+    "View on map",
+    "Voir sur la carte",
+    "Ver no mapa",
+    "Auf Karte anzeigen",
+    "Vedi sulla mappa"
+  ],
+  "Publicar mi tour o excursión": [
+    "List my tour or excursion",
+    "Publier mon excursion ou circuit",
+    "Publicar meu passeio ou excursão",
+    "Tour oder Ausflug anbieten",
+    "Pubblica il mio tour o escursione"
+  ],
+  "Registrar mi servicio": [
+    "List my service",
+    "Enregistrer mon service",
+    "Cadastrar meu serviço",
+    "Meinen Dienst anmelden",
+    "Registra il mio servizio"
+  ],
+  "Centrar en mí": [
+    "Center on me",
+    "Centrer sur ma position",
+    "Centralizar em mim",
+    "Auf mich zentrieren",
+    "Centra sulla mia posizione"
+  ],
+  "Registrar mi negocio": [
+    "List my business",
+    "Inscrire mon entreprise",
+    "Cadastrar meu negócio",
+    "Mein Unternehmen eintragen",
+    "Registra la mia attività"
+  ],
+  "Solicitar registro": [
+    "Request listing",
+    "Demander l’inscription",
+    "Solicitar cadastro",
+    "Eintrag beantragen",
+    "Richiedi registrazione"
+  ],
+  "Elegir Destacado": [
+    "Choose Featured",
+    "Choisir Vedette",
+    "Escolher Destaque",
+    "Hervorgehoben wählen",
+    "Scegli In evidenza"
+  ],
+  "Elegir Premium": [
+    "Choose Premium",
+    "Choisir Premium",
+    "Escolher Premium",
+    "Premium auswählen",
+    "Scegli Premium"
+  ],
+  "Reintentar carga de municipios": [
+    "Retry loading municipalities",
+    "Réessayer le chargement des communes",
+    "Tentar carregar municípios novamente",
+    "Gemeinden erneut laden",
+    "Riprova a caricare i comuni"
+  ],
+  "Explorar este municipio": [
+    "Explore this municipality",
+    "Explorer cette commune",
+    "Explorar este município",
+    "Diese Gemeinde erkunden",
+    "Esplora questo comune"
+  ],
+  "Enviar para revisión": [
+    "Submit for review",
+    "Envoyer pour vérification",
+    "Enviar para análise",
+    "Zur Prüfung einreichen",
+    "Invia per revisione"
+  ],
+  "Enviar solicitud para revisión": [
+    "Submit request for review",
+    "Envoyer la demande pour vérification",
+    "Enviar solicitação para análise",
+    "Antrag zur Prüfung senden",
+    "Invia richiesta per revisione"
+  ],
+  "Enviar solicitud de registro": [
+    "Submit registration request",
+    "Envoyer une demande d’inscription",
+    "Enviar solicitação de cadastro",
+    "Eintragungsantrag senden",
+    "Invia richiesta di registrazione"
+  ],
+  "Preferencias guardadas.": [
+    "Preferences saved.",
+    "Préférences enregistrées.",
+    "Preferências salvas.",
+    "Einstellungen gespeichert.",
+    "Preferenze salvate."
+  ],
+  "Viaje guardado.": [
+    "Trip saved.",
+    "Voyage enregistré.",
+    "Viagem salva.",
+    "Reise gespeichert.",
+    "Viaggio salvato."
+  ],
+  "Lugar agregado al viaje.": [
+    "Place added to trip.",
+    "Lieu ajouté au voyage.",
+    "Lugar adicionado à viagem.",
+    "Ort zur Reise hinzugefügt.",
+    "Luogo aggiunto al viaggio."
+  ],
+  "Escribe el nombre del viaje.": [
+    "Enter a trip name.",
+    "Saisissez le nom du voyage.",
+    "Digite o nome da viagem.",
+    "Gib einen Reisenamen ein.",
+    "Inserisci il nome del viaggio."
+  ],
+  "Todavía no tienes lugares aquí. Descubre lugares y guárdalos cuando quieras.": [
+    "You have no places here yet. Discover and save places anytime.",
+    "Vous n’avez pas encore de lieux ici. Explorez et enregistrez des lieux quand vous voulez.",
+    "Você ainda não tem lugares aqui. Descubra e salve lugares quando quiser.",
+    "Hier sind noch keine Orte gespeichert. Entdecke Orte und speichere sie jederzeit.",
+    "Non hai ancora luoghi qui. Scopri e salva luoghi quando vuoi."
+  ],
+  "Foto": [
+    "Photo",
+    "Photo",
+    "Foto",
+    "Foto",
+    "Foto"
+  ],
+  "Foto:": [
+    "Photo:",
+    "Photo :",
+    "Foto:",
+    "Foto:",
+    "Foto:"
+  ],
+  "Detalles": [
+    "Details",
+    "Détails",
+    "Detalhes",
+    "Details",
+    "Dettagli"
+  ],
+  "Fotografía vinculada al lugar": [
+    "Photo of this place",
+    "Photo liée à ce lieu",
+    "Foto vinculada ao local",
+    "Foto dieses Ortes",
+    "Foto associata al luogo"
+  ],
+  "Ver detalles": [
+    "View details",
+    "Voir les détails",
+    "Ver detalhes",
+    "Details ansehen",
+    "Vedi dettagli"
+  ],
+  "Tu próximo descubrimiento": [
+    "Your next discovery",
+    "Votre prochaine découverte",
+    "Sua próxima descoberta",
+    "Deine nächste Entdeckung",
+    "La tua prossima scoperta"
+  ]
+});
 // Category labels are stored with stable IDs; proper names and addresses are not translated.
 const categories={
 rios:['Rivers','Rivières','Rios','Flüsse','Fiumi'],balnearios:['Swimming spots','Baignades naturelles','Balneários','Badestellen','Luoghi balneari'],cascadas:['Waterfalls','Cascades','Cachoeiras','Wasserfälle','Cascate'],lagunas:['Lagoons','Lagunes','Lagoas','Lagunen','Lagune'],senderismo:['Hiking','Randonnées','Trilhas','Wandern','Escursionismo'],playas:['Beaches','Plages','Praias','Strände','Spiagge'],parques:['Parks','Parcs','Parques','Parks','Parchi'],atracciones:['Tourist attractions','Sites touristiques','Atrações turísticas','Sehenswürdigkeiten','Attrazioni turistiche'],entretenimiento:['Entertainment','Divertissement','Entretenimento','Unterhaltung','Intrattenimento'],infantil:['Kids activities','Activités enfants','Diversão infantil','Kinderaktivitäten','Attività per bambini'],piscinas:['Swimming pools','Piscines','Piscinas','Pools','Piscine'],restaurantes:['Restaurants','Restaurants','Restaurantes','Restaurants','Ristoranti'],bares:['Bars','Bars','Bares','Bars','Bar'],discotecas:['Nightclubs','Discothèques','Boates','Nachtclubs','Discoteche'],cafes:['Cafés','Cafés','Cafés','Cafés','Caffetterie'],heladerias:['Ice cream shops','Glaciers','Sorveterias','Eisdielen','Gelaterie'],panaderias:['Bakeries','Boulangeries','Padarias','Bäckereien','Panetterie'],pescaderias:['Fish shops','Poissonneries','Peixarias','Fischgeschäfte','Pescherie'],comidarapida:['Fast food','Restauration rapide','Fast food','Schnellimbiss','Fast food'],supermercados:['Supermarkets','Supermarchés','Supermercados','Supermärkte','Supermercati'],colmados:['Local grocery stores','Épiceries locales','Mercearias','Nachbarschaftsläden','Alimentari'],mercados:['Markets','Marchés','Mercados','Märkte','Mercati'],tiendas:['Shops & fashion','Magasins et mode','Lojas e moda','Geschäfte & Mode','Negozi e moda'],ferreterias:['Hardware stores','Quincailleries','Lojas de ferragens','Baumärkte','Ferramenta'],electrodomesticos:['Appliances','Électroménager','Eletrodomésticos','Haushaltsgeräte','Elettrodomestici'],tecnologia:['Technology','Technologie','Tecnologia','Technik','Tecnologia'],barberias:['Barbers','Barbiers','Barbearias','Barbershops','Barbieri'],salones:['Beauty salons','Salons de beauté','Salões de beleza','Schönheitssalons','Saloni di bellezza'],unas:['Nail salons','Ongleries','Salões de unhas','Nagelstudios','Centri unghie'],spas:['Spas & massage','Spas et massages','Spas e massagens','Spas & Massagen','Spa e massaggi'],gimnasios:['Gyms','Salles de sport','Academias','Fitnessstudios','Palestre'],hoteles:['Hotels','Hôtels','Hotéis','Hotels','Hotel'],resorts:['Resorts','Resorts','Resorts','Resorts','Resort'],villas:['Villas','Villas','Villas','Villen','Ville'],taxis:['Taxis & transport','Taxis et transport','Táxis e transporte','Taxis & Transport','Taxi e trasporti'],gasolineras:['Gas stations','Stations-service','Postos de combustível','Tankstellen','Distributori'],talleres:['Repair shops','Garages','Oficinas','Werkstätten','Officine'],lavaderos:['Car washes','Stations de lavage','Lava-rápidos','Autowaschanlagen','Autolavaggi'],farmacias:['Pharmacies','Pharmacies','Farmácias','Apotheken','Farmacie'],hospitales:['Hospitals & clinics','Hôpitaux et cliniques','Hospitais e clínicas','Krankenhäuser & Kliniken','Ospedali e cliniche'],odontologia:['Dentists','Dentistes','Dentistas','Zahnärzte','Dentisti'],veterinarias:['Veterinarians','Vétérinaires','Veterinários','Tierärzte','Veterinari'],mascotas:['Pet shops','Animaleries','Pet shops','Tierhandlungen','Negozi animali'],bancos:['Banks','Banques','Bancos','Banken','Banche'],cajeros:['ATMs','Distributeurs automatiques','Caixas eletrônicos','Geldautomaten','Bancomat'],lavanderias:['Laundries','Blanchisseries','Lavanderias','Wäschereien','Lavanderie'],servicios:['Professional services','Services professionnels','Serviços profissionais','Professionelle Dienstleistungen','Servizi professionali'],escuelas:['Schools','Écoles','Escolas','Schulen','Scuole'],iglesias:['Churches','Églises','Igrejas','Kirchen','Chiese'],deportes:['Sports','Sports','Esportes','Sport','Sport']
@@ -2224,10 +2634,14 @@ function t(str){const key=String(str??'');if(lang==='es')return key;const idx=co
 function category(id,fallback){const idx=codes.indexOf(lang)-1;return idx<0?fallback:(categories[id]?.[idx]||fallback);}
 function dynamicText(text){
   const exp=/^(Descubre) (.+?): (tu próxima aventura\.)$/;
+  // Provider names, authors and place titles stay untouched; translate only
+  // the UI prefix of photo credits (not the referenced source attribution).
+  if(/^Foto:\s*/.test(text))return t('Foto:')+' '+text.replace(/^Foto:\s*/,'');
+
   const m=text.match(exp);if(m)return t(m[1])+' '+m[2]+': '+t(m[3]);
   // Translate UI labels even when they include decorative arrows/icons.
   // The place name itself is never translated.
-  const glyph=text.match(/^([✦★▤◈📷◎⌖🌐📍🌎🌍🧭✉♡🔐🚘]+\s*)(.*)$/u);
+  const glyph=text.match(/^([✦★▤◈📷📲◎⌖🌐📍🌎🌍🧭✉♡🔐🚘+]+\s*)(.*)$/u);
   const prefix=glyph?glyph[1]:'';
   let body=glyph?glyph[2]:text;
   const end=body.match(/^(.*?)(\s*[↗→↻])$/u);
@@ -2298,7 +2712,7 @@ function translateAttrs(el){
 function translateNode(node){
   if(!node)return;
   const process=textNode=>{
-    if(textNode.parentElement?.closest('script,style,textarea,[contenteditable],.hero-coordinate,.hero-credit,.place-title,.place-meta,.detail-location,.detail-description,.source-credit,.photo-authors,.location-pill-text,[data-no-translate]'))return;
+    if(textNode.parentElement?.closest('script,style,textarea,[contenteditable],.hero-coordinate,.hero-credit,.place-title,.place-meta,.detail-location,.location-pill-text,[data-no-translate]'))return;
     const text=textNode.nodeValue; if(!text||!text.trim())return;
     let source=originalText.get(textNode);
     const last=lastRenderedText.get(textNode);
@@ -2324,6 +2738,6 @@ let queued=false;const pending=new Set();
 function schedule(node){pending.add(node);if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;const nodes=[...pending];pending.clear();nodes.forEach(translateNode);});}
 function change(next,save=true){if(!codes.includes(next))next='es';lang=next;document.documentElement.lang=next;document.querySelectorAll('#wtg-language-select,#wtg-auth-language-select').forEach(el=>{el.value=next});if(save){try{localStorage.setItem('wtg_ui_language',next)}catch{}}schedule(document);window.dispatchEvent(new CustomEvent('wtg-language-changed',{detail:{language:lang}}));}
 window.WTG_I18N={get lang(){return lang},t,category,change,translateDom:()=>schedule(document),supported:[...codes]};
-function init(){document.documentElement.lang=lang;document.querySelectorAll('#wtg-language-select,#wtg-auth-language-select').forEach(el=>{el.value=lang;el.addEventListener('change',()=>change(el.value,true))});schedule(document);const observer=new MutationObserver(mutations=>{for(const rec of mutations){for(const node of rec.addedNodes)if(node.nodeType===1||node.nodeType===3)schedule(node);}});observer.observe(document.body,{childList:true,subtree:true});window.addEventListener('languagechange',()=>{let hasOverride=false;try{hasOverride=!!localStorage.getItem('wtg_ui_language')}catch{}if(!hasOverride)change(bestLanguage(),false);});}
+function init(){document.documentElement.lang=lang;document.querySelectorAll('#wtg-language-select,#wtg-auth-language-select').forEach(el=>{el.value=lang;el.addEventListener('change',()=>change(el.value,true))});schedule(document);const observer=new MutationObserver(mutations=>{for(const rec of mutations){if(rec.type==='characterData')schedule(rec.target);else if(rec.type==='attributes')schedule(rec.target);else for(const node of rec.addedNodes)if(node.nodeType===1||node.nodeType===3)schedule(node);}});observer.observe(document.body,{childList:true,characterData:true,attributes:true,attributeFilter:['placeholder','aria-label','title'],subtree:true});window.addEventListener('languagechange',()=>{let hasOverride=false;try{hasOverride=!!localStorage.getItem('wtg_ui_language')}catch{}if(!hasOverride)change(bestLanguage(),false);});}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
