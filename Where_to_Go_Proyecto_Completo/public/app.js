@@ -1368,7 +1368,9 @@ function openReport(placeId=''){
   }
   openModal('report-modal');
 }
-function openRegister(plan='basico'){$('register-form').reset();$('business-city').value=state.mode==='gps'?'':state.city;
+function openRegister(plan='basico'){$('register-form').reset();
+  const feedback=$('wtg-business-feedback');if(feedback){feedback.hidden=true;feedback.textContent='';}
+  $('business-city').value=state.mode==='gps'?'':state.city;
   if($('business-province')){$('business-province').innerHTML='<option value="">Selecciona una provincia</option>'+PROVINCES.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');$('business-province').value=state.province||'';}$('business-plan').value=['basico','destacado','premium'].includes(plan)?plan:'basico';openModal('register-modal')}
 function renderCities(){
   $('city-options').innerHTML=CITIES.map(c=>`<button class="city-btn" data-city="${esc(c.name)}"><span>${c.emoji}</span><div>${esc(c.name)}<small>${esc(c.region)}</small></div></button>`).join('');
@@ -1726,19 +1728,25 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
   };
   $('report-category').innerHTML='<option value="">No lo sé</option>'+CATEGORIES.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
   $('register-form').onsubmit=async e=>{
-    e.preventDefault();const get=id=>$(id).value.trim();
+    e.preventDefault();
+    const feedback=$('wtg-business-feedback');
+    const report=message=>{if(feedback){feedback.textContent=message;feedback.hidden=false;feedback.scrollIntoView({block:'nearest',behavior:'smooth'});}else toast(message);};
+    if(feedback){feedback.textContent='';feedback.hidden=true;}
+    const get=id=>$(id).value.trim();
     const b={id:`draft-${Date.now()}`,name:get('business-name'),category:get('business-category'),
       province:get('business-province'),city:get('business-city'),address:get('business-address'),phone:get('business-phone'),
       mapUrl:get('business-map-url'),
       plan:get('business-plan'),description:get('business-description'),createdAt:new Date().toISOString()};
-    if(!b.name||!b.province||!b.city||!b.address||!b.phone||!$('business-consent').checked){toast('Completa los campos obligatorios.');return;}
+    if(!b.name||!b.category||!b.province||!b.city||!b.address||!b.phone||!$('business-consent').checked){report('Completa los campos obligatorios y acepta las condiciones.');return;}
     const files=Array.from($('business-photos')?.files||[]);
-    if(files.length<1||files.length>5){toast('Selecciona de 1 a 5 fotos de tu negocio.');return;}
+    if(files.length<1||files.length>5){report('Selecciona de 1 a 5 fotos auténticas de tu negocio.');return;}
     if(files.some(file=>file.size<=0||file.size>5*1024*1024||!['image/jpeg','image/png','image/webp'].includes(file.type))){
-      toast('Fotos JPG, PNG o WebP, máximo 5 MB por foto.');return;
+      report('Fotos JPG, PNG o WebP, máximo 5 MB por foto.');return;
     }
     const submitBtn=$('register-form').querySelector('[type="submit"]');
-    if(submitBtn)submitBtn.disabled=true;
+    const originalLabel=submitBtn?.textContent||'Enviar solicitud de registro →';
+    if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Enviando fotos y solicitud…';}
+    if(feedback){feedback.hidden=false;feedback.textContent='Enviando tu solicitud y las fotografías privadas. No cierres este formulario.';}
     try{
       if(!window.WTG_SUBMISSIONS)throw Error('No hay servidor de solicitudes conectado.');
       const receipt=await window.WTG_SUBMISSIONS.submitBusiness(b,files);
@@ -1747,12 +1755,10 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
       closeModals();navigate('mis-negocios');renderMyBusinesses();
       toast('Solicitud recibida con número '+receipt.id.slice(0,8)+'; pendiente de revisión, sin cobro.');
     }catch(err){
-      // Browser drafts contain only text; file objects are never persisted to localStorage.
-      state.businesses.unshift({...b,status:'Borrador local · fotos pendientes de volver a seleccionar',cloudStored:false});
-      saveJSON('wtg_businesses',state.businesses.filter(item=>!item.cloudStored));
-      closeModals();navigate('mis-negocios');renderMyBusinesses();
-      toast('No se envió la solicitud: '+String(err?.message||'error').slice(0,110)+' Guardada localmente.');
-    }finally{if(submitBtn)submitBtn.disabled=false;}
+      // Leave the form AND selected photos intact, so the owner can retry.
+      // Never report a failed network request as a received application.
+      report('No se envió la solicitud: '+String(err?.message||'error').slice(0,160)+'. Tus datos y fotos siguen seleccionados; puedes reintentar.');
+    }finally{if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=originalLabel;}}
   };
   renderAll();
   // Do not block nearby places behind editorial catalogs and business extras.
