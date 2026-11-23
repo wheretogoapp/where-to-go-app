@@ -160,5 +160,18 @@ create policy "People may request deletion" on public.account_deletion_requests
     user_id = (select auth.uid()) and status = 'pending' and completed_at is null
   );
 
+-- Essential: Supabase projects can grant UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER
+-- to 'authenticated' by default even when the table has RLS. TRUNCATE bypasses
+-- row-level policies. Never leave these grants on private application tables.
+-- Re-running this file is safe: revoke broad privileges, grant only needed operations.
+revoke all privileges on table
+  public.business_submissions, public.tour_submissions,
+  public.place_reports, public.account_deletion_requests
+  from public, anon, authenticated;
+grant select, insert on table
+  public.business_submissions, public.tour_submissions,
+  public.place_reports, public.account_deletion_requests
+  to authenticated;
+
 -- Admin review, payment verification, support response and completed deletion:
 -- intentionally NOT available via authenticated browser writes.
