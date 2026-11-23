@@ -104,10 +104,10 @@ async function submitTour(form){
 async function listTours(){
  const {db,user}=session();
  const {data,error}=await db.from('tour_submissions')
-  .select('id,details,status,created_at')
+  .select('id,details,status,created_at,photo_paths')
   .eq('user_id',user.id).order('created_at',{ascending:false}).limit(50);
  if(error)throw databaseError(error);
- return data||[];
+ return (data||[]).map(row=>({...row,photoCount:Array.isArray(row.photo_paths)?row.photo_paths.length:0}));
 }
 async function submitReport(details,file){
  const {db,user}=session();
