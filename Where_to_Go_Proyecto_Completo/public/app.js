@@ -1718,12 +1718,10 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
         observaciones:val('report-notes'),contacto:val('report-contact'),
         permiso:'Declara autorización para compartir foto/datos',fecha:new Date().toISOString()
       });
-      const body=file?new FormData():data;
-      if(file){for(const [key,value] of data)body.append(key,value);body.append('fotoarchivo',file)}
-      const r=await fetch('/__forms.html',file?{method:'POST',body}:{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:data});
-      if(!r.ok)throw Error('HTTP '+r.status);
-      closeModals();toast('Información recibida para revisión. No se publica automáticamente.');
-    }catch{toast('No se pudo enviar. Revisa si Netlify Forms está activo.');}
+      if(!window.WTG_SUBMISSIONS)throw Error('Servidor de reportes no configurado');
+      const receipt=await window.WTG_SUBMISSIONS.submitReport(Object.fromEntries(data),file);
+      closeModals();toast('Reporte recibido '+receipt.id.slice(0,8)+'; pendiente de revisión.');
+    }catch(err){toast('El reporte no fue enviado: '+String(err?.message||'Error').slice(0,140));}
     finally{button.disabled=false;}
   };
   $('report-category').innerHTML='<option value="">No lo sé</option>'+CATEGORIES.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
