@@ -11,6 +11,7 @@ on:
       - 'Where_to_Go_Proyecto_Completo/tests/rd-national-coverage.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/tests/traveler-profile.test.cjs'
+      - 'Where_to_Go_Proyecto_Completo/tools/test_mobile_v10.mjs'
       - 'Where_to_Go_Proyecto_Completo/supabase/traveler-profile-v2.sql'
       - 'Where_to_Go_Proyecto_Completo/public/**'
 permissions:
@@ -57,6 +58,10 @@ jobs:
           test -s /tmp/where-to-go-pages/traveler-profile.css
           test -s /tmp/where-to-go-pages/business-photo-preview.js
           test -s /tmp/where-to-go-pages/business-share.js
+          test -s /tmp/where-to-go-pages/header-drawer.js
+          test -s /tmp/where-to-go-pages/header-drawer.css
+          grep -q 'id="wtg-drawer-categories"' /tmp/where-to-go-pages/index.html
+          grep -q 'id="wtg-drawer-category-list"' /tmp/where-to-go-pages/index.html
           test -s /tmp/where-to-go-pages/assets/wtg-icon-180.png
           test -s /tmp/where-to-go-pages/assets/wtg-icon-192.png
           test -s /tmp/where-to-go-pages/assets/wtg-icon-512.png
@@ -106,6 +111,7 @@ jobs:
           node --check /tmp/where-to-go-pages/traveler-profile.js
           node --check /tmp/where-to-go-pages/business-photo-preview.js
           node --check /tmp/where-to-go-pages/business-share.js
+          node --check /tmp/where-to-go-pages/header-drawer.js
           node --input-type=module --check < /tmp/where-to-go-pages/auth.js
           node --test Where_to_Go_Proyecto_Completo/tests/traveler-profile.test.cjs
           node --check /tmp/where-to-go-pages/google-places-adapter.js
@@ -284,7 +290,7 @@ jobs:
               assert 'enrichDominicanGooglePlaces' in js,'Falta conexión Google con catálogo dominicano'
               assert 'renderLocalDiscovery' in js,'No se publicó la portada de descubrimiento por destino'
               print('Google Places: integración RD publicada')
-          for asset in ('world-location.js','world-explorer.js','world-explorer.css','city-covers.js','world-geography.js','native-mobile.css','local-discovery.css','onboarding.js','onboarding.css','ux-polish.css','municipality-geocoder.js','area-discovery.js','area-discovery.css','business-photo-preview.js','business-share.js'):
+          for asset in ('world-location.js','world-explorer.js','world-explorer.css','city-covers.js','world-geography.js','native-mobile.css','local-discovery.css','onboarding.js','onboarding.css','ux-polish.css','municipality-geocoder.js','area-discovery.js','area-discovery.css','business-photo-preview.js','business-share.js','header-drawer.js','header-drawer.css'):
               with urllib.request.urlopen(base+asset,timeout=20) as response:
                   assert response.status==200 and len(response.read())>100,asset
                   print('ASSET MUNDIAL PUBLICADO:',asset)
