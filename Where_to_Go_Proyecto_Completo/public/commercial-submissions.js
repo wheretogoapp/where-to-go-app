@@ -14,7 +14,7 @@ function session(){
 function databaseError(error){
  const raw=String(error?.message||error||'Error al enviar').slice(0,220);
  if(/relation.*does not exist|could not find the table|schema cache|42P01|PGRST205/i.test(raw))
-  return Error('Falta activar la tabla de solicitudes en Supabase. La solicitud no fue enviada.');
+  return Error('El servicio de solicitudes no está disponible. La solicitud no fue enviada.');
  if(/permission denied|row.level.security|42501/i.test(raw))
   return Error('El servidor rechazó el permiso. Revisa las políticas RLS o tu sesión.');
  return Error('No se pudo enviar la solicitud: '+raw);
