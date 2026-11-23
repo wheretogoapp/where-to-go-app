@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#071e35">
+<title>Revisión privada de solicitudes · Where to Go</title>
+<style>
+:root{color-scheme:dark;font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#091c34,#0a3451 65%,#102d40);color:#f3f8ff;min-height:100vh}
+main{width:min(1040px,100%);margin:auto;padding:20px 16px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}.brand img{width:62px;height:62px;object-fit:contain}.brand small{display:block;color:#b9d5ea}
+h1{font-size:clamp(25px,4vw,35px);line-height:1.15;margin:26px 0 8px}h2{font-size:20px;margin:0}
+p{margin:8px 0 16px;color:#d5e7f4}a{color:#ffe1a4}
+button,a.action{font:inherit;min-height:42px;border-radius:12px;padding:10px 14px;cursor:pointer}
+button{background:#f0cf92;color:#1d2938;border:0;font-weight:700}
+button.secondary{background:#173957;color:#f3f8ff;border:1px solid #517089}
+button[disabled]{opacity:.56;cursor:progress}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+.tabs button{background:#17405b;color:white;border:1px solid #5b7a91}
+.tabs button[aria-selected=true]{background:#f0cf92;color:#1a2c3c}
+.panel{border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:17px;background:rgba(1,15,33,.42);margin-top:18px}
+.card{border:1px solid rgba(220,232,245,.18);border-radius:14px;padding:16px;background:rgba(10,43,68,.81);margin:12px 0}
+.meta{font-size:12px;color:#b8d2e3}.status{font-weight:700;color:#ffdb94}.details{display:grid;gap:6px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin:12px 0}
+.detail{padding:8px 10px;background:rgba(255,255,255,.055);border-radius:9px;overflow-wrap:anywhere}
+.detail strong{display:block;font-size:11px;color:#bdd9e8;margin-bottom:2px}.detail span{font-size:13px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.actions button{font-size:13px;min-height:44px}
+.photos{display:flex;gap:9px;overflow-x:auto;margin:12px 0}.photos img{width:120px;height:95px;border-radius:10px;object-fit:cover;border:1px solid #a5b8cb}
+#review-status{color:#f5d9a2;min-height:22px;margin-top:10px}
+.notice{background:#153852;border:1px solid #576e81;padding:12px 14px;border-radius:12px}
+#review-app[hidden],#review-auth[hidden]{display:none}
+#review-audit-list{font-size:12px;color:#d5e7f4}
+@media(max-width:520px){main{padding:12px 12px 70px}.brand img{width:48px;height:48px}.details{grid-template-columns:1fr 1fr}.card{padding:12px}.actions button{flex:1 1 45%}}
+</style>
+<script defer src="./config.js"></script>
+<script type="module" src="./admin-review.js?v=1"></script>
+</head>
+<body><main>
+<header><div class="brand"><img src="./assets/wtg-logo-hd.webp" alt="Where to Go"><div><strong>WHERE TO GO</strong><small>Revisión privada · República Dominicana</small></div></div><a href="./">Volver a la aplicación</a></header>
+<h1>Solicitudes y fotografías</h1>
+<p>Esta pantalla requiere una cuenta autorizada. La revisión de contenido no confirma un pago ni publica automáticamente un anuncio.</p>
+<p class="notice">Las fotografías de negocios y tours siguen siendo privadas. Solo deben aprobarse contenidos con identidad, ubicación y derechos de imagen verificados.</p>
+<div id="review-auth" class="panel"><h2>Acceso privado</h2><p id="review-auth-status">Comprobando que tienes acceso…</p><a href="./" class="action">Abrir Where to Go e iniciar sesión</a></div>
+<section id="review-app" hidden>
+<div id="review-user" class="meta"></div>
+<nav class="tabs" aria-label="Bandejas de revisión">
+<button type="button" data-review-kind="business_submissions" aria-selected="true">Negocios</button>
+<button type="button" data-review-kind="tour_submissions">Excursiones</button>
+<button type="button" data-review-kind="place_reports">Reportes</button>
+<button type="button" data-review-kind="account_deletion_requests">Eliminar cuentas</button>
+<button type="button" data-review-kind="wtg_review_audit">Auditoría</button>
+</nav>
+<div class="actions"><button type="button" class="secondary" id="review-refresh">Actualizar solicitudes</button><button type="button" class="secondary" id="review-signout">Cerrar sesión</button></div>
+<div id="review-status" role="status" aria-live="polite"></div>
+<div id="review-list" aria-live="polite"></div>
+</section>
+</main></body></html>

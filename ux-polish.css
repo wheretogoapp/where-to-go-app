@@ -1,0 +1,286 @@
+/* Where to Go — cleaner mobile-native UI, no fake photographs. */
+.auth-email-reveal{
+ display:block;width:100%;min-height:47px;cursor:pointer;
+ padding:11px 16px;margin:10px 0 8px;background:#ffffff16;
+ color:#f1f7ff;border:1px solid #c4ddf766;border-radius:15px;
+ font:750 14px "DM Sans",sans-serif
+}
+.auth-email-reveal:focus-visible{outline:3px solid #eab851;outline-offset:2px}
+#auth-email-fold[hidden]{display:none!important}
+#map-places button.map-place{
+ display:flex;gap:13px;width:100%;padding:13px 12px;
+ text-align:left;border:1px solid #c8d9e7;background:#fff;
+ border-radius:14px;font:inherit;color:#143053;cursor:pointer
+}
+#map-places button.map-place:hover{background:#edf6ff}
+#map-places button.map-place:focus-visible{outline:3px solid #146eea}
+#world-map{min-height:320px}
+#view-inicio .wtg-local-heading h2{color:#f9f3e7}
+#view-inicio .wtg-local-heading p{color:#cedef2}
+#view-inicio .wtg-local-card{
+ box-shadow:0 15px 25px #0004;
+ border:1px solid #ffffff35
+}
+#view-inicio .wtg-local-card:focus-visible{outline:3px solid #f5bf57;outline-offset:3px}
+@media(max-width:820px){
+ #view-explorar #explore-list>.place-card.wtg-no-photo,
+ #view-explorar #explore-list>.place-card.wtg-photo-load-failed{
+  display:grid!important;grid-template-columns:100px minmax(0,1fr)!important;
+  min-height:146px!important;border-radius:18px!important;align-items:stretch!important;
+  box-shadow:0 7px 16px #0018352b!important
+ }
+ #view-explorar #explore-list>.place-card.wtg-no-photo .place-photo,
+ #view-explorar #explore-list>.place-card.wtg-photo-load-failed .place-photo{
+  height:100%!important;min-height:146px!important;max-height:none!important;
+  width:100%!important;border-radius:0!important;
+  background:linear-gradient(145deg,#123b64,#0a2044)!important
+ }
+ #view-explorar #explore-list>.place-card.wtg-no-photo .photo-empty,
+ #view-explorar #explore-list>.place-card.wtg-photo-load-failed .photo-empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;width:100%;color:white;background:transparent
+ }
+ #view-explorar #explore-list>.place-card.wtg-no-photo .wtg-photo-icon{font-size:30px}
+ #view-explorar #explore-list>.place-card.wtg-no-photo .wtg-photo-label{font-size:9px}
+ #view-explorar #explore-list>.place-card.wtg-no-photo .place-body,
+ #view-explorar #explore-list>.place-card.wtg-photo-load-failed .place-body{
+  display:flex!important;flex-direction:column;justify-content:center;
+  padding:13px!important;min-width:0
+ }
+ #view-explorar #explore-list>.place-card.wtg-no-photo .place-title,
+ #view-explorar #explore-list>.place-card.wtg-photo-load-failed .place-title{
+  font-size:15px!important;line-height:1.25!important;text-align:left
+ }
+ #view-explorar #explore-list>.place-card.wtg-no-photo .place-footer,
+ #view-explorar #explore-list>.place-card.wtg-photo-load-failed .place-footer{
+  margin-top:7px!important;gap:6px!important
+ }
+ #view-explorar #explore-list>.place-card.wtg-no-photo .fav-button{right:7px!important;top:7px!important}
+ #view-explorar #explore-list>.place-card.wtg-no-photo .card-tag{display:none!important}
+ #view-explorar #explore-list>.place-card.wtg-no-photo .card-open{
+  font-size:11px!important;white-space:nowrap
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #view-inicio .wtg-local-card,#map-places button.map-place{transition:none!important}
+}
+/* DESTINATION FIRST OVERRIDE: older mobile themes hid every scenic cover.
+   The whole purpose of Where to Go is destination photography before listings. */
+@media(max-width:820px){
+ #view-inicio .hero{
+  display:block!important;min-height:360px!important;max-height:none!important;
+  margin:9px 0 15px!important;border-radius:24px!important;
+  overflow:hidden!important;box-shadow:0 15px 36px #0008!important
+ }
+ #view-inicio .hero .hero-content{padding:27px 20px 88px!important}
+ #view-inicio .hero .hero-content h2{
+  font-size:clamp(29px,7.6vw,40px)!important;max-width:17ch!important;
+  line-height:1.07!important;margin:15px 0 10px!important
+ }
+ #view-inicio .hero .hero-content p{
+  display:block!important;font-size:13px!important;max-width:30ch!important;
+  line-height:1.45!important;color:#fff!important
+ }
+ #view-inicio .hero .hero-coordinate{display:block!important;bottom:48px!important;left:20px!important;color:#ffdb8b!important}
+ #view-inicio .hero .wtg-hero-controls{
+  display:flex!important;position:absolute!important;z-index:4!important;
+  bottom:10px!important;left:15px!important
+ }
+ #view-inicio .hero-credit{
+  display:block!important;font-size:10px!important;line-height:1.4!important;
+  margin:2px 6px 16px!important;color:#d8e4f1!important
+ }
+ #view-inicio .wtg-v8-destinations{
+  display:block!important;margin:17px 0 22px!important
+ }
+ #view-inicio .wtg-v8-section-title{
+  display:flex!important;align-items:end!important;justify-content:space-between!important;
+  gap:10px!important
+ }
+ #view-inicio .wtg-v8-destinations h2{font-size:23px!important;color:#fff!important}
+ #view-inicio .wtg-v8-destinations .mini-eyebrow{color:#edc775!important}
+ #view-inicio .wtg-v8-destination-rail{scroll-snap-type:x mandatory!important}
+ #view-inicio .wtg-v8-destination{scroll-snap-align:start!important}
+}
+
+/* Discovery expansion is optional and belongs AFTER the real place cards. */
+#view-explorar .wtg-more-explore.wtg-discover-more{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:100%!important;max-width:100%!important;min-height:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ padding:8px 0 20px!important;margin:10px auto 0!important
+}
+#view-explorar .wtg-more-explore.wtg-discover-more>button{
+ display:inline-flex!important;justify-content:center!important;align-items:center!important;
+ max-width:100%!important;width:auto!important;min-height:44px!important;
+ border:1px solid #dab76e!important;border-radius:99px!important;
+ background:#132e53!important;color:#ffe1a2!important;font-size:13px!important;
+ font-weight:750!important;padding:10px 18px!important;box-shadow:none!important;
+ white-space:normal!important;text-align:center!important
+}
+#view-explorar .wtg-more-explore.wtg-discover-more>button:focus-visible{
+ outline:3px solid #f5bc42!important;outline-offset:2px
+}
+
+/* Explore looks like a mobile destination finder, not a wide desktop form. */
+@media(max-width:820px){
+ #view-explorar .page-intro{margin:18px 2px 15px!important}
+ #view-explorar .page-intro h1{font-size:clamp(28px,7.3vw,36px)!important;
+   letter-spacing:-.045em!important;line-height:1.08!important;margin:4px 0 8px!important}
+ #view-explorar .page-intro p{font-size:13px!important;line-height:1.4!important}
+ #view-explorar .filter-panel{
+   padding:14px!important;border-radius:22px!important;
+   box-shadow:0 8px 20px #001a3a20!important
+ }
+ #view-explorar .filter-panel .searchbar{
+   display:flex!important;gap:6px!important;align-items:center!important;
+   border:1px solid #bed5ed!important;border-radius:15px!important;
+   overflow:hidden!important;min-height:52px!important;
+   padding:5px 5px 5px 10px!important;box-shadow:none!important
+ }
+ #view-explorar .filter-panel .searchbar input{
+   min-width:0!important;flex:1 1 auto!important;width:0!important;
+   height:40px!important;font-size:15px!important;padding:8px 4px!important
+ }
+ #view-explorar .filter-panel .searchbar .search-icon{
+   flex:0 0 19px!important;font-size:20px!important
+ }
+ #view-explorar #google-search-submit{
+   width:auto!important;min-width:69px!important;flex:0 0 auto!important;
+   height:41px!important;min-height:41px!important;
+   padding:6px 11px!important;margin:0!important;font-size:12px!important;
+   border:0!important;border-radius:11px!important;
+   background:linear-gradient(135deg,#f9d37e,#e7ab37)!important;
+   color:#061c3c!important;box-shadow:none!important
+ }
+ #view-explorar #clear-search{flex:0 0 22px!important;min-width:22px!important}
+ #view-explorar .filter-row{margin-top:12px!important;row-gap:9px!important}
+ #view-explorar .explorer-result-heading{margin:18px 1px 12px!important}
+ #view-explorar .explorer-result-heading h2{font-size:23px!important}
+ #view-explorar #explore-map{min-height:41px!important;padding:7px 10px!important;font-size:11px!important}
+}
+
+/* Small transient status pill above the tab bar, not a large card overlay. */
+@media(max-width:820px){
+ #toast.toast{
+   bottom:calc(80px + env(safe-area-inset-bottom))!important;
+   max-width:min(296px,calc(100vw - 50px))!important;
+   padding:10px 13px!important;border:1px solid #ffffff3b!important;
+   border-radius:18px!important;font-size:11px!important;font-weight:750!important;
+   line-height:1.35!important;background:#073678ee!important;
+   backdrop-filter:blur(8px)!important;box-shadow:0 6px 19px #001c3e55!important
+ }
+}
+/* Photo-first discovery is the default in every Dominican location.
+   Missing images remain accessible, but never overwhelm the tourist cards. */
+#view-explorar .wtg-unpictured-toggle{
+ width:100%;display:flex;justify-content:center;margin:10px auto 4px!important;
+ border:0!important;box-shadow:none!important;background:transparent!important;
+ padding:5px 6px!important
+}
+#view-explorar .wtg-unpictured-toggle button{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:43px;padding:11px 16px;max-width:min(100%,370px);
+ border:1px solid #f0c66c!important;border-radius:999px!important;
+ color:#ffdf91!important;background:#102c50!important;
+ font:750 12px 'DM Sans',sans-serif;cursor:pointer;
+ white-space:normal;text-align:center
+}
+#view-explorar .wtg-unpictured-toggle button:focus-visible{
+ outline:3px solid #f4bc3f;outline-offset:3px
+}
+
+/* Premium place detail: real galleries, accessible controls, lightweight cards. */
+#place-modal.place-sheet{overflow-y:auto;overscroll-behavior:contain;
+  max-height:min(92dvh,900px);-webkit-overflow-scrolling:touch}
+#place-modal .wtg-gallery{border-radius:19px 19px 0 0;position:relative}
+#place-modal .wtg-gallery-stage{aspect-ratio:3/2;height:auto;min-height:225px;max-height:420px;background:#061d38}
+#place-modal .wtg-gallery-stage .wtg-gallery-main{width:100%;height:100%;object-fit:cover;display:block}
+#place-modal .wtg-gallery-prev,#place-modal .wtg-gallery-next{
+ width:44px;height:44px;min-width:44px;min-height:44px;touch-action:manipulation;
+ background:#061d38cc;border:1px solid #ffffff70;box-shadow:0 5px 13px #03162d77}
+#place-modal .wtg-gallery-thumbnails{display:flex;gap:8px;overflow-x:auto;
+ scrollbar-width:thin;scroll-snap-type:x proximity;padding:10px 12px}
+#place-modal .wtg-gallery-thumbnails button{flex:0 0 75px;min-width:75px;
+ height:60px;border:2px solid transparent;border-radius:10px;
+ overflow:hidden;scroll-snap-align:start;padding:0;background:#183752}
+#place-modal .wtg-gallery-thumbnails button.active{
+ border-color:#ffca68;box-shadow:0 0 0 2px #ffca6830}
+#place-modal .wtg-gallery-thumbnails img{width:100%;height:100%;object-fit:cover}
+#place-modal .wtg-gallery-credit{font-size:11px;line-height:1.5;padding:9px 14px 12px;
+ overflow-wrap:anywhere}
+#place-modal .wtg-detail-eyebrow{color:#b07c27;font:800 10px "DM Sans",sans-serif;
+ letter-spacing:.12em;margin-bottom:10px}
+#place-modal .detail-content{min-width:0;padding:22px clamp(17px,4vw,31px) 30px}
+#place-modal .detail-content h2{font-size:clamp(24px,5.9vw,35px);
+ line-height:1.13;letter-spacing:-.045em;overflow-wrap:anywhere}
+#place-modal .detail-description{line-height:1.62;max-width:70ch}
+#place-modal .detail-facts{overflow-wrap:anywhere;line-height:1.6}
+#place-modal .detail-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#place-modal .detail-actions>*{display:flex;justify-content:center;align-items:center;
+ text-align:center;min-height:46px;line-height:1.4;border-radius:13px;min-width:0}
+#place-modal .detail-actions .primary,#place-modal .detail-actions .full-line{
+ grid-column:1/-1}
+#view-inicio #home-list>.place-card,#view-explorar #explore-list>.place-card{
+ content-visibility:auto;contain-intrinsic-size:auto 335px;transition:box-shadow .2s ease}
+@media (max-width:820px){
+ #place-modal.place-sheet{max-height:calc(100dvh - 55px);
+   width:min(100vw - 14px,520px);border-radius:22px 22px 12px 12px}
+ #place-modal .wtg-gallery-stage{min-height:210px;max-height:310px}
+ #place-modal .detail-actions{grid-template-columns:1fr 1fr}
+ #place-modal .detail-actions>a,#place-modal .detail-actions>button{font-size:12px;padding:10px 8px}
+ #view-inicio #home-list>.place-card,#view-explorar #explore-list>.place-card{
+   contain-intrinsic-size:auto 360px}
+}
+@media (max-width:360px){
+ #place-modal .detail-actions{grid-template-columns:1fr}
+ #place-modal .detail-actions>*{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:reduce){
+ #view-inicio #home-list>.place-card,#view-explorar #explore-list>.place-card{transition:none}
+}
+
+
+/* High-contrast language controls on navy backgrounds.
+   Keep native select behavior; language names remain readable in the picker. */
+.topbar .wtg-language-control{
+ display:inline-flex!important;align-items:center!important;gap:3px!important;
+ background:#fff8e8!important;border:1.5px solid #efc56c!important;
+ border-radius:17px!important;color:#082d57!important;
+ padding:5px 6px!important;box-shadow:0 3px 10px #0019344d!important;
+ min-width:0!important
+}
+.topbar .wtg-language-control>span[aria-hidden]{color:#103865!important}
+.topbar #wtg-language-select,.auth-shell #wtg-auth-language-select{
+ color-scheme:light!important;appearance:auto!important;
+ background:#ffffff!important;color:#082d57!important;
+ border:1px solid #d7b771!important;border-radius:9px!important;
+ font-weight:800!important;font-size:13px!important;
+ height:34px!important;min-height:34px!important;padding:4px 3px!important
+}
+.topbar #wtg-language-select option,.auth-shell #wtg-auth-language-select option{
+ color:#082d57!important;background:#fff!important;font-weight:650!important
+}
+.topbar #wtg-language-select:focus-visible,.auth-shell #wtg-auth-language-select:focus-visible{
+ outline:3px solid #efb73b!important;outline-offset:2px!important
+}
+.auth-shell .wtg-auth-language{color:#eff7ff!important}
+.auth-shell .wtg-auth-language label{color:#f8e7bf!important}
+.auth-shell #wtg-auth-language-select{min-width:144px!important;padding:6px 9px!important}
+@media(max-width:820px){
+ .topbar .wtg-language-control{max-width:90px!important;flex:0 0 auto!important}
+ .topbar #wtg-language-select{min-width:0!important;width:62px!important;
+  max-width:62px!important;font-size:12px!important}
+}
+@media(max-width:380px){
+ .topbar .wtg-language-control{padding:4px!important}
+ .topbar #wtg-language-select{width:54px!important;max-width:54px!important}
+}
+/* The old decorative title was a fixed Spanish CSS string and ignored UI language. */
+@media(max-width:769px){
+ html:lang(en) #view-inicio .wtg-v8-home-tools:before{content:"DISCOVER YOUR NEXT ADVENTURE"!important}
+ html:lang(fr) #view-inicio .wtg-v8-home-tools:before{content:"DÉCOUVREZ VOTRE PROCHAINE AVENTURE"!important}
+ html:lang(pt) #view-inicio .wtg-v8-home-tools:before{content:"DESCUBRA SUA PRÓXIMA AVENTURA"!important}
+ html:lang(de) #view-inicio .wtg-v8-home-tools:before{content:"ENTDECKE DEIN NÄCHSTES ABENTEUER"!important}
+ html:lang(it) #view-inicio .wtg-v8-home-tools:before{content:"SCOPRI LA TUA PROSSIMA AVVENTURA"!important}
+}

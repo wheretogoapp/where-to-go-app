@@ -1,0 +1,132 @@
+/* Six priorities: accessible recovery, private submissions and less mobile clutter.
+ * Tokens isolated so existing Google Places and province styling stays intact. */
+.wtg-recovery-dialog[hidden],.wtg-tour-request-list[hidden]{display:none!important}
+.wtg-recovery-dialog{
+ position:fixed;inset:0;z-index:14000;
+ display:grid;place-items:center;padding:20px;
+ background:rgba(2,14,33,.81);backdrop-filter:blur(5px)
+}
+.wtg-recovery-card{
+ position:relative;width:min(440px,100%);max-height:90dvh;
+ overflow:auto;border-radius:23px;padding:26px;
+ background:#f8fbff;color:#12334b;-webkit-text-fill-color:#12334b;
+ border:1px solid #d6e2eb;box-shadow:0 25px 60px rgba(0,0,0,.35)
+}
+.wtg-recovery-card h2{font-size:clamp(20px,5vw,27px);line-height:1.15;margin:0 30px 10px 0;color:#102f49}
+.wtg-recovery-card p{color:#36596e;font-size:13px;line-height:1.55}
+.wtg-recovery-card form{display:grid;gap:14px;margin-top:18px}
+.wtg-recovery-card label{display:grid;gap:6px;font-size:13px;font-weight:750}
+.wtg-recovery-card input{
+ min-height:46px;width:100%;padding:11px;border:1px solid #adc5d6;
+ border-radius:12px;background:#fff;color:#102e49;-webkit-text-fill-color:#102e49
+}
+.wtg-recovery-card form button{
+ min-height:48px;border:0;border-radius:12px;
+ background:#eec77f;color:#142e43;-webkit-text-fill-color:#142e43;
+ font-weight:900;cursor:pointer
+}
+.wtg-recovery-card button:disabled{opacity:.65;cursor:progress}
+.wtg-recovery-close{
+ position:absolute;top:14px;right:13px;width:40px;height:40px;
+ border:1px solid #bfced8;border-radius:50%;background:white;
+ font-size:25px;cursor:pointer;color:#12334b;-webkit-text-fill-color:#12334b
+}
+.wtg-recovery-link{
+ display:block;width:100%;padding:8px 10px;margin-top:9px;
+ border:0;background:transparent;
+ color:#ead092!important;-webkit-text-fill-color:#ead092!important;
+ font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:4px
+}
+.wtg-recovery-dialog :focus-visible,
+.wtg-recovery-link:focus-visible{outline:3px solid #0c7db3;outline-offset:3px}
+.wtg-tour-request-list{
+ width:100%;min-width:0;margin-top:14px;
+ padding:13px;border-radius:14px;background:rgba(2,31,60,.34);
+ border:1px solid rgba(222,237,248,.18);text-align:left
+}
+.wtg-tour-request{
+ padding:12px;border-radius:10px;background:#fff;
+ color:#153b54;-webkit-text-fill-color:#153b54;
+ margin:9px 0;overflow-wrap:anywhere
+}
+.wtg-tour-request strong,.wtg-tour-request small,.wtg-tour-request p{
+ color:inherit!important;-webkit-text-fill-color:inherit!important
+}
+.wtg-tour-request small{font-size:12px;display:block;margin:5px 0}
+.wtg-tour-request p{font-size:11px;margin:5px 0}
+@media(max-width:600px){
+ .wtg-recovery-dialog{padding:12px}
+ .wtg-recovery-card{padding:23px 18px}
+ .wtg-recovery-card input{font-size:16px}
+ #wtg-tours-own-open{min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){
+ .wtg-recovery-dialog,.wtg-recovery-card{transition:none!important;animation:none!important}
+}
+
+
+/* Pilot business onboarding: photos never leave the phone until the owner sends them. */
+#register-modal .wtg-business-photo-preview[hidden],
+#tours-modal .wtg-business-photo-preview[hidden],
+#register-modal .wtg-business-feedback[hidden]{display:none!important}
+:is(#register-modal,#tours-modal) .wtg-business-photo-preview{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(72px,1fr));
+ gap:9px;margin:8px 0 14px;max-width:100%;
+}
+:is(#register-modal,#tours-modal) .wtg-business-photo-thumb{
+ min-width:0;overflow:hidden;border-radius:12px;
+ border:1px solid rgba(202,169,92,.55);background:#eaf1f8;
+ color:#16334d;text-align:center;
+}
+:is(#register-modal,#tours-modal) .wtg-business-photo-thumb img{
+ display:block;width:100%;aspect-ratio:1/1;object-fit:cover;
+}
+:is(#register-modal,#tours-modal) .wtg-business-photo-thumb>span{
+ display:grid;place-items:center;aspect-ratio:1/1;
+ padding:6px;font-size:11px;
+}
+:is(#register-modal,#tours-modal) .wtg-business-photo-thumb small{
+ display:block;padding:5px;font-size:11px;font-weight:700;
+}
+#register-modal .wtg-business-feedback{
+ margin:12px 0;padding:12px 14px;
+ border-radius:12px;border:1px solid #d0a95f;
+ background:#fff7e7;color:#382b18;
+ font-size:13px;line-height:1.5;
+ overflow-wrap:anywhere;
+}
+#register-modal button[type="submit"]:disabled{
+ opacity:.68;cursor:progress;
+}
+@media(max-width:420px){
+ :is(#register-modal,#tours-modal) .wtg-business-photo-preview{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+ }
+}
+
+
+/* Discovery pilot: visual listings remain default; the entire real directory is optional. */
+.wtg-explore-directory-actions{
+ display:flex;justify-content:center;align-items:center;margin:8px 0 18px;
+}
+#wtg-explore-directory-toggle{
+ min-height:46px;max-width:min(100%,560px);
+ width:100%;white-space:normal;line-height:1.35;
+ border:1px solid rgba(164,187,205,.7);
+ border-radius:14px;padding:10px 16px;font-size:14px;
+}
+#wtg-explore-directory-toggle[hidden]{display:none!important}
+#wtg-explore-directory-toggle[aria-pressed="true"]{
+ background:#173a59!important;color:#fdf0c9!important;
+ border-color:#d3b879!important;
+}
+
+/* Pending OAuth providers should never look like a fully working option. */
+#auth-gate .auth-social:disabled{
+ opacity:.65!important;cursor:not-allowed!important;
+ filter:saturate(.7);box-shadow:none!important;
+}
+#auth-gate .auth-social .wtg-social-coming-soon{
+ font-size:11px;font-weight:700;color:inherit;
+ -webkit-text-fill-color:inherit;white-space:nowrap;
+}

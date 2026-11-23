@@ -1,0 +1,82 @@
+[
+  {
+    "osm_id": "osm-way-254282388",
+    "nombre": "Fortaleza San Felipe",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Fortaleza_de_San_Felipe_DR_2.jpg?width=700",
+    "attribution": "CareAhLine · CC0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Fortaleza_de_San_Felipe_DR_2.jpg",
+    "note": "Imagen autenticada contra la categoría de Fortaleza de San Felipe, Puerto Plata, y el identificador del objeto OSM."
+  },
+  {
+    "osm_id": "osm-node-10633818705",
+    "nombre": "Dunas de Baní",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Dunas%20de%20Ban%C3%AD%201.jpg?width=700",
+    "attribution": "Ronny Medina · CC BY 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Dunas_de_Ban%C3%AD_1.jpg",
+    "note": "Imagen del mismo destino, identidad y licencia comprobadas manualmente en la ficha pública de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-way-320449984",
+    "nombre": "Saltos de Damajagua",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Damajagua%20Waterfall.jpg?width=700",
+    "attribution": "Funcheta · CC BY-SA 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Damajagua_Waterfall.jpg",
+    "note": "Imagen del mismo destino, identidad y licencia comprobadas manualmente en la ficha pública de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-node-1645554843",
+    "nombre": "Salto El Limón",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Wasserfall%20El%20Limon.jpg?width=700",
+    "attribution": "Thetornado76 · CC BY-SA 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Wasserfall_El_Limon.jpg",
+    "note": "Imagen del mismo destino, identidad y licencia comprobadas manualmente en la ficha pública de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-node-3684543648",
+    "nombre": "Parque Nacional Lago Enriquillo",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Lago%20Enriquillo.jpg?width=700",
+    "attribution": "Juan Alberto Silver · CC BY-SA 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Lago_Enriquillo.jpg",
+    "note": "Imagen del mismo destino, identidad y licencia comprobadas manualmente en la ficha pública de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-node-1440518529",
+    "nombre": "El Salto Jimenoa",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Saltos%20de%20Jimenoa.jpg?width=700",
+    "attribution": "Treeman · Dominio público · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Saltos_de_Jimenoa.jpg",
+    "note": "Imagen vinculada a este mismo lugar con identidad y licencia comprobadas en la página de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-way-329792669",
+    "nombre": "Arco del Triunfo",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Triumphbogen(Arco%20del%20triunfo).jpg?width=700",
+    "attribution": "Escape2606 · CC BY-SA 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Triumphbogen(Arco_del_triunfo).jpg",
+    "note": "Imagen vinculada a este mismo lugar con identidad y licencia comprobadas en la página de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-way-140159249",
+    "nombre": "Anfiteatro Altos de Chavón",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Altos%20de%20Chavon%20Amphitheater.JPG?width=700",
+    "attribution": "Compro · Dominio público · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Altos_de_Chavon_Amphitheater.JPG",
+    "note": "Imagen vinculada a este mismo lugar con identidad y licencia comprobadas en la página de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-way-246753931",
+    "nombre": "Catedral San Pedro Apóstol",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Catedral%20San%20Pedro.jpg?width=700",
+    "attribution": "PJAQUEZ19 · CC BY-SA 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Catedral_San_Pedro.jpg",
+    "note": "Imagen vinculada a este mismo lugar con identidad y licencia comprobadas en la página de Wikimedia Commons"
+  },
+  {
+    "osm_id": "osm-node-7074406573",
+    "nombre": "Monumento Hermanas Mirabal",
+    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Monumento%20hermanas%20Mirabal.jpg?width=700",
+    "attribution": "Ronny Medina · CC BY-SA 4.0 · Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Monumento_hermanas_Mirabal.jpg",
+    "note": "Imagen vinculada a este mismo lugar con identidad y licencia comprobadas en la página de Wikimedia Commons"
+  }
+]

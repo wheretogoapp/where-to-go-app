@@ -1,0 +1,151 @@
+/* WHERE TO GO — 5-tab mobile navigation, traveler hub and clearly priced plans.
+   Pure CSS only: no Google Places, GPS, search radius, maps or data changes. */
+
+/* White plan cards always need dark text, even in global dark mode.
+   Explicit -webkit-text-fill-color avoids Safari inherited light/gold text. */
+#view-promocionar .plans-grid .plan,
+html[data-wtg-theme="dark"] #view-promocionar .plans-grid .plan,
+html[data-wtg-theme="light"] #view-promocionar .plans-grid .plan{
+  background:#fff!important;color:#173b54!important;
+  -webkit-text-fill-color:#173b54!important;
+  border:1px solid #d6e3ed!important;
+}
+#view-promocionar .plans-grid .plan h3,
+html[data-wtg-theme] #view-promocionar .plans-grid .plan h3{
+ color:#102f4b!important;-webkit-text-fill-color:#102f4b!important;
+ font-weight:900!important;font-size:clamp(23px,5vw,28px)!important;
+ letter-spacing:-.035em!important;opacity:1!important;
+}
+#view-promocionar .plans-grid .plan p,
+#view-promocionar .plans-grid .plan li,
+html[data-wtg-theme] #view-promocionar .plans-grid .plan p,
+html[data-wtg-theme] #view-promocionar .plans-grid .plan li{
+ color:#3a596e!important;-webkit-text-fill-color:#3a596e!important;
+ opacity:1!important;line-height:1.55!important;
+}
+#view-promocionar .plans-grid .plan .plan-price{
+ min-height:98px;align-items:center!important;justify-content:flex-start!important;
+ gap:12px!important;margin:16px 0!important;
+ border-top:1px solid #dbe5ee!important;border-bottom:1px solid #dbe5ee!important;
+}
+#view-promocionar .plans-grid .plan .plan-price strong,
+html[data-wtg-theme] #view-promocionar .plans-grid .plan .plan-price strong{
+ color:#102b47!important;-webkit-text-fill-color:#102b47!important;
+ opacity:1!important;visibility:visible!important;
+ font-size:clamp(37px,8vw,50px)!important;
+ font-family:Outfit,'DM Sans',sans-serif!important;
+ font-weight:900!important;line-height:1.1!important;
+ letter-spacing:-.055em!important;
+ text-shadow:none!important;display:inline-block!important;flex-shrink:0!important;
+}
+#view-promocionar .plans-grid .plan .plan-price span,
+html[data-wtg-theme] #view-promocionar .plans-grid .plan .plan-price span{
+ color:#526b7f!important;-webkit-text-fill-color:#526b7f!important;
+ opacity:1!important;font-weight:700!important;font-size:12px!important;margin:0!important;
+}
+#view-promocionar .plans-grid .plan.premium{
+ border-color:#c9a357!important;
+ background:linear-gradient(160deg,#ffffff,#fffdf6)!important;
+}
+#view-promocionar .plans-grid .plan.premium .plan-price strong{
+ color:#7e5018!important;-webkit-text-fill-color:#7e5018!important;
+}
+#view-promocionar .plans-grid .plan .plan-symbol{
+ color:#11637a!important;-webkit-text-fill-color:#11637a!important;
+}
+#view-promocionar .plans-grid .plan .choose-plan{
+ color:#103047!important;-webkit-text-fill-color:#103047!important;
+ border-color:#cdb897!important;
+}
+/* 5 large finger targets, instead of 7 tiny items. */
+@media(max-width:769px){
+ .mobile-tabbar,
+ body.wtg-profile-open .mobile-tabbar{
+  display:flex!important;
+  justify-content:space-around!important;align-items:stretch!important;
+  padding-left:max(6px,env(safe-area-inset-left))!important;
+  padding-right:max(6px,env(safe-area-inset-right))!important;
+  background:#fafcff!important;
+ }
+ .mobile-tabbar .mobile-tab{
+  flex:1 1 20%!important;max-width:20%!important;
+  gap:3px!important;padding:5px 2px!important;min-height:56px!important;
+ }
+ .mobile-tabbar .mobile-tab span{font-size:24px!important;line-height:25px!important}
+ .mobile-tabbar .mobile-tab small{
+  font-size:clamp(10px,2.65vw,12px)!important;
+  line-height:1.2!important;font-weight:800!important;
+  letter-spacing:-.016em!important
+ }
+ .mobile-tabbar .mobile-tab.active,
+ body.wtg-profile-open .mobile-tabbar [data-profile-open]{
+  background:rgba(15,97,161,.1)!important;border-radius:13px!important;
+ }
+ html[data-wtg-theme="dark"] .mobile-tabbar{
+  background:#092743!important;border-top-color:#365a74!important
+ }
+ #wtg-traveler-profile:not([hidden]){
+  bottom:calc(66px + env(safe-area-inset-bottom))!important;
+ }
+}
+/* The profile is the consolidated menu — keep the existing full profile tabs. */
+#wtg-traveler-profile .wtg-profile-quickmenu{
+ margin:19px 0 16px;padding:15px;border-radius:22px;
+ background:rgba(10,46,78,.62);
+ border:1px solid rgba(187,217,237,.28);
+ box-shadow:0 14px 32px rgba(0,14,36,.16)
+}
+#wtg-traveler-profile .wtg-profile-quickmenu>h4{
+ font-size:13px!important;letter-spacing:.055em!important;
+ text-transform:uppercase!important;color:#f7dba6!important;
+ margin:0 0 12px!important;
+}
+#wtg-traveler-profile .wtg-profile-quickgrid{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px
+}
+#wtg-traveler-profile .wtg-profile-quick{
+ display:flex;align-items:center;text-align:left;gap:9px;
+ min-height:60px;padding:12px;border-radius:15px;
+ border:1px solid rgba(163,203,228,.36);
+ background:linear-gradient(135deg,rgba(24,68,104,.95),rgba(10,43,72,.92));
+ color:#f5faff!important;-webkit-text-fill-color:#f5faff!important;
+ text-decoration:none!important;cursor:pointer;
+ font-family:inherit;box-shadow:0 5px 15px rgba(0,11,30,.11)
+}
+#wtg-traveler-profile .wtg-profile-quick>span{
+ font-size:20px;flex:0 0 26px;text-align:center;
+ -webkit-text-fill-color:#f6d78e!important;color:#f6d78e!important;
+}
+#wtg-traveler-profile .wtg-profile-quick strong{
+ font-size:13px;font-weight:750;line-height:1.28;
+ overflow-wrap:anywhere;color:inherit!important;-webkit-text-fill-color:inherit!important;
+}
+#wtg-traveler-profile .wtg-profile-quick:focus-visible{
+ outline:3px solid #ffdfa7!important;outline-offset:2px!important;
+}
+html[data-wtg-theme="light"] #wtg-traveler-profile .wtg-profile-quickmenu{
+ background:#f7fbff!important;border-color:#c7daea!important
+}
+html[data-wtg-theme="light"] #wtg-traveler-profile .wtg-profile-quickmenu>h4{
+ color:#224865!important;-webkit-text-fill-color:#224865!important
+}
+html[data-wtg-theme="light"] #wtg-traveler-profile .wtg-profile-quick{
+ background:#fff!important;border-color:#b6d1e2!important;
+ color:#143b58!important;-webkit-text-fill-color:#143b58!important
+}
+html[data-wtg-theme="light"] #wtg-traveler-profile .wtg-profile-quick>span{
+ color:#0e7185!important;-webkit-text-fill-color:#0e7185!important
+}
+@media(max-width:365px){
+ #wtg-traveler-profile .wtg-profile-quickgrid{gap:7px}
+ #wtg-traveler-profile .wtg-profile-quick{padding:10px 8px;min-height:56px;gap:6px}
+ #wtg-traveler-profile .wtg-profile-quick strong{font-size:12px}
+}
+@media(hover:hover) and (pointer:fine){
+ #wtg-traveler-profile .wtg-profile-quick:hover{
+  transform:translateY(-2px);border-color:#f2d08e
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #wtg-traveler-profile .wtg-profile-quick{transition:none!important;transform:none!important}
+}

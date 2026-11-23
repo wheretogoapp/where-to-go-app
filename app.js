@@ -1,0 +1,1903 @@
+/* Province-accurate editorial cover. No photo is substituted for a missing image. */
+const WTG_HERO_DATA=window.WTG_PROVINCE_HEROES||{};
+const WTG_HERO_SRC=window.WTG_HERO_DEFAULT||{};
+let wtgProvincePreview='';
+function canonicalProvince(raw){let v=String(raw||'').trim().toLocaleLowerCase('es').replace(/^(provincia de |provincia |province of )/,'').replace(/( province| provincia)$/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if(v==='santo domingo de guzman')return 'Distrito Nacional';
+  const list=Object.keys(WTG_HERO_DATA);
+  return list.find(x=>x.toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'')===v)||'';
+}
+function provinceFromCity(){
+  const p=canonicalProvince(state.province);
+  if(p)return p;
+  const located=municipalities.find(m=>m.municipio.toLocaleLowerCase('es')===String(state.city||'').toLocaleLowerCase('es'));
+  return located?located.provincia:(state.mode==='gps'?'':(['Sosúa','Cabarete'].includes(state.city)?'Puerto Plata':['Punta Cana','Bávaro','Verón–Punta Cana'].includes(state.city)?'La Altagracia':''));
+}
+function updateProvinceHero(forPreview=false){
+  const province=forPreview ? wtgProvincePreview : provinceFromCity();
+  const data=WTG_HERO_DATA[province];
+  const hero=document.querySelector('.hero');if(!hero)return;
+  const art=hero.querySelector('.hero-art');const title=hero.querySelector('h2');const subtitle=hero.querySelector('.hero-content p');const place=hero.querySelector('.hero-coordinate span');const credit=document.querySelector('.hero-credit');
+  if(!data){
+    art.style.backgroundImage='none';title.innerHTML=(window.WTG_I18N?.t('Descubre lugares')||'Descubre lugares')+'<br><em>'+(window.WTG_I18N?.t('cerca de ti.')||'cerca de ti.')+'</em>';
+    subtitle.textContent='Activa tu ubicación o elige un municipio para explorar tu entorno, sin resultados de zonas lejanas.';
+    place.textContent='TU PRÓXIMA AVENTURA';credit.textContent='Elige una provincia para ver su fotografía identificada.';
+    return;
+  }
+  art.style.backgroundImage=`url("${data.photo.replaceAll('"','%22')}")`;
+  art.style.backgroundPosition='50% 50%';
+  art.style.backgroundColor='#1c3945';
+  title.textContent='';title.appendChild(document.createTextNode((window.WTG_I18N?.t('Descubre')||'Descubre') + ' ' + data.province + ': '));
+  const em=document.createElement('em');em.textContent=(window.WTG_I18N?.t('tu próxima aventura.')||'tu próxima aventura.');title.append(em);
+  subtitle.textContent=window.WTG_I18N?.lang==='es'?data.subtitle:((window.WTG_I18N?.t('Explora los lugares más interesantes de')||'Explora los lugares más interesantes de')+' '+data.province+'.');
+  place.textContent=(data.province+' · '+data.landmark).toLocaleUpperCase('es');
+  credit.replaceChildren(document.createTextNode('Foto: '+data.landmark+' · '+data.author+' · '+data.license+' · '));
+  const link=document.createElement('a');link.href=data.source;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Licencia y archivo original en Wikimedia Commons';credit.append(link);
+  const selector=document.getElementById('hero-province');if(selector && document.activeElement!==selector)selector.value=data.province;
+  const note=document.getElementById('hero-preview-note');if(note)note.hidden=!forPreview;
+}
+function createProvinceControls(){
+  const row=document.getElementById('province-explorer');if(!row)return;
+  const sel=document.getElementById('hero-province');
+  sel.replaceChildren(new Option('Elige una provincia…',''),...Object.keys(WTG_HERO_DATA).map(p=>new Option(p,p)));
+  sel.value=provinceFromCity()||'';
+  sel.addEventListener('change',()=>{if(sel.value)selectProvinceHub(sel.value);else{wtgProvincePreview='';updateProvinceHero();window.WTG_EXPERIENCE?.update?.()}});
+  document.getElementById('hero-choose-municipio').onclick=()=>{
+    const p=sel.value;if(!p)return;
+    openModal('location-modal');const provinceSelect=document.getElementById('province-select');provinceSelect.value=p;refreshMunicipalitySelect();
+    document.getElementById('municipality-select').focus();
+  };
+  document.getElementById('province-select').addEventListener('change',e=>{
+    if(WTG_HERO_DATA[e.target.value]){wtgProvincePreview=e.target.value;updateProvinceHero(true);window.WTG_EXPERIENCE?.update?.()}
+  });
+  document.addEventListener('click',e=>{
+    if(e.target.closest('[data-close]')||e.target.id==='overlay'){
+      wtgProvincePreview='';updateProvinceHero();window.WTG_EXPERIENCE?.update?.();
+    }
+  });
+}
+
+/* Where to Go · A dónde ir — Version 4.3 · catálogo local rápido, sin Google Places
+   POIs from OpenStreetMap with exact OSM element IDs; no fabricated listings or photos.
+   User-submitted businesses and favorites are stored on THIS DEVICE only.
+   Payments, authentication and global publishing are NOT enabled in this build. */
+'use strict';
+
+const $ = (id) => document.getElementById(id);
+const CATEGORIES = [
+  {id:'rios',name:'Ríos',emoji:'🏞️',color:'#eaf1f3',photo:'nature',text:'Explora cerca de ti'},
+  {id:'balnearios',name:'Balnearios',emoji:'🌊',color:'#eaf1f3',photo:'nature',text:'Explora cerca de ti'},
+  {id:'cascadas',name:'Cascadas',emoji:'💦',color:'#eaf1f3',photo:'nature',text:'Explora cerca de ti'},
+  {id:'lagunas',name:'Lagunas',emoji:'🛶',color:'#eaf1f3',photo:'nature',text:'Explora cerca de ti'},
+  {id:'senderismo',name:'Senderismo',emoji:'🥾',color:'#eaf1f3',photo:'nature',text:'Explora cerca de ti'},
+  {id:'playas',name:'Playas',emoji:'🏖️',color:'#eaf1f3',photo:'beach',text:'Explora cerca de ti'},
+  {id:'parques',name:'Parques',emoji:'🌳',color:'#eaf1f3',photo:'nature',text:'Explora cerca de ti'},
+  {id:'atracciones',name:'Lugares turísticos',emoji:'📸',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'entretenimiento',name:'Entretenimiento',emoji:'🎡',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'infantil',name:'Diversión infantil',emoji:'🧸',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'piscinas',name:'Piscinas',emoji:'🏊',color:'#eaf1f3',photo:'pool',text:'Explora cerca de ti'},
+  {id:'restaurantes',name:'Restaurantes',emoji:'🍽️',color:'#eaf1f3',photo:'food',text:'Explora cerca de ti'},
+  {id:'bares',name:'Bares',emoji:'🍹',color:'#eaf1f3',photo:'night',text:'Explora cerca de ti'},
+  {id:'discotecas',name:'Discotecas',emoji:'🪩',color:'#eaf1f3',photo:'night',text:'Explora cerca de ti'},
+  {id:'cafes',name:'Cafeterías',emoji:'☕',color:'#eaf1f3',photo:'food',text:'Explora cerca de ti'},
+  {id:'heladerias',name:'Heladerías',emoji:'🍦',color:'#eaf1f3',photo:'food',text:'Explora cerca de ti'},
+  {id:'panaderias',name:'Panaderías',emoji:'🥖',color:'#eaf1f3',photo:'food',text:'Explora cerca de ti'},
+  {id:'pescaderias',name:'Pescaderías',emoji:'🐟',color:'#eaf1f3',photo:'food',text:'Explora cerca de ti'},
+  {id:'comidarapida',name:'Comida rápida',emoji:'🍔',color:'#eaf1f3',photo:'food',text:'Explora cerca de ti'},
+  {id:'supermercados',name:'Supermercados',emoji:'🛒',color:'#eaf1f3',photo:'food',text:'Explora cerca de ti'},
+  {id:'colmados',name:'Colmados',emoji:'🧺',color:'#eaf1f3',photo:'food',text:'Explora cerca de ti'},
+  {id:'mercados',name:'Mercados',emoji:'🥬',color:'#eaf1f3',photo:'food',text:'Explora cerca de ti'},
+  {id:'tiendas',name:'Tiendas y moda',emoji:'🛍️',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'ferreterias',name:'Ferreterías',emoji:'🛠️',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'electrodomesticos',name:'Electrodomésticos',emoji:'📺',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'tecnologia',name:'Tecnología',emoji:'📱',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'barberias',name:'Barberías',emoji:'💈',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'salones',name:'Salones de belleza',emoji:'💇',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'unas',name:'Centros de uñas',emoji:'💅',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'spas',name:'Spas y masajes',emoji:'🧖',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'gimnasios',name:'Gimnasios',emoji:'🏋️',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'hoteles',name:'Hoteles',emoji:'🏨',color:'#eaf1f3',photo:'hotel',text:'Explora cerca de ti'},
+  {id:'resorts',name:'Resorts',emoji:'🌴',color:'#eaf1f3',photo:'hotel',text:'Explora cerca de ti'},
+  {id:'villas',name:'Villas y alojamientos',emoji:'🏡',color:'#eaf1f3',photo:'hotel',text:'Explora cerca de ti'},
+  {id:'taxis',name:'Taxis y transporte',emoji:'🚘',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'gasolineras',name:'Gasolineras',emoji:'⛽',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'talleres',name:'Talleres',emoji:'🔧',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'lavaderos',name:'Car washes',emoji:'🚿',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'farmacias',name:'Farmacias',emoji:'💊',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'hospitales',name:'Hospitales y clínicas',emoji:'🏥',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'odontologia',name:'Dentistas',emoji:'🦷',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'veterinarias',name:'Veterinarias',emoji:'🐾',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'mascotas',name:'Tiendas de mascotas',emoji:'🐕',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'bancos',name:'Bancos',emoji:'🏦',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'cajeros',name:'Cajeros automáticos',emoji:'🏧',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'lavanderias',name:'Lavanderías',emoji:'🧺',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'servicios',name:'Servicios profesionales',emoji:'🗂️',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'escuelas',name:'Escuelas',emoji:'🎓',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'iglesias',name:'Iglesias',emoji:'⛪',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'},
+  {id:'deportes',name:'Deportes',emoji:'⚽',color:'#eaf1f3',photo:'attraction',text:'Explora cerca de ti'}
+];
+const CATEGORY_BY_ID = Object.fromEntries(CATEGORIES.map(x=>[x.id,x]));
+// Selected quick-access places. Locality centers are browsing centers only, never place directions.
+const CITIES = [
+  {name:'Puerto Plata',region:'República Dominicana',country:'RD',lat:19.7934,lon:-70.6884,emoji:'🏝️'},
+  {name:'Santo Domingo de Guzmán',region:'República Dominicana',country:'RD',lat:18.4861,lon:-69.9312,emoji:'🏛️'},
+  {name:'Santiago de los Caballeros',region:'República Dominicana',country:'RD',lat:19.4517,lon:-70.6970,emoji:'🌇'},
+  {name:'Sosúa',region:'República Dominicana',country:'RD',lat:19.7683,lon:-70.5199,emoji:'🏖️'},
+  {name:'Cabarete',region:'Distrito municipal de Sosúa · Puerto Plata',country:'RD',lat:19.7496,lon:-70.4139,emoji:'🏄'},
+  {name:'Las Terrenas',region:'Samaná · República Dominicana',country:'RD',lat:19.311,lon:-69.543,emoji:'🏖️'},
+  {name:'El Limón',region:'Samaná · República Dominicana',country:'RD',lat:19.27,lon:-69.447,emoji:'🌿'},
+  {name:'La Romana',region:'República Dominicana',country:'RD',lat:18.4273,lon:-68.9728,emoji:'🌴'},
+  {name:'Punta Cana',region:'Higüey · La Altagracia · centro de zona',country:'RD',lat:18.5586,lon:-68.3694,emoji:'🌴'},
+  {name:'Bávaro',region:'Verón–Punta Cana · La Altagracia · centro de zona',country:'RD',lat:18.6862,lon:-68.4198,emoji:'🏖️'},
+  {name:'Verón–Punta Cana',region:'Distrito municipal de Higüey · La Altagracia',country:'RD',lat:18.58182,lon:-68.40431,emoji:'☀️'}
+];
+const PROVINCES = ['Azua','Baoruco','Barahona','Dajabón','Distrito Nacional','Duarte','El Seibo','Elías Piña','Espaillat','Hato Mayor','Hermanas Mirabal','Independencia','La Altagracia','La Romana','La Vega','María Trinidad Sánchez','Monseñor Nouel','Monte Cristi','Monte Plata','Pedernales','Peravia','Puerto Plata','Samaná','San Cristóbal','San José de Ocoa','San Juan','San Pedro de Macorís','Sánchez Ramírez','Santiago','Santiago Rodríguez','Santo Domingo','Valverde'];
+
+// Published city-centre reference coordinates from the existing RD photo-atlas anchors.
+// A provincial selection previews places NEAR this hub, not every municipality.
+const WTG_PROVINCE_HUBS={"Azua":{"city":"Azua de Compostela","lat":18.455,"lon":-70.73},"Baoruco":{"city":"Neyba","lat":18.482,"lon":-71.417},"Barahona":{"city":"Barahona","lat":18.211,"lon":-71.101},"Dajabón":{"city":"Dajabón","lat":19.547,"lon":-71.704},"Distrito Nacional":{"city":"Santo Domingo","lat":18.4861,"lon":-69.9312},"Duarte":{"city":"San Francisco de Macorís","lat":19.301,"lon":-70.253},"El Seibo":{"city":"Santa Cruz de El Seibo","lat":18.771,"lon":-69.04},"Elías Piña":{"city":"Comendador","lat":18.877,"lon":-71.702},"Espaillat":{"city":"Moca","lat":19.395,"lon":-70.523},"Hato Mayor":{"city":"Hato Mayor del Rey","lat":18.767,"lon":-69.257},"Hermanas Mirabal":{"city":"Salcedo","lat":19.378,"lon":-70.415},"Independencia":{"city":"Jimaní","lat":18.49,"lon":-71.851},"La Altagracia":{"city":"Punta Cana","lat":18.5586,"lon":-68.3694},"La Romana":{"city":"La Romana","lat":18.4273,"lon":-68.9728},"La Vega":{"city":"La Vega","lat":19.224,"lon":-70.531},"María Trinidad Sánchez":{"city":"Nagua","lat":19.383,"lon":-69.847},"Monseñor Nouel":{"city":"Bonao","lat":18.943,"lon":-70.409},"Monte Cristi":{"city":"Monte Cristi","lat":19.845,"lon":-71.647},"Monte Plata":{"city":"Monte Plata","lat":18.807,"lon":-69.784},"Pedernales":{"city":"Pedernales","lat":18.036,"lon":-71.743},"Peravia":{"city":"Baní","lat":18.279,"lon":-70.331},"Puerto Plata":{"city":"Puerto Plata","lat":19.7934,"lon":-70.6884},"Samaná":{"city":"Samaná","lat":19.204,"lon":-69.337},"San Cristóbal":{"city":"San Cristóbal","lat":18.417,"lon":-70.11},"San José de Ocoa":{"city":"San José de Ocoa","lat":18.548,"lon":-70.507},"San Juan":{"city":"San Juan de la Maguana","lat":18.808,"lon":-71.227},"San Pedro de Macorís":{"city":"San Pedro de Macorís","lat":18.454,"lon":-69.307},"Sánchez Ramírez":{"city":"Cotuí","lat":19.052,"lon":-70.151},"Santiago":{"city":"Santiago","lat":19.4517,"lon":-70.697},"Santiago Rodríguez":{"city":"San Ignacio de Sabaneta","lat":19.476,"lon":-71.343},"Santo Domingo":{"city":"Santo Domingo Este","lat":18.486,"lon":-69.852},"Valverde":{"city":"Mao","lat":19.552,"lon":-71.078}};
+// Territorial catalog from ONE's published 158-municipality index. Bundled for reliable offline selector.
+// 'local-*' codes are UI-only keys, never shown as official municipality identifiers.
+// A hosted ONE index can refresh real administrative codes when its public endpoint is reachable.
+const MUNICIPAL_SOURCE=[
+ '/where-to-go-app/data/municipios-rd.json',
+ 'https://raw.githubusercontent.com/mnakagaw/ONE-TuMunicipioEnCifras-WEB/main/public/data/municipios_index.json',
+ 'https://cdn.jsdelivr.net/gh/mnakagaw/ONE-TuMunicipioEnCifras-WEB@main/public/data/municipios_index.json'
+];
+let municipalities=[];
+const VERIFIED_OSM_IMAGES={'osm-way-254282388':{photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Fortaleza_de_San_Felipe_DR_2.jpg?width=700',attribution:'CareAhLine · CC0 · Wikimedia Commons',source:'https://commons.wikimedia.org/wiki/File:Fortaleza_de_San_Felipe_DR_2.jpg'}};
+const GOOGLE_BRAND='<a class="google-credit" href="https://maps.google.com" target="_blank" rel="noopener"><img src="https://www.gstatic.com/images/branding/product/1x/maps_48dp.png" width="16" height="16" alt="Google Maps" /> Google Maps</a>';
+function savedManualLocation(){
+  try{
+    const o=JSON.parse(localStorage.getItem('wtg_last_selected_location_v1')||'null');
+    if(!o||!['city','municipio'].includes(o.mode)||typeof o.city!=='string'||!o.city.trim()||!Number.isFinite(o.lat)||!Number.isFinite(o.lon))return null;
+    if(o.lat<17.5||o.lat>20.3||o.lon< -72.1||o.lon> -68.1)return null;
+    return o;
+  }catch{return null}
+}
+function activateDominicanDestination(){
+  window.WTG_ACTIVE_COUNTRY='DO';
+  window.WTG_ACTIVE_HAS_COORDINATES=true;
+  window.WTG_ACTIVE_DESTINATION='';
+  try{sessionStorage.removeItem('wtg_world_selection')}catch{}
+}
+function rememberManualLocation(){
+  if(!['city','municipio'].includes(state.mode))return;
+  try{localStorage.setItem('wtg_last_selected_location_v1',JSON.stringify({lat:state.lat,lon:state.lon,city:state.city,province:state.province,region:state.region,mode:state.mode}))}catch{}
+}
+const wtgSavedArea=savedManualLocation();
+const state = {
+  view:'inicio', lat:wtgSavedArea?.lat??19.7934, lon:wtgSavedArea?.lon??-70.6884,
+  city:wtgSavedArea?.city||'Puerto Plata',region:wtgSavedArea?.region||'República Dominicana',
+  mode:wtgSavedArea?.mode||'demo', gpsAccuracy:null, places:[], catalog:[], remotePlaces:[], showUnpictured:false,
+  dataMode:'loading', dataError:'', category:'todos', radius:wtgSavedArea?.province==='Puerto Plata'?30000:12000, search:'', googleEnabled:false, googleIssue:'',
+  province:wtgSavedArea?.province||'Puerto Plata', placesProvider:'osm',
+  favorites:loadScoped('wtg_favorites',null), favoritePlaces:loadScoped('wtg_favorite_places',null), businesses:loadScoped('wtg_businesses',null),
+  map:null, markers:[], loadingId:0, modal:null, toastTimeout:null, exploreLimit:80
+};
+function loadJSON(key,def){try{const v=JSON.parse(localStorage.getItem(key));return Array.isArray(v)?v:def}catch{return def}}
+// A signed-in user's saved lists must never reuse another account's browser data.
+// Legacy keys are preserved ONLY as guest data; never imported into a new account.
+function scopedKey(base,userId){return base+'_'+(userId?'user_'+String(userId):'guest')}
+function loadScoped(base,userId){
+ const key=scopedKey(base,userId);
+ const fallback=userId?[]:loadJSON(base,[]);
+ const list=loadJSON(key,fallback);
+ // Google Places details/photos must not be stored as a copied permanent listing.
+ return base==='wtg_favorite_places'?list.filter(p=>p&&p.source!=='google'):list;
+}
+function saveScoped(base,data){
+ const id=window.WTG_auth?.user?.id||null;
+ const safe=base==='wtg_favorite_places'?data.filter(p=>p&&p.source!=='google'):data;
+ return saveJSON(scopedKey(base,id),safe);
+}
+function saveJSON(key,data){try{localStorage.setItem(key,JSON.stringify(data));return true}catch{toast('No se pudo guardar en este dispositivo.');return false}}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function haversine(lat1,lon1,lat2,lon2){const r=Math.PI/180, a=Math.sin((lat2-lat1)*r/2)**2+Math.cos(lat1*r)*Math.cos(lat2*r)*Math.sin((lon2-lon1)*r/2)**2;return 6371000*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
+function distance(m){return Number.isFinite(m)?m<1000?`${Math.round(m)} m`:`${(m/1000).toFixed(1).replace('.0','')} km`:'—'}
+function catInfo(id){const c=CATEGORY_BY_ID[id]||CATEGORY_BY_ID.atracciones;return {...c,name:window.WTG_I18N?.category(c.id,c.name)||c.name}}
+// Solo mostrar en los resultados destacados fotos vinculadas a la ficha.
+const wtgUnavailableImageUrls=new Set();
+let wtgBrokenPhotoRefreshScheduled=false;
+function placeCoverUrl(p){
+  const direct=safeUrl(p?.photo||'');
+  if(direct&&!wtgUnavailableImageUrls.has(direct))return direct;
+  return placeGalleryPhotos(p).find(photo=>photo.url&&!wtgUnavailableImageUrls.has(photo.url))?.url||'';
+}
+function hasCatalogPhoto(p){return !!placeCoverUrl(p)}
+function isVisibleBusiness(p){return !!p&&p.nameKnown!==false&&
+  !['escuelas','iglesias'].includes(p.cat)&&hasCatalogPhoto(p)}
+const WTG_QUICK_CATEGORIES=['restaurantes','supermercados','farmacias','barberias',
+  'salones','tiendas','hoteles','bares','cafes','discotecas','playas','colmados',
+  'unas','spas','gimnasios','ferreterias','tecnologia','bancos','cajeros',
+  'hospitales','odontologia','gasolineras','talleres','lavaderos','heladerias',
+  'panaderias','entretenimiento','infantil','piscinas','resorts','villas','taxis'];
+function normalizedPhone(s){return String(s||'').replace(/[^+\d]/g,'')}
+function safeUrl(s){if(typeof s==='string'&&/^\/(?:where-to-go-app\/)?assets\/places\/[a-z0-9-]+\.(?:jpg|jpeg|webp|png)(?:\?[^#]*)?$/.test(s))return s;try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return''}}
+// Remote images sometimes fail on mobile. Recover with a compact, honest visual.
+document.addEventListener('error', event => {
+  const el=event.target;
+  if(!(el instanceof HTMLImageElement) || !el.classList.contains('actual-photo'))return;
+  const parent=el.closest('.place-photo, .detail-cover, .wtg-gallery-stage');
+  const icon=parent?.querySelector('.card-tag')?.textContent?.trim().slice(0,3)||'⌖';
+  const fallback=document.createElement('div');fallback.className='photo-empty wtg-photo-placeholder';
+  const sign=document.createElement('span');sign.className='wtg-photo-icon';sign.textContent=icon;
+  const label=document.createElement('span');label.className='wtg-photo-label';label.textContent='FOTO NO DISPONIBLE';
+  const card=parent?.closest('.place-card');
+  if(el.classList.contains('wtg-regional-photo')){
+    parent?.querySelector('.wtg-regional-disclaimer')?.remove();
+    card?.querySelector('.wtg-regional-credit')?.remove();
+  }
+  const failedSrc=el.getAttribute('src')||'';
+  if(failedSrc)wtgUnavailableImageUrls.add(failedSrc);
+  fallback.append(sign,label);el.replaceWith(fallback);
+  card?.classList.add('wtg-photo-load-failed');
+  // The page must not keep a broken photo card in the photo-first grid.
+  // Re-render once after the failed URL is memoized; no retry loop.
+  if(!wtgBrokenPhotoRefreshScheduled&&typeof state!=='undefined'){
+    wtgBrokenPhotoRefreshScheduled=true;
+    // Many remote photos can fail together; wait briefly and redraw once
+    // instead of rebuilding the entire mobile card grid every animation frame.
+    setTimeout(()=>{
+      wtgBrokenPhotoRefreshScheduled=false;
+      if(state.view==='explorar')renderExplore();
+      else if(state.view==='inicio')renderHome();
+    },240);
+  }
+},true);
+function regionalScene(p){
+  // Province scenery is never published as the photo of a particular business.
+  // It must be labelled as contextual imagery, with source and creator.
+  const province=provinceFromCity();
+  const hero=window.WTG_PROVINCE_HEROES?.[province];
+  if(!province||!hero||!safeUrl(hero.photo)||!safeUrl(hero.source)||!hero.author)return null;
+  return {province,image:safeUrl(hero.photo),source:safeUrl(hero.source),credit:hero.author+' · '+(hero.license||'Ver licencia en Wikimedia Commons')};
+}
+function mapsPlaceSearch(p){
+  // This is a user-initiated external search, not scraping or an API request.
+  // Including coordinates reduces ambiguity for similarly named businesses.
+  const terms=p.name+', '+p.lat+', '+p.lon+', República Dominicana';
+  return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(terms);
+}
+function placePhotoMarkup(p, kind='card'){
+  // Extra photos approved for this exact place also serve as its card cover.
+  const src=placeCoverUrl(p);
+  const icon=catInfo(p.cat).emoji;
+  const placeholder=`<div class="photo-empty wtg-photo-placeholder" role="img" aria-label="Sin fotografía del lugar"><span class="wtg-photo-icon" aria-hidden="true">${icon}</span><span class="wtg-photo-label">${esc(catInfo(p.cat).name)}</span></div>`;
+  // Las fotos de Google utilizan una clave restringida por sitio: envía solo
+  // el ORIGEN como Referer; para las fuentes abiertas, conservar no-referrer.
+  const referrerPolicy=p.source==='google'||p.googlePhotoMapUrl?'strict-origin-when-cross-origin':'no-referrer';
+  if(src)return `<img class="photo-illustration actual-photo" loading="lazy" decoding="async" fetchpriority="low" width="960" height="640" src="${esc(src)}" alt="Fotografía vinculada a ${esc(p.name)}" referrerpolicy="${referrerPolicy}" />`;
+  return placeholder;
+}
+// Galería de fotos del MISMO lugar: solo fotos con fuente y autor/licencia.
+function placeGalleryPhotos(p){
+  if(!p)return [];
+  const first=p.photo&&p.photoSource&&p.photoAttribution?
+    [{url:p.photo,source:p.photoSource,attribution:p.photoAttribution,license:p.photoLicense||''}]:[];
+  const extras=[...(Array.isArray(p.googlePhotos)?p.googlePhotos:[]),...(Array.isArray(p.photos)?p.photos:[]),...((window.WTG_GALLERY_PHOTOS||{})[p.id]||[])];
+  const seen=new Set(),list=[];
+  for(const item of [...first,...extras]){
+    if(!item||typeof item!=='object')continue;
+    const url=safeUrl(item.url||item.photo),source=safeUrl(item.source||item.photoSource);
+    const attribution=String(item.attribution||item.photoAttribution||'').trim();
+    if(!url||wtgUnavailableImageUrls.has(url)||!source||!attribution||seen.has(url))continue;
+    seen.add(url);
+    list.push({url,source,attribution,provider:item.provider||'',license:safeUrl(item.license||item.photoLicense||'')});
+    if(list.length>=19)break;
+  }
+  return list;
+}
+function placeGalleryMarkup(p){
+  const photos=placeGalleryPhotos(p);
+  if(!photos.length)return '<div class="detail-cover">'+placePhotoMarkup(p,'detail')+'</div>';
+  const first=photos[0],multiple=photos.length>1;
+  return `<section class="wtg-gallery" data-gallery-place="${esc(p.id)}" data-gallery-current="0" aria-label="Fotografías auténticas de ${esc(p.name)}">
+    <div class="wtg-gallery-stage">
+      <img class="actual-photo wtg-gallery-main" fetchpriority="high" width="1200" height="800" src="${esc(first.url)}" alt="Fotografía 1 de ${photos.length} del lugar ${esc(p.name)}" decoding="async" referrerpolicy="${first.provider==='google'?'strict-origin-when-cross-origin':'no-referrer'}">
+      ${multiple?'<button type="button" class="wtg-gallery-prev" data-gallery-step="-1" aria-label="Fotografía anterior">‹</button><button type="button" class="wtg-gallery-next" data-gallery-step="1" aria-label="Siguiente fotografía">›</button>':''}
+      <span class="wtg-gallery-count">1 / ${photos.length} fotos reales</span>
+    </div>
+    ${multiple?'<div class="wtg-gallery-thumbnails" role="group" aria-label="Elegir fotografía">'+photos.map((photo,i)=>`<button type="button" data-gallery-thumb="${i}" aria-label="Ver foto ${i+1}" aria-pressed="${i===0}" class="${i===0?'active':''}"><img src="${esc(photo.url)}" alt="" loading="lazy" decoding="async" fetchpriority="low" width="100" height="72" referrerpolicy="${photo.provider==='google'?'strict-origin-when-cross-origin':'no-referrer'}"></button>`).join('')+'</div>':''}
+    <p class="wtg-gallery-credit">Foto: <span data-gallery-attribution>${esc(first.attribution)}</span> · <a data-gallery-source href="${esc(first.source)}" target="_blank" rel="noopener noreferrer">Ver original y derechos ↗</a>${first.provider==='google'?'':`<a data-gallery-license href="${esc(first.license||first.source)}" target="_blank" rel="noopener noreferrer">Licencia</a>`}</p>
+  </section>`;
+}
+function selectGalleryPhoto(container,index){
+  if(!container)return;
+  const id=container.dataset.galleryPlace;
+  const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);
+  const photos=placeGalleryPhotos(p);
+  if(!photos.length)return;
+  const at=(index%photos.length+photos.length)%photos.length,entry=photos[at];
+  container.dataset.galleryCurrent=String(at);
+  const img=container.querySelector('.wtg-gallery-main');
+  if(img){img.referrerPolicy=entry.provider==='google'?'strict-origin-when-cross-origin':'no-referrer';img.src=entry.url;img.alt='Fotografía '+(at+1)+' de '+photos.length+' del lugar '+p.name}
+  const label=container.querySelector('.wtg-gallery-count');
+  if(label)label.textContent=(at+1)+' / '+photos.length+' fotos reales';
+  const credit=container.querySelector('[data-gallery-attribution]');if(credit)credit.textContent=entry.attribution;
+  const src=container.querySelector('[data-gallery-source]');if(src)src.href=entry.source;
+  const license=container.querySelector('[data-gallery-license]');if(license){license.href=entry.license||entry.source;license.hidden=entry.provider==='google'}
+  container.querySelectorAll('[data-gallery-thumb]').forEach(b=>{
+    const active=Number(b.dataset.galleryThumb)===at;
+    b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));
+  });
+}
+
+function photoFromTags(tags){
+  const raw=String(tags.image||tags['image:0']||'');
+  if(raw.startsWith('File:'))return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(raw.slice(5))}?width=700`;
+  const url=safeUrl(raw);
+  if(url && /^https:\/\/(commons\.wikimedia\.org|upload\.wikimedia\.org)\//.test(url))return url;
+  const cc=String(tags.wikimedia_commons||'');
+  if(cc.startsWith('File:'))return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(cc.slice(5).replaceAll('_',' '))}?width=700`;
+  return '';
+}
+async function fillWikidataPhoto(p){
+  if(p.photo||p.photoChecked||!/^Q[0-9]+$/.test(p.tags?.wikidata||''))return;
+  p.photoChecked=true;
+  try{
+    const url=`https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${p.tags.wikidata}&props=claims&format=json&origin=*`;
+    const r=await fetch(url);if(!r.ok)return;
+    const d=await r.json(), claim=d.entities?.[p.tags.wikidata]?.claims?.P18?.[0];
+    const filename=claim?.mainsnak?.datavalue?.value;
+    if(typeof filename==='string'&&filename)p.photo=`https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(filename)}?width=700`;
+  }catch{/* No photo is better than a wrong photo. */}
+}
+async function enrichPhotoCards(){
+  const arr=state.places.filter(p=>!p.photo&&!p.photoChecked&&p.tags?.wikidata).slice(0,12);
+  return; // Batch enrichment verifies Commons licenses and attribution first.
+  // State may have changed while fetching.
+  renderHome();renderExplore();if(state.modal==='place-modal'){/* Do not replace a user's currently open details. */}
+}
+
+// Catálogo de aventura precargado: solamente entradas con punto geográfico documentado
+// pasan a los resultados locales; el resto permanece en datos editoriales, NO cercanos.
+async function loadLocalAdventureCatalog(){
+  try{
+    const r=await fetch('/where-to-go-app/data/aventuras.json',{cache:'force-cache'});
+    if(!r.ok)throw Error('Catálogo local no accesible');
+    const items=await r.json();
+    const [pilotResponse,galleryResponse]=await Promise.all([
+      fetch('/where-to-go-app/data/pilot-places.json',{cache:'no-cache'}).catch(()=>null),
+      fetch('/where-to-go-app/data/place-gallery.json',{cache:'no-cache'}).catch(()=>null)
+    ]);
+    window.WTG_GALLERY_PHOTOS=galleryResponse?.ok?(await galleryResponse.json()):{};
+    const pilot=pilotResponse?.ok?await pilotResponse.json():[];
+    window.WTG_PILOT_PLACES=Array.isArray(pilot)?pilot:[];
+    const combined=new Map([...items,...window.WTG_PILOT_PLACES].map(p=>[p.id,p]));
+    state.catalog=[...combined.values()]
+      .filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon) && p.sourceUrl && ['Punto de destino enlazado por Turismo RD','Punto documentado en cartografía','Punto identificado por organismo público'].includes(p.accuracy))
+      .map(p=>({
+        id:p.id,name:p.name,cat:p.cat,lat:p.lat,lon:p.lon,province:p.province,
+        municipality:p.municipality,address:p.address||[p.municipality,p.province].filter(Boolean).join(', '),
+        description:p.description,source:p.sourceType?'editorial':'mitur',sourceUrl:p.sourceUrl,accuracy:p.accuracy,
+        photo:p.photo||VERIFIED_OSM_IMAGES[p.id]?.photo||(p.id==='mitur-damajagua'?'https://commons.wikimedia.org/wiki/Special:FilePath/Damajagua_Waterfall.jpg?width=700':''),photoAttribution:p.photoAttribution||VERIFIED_OSM_IMAGES[p.id]?.attribution||(p.id==='mitur-damajagua'?'Funcheta · CC BY-SA 4.0 · Wikimedia Commons':''),photoSource:p.photoSource||VERIFIED_OSM_IMAGES[p.id]?.source||(p.id==='mitur-damajagua'?'https://commons.wikimedia.org/wiki/File:Damajagua_Waterfall.jpg':''),website:p.website||p.sourceUrl,phone:p.phone||'',tags:{},relatedTags:p.tags||[],photoLicense:p.photoLicense||'',photos:Array.isArray(p.photos)?p.photos:[],
+        distance:0
+      }));
+  }catch(e){state.catalog=[];console.warn('Catálogo base sin cargar:',e.message)}
+  return state.catalog;
+}
+function insideNearbyRadius(p){
+  return Number.isFinite(p?.lat)&&Number.isFinite(p?.lon) &&
+    haversine(state.lat,state.lon,p.lat,p.lon) <= state.radius;
+}
+function localNearby(){
+  return state.catalog.filter(insideNearbyRadius).map(p=>({...p,distance:haversine(state.lat,state.lon,p.lat,p.lon)}));
+}
+
+// Anuncios revisados por propietario: solo se muestran en su provincia y su categoría.
+// Nunca se venden ni activan mediante el formulario sin revisión humana.
+let wtgSponsors=[];
+async function loadApprovedSponsors(){
+  try {const r=await fetch('/where-to-go-app/data/promociones.json',{cache:'no-cache'});if(!r.ok)return;
+    const items=await r.json();wtgSponsors=(Array.isArray(items)?items:[]).filter(x=>x.approved===true&&x.active===true&&x.paymentVerified===true&&['destacado','premium'].includes(x.plan)&&!!x.paidUntil&&Date.parse(x.paidUntil+'T23:59:59Z')>=Date.now()&&CATEGORIES.some(c=>c.id===x.cat));}
+  catch {wtgSponsors=[];}
+}
+
+async function loadApprovedFreeBusinesses(){
+ try{
+  const r=await fetch('/where-to-go-app/data/negocios-aprobados.json',{cache:'no-cache'});if(!r.ok)return;
+  const list=await r.json();if(!Array.isArray(list))return;
+  for(const b of list){
+    if(b.approved!==true||b.registrationPaid!==true||!b.id||!b.name||!CATEGORIES.some(c=>c.id===b.cat)||!Number.isFinite(b.lat)||!Number.isFinite(b.lon)||!b.sourceUrl)continue;
+    state.catalog.push({id:'business-'+b.id,name:b.name,cat:b.cat,lat:b.lat,lon:b.lon,
+      address:b.address||'',phone:b.phone||'',website:b.website||'',photo:b.photoRightsConfirmed?b.photo||'':'',
+      photoSource:b.photoRightsConfirmed?b.photoSource||'':'',photoAttribution:b.photoAttribution||'',photos:b.photoRightsConfirmed&&Array.isArray(b.photos)?b.photos:[],
+      province:b.province||'',municipality:b.municipality||'',source:'propietario',sourceUrl:b.sourceUrl,
+      accuracy:b.accuracy||'Ubicación verificada al aprobar la ficha; confirma la entrada',description:b.description||'',tags:{}});
+  }
+ }catch(e){console.warn('Directorio de registros básicos pendiente:',e.message)}
+}
+function sponsorInScope(s){
+  return s.province===provinceFromCity() && (state.category==='todos'||state.category===s.cat) &&
+    Number.isFinite(s.lat)&&Number.isFinite(s.lon) && haversine(state.lat,state.lon,s.lat,s.lon)<=state.radius;
+}
+function sponsorNearby(){return wtgSponsors.filter(sponsorInScope).map(s=>({
+ id:'sponsor-'+s.id,name:s.name,cat:s.cat,lat:s.lat,lon:s.lon,province:s.province,
+ municipality:s.municipality||'',address:s.address||'',phone:s.phone||'',website:s.website||'',
+ description:s.description||'',source:'patrocinado',sourceUrl:s.sourceUrl||'',sponsored:true,plan:s.plan,
+ photo:s.photo||'',photoSource:s.photoSource||'',photoAttribution:s.photoAttribution||'',
+ photos:s.photoRightsConfirmed===true&&Array.isArray(s.photos)?s.photos:[],
+ distance:haversine(state.lat,state.lon,s.lat,s.lon),accuracy:'Punto proporcionado y revisado por el anunciante',tags:{}
+}));}
+function promoSort(arr){const rank=p=>p.sponsored?(p.plan==='premium'?3:2):0;return arr.sort((a,b)=>(a.distance-b.distance)||rank(b)-rank(a)||a.name.localeCompare(b.name,'es'));}
+
+function combineNearby(remote=[]){
+  const output=new Map();
+  for(const p of [...sponsorNearby(),...localNearby(),...remote]){
+    if(!insideNearbyRadius(p))continue;
+    const normalized={...p,distance:haversine(state.lat,state.lon,p.lat,p.lon)};
+    if(!output.has(normalized.id))output.set(normalized.id,normalized);
+  }
+  return promoSort([...output.values()]);
+}
+// Google Places se mezcla solo en las listas, nunca como puntos sobre el mapa OSM.
+let wtgGoogleNearby=[];
+function applyNearby(remote=[],message=''){
+  state.remotePlaces=remote.filter(insideNearbyRadius);
+  // Google may finish first on mobile. Reconcile its photos with cartographic
+  // records loaded later, without showing the same establishment twice.
+  if(window.WTG_GOOGLE_PLACES?.sameEstablishment){
+    const unmatched=[];
+    for(const google of wtgGoogleNearby){
+      const local=state.remotePlaces.find(p=>p.cat===google.cat&&
+        window.WTG_GOOGLE_PLACES.sameEstablishment(p.name,google.name)&&
+        window.WTG_GOOGLE_PLACES.meters(p.lat,p.lon,google.lat,google.lon)<=100);
+      if(!local){unmatched.push(google);continue;}
+      if(!hasCatalogPhoto(local)&&safeUrl(google.photo)){
+        local.photo=google.photo;local.googlePhotos=google.googlePhotos||[];
+        local.googlePhotoAttributions=google.photoAttributions||[];
+        local.googlePhotoMapUrl=google.googleUri||google.mapUrl||'';
+      }
+    }
+    wtgGoogleNearby=unmatched;
+  }
+  state.places=combineNearby([...state.remotePlaces,...wtgGoogleNearby]);
+  state.dataMode='live';state.dataError=message;
+  renderAll();
+}
+function placeMatchesCategory(p,cat){
+  return cat==='todos' || p.cat===cat || (p.source==='mitur'&&p.relatedTags?.includes(cat));
+}
+// Tourism is a ranking priority, NOT a filter that hides everyday businesses.
+// The general visual catalogue includes all photo-backed categories; schools and churches stay excluded.
+const WTG_DISCOVERY_CATEGORIES = new Set(['rios','balnearios','cascadas','lagunas','senderismo','playas','parques','atracciones','entretenimiento','infantil','piscinas','restaurantes','bares','discotecas','hoteles','resorts','villas','cafes','comidarapida','heladerias']);
+// A natural attraction or buggy experience outranks closer everyday services.
+const WTG_TOURISM_NATURE=new Set(['rios','balnearios','cascadas','lagunas','senderismo','playas','parques','atracciones']);
+const WTG_TOURISM_EXPERIENCES=new Set(['entretenimiento','infantil']);
+const WTG_TOURISM_STAYS=new Set(['villas','resorts','hoteles','piscinas']);
+const WTG_TOURISM_FOOD=new Set(['restaurantes','bares','cafes','heladerias','comidarapida','discotecas']);
+const WTG_TOURISM_SERVICE_EXCLUSIONS=new Set(['barberias','salones','unas','farmacias','hospitales','bancos','cajeros','talleres','gasolineras','escuelas','iglesias']);
+const WTG_TOURISM_ACTIVITY=/\b(buggy|buggies|atv|cuatrimoto(?:s)?|4x4|four.wheel|zip.?line|tirolesa|excursi[oó]n|safari|cabalgata|rafting|kayak|snorkel|buceo|catamar[aá]n|paseo en barco|paseo en bote|aventura|adventure|tours?)\b/i;
+function tourismRank(p){
+ const cat=p?.cat||'';
+ if(WTG_TOURISM_NATURE.has(cat))return 0;
+ if(!WTG_TOURISM_SERVICE_EXCLUSIONS.has(cat)&&WTG_TOURISM_ACTIVITY.test(String(p?.name||'')))return 0;
+ if(WTG_TOURISM_EXPERIENCES.has(cat))return 1;
+ if(WTG_TOURISM_STAYS.has(cat))return 2;
+ if(WTG_TOURISM_FOOD.has(cat))return 3;
+ return 4;
+}
+function isTouristDiscovery(p){
+ return !!p&&p.nameKnown!==false&&!!String(p.name||'').trim()&&tourismRank(p)<4;
+}
+function tourismSort(arr){
+ return arr.sort((a,b)=>tourismRank(a)-tourismRank(b)||
+   (a.distance-b.distance)||
+   (a.source==='google'?0:1)-(b.source==='google'?0:1)||
+   String(a.name||'').localeCompare(String(b.name||''),'es'));
+}
+function discoveryMatches(p){return state.category!=='todos'||!!state.search||isTouristDiscovery(p);}
+function sortByDistance(arr){return promoSort(arr)}
+function classify(tags){
+  const a=tags.amenity||'',t=tags.tourism||'',l=tags.leisure||'',n=tags.natural||'',s=tags.shop||'',o=tags.office||'',h=tags.healthcare||'',craft=tags.craft||'';
+  if(n==='waterfall'||tags.waterway==='waterfall')return 'cascadas';
+  if(l==='swimming_area')return 'balnearios';
+  if(n==='beach'||l==='beach')return 'playas';
+  if(n==='water'&&['lake','lagoon','reservoir'].includes(tags.water))return 'lagunas';
+  if(tags.waterway==='river'&&tags.name)return 'rios';
+  if(tags.route==='hiking')return 'senderismo';
+  if(l==='swimming_pool')return 'piscinas';
+  if(t==='resort'||l==='resort')return 'resorts';
+  if(t==='villa'||t==='apartment'||tags.building==='villa')return 'villas';
+  if(['hotel','hostel','guest_house','motel','chalet','camp_site'].includes(t))return 'hoteles';
+  if(a==='taxi'||o==='transport'||tags['taxi']==='yes')return 'taxis';
+  if(a==='fuel')return 'gasolineras';
+  if(a==='bank')return 'bancos';
+  if(a==='atm')return 'cajeros';
+  if(a==='pharmacy'||s==='chemist')return 'farmacias';
+  if(['hospital','clinic','doctors'].includes(a)||['hospital','clinic','doctor'].includes(h))return 'hospitales';
+  if(a==='dentist'||h==='dentist')return 'odontologia';
+  if(a==='veterinary'||h==='veterinary')return 'veterinarias';
+  if(a==='school'||a==='kindergarten'||a==='college')return 'escuelas';
+  if(a==='place_of_worship')return 'iglesias';
+  if(['fast_food','food_court'].includes(a))return 'comidarapida';
+  if(a==='restaurant')return 'restaurantes';
+  if(a==='bar'||a==='pub'||a==='biergarten')return 'bares';
+  if(a==='nightclub')return 'discotecas';
+  if(a==='ice_cream'||s==='ice_cream')return 'heladerias';
+  if(a==='cafe'||s==='coffee')return 'cafes';
+  if(s==='bakery'||s==='pastry')return 'panaderias';
+  if(s==='seafood'||s==='fishmonger')return 'pescaderias';
+  if(s==='supermarket')return 'supermercados';
+  if(['convenience','general','kiosk'].includes(s))return 'colmados';
+  if(a==='marketplace'||s==='greengrocer')return 'mercados';
+  if(s==='hardware'||s==='doityourself'||s==='building_materials')return 'ferreterias';
+  if(s==='electronics'||s==='mobile_phone'||s==='computer')return 'tecnologia';
+  if(s==='appliance'||s==='electrical')return 'electrodomesticos';
+  if(s==='hairdresser'&&tags['hairdresser:gender']==='male'||s==='barber'||s==='barber_shop')return 'barberias';
+  if(s==='hairdresser'||s==='beauty')return 'salones';
+  if(s==='nails'||s==='nail_salon'||tags.beauty==='nails')return 'unas';
+  if(s==='massage'||s==='spa'||l==='spa')return 'spas';
+  if(l==='fitness_centre'||s==='sports'||a==='gym')return 'gimnasios';
+  if(s==='pet'||s==='pet_grooming')return 'mascotas';
+  if(s==='car_repair'||s==='car_parts'||craft==='carpenter'||craft==='mechanic')return 'talleres';
+  if(s==='car_wash'||a==='car_wash')return 'lavaderos';
+  if(s==='laundry'||s==='dry_cleaning')return 'lavanderias';
+  if(['accountant','lawyer','insurance','estate_agent','travel_agent','consulting'].includes(o))return 'servicios';
+  if(l==='park'||l==='garden'||l==='nature_reserve')return 'parques';
+  if(l==='playground'||a==='childcare')return 'infantil';
+  if(l==='sports_centre'||l==='stadium'||l==='pitch')return 'deportes';
+  if(a==='cinema'||a==='theatre'||['water_park','amusement_arcade','theme_park'].includes(l))return 'entretenimiento';
+  if(t==='attraction'||t==='viewpoint'||t==='museum'||tags.historic)return 'atracciones';
+  if(s&&s!=='vacant'&&s!=='no')return 'tiendas';
+  return null;
+}
+function parseOSM(elements){const seen=new Set(),arr=[];
+  for(const el of elements){const tags=el.tags||{},cat=classify(tags),name=tags['name:es']||tags.name;if(!cat||!name)continue;
+    const lat=el.lat??el.center?.lat,lon=el.lon??el.center?.lon;if(!Number.isFinite(lat)||!Number.isFinite(lon))continue;
+    const dist=haversine(state.lat,state.lon,lat,lon),placeKey=`${el.type}-${el.id}`;
+    if(seen.has(placeKey))continue;seen.add(placeKey);
+    const known=VERIFIED_OSM_IMAGES[`osm-${el.type}-${el.id}`];
+    arr.push({id:`osm-${el.type}-${el.id}`,name,cat,lat,lon,distance:dist,source:'osm',photoAttribution:known?.attribution||'',photoSource:known?.source||'',website:tags.website||tags['contact:website']||'',phone:tags['contact:phone']||tags.phone||'',address:[tags['addr:street'],tags['addr:housenumber']].filter(Boolean).join(' ')||tags['addr:city']||'',description:tags.description||'',photo:known?.photo||photoFromTags(tags),tags});
+  }
+  return sortByDistance(arr);
+}
+function overpassQuery(lat,lon,radius,category='todos'){
+  const around=`(around:${radius},${lat.toFixed(5)},${lon.toFixed(5)})`;
+  const patterns={
+    rios:[['tourism','attraction']],
+    balnearios:[['leisure','swimming_area']],
+    cascadas:[['natural','waterfall'],['waterway','waterfall']],
+    lagunas:[['natural','water']],
+    senderismo:[['route','hiking']],
+    restaurantes:[['amenity','restaurant|fast_food|food_court']],
+    bares:[['amenity','bar|pub|biergarten']],
+    playas:[['natural','beach'],['leisure','beach|beach_resort']],
+    piscinas:[['leisure','swimming_pool']],
+    hoteles:[['tourism','hotel|hostel|guest_house|motel|apartment']],
+    resorts:[['tourism','resort'],['leisure','resort|beach_resort']],
+    villas:[['tourism','villa'],['building','villa']],
+    discotecas:[['amenity','nightclub']],
+    parques:[['leisure','park|garden|nature_reserve']],
+    entretenimiento:[['amenity','cinema|theatre'],['leisure','water_park|amusement_arcade|theme_park'],['tourism','theme_park']],
+    cafes:[['amenity','cafe|ice_cream']],
+    taxis:[['amenity','taxi'],['office','transport']],
+    atracciones:[['tourism','attraction|viewpoint|museum'],['historic','.+']]
+  };
+  const patternsForCategory=category==='todos'?Object.entries(patterns).filter(([k])=>!['rios','lagunas','senderismo'].includes(k)).flatMap(([,v])=>v):patterns[category]||[];
+  const clauses=[...new Set(patternsForCategory.map(([key,regex])=>`nwr${around}["${key}"~"^(${regex})$"]["name"];`))];
+  return `[out:json][timeout:24];(${clauses.join('')});out center 650;`;
+}
+async function overpassFetch(query,endpoint){const ctrl=new AbortController(),t=setTimeout(()=>ctrl.abort(),7000);try{const body=new URLSearchParams({data:query});const res=await fetch(endpoint,{method:'POST',body,signal:ctrl.signal,headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'}});if(!res.ok)throw new Error(`Proveedor respondió ${res.status}`);const data=await res.json();if(!Array.isArray(data.elements))throw Error('Respuesta no válida');return data.elements;}finally{clearTimeout(t)}}
+// Optional Google Places data. Enabled only after Netlify Functions + GOOGLE_MAPS_API_KEY are configured.
+async function checkGoogleProvider(){
+  try{const r=await fetch('/.netlify/functions/provider-status',{cache:'no-store'});if(!r.ok)return;
+    const d=await r.json();if(d.googlePlacesEnabled){state.googleEnabled=true;state.placesProvider='google';loadPlaces(true)}
+  }catch{/* Static Netlify Drop deployment continues with real OpenStreetMap data. */}
+}
+const GOOGLE_CATS={taxi_service:'taxis',taxi_stand:'taxis',chauffeur_service:'taxis',restaurant:'restaurantes',bar:'bares',pub:'bares',night_club:'discotecas',nightclub:'discotecas',cafe:'cafes',coffee_shop:'cafes',hotel:'hoteles',lodging:'hoteles',resort_hotel:'resorts',tourist_attraction:'atracciones',museum:'atracciones',park:'parques',national_park:'parques',amusement_park:'entretenimiento',movie_theater:'entretenimiento',swimming_pool:'piscinas',beach:'playas'};
+function googleCategory(row,chosen){if(chosen!=='todos')return chosen;return GOOGLE_CATS[row.primaryType]||row.types?.map(x=>GOOGLE_CATS[x]).find(Boolean)||'atracciones'}
+async function loadGooglePlaces(force=false){
+  const id=++state.loadingId,lat=state.lat,lon=state.lon,radius=state.radius,category=state.category;
+  // Los resultados verificados del catálogo se ven INMEDIATAMENTE.
+  applyNearby([], 'Comprobando lugares adicionales…');
+  const params=new URLSearchParams({lat:String(lat),lon:String(lon),radius:String(radius),category,city:`${state.city}, ${state.region}`});
+  if(state.search)params.set('search',state.search);
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),6500);
+  try{
+    const r=await fetch('/.netlify/functions/google-search?'+params,{cache:'no-store',signal:ctrl.signal});
+    const data=await r.json();if(id!==state.loadingId)return;
+    if(!r.ok)throw Error(data.error||'Fuente externa no disponible');
+    const places=(data.places||[]).filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)).map(p=>({
+      id:'google-'+p.id,googleId:p.id,name:p.name,cat:googleCategory(p,category),
+      lat:p.lat,lon:p.lon,distance:haversine(lat,lon,p.lat,p.lon),address:p.address,source:'google',
+      photo:p.photoName?`/.netlify/functions/google-photo?name=${encodeURIComponent(p.photoName)}`:'',
+      photoAttributions:p.photoAttributions||[],website:'',phone:'',
+      description:'Información proporcionada por Google Maps.',googleUri:p.mapsUri,
+      googleDirections:p.directionsUri,detailsLoaded:false,tags:{}
+    }));
+    state.placesProvider='google';applyNearby(places);
+  }catch(e){
+    if(id!==state.loadingId)return;
+    state.googleEnabled=false;
+    state.googleIssue='La búsqueda de lugares no está disponible: '+String(e.message||'permiso denegado').slice(0,160);
+    state.placesProvider='osm';
+    applyNearby([], 'Mostrando destinos locales; buscando otras fichas…');
+    toast('Google no respondió. Se muestran primero los destinos cercanos verificados.');
+    await loadPlaces(false);
+  }finally{clearTimeout(timer)}
+}
+async function getGoogleDetails(p){
+ if(p.detailsLoaded)return;
+ p.detailsLoaded=true;
+ try{const r=await fetch('/.netlify/functions/google-detail?id='+encodeURIComponent(p.googleId),{cache:'no-store'});if(!r.ok)return;
+  const d=await r.json();p.phone=d.phone||'';p.website=d.website||'';p.googleUri=d.mapsUri||p.googleUri;p.googleDirections=d.directionsUri||p.googleDirections;
+  if(!p.photo&&d.photoName){p.photo='/.netlify/functions/google-photo?name='+encodeURIComponent(d.photoName);p.photoAttributions=d.photoAttributions||[]}
+ }catch{}
+}
+function googleAttribution(p){
+  if(!p.photo||!(p.source==='google'||p.googlePhotoMapUrl))return '';
+  const attributions=(p.googlePhotoAttributions||p.photoAttributions||[]).map(a=>{
+    const uri=safeUrl(a.uri||'');
+    return uri?`<a href="${esc(uri)}" target="_blank" rel="noopener noreferrer">${esc(a.displayName||'Autor')}</a>`:esc(a.displayName||'Autor');
+  }).join(', ');
+  const uri=safeUrl(p.googlePhotoMapUrl||p.googleUri||'https://maps.google.com/');
+  return `<small class="photo-authors">Foto: <a href="${esc(uri)}" target="_blank" rel="noopener noreferrer">Google Maps</a>${attributions?' · '+attributions:''}</small>`;
+}
+/* V4.3: offline-first grid data. No Google Places / live Overpass requests.
+   Optional grid files are pre-generated once from OSM extracts (Geofabrik); the
+   client downloads ONLY tiles intersecting the selected radius. */
+let wtgManifestPromise=null;
+const wtgGridCache=new Map();
+const wtgFailedCells=new Set();
+const WTG_CELL_DEGREES=0.2;
+function wtgCell(lat,lon){return [Math.floor((lat+90)/WTG_CELL_DEGREES),Math.floor((lon+180)/WTG_CELL_DEGREES)]}
+async function wtgManifest(force=false){
+  if(force){wtgManifestPromise=null;wtgGridCache.clear();}
+  if(!wtgManifestPromise){
+    wtgManifestPromise=fetch('/where-to-go-app/data/places/manifest.json',{cache:'no-cache'}).then(async r=>r.ok?r.json():null).catch(()=>null);
+  }
+  return wtgManifestPromise;
+}
+function wtgCellsNearby(lat,lon,radius,manifest){
+  const kmLat=radius/111000;
+  const kmLon=radius/(111000*Math.max(.15,Math.cos(lat*Math.PI/180)));
+  const [loA,loB]=wtgCell(lat-kmLat,lon-kmLon);
+  const [hiA,hiB]=wtgCell(lat+kmLat,lon+kmLon);
+  const available=new Set(manifest?.cells||[]), cells=[];
+  // Manifest V6 lists finer cells only in dense areas. Old V5 catalogues
+  // keep working without the splitCells field.
+  const fine=manifest?.fineCellDegrees||.04;
+  const fineLoA=Math.floor((lat-kmLat+90)/fine),fineHiA=Math.floor((lat+kmLat+90)/fine);
+  const fineLoB=Math.floor((lon-kmLon+180)/fine),fineHiB=Math.floor((lon+kmLon+180)/fine);
+  for(let a=loA;a<=hiA;a++)for(let b=loB;b<=hiB;b++){
+    const key=`${a}_${b}`;
+    if(!available.has(key))continue;
+    const split=manifest?.splitCells?.[key];
+    if(!Array.isArray(split)||!split.length){cells.push(key);continue}
+    for(const sub of split){
+      const coords=sub.split('_');
+      const subA=Number(coords[2]),subB=Number(coords[3]);
+      if(!Number.isInteger(subA)||!Number.isInteger(subB))continue;
+      const indexA=a*5+subA,indexB=b*5+subB;
+      if(indexA>=fineLoA&&indexA<=fineHiA&&indexB>=fineLoB&&indexB<=fineHiB)cells.push(sub);
+    }
+  }
+  return cells;
+}
+async function wtgGrid(key){
+  if(wtgGridCache.has(key))return wtgGridCache.get(key);
+  const promise=(async()=>{
+    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),12000);
+    try{
+      const r=await fetch(`/where-to-go-app/data/places/cell_${key}.json`,{signal:controller.signal,cache:'force-cache'});
+      if(!r.ok)throw Error(`Celda ${key}: HTTP ${r.status}`);
+      const entries=await r.json();
+      if(!Array.isArray(entries))throw Error(`Celda ${key}: no es una lista`);
+      return entries;
+    }finally{clearTimeout(timer)}
+  })();
+  wtgGridCache.set(key,promise);
+  try{return await promise}
+  catch(err){
+    // A missing/failed grid was previously cached as an empty array forever.
+    // Never mistake a failed download for an area without places.
+    wtgGridCache.delete(key);wtgFailedCells.add(key);
+    console.warn('Where to Go: error cargando bloque local:',key,String(err));
+    return [];
+  }
+}
+function wtgImportedPlace(row){
+  if(row.id==='osm-node-1645554843')return null; // Same waterfall as curated mitur-limon.
+  if(!Number.isFinite(row.lat)||!Number.isFinite(row.lon)||!row.id||!row.name||!CATEGORY_BY_ID[row.cat])return null;
+  return {
+    id:row.id,name:row.name,cat:row.cat,lat:row.lat,lon:row.lon,
+    address:row.address||'',phone:row.phone||'',website:row.website||'',photo:row.photoSource&&safeUrl(row.image)?row.image:(VERIFIED_OSM_IMAGES[row.id]?.photo||''),photoSource:row.photoSource||(VERIFIED_OSM_IMAGES[row.id]?.source||''),photoAttribution:row.photoAttribution||(VERIFIED_OSM_IMAGES[row.id]?.attribution||''),photos:Array.isArray(row.photos)?row.photos:[],
+    tags:{wikidata:row.wikidata||'',opening_hours:row.opening_hours||''},nameKnown:row.nameKnown!==false,source:row.source==='overture'?'overture':'osm',accuracy:row.accuracy||'Punto registrado en el catálogo de origen',
+    sourceUrl:row.sourceUrl||'https://www.openstreetmap.org/',
+    description:row.description||'',distance:haversine(state.lat,state.lon,row.lat,row.lon)
+  };
+}
+async function loadPlaces(force=false){
+  // Never request or render Dominican tiles while another country is selected.
+  if(window.WTG_ACTIVE_COUNTRY && window.WTG_ACTIVE_COUNTRY!=='DO'){
+    const token=++state.loadingId;
+    state.remotePlaces=[];state.places=[];state.catalog=[];state.dataMode='loading';
+    state.dataError='Buscando lugares en el destino seleccionado…';renderAll();
+    if(!window.WTG_GOOGLE_PLACES?.configured()){
+      state.dataMode='live';state.dataError='La búsqueda de lugares todavía no está disponible en este destino. Puedes cambiar de país o ciudad.';renderAll();return;
+    }
+    if(!window.WTG_ACTIVE_HAS_COORDINATES){state.dataMode='live';state.dataError='Selecciona una ciudad para buscar negocios reales en este país.';renderAll();return;}
+    const response=await window.WTG_GOOGLE_PLACES.nearby({lat:state.lat,lon:state.lon,radius:state.radius,category:state.category});
+    if(token!==state.loadingId)return;
+    const typeToCategory={restaurant:'restaurantes',cafe:'cafes',bar:'bares',lodging:'hoteles',tourist_attraction:'atracciones',museum:'atracciones',park:'parques',supermarket:'supermercados',pharmacy:'farmacias',bank:'bancos',gas_station:'gasolineras',amusement_park:'entretenimiento',movie_theater:'entretenimiento',taxi_stand:'taxis'};
+    const places=response.places.map(p=>({...p,cat:p.types.map(t=>typeToCategory[t]).find(Boolean)||'atracciones',distance:haversine(state.lat,state.lon,p.lat,p.lon),nameKnown:true,photo:p.photo||'',photoAttributions:p.photoAttributions||[],googleUri:p.mapUrl,googleDirections:p.mapUrl,detailsLoaded:true}));
+    state.places=places;state.remotePlaces=places;state.placesProvider='google';state.dataMode='live';
+    state.dataError=response.status==='error'?'No pudimos completar la búsqueda. Inténtalo nuevamente.':places.length?'Lugares disponibles en el destino seleccionado.':'No hay resultados disponibles para esta zona.';
+    renderAll();return;
+  }
+  const token=++state.loadingId;
+  wtgGoogleNearby=[];wtgGoogleStage=0;wtgGoogleBusy=false;
+  state.googleEnabled=false;state.googleIssue='';state.placesProvider='osm';
+  // Do not flash a misleading 0 while downloading the regional catalogue.
+  state.remotePlaces=[];state.places=[];state.dataMode='loading';state.dataError='Cargando establecimientos cercanos…';renderAll();
+  wtgFailedCells.clear();
+  // Google Places is an independent live source. Start it immediately; a slow
+  // or unavailable local data manifest must never hide verified Google places.
+  if(window.WTG_GOOGLE_PLACES?.configured()){
+    void enrichDominicanGooglePlaces(token,()=>state.remotePlaces);
+  }
+  const manifest=await wtgManifest(force);
+  if(token!==state.loadingId)return;
+  if(!manifest||!Array.isArray(manifest.cells)||!manifest.cells.length){
+    if(window.WTG_GOOGLE_PLACES?.configured()){
+      applyNearby([], 'Directorio cartográfico no disponible; consultando negocios reales en Google Maps…');
+      return;
+    }
+    state.dataMode='error';
+    state.dataError='No se pudo descargar el índice nacional. Reintenta con Actualizar: no significa que esta provincia no tenga negocios.';
+    renderAll();return;
+  }
+  const keys=wtgCellsNearby(state.lat,state.lon,state.radius,manifest);
+  // Request nearest geographic tiles first, not the entire 12 km zone in arbitrary order.
+  // Show the first places quickly; additional tiles enrich the same list progressively.
+  const tileDistance=key=>{
+    const parts=key.split('_').map(Number);
+    if(parts.length>=5){
+      const fine=Number(manifest.fineCellDegrees)||.04;
+      const lat=-90+(parts[0]*5+parts[2]+.5)*fine;
+      const lon=-180+(parts[1]*5+parts[3]+.5)*fine;
+      return haversine(state.lat,state.lon,lat,lon);
+    }
+    return haversine(state.lat,state.lon,-90+(parts[0]+.5)*.2,-180+(parts[1]+.5)*.2);
+  };
+  keys.sort((a,b)=>tileDistance(a)-tileDistance(b));
+  const unique=new Map();
+  let next=0,finished=0;
+  const total=keys.length;
+  const publish=complete=>{
+    if(token!==state.loadingId)return;
+    if(!unique.size&&!complete)return;
+    const msg=complete?`Lugares dentro de ${distance(state.radius)} · ${wtgFailedCells.size?'Algunos bloques sin cargar; pulsa Actualizar':'Catálogo actualizado'}`:'Ampliando los resultados cercanos…';
+    applyNearby([...unique.values()],msg);
+  };
+  await Promise.all(Array.from({length:Math.min(9,total)},async()=>{
+    while(next<total){
+      const key=keys[next++];
+      const rows=await wtgGrid(key);
+      if(token!==state.loadingId)return;
+      for(const item of rows){
+        if(!item||unique.has(item.id))continue;
+        const p=wtgImportedPlace(item);
+        if(p&&insideNearbyRadius(p))unique.set(p.id,p);
+      }
+      finished++;
+      if(finished===4||finished%10===0)publish(false);
+    }
+  }));
+  if(token!==state.loadingId)return;
+  publish(true);
+  // Google Places ya empezó en paralelo, sin depender del índice local.
+}
+
+// Complementar RD sin sustituir las fichas cartográficas ni bloquear su carga.
+// La búsqueda de Google es opcional; si falla, el directorio OSM sigue visible.
+const WTG_GOOGLE_TYPES={restaurant:'restaurantes',fast_food_restaurant:'comidarapida',cafe:'cafes',coffee_shop:'cafes',bar:'bares',pub:'bares',hotel:'hoteles',hostel:'hoteles',lodging:'hoteles',resort_hotel:'resorts',cottage:'villas',beach:'playas',swimming_pool:'piscinas',night_club:'discotecas',ice_cream_shop:'heladerias',bakery:'panaderias',tourist_attraction:'atracciones',museum:'atracciones',historical_landmark:'atracciones',scenic_spot:'atracciones',hiking_area:'senderismo',park:'parques',supermarket:'supermercados',store:'tiendas',pharmacy:'farmacias',bank:'bancos',gas_station:'gasolineras',amusement_park:'entretenimiento',movie_theater:'entretenimiento',bowling_alley:'entretenimiento',taxi_stand:'taxis',taxi_service:'taxis',barber_shop:'barberias',beauty_salon:'salones',hair_salon:'salones',hair_care:'salones',nail_salon:'unas',spa:'spas',gym:'gimnasios',grocery_store:'supermercados',hypermarket:'supermercados',convenience_store:'colmados',shopping_mall:'tiendas',clothing_store:'tiendas',department_store:'tiendas',pharmacy:'farmacias',medical_clinic:'hospitales',dentist:'odontologia',car_wash:'lavaderos',car_repair:'talleres',hardware_store:'ferreterias',cell_phone_store:'tecnologia',electronics_store:'tecnologia',atm:'cajeros',veterinary_care:'veterinarias',pet_store:'mascotas',indoor_playground:'infantil',amusement_center:'entretenimiento',night_club:'discotecas',fast_food_restaurant:'comidarapida'};
+let wtgGoogleStage=0;
+let wtgGoogleBusy=false;
+function toGoogleListing(p){
+ const cat=state.category==='todos'?(p.types||[]).map(t=>WTG_GOOGLE_TYPES[t]).find(Boolean)||'atracciones':state.category;
+ return {...p,cat,googleId:p.googlePlaceId,googleUri:p.mapUrl,googleDirections:p.mapUrl,
+   source:'google',distance:haversine(state.lat,state.lon,p.lat,p.lon),nameKnown:true,detailsLoaded:true,
+   description:'Información del establecimiento consultada en Google Maps.',
+   photo:p.photo||'',googlePhotos:p.photos||[],photoAttributions:p.photoAttributions||[],
+   photoSource:'',photoAttribution:'',photos:[]};
+}
+function mergeGoogleListings(result,localPlaces,context='Google Maps'){
+  const incoming=(result?.places||[]).map(toGoogleListing)
+    .filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&insideNearbyRadius(p));
+  const existingIds=new Set(wtgGoogleNearby.map(p=>p.id));
+  let added=0,photosLinked=0,withPhoto=0;
+  for(const google of incoming){
+    // A business is useful even when Google has no photo. Never hide a real
+    // establishment merely because its photo gallery is empty.
+    if(google.photo&&safeUrl(google.photo))withPhoto++;
+    const local=localPlaces.find(p=>p.cat===google.cat&&
+      window.WTG_GOOGLE_PLACES.sameEstablishment(p.name,google.name)&&
+      window.WTG_GOOGLE_PLACES.meters(p.lat,p.lon,google.lat,google.lon)<=100);
+    if(local){
+      if(!hasCatalogPhoto(local)){
+        local.photo=google.photo;local.googlePhotos=google.googlePhotos||[];
+        local.googlePhotoAttributions=google.photoAttributions||[];
+        local.googlePhotoMapUrl=google.mapUrl||google.googleUri||'';
+        photosLinked++;
+      }
+    }else if(!existingIds.has(google.id)){
+      wtgGoogleNearby.push(google);existingIds.add(google.id);added++;
+    }
+  }
+  const photoCount=[...localPlaces,...wtgGoogleNearby].filter(hasCatalogPhoto).length;
+  applyNearby(localPlaces,context+' · '+photoCount+' establecimientos con fotografía · '+state.city);
+  return {added,photosLinked,withPhoto,photoCount};
+}
+// Exact iconic destinations: at most two targeted Places Text Search
+// requests per browser session, only when GPS/city is actually Puerto Plata.
+// Other regions do not receive borrowed photos. Do not permanently cache Google content.
+let wtgIconicPuertoPlataCache=null;
+let wtgIconicPuertoPlataPending=null;
+async function enrichIconicPuertoPlata(token){
+ if(!window.WTG_GOOGLE_PLACES?.configured()||window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')return;
+ if(haversine(state.lat,state.lon,19.7934,-70.6884)>7000)return;
+ const wanted=[
+   {query:'Paseo de Doña Blanca Puerto Plata República Dominicana',match:/paseo.{0,12}do[ñn]a blanca|do[ñn]a blanca/i},
+   {query:'Calle de las Sombrillas Puerto Plata República Dominicana',match:/sombrillas/i}
+ ];
+ if(!wtgIconicPuertoPlataPending && !wtgIconicPuertoPlataCache){
+   wtgIconicPuertoPlataPending=(async()=>{
+     const results=[];
+     for(const target of wanted){
+       const known=state.places.find(p=>target.match.test(p.name)&&hasCatalogPhoto(p)&&
+         haversine(p.lat,p.lon,19.7934,-70.6884)<6000);
+       if(known)continue;
+       // One text query per landmark. Never scan entire provinces or store photos.
+       const response=await window.WTG_GOOGLE_PLACES.searchText({
+         query:target.query,lat:19.7934,lon:-70.6884,radius:7500
+       });
+       const exact=(response?.places||[]).find(p=>target.match.test(p.name)&&
+         haversine(p.lat,p.lon,19.7934,-70.6884)<6000&&safeUrl(p.photo));
+       if(exact)results.push(exact);
+     }
+     return results;
+   })().then(value=>(wtgIconicPuertoPlataCache=value,value)).finally(()=>{wtgIconicPuertoPlataPending=null});
+ }
+ const rows=wtgIconicPuertoPlataCache||await wtgIconicPuertoPlataPending;
+ if(token!==state.loadingId||!rows?.length)return;
+ mergeGoogleListings({places:rows},state.remotePlaces,'Sitios emblemáticos de Puerto Plata');
+}
+
+// A single optional photo-rich tourism discovery lookup per visited destination.
+// It is NOT a national crawler; no Google photos are saved for later sessions.
+const wtgNationalPhotoLookups=new Set();
+async function enrichPhotographedDestinations(token){
+  if(token!==state.loadingId||state.category!=='todos'||
+     !window.WTG_GOOGLE_PLACES?.searchText||
+     !window.WTG_GOOGLE_PLACES.configured()||
+     (window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO'))return;
+  const current=state.places.filter(p=>isTouristDiscovery(p)&&hasCatalogPhoto(p)&&
+    p.distance<=state.radius+100).length;
+  if(current>=6)return;
+  const province=provinceFromCity();
+  const city=String(state.city||'').trim();
+  if(!city||!province||state.mode==='demo')return;
+  const lookupKey=[province,city,Math.round(state.lat*100),Math.round(state.lon*100)].join('|');
+  // At most 24 extra photo searches per browser session even when visitors
+  // explore many sectors. Each visited destination/sector is checked once.
+  if(wtgNationalPhotoLookups.has(lookupKey)||wtgNationalPhotoLookups.size>=24)return;
+  wtgNationalPhotoLookups.add(lookupKey);
+  try{
+    // One bounded text lookup for a photo-poor city or a sector explicitly
+    // selected by the visitor. The query names the REAL city/province.
+    const response=await window.WTG_GOOGLE_PLACES.searchText({
+      query:'lugares turísticos y atractivos para visitar en '+city+', '+province+', República Dominicana',
+      lat:state.lat,lon:state.lon,radius:state.radius
+    });
+    if(token!==state.loadingId)return;
+    const verified=(response.places||[]).filter(p=>safeUrl(p.photo)&&
+      haversine(state.lat,state.lon,p.lat,p.lon)<=state.radius+100);
+    if(verified.length){
+      mergeGoogleListings({places:verified},state.remotePlaces,
+        'Fotografías reales de '+city+' · Google Maps');
+    }
+  }catch(error){
+    console.warn('Búsqueda visual del municipio no disponible',String(error));
+  }
+}
+// Mostrar Google desde el primer lote sin bloquear el catálogo local.
+async function enrichDominicanGooglePlaces(token,localPlaces){
+  if(!window.WTG_GOOGLE_PLACES?.configured())return;
+  try{
+    const result=await window.WTG_GOOGLE_PLACES.nearby({
+      lat:state.lat,lon:state.lon,radius:state.radius,category:state.category,batch:'main'
+    });
+    if(token!==state.loadingId||window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')return;
+    if(result?.status==='error'||result?.status==='unconfigured'){
+      state.googleIssue='Proveedor de resultados temporalmente no disponible. Puedes reintentar.';
+      updateProviderNotice();
+      return;
+    }
+    if(result?.places?.length)mergeGoogleListings(result,typeof localPlaces==='function'?localPlaces():localPlaces,'Google Maps · búsqueda principal');
+    // Main already queried all eight tourism/center types at this exact radius.
+    // Stage 0 would issue identical paid Nearby Search queries again, but cannot
+    // add a new sector. Start expansion at stage 1 (north) without losing a
+    // destination, place card or Google image from the main search.
+    if(state.category==='todos'&&wtgGoogleStage===0)wtgGoogleStage=1;
+    // Las cinco clases de comercios cotidianos se consultan también en Inicio,
+    // únicamente en la vista general. No se realiza un rastreo nacional.
+    if(state.category==='todos'&&state.mode!=='sector'&&result?.status!=='error'){
+      const everyday=await window.WTG_GOOGLE_PLACES.nearby({
+        lat:state.lat,lon:state.lon,radius:state.radius,category:'todos',batch:'essentials'
+      });
+      if(token!==state.loadingId)return;
+      if(everyday?.places?.length)mergeGoogleListings(everyday,typeof localPlaces==='function'?localPlaces():localPlaces,'Google Maps · comercios y servicios');
+    }
+    // Some natural attractions and local services lack a reliable Google primary
+    // type. When that exact category was requested, use at most one extra
+    // bounded text lookup; never run it for the general home feed.
+    if(state.category!=='todos'&&result?.status!=='error'&&
+       window.WTG_GOOGLE_PLACES?.searchCategory){
+      const category=state.category;
+      const named=await window.WTG_GOOGLE_PLACES.searchCategory({
+        category,lat:state.lat,lon:state.lon,radius:state.radius,
+        city:state.city+', '+(state.province||state.region)
+      });
+      if(token!==state.loadingId)return;
+      if(named?.places?.length)mergeGoogleListings(named,
+        typeof localPlaces==='function'?localPlaces():localPlaces,
+        'Lugares de '+catInfo(category).name);
+    }
+    if(token===state.loadingId){if(state.mode!=='sector'){void enrichIconicPuertoPlata(token);void enrichPhotographedDestinations(token);}void enrichVisiblePhotoCards(token,6);if(state.category==='todos')void autoDiscoverNearbyPhotos(token);}
+  }catch(error){console.warn('Where to Go: Google Places no disponible en esta zona',String(error));}
+}
+// Explorar físicamente otros sectores del municipio. Una pulsación consulta
+// solo un sector y reúne las fotos en memoria de esta pantalla.
+async function loadMoreGoogleBusinesses(maxStages=2){
+ if(wtgGoogleBusy||state.category!=='todos'||!window.WTG_GOOGLE_PLACES?.configured())return;
+ const stages=window.WTG_GOOGLE_PLACES.scanStages();
+ if(wtgGoogleStage>=stages.length)return;
+ const token=state.loadingId;
+ wtgGoogleBusy=true;
+ let added=0,linked=0,completed=0,failed=0;
+ renderExplore();
+ try{
+   // Cada toque explora hasta dos sectores; se consulta en vivo sin descargar
+   // una base nacional ni disparar decenas de llamadas al abrir la página.
+   for(let part=0;part<maxStages&&wtgGoogleStage<stages.length;part++){
+     if(token!==state.loadingId)break;
+     const stage=stages[wtgGoogleStage];
+     toast('Google Maps: ampliando '+stage.name.toLowerCase()+'…');
+     let result;
+     try{
+       result=await window.WTG_GOOGLE_PLACES.nearby({
+         lat:state.lat,lon:state.lon,radius:state.radius,category:'todos',
+         batch:stage.batch,sector:stage.sector
+       });
+     }catch(error){console.warn('Sector Google Maps no disponible',String(error));failed++;}
+     if(token!==state.loadingId)break;
+     wtgGoogleStage++;completed++;
+     if(result?.status==='error'){failed++;continue;}
+     if(result?.places?.length){
+       const summary=mergeGoogleListings(result,state.remotePlaces,'Google Maps · '+stage.name);
+       added+=summary.added;linked+=summary.photosLinked;
+     }
+   }
+   if(token===state.loadingId){
+     toast(added||linked?
+       'Google: '+added+' negocios nuevos con foto y '+linked+' fotos vinculadas · '+completed+' sectores.':
+       'Consultamos '+completed+' sectores. No aparecieron nuevas fotografías verificadas.'+
+         (failed?' Algunas consultas no respondieron.':''));
+   }
+ }finally{wtgGoogleBusy=false;if(token===state.loadingId)renderExplore();}
+}
+// Bounded automatic expansion, only for the destination currently visited.
+let wtgAutoDiscoveryBudget=12;
+const wtgAutoDiscoveryLocations=new Set();
+async function autoDiscoverNearbyPhotos(token){
+  if(token!==state.loadingId||state.category!=='todos'||
+     !window.WTG_GOOGLE_PLACES?.configured()||
+     !window.WTG_GOOGLE_PLACES?.scanStages||wtgAutoDiscoveryBudget<2)return;
+  const key=[window.WTG_ACTIVE_COUNTRY||'DO',state.city,
+    Math.round(state.lat*1000),Math.round(state.lon*1000)].join('|');
+  if(wtgAutoDiscoveryLocations.has(key))return;
+  wtgAutoDiscoveryLocations.add(key);
+  const stages=window.WTG_GOOGLE_PLACES.scanStages();
+  const count=Math.min(2,Math.ceil(stages.length/2),Math.floor(wtgAutoDiscoveryBudget/2));
+  for(let n=0;n<count;n++){
+    if(token!==state.loadingId)return;
+    wtgAutoDiscoveryBudget-=2;
+    // The first automatic pass explores 2 distinct sectors and the second 1.
+    // Previously the fourth pass slot repeated 8 already-paid center types.
+    // We retain the original three distinct automatic sectors: north/east/south.
+    await loadMoreGoogleBusinesses(n===0?2:1);
+  }
+}
+async function runGoogleBusinessSearch(){
+ const query=String(state.search||'').trim();
+ if(query.length<3||!window.WTG_GOOGLE_PLACES?.configured())return;
+ const token=state.loadingId;
+ toast('Buscando '+query+'…');
+ const result=await window.WTG_GOOGLE_PLACES.searchText({query,lat:state.lat,lon:state.lon,radius:state.radius});
+ if(token!==state.loadingId||state.search!==query)return;
+ if(result.status==='error'){toast('La búsqueda de Google no respondió. Revisa la API.');return}
+ const ids=new Set(wtgGoogleNearby.map(p=>p.id));
+ let added=0;
+ for(const item of result.places||[]){
+   if(ids.has(item.id))continue;
+   const p=toGoogleListing(item);
+   if(p.distance>Math.max(state.radius,30000)+100)continue;
+   p.matchedSearch=query;
+   wtgGoogleNearby.push(p);ids.add(p.id);added++;
+ }
+ applyNearby(state.remotePlaces,'Resultados de búsqueda · '+query);
+ navigate('explorar');
+ toast(added?'Se encontraron '+added+' negocios adicionales.':'No se encontraron negocios adicionales en esta zona.');
+}
+
+// Búsqueda adicional en pantalla: máximo 24 consultas puntuales por sesión.
+// No guardamos ni descargamos fotografías de Google al catálogo permanente.
+let wtgPhotoBudget=48;
+let wtgPhotoMatching=false;
+const wtgPhotoAttempted=new Set();
+function candidatesForGooglePhoto(){
+  const collection=state.places.filter(p=>p.source!=='google'&&p.source!=='patrocinado'&&
+    !p.photo&&p.nameKnown!==false&&String(p.name||'').trim().length>=5&&
+    (state.search?(`${p.name} ${p.address||''}`.toLocaleLowerCase('es').includes(state.search.toLocaleLowerCase('es'))):state.category==='todos'?!['escuelas','iglesias'].includes(p.cat):matches(p))&&
+    Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&p.distance<=state.radius+100&&
+    !wtgPhotoAttempted.has(p.id));
+  return tourismSort(collection);
+}
+async function enrichVisiblePhotoCards(token,maxRequests=4){
+  if(token!==state.loadingId||wtgPhotoMatching||wtgPhotoBudget<=0||
+      !window.WTG_GOOGLE_PLACES?.configured())return {lookups:0,photos:0};
+  wtgPhotoMatching=true;
+  let lookups=0,photos=0;
+  try{
+    const items=candidatesForGooglePhoto().slice(0,Math.min(maxRequests,wtgPhotoBudget));
+    for(const p of items){
+      if(token!==state.loadingId)break;
+      wtgPhotoAttempted.add(p.id);wtgPhotoBudget--;lookups++;
+      const info=await window.WTG_GOOGLE_PLACES.matchPhoto({name:p.name,lat:p.lat,lon:p.lon});
+      if(token!==state.loadingId)break;
+      if(info?.status==='ok'&&safeUrl(info.photo)){
+        p.photo=info.photo;p.googlePhotoMapUrl=info.mapUrl||'';
+        p.googlePhotoAttributions=info.photoAttributions||[];
+        p.googlePhotos=info.photos||[];
+        photos++;
+        // Actualizar las tarjetas una sola vez al final del lote para no
+        // cancelar imágenes que aún se descargan en el navegador.
+      }
+    }
+    if(token===state.loadingId&&photos)renderAll();
+    return {lookups,photos};
+  }catch(error){console.warn('Where to Go: fotos adicionales no disponibles',String(error));return {lookups,photos}}
+  finally{wtgPhotoMatching=false;if(token===state.loadingId)renderExplore();}
+}
+
+// Consulta puntual que puede generar cargos: solo con acción expresa del visitante.
+async function fetchVerifiedGooglePhoto(id){
+  const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);
+  if(!p||p.photo||p.googlePhotoTried||wtgPhotoBudget<=0||!window.WTG_GOOGLE_PLACES?.configured())return;
+  p.googlePhotoTried=true;
+  wtgPhotoAttempted.add(p.id);
+  wtgPhotoBudget--;
+  toast('Buscando foto del negocio en Google Maps…');
+  const result=await window.WTG_GOOGLE_PLACES.matchPhoto({name:p.name,lat:p.lat,lon:p.lon});
+  if(result.status==='ok'&&safeUrl(result.photo)){
+    p.photo=result.photo;p.googlePhotoMapUrl=result.mapUrl;
+    p.googlePhotoAttributions=result.photoAttributions||[];
+    p.googlePhotos=result.photos||[];
+    renderAll();
+    if(state.modal==='place-modal'&&$('place-modal-title')?.textContent===p.name)openPlace(id);
+    toast('Fotografía del establecimiento encontrada.');
+    return;
+  }
+  if(state.modal==='place-modal'&&$('place-modal-title')?.textContent===p.name)openPlace(id);
+  toast(result.status==='not-found'?'No encontramos una foto que corresponda con seguridad a este lugar.':'No fue posible consultar la foto; la ficha queda sin imagen.');
+}
+
+function ensureProviderBanner(){
+  return; // Sin avisos sobre Google; la V4.3 no depende de esa API.
+  if($('provider-banner'))return;
+  const box=document.createElement('div');
+  box.id='provider-banner';
+  box.hidden=true;
+  box.setAttribute('role','status');
+  box.setAttribute('aria-live','polite');
+  box.style.cssText='display:flex;gap:14px;align-items:center;justify-content:space-between;margin:14px 22px;padding:14px;border:1px solid #e6c88c;border-radius:14px;background:#fff7e8;color:#584017;flex-wrap:wrap';
+  box.innerHTML='<div style="flex:1;min-width:200px"><strong style="display:block;font-size:14px">Google Places no está disponible</strong><small id="provider-notice-desc" style="font-size:12px;line-height:1.5;display:block">Buscando lugares reales disponibles.</small></div><button id="retry-google-provider" type="button" style="border:1px solid #caa75c;background:#fff;color:#584017;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer">Reintentar Google ↻</button>';
+  const main=$('main-content');
+  if(main)main.parentNode.insertBefore(box,main);
+}
+function updateProviderNotice(){
+  return; // La fuente local no genera mensajes de permisos de Google.
+  const banner=$('provider-banner');if(!banner)return;
+  banner.hidden=!state.googleIssue;
+  if(state.googleIssue){
+    $('provider-notice-desc').textContent='No pudimos completar una de las búsquedas. Seguiremos mostrando los lugares disponibles; la cobertura puede variar por zona.';
+  }
+}
+function viewTitle(id){return {inicio:'Inicio',explorar:'Explorar lugares',mapa:'Mapa interactivo',favoritos:'Mis favoritos',promocionar:'Promocionar', 'mis-negocios':'Mis negocios',taxis:'Taxis y transporte',tours:'Tours y excursiones',piloto:'Destinos con fotos',negocioDemo:'Presentar a un negocio',atlas:'Fotos reales de RD'}[id]||'Inicio'}
+let wtgLeafletLoading=null;
+function ensureLeaflet(){
+  if(window.L)return Promise.resolve(true);
+  if(wtgLeafletLoading)return wtgLeafletLoading;
+  wtgLeafletLoading=new Promise(resolve=>{
+    if(!document.querySelector('link[data-wtg-leaflet]')){
+      const css=document.createElement('link');
+      css.rel='stylesheet';css.dataset.wtgLeaflet='true';
+      css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(css);
+    }
+    const script=document.createElement('script');
+    script.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.async=true;
+    script.onload=()=>resolve(!!window.L);
+    script.onerror=()=>resolve(false);
+    document.head.appendChild(script);
+  });
+  return wtgLeafletLoading;
+}
+function navigate(view){if(!$("view-"+view))view='inicio';state.view=view;document.querySelectorAll('.view').forEach(el=>el.classList.toggle('active',el.id===`view-${view}`));document.querySelectorAll('[data-view]').forEach(el=>el.classList.toggle('active',el.dataset.view===view));$('current-page-label').textContent=viewTitle(view);if(view==='taxis')renderTaxis();if(view==='explorar')renderExplore();if(view==='favoritos')renderFavorites();if(view==='mis-negocios'){renderMyBusinesses();void refreshMyBusinessSubmissions();}if(view==='mapa'){
+  const map=$('world-map');
+  if(map&&!window.L)map.textContent='Preparando mapa de esta zona…';
+  if(window.WTG_GOOGLE_PLACES?.configured())renderMap();
+  else void ensureLeaflet().then(()=>{if(state.view==='mapa')renderMap()});
+}window.scrollTo({top:0,behavior:'instant'});try{if(!/(?:^#|[&#])(?:access_token|refresh_token|error|error_description|code)=/.test(location.hash))history.replaceState(null,'',`#${view}`)}catch{}}
+function startCategoryRotation(rail){
+ if(rail.dataset.wtgRotating==='yes')return;
+ rail.dataset.wtgRotating='yes';
+ let resumeAt=0;
+ const progress=()=>{const track=rail.nextElementSibling?.querySelector('.wtg-category-motion-bar');if(track){const max=Math.max(1,rail.scrollWidth-rail.clientWidth);const percent=Math.min(100,(rail.scrollLeft/max)*100);track.style.transform='translateX('+percent*.75+'%)';}};
+ rail.addEventListener('scroll',progress,{passive:true});
+ rail.addEventListener('pointerdown',()=>{resumeAt=Date.now()+11000},{passive:true});
+ rail.addEventListener('touchstart',()=>{resumeAt=Date.now()+11000},{passive:true});
+ setInterval(()=>{
+   if(document.hidden||Date.now()<resumeAt||rail.offsetParent===null||rail.scrollWidth<=rail.clientWidth)return;
+   const step=rail.querySelector('button')?.getBoundingClientRect().width||150;
+   const end=rail.scrollWidth-rail.clientWidth;
+   rail.scrollTo({left:rail.scrollLeft+step+12>=end?0:rail.scrollLeft+step+12,behavior:'smooth'});
+ },3200);
+ progress();
+}
+function renderCategories(){const counts={};
+  // Never fill the home screen with 50 category cards. The full directory
+  // belongs to Explore, while Home stays focused on nearby photo listings.
+  $('home-categories')?.classList.remove('wtg-v8-expanded');state.places.filter(p=>p&&p.nameKnown!==false&&String(p.name||'').trim()).forEach(p=>{counts[p.cat]=(counts[p.cat]||0)+1;if(p.relatedTags)for(const tag of p.relatedTags)counts[tag]=(counts[tag]||0)+1});
+  const shortcuts=document.querySelector('.wtg-v8-category-shortcuts');
+  if(shortcuts&&shortcuts.dataset.wtgLoaded!=='yes'){
+    shortcuts.innerHTML=CATEGORIES.filter(cat=>!['escuelas','iglesias'].includes(cat.id))
+      .map(cat=>`<button type="button" data-cat="${esc(cat.id)}" aria-label="Explorar ${esc(cat.name)}"><span aria-hidden="true">${cat.emoji}</span><strong>${esc(cat.name)}</strong></button>`).join('');
+    shortcuts.setAttribute('role','region');shortcuts.setAttribute('aria-label','Categorías deslizables');
+    shortcuts.insertAdjacentHTML('afterend','<div class="wtg-category-motion"><span class="wtg-category-motion-bar"></span></div>');
+    startCategoryRotation(shortcuts);
+    if(!document.querySelector('#wtg-category-bar-title')){
+      shortcuts.insertAdjacentHTML('beforebegin','<div class="wtg-category-bar-title" id="wtg-category-bar-title"><strong>Todo cerca de ti</strong><button type="button" data-show-all-cats="yes">Ver las '+CATEGORIES.length+' categorías ↗</button></div>');
+    }
+    shortcuts.dataset.wtgLoaded='yes';
+  }
+  const blocks=[
+    ['🌿 Aventuras y naturaleza','rios balnearios cascadas lagunas senderismo playas parques atracciones entretenimiento infantil piscinas'],
+    ['🍽️ Comida y bebida','restaurantes bares discotecas cafes heladerias panaderias pescaderias comidarapida'],
+    ['🛍️ Compras y mercados','supermercados colmados mercados tiendas ferreterias electrodomesticos tecnologia'],
+    ['💆 Belleza y bienestar','barberias salones unas spas gimnasios'],
+    ['🏨 Alojamiento y transporte','hoteles resorts villas taxis gasolineras talleres lavaderos'],
+    ['🩺 Salud y servicios','farmacias hospitales odontologia veterinarias mascotas bancos cajeros lavanderias servicios escuelas iglesias deportes']
+  ];
+  $('home-categories').innerHTML=blocks.map(([label,ids])=>`<section class="wtg-category-section"><h3>${label}</h3><div class="wtg-category-group">${ids.split(' ').map(id=>CATEGORIES.find(c=>c.id===id)).filter(Boolean).map(c=>`<button class="category-card" data-cat="${c.id}"><span class="category-emoji" style="--category-color:${c.color}">${c.emoji}</span><strong>${esc(catInfo(c.id).name)}</strong><small>${state.dataMode==='live'&&state.category==='todos'?(counts[c.id]||0)?(counts[c.id]+' con foto'):'Explorar negocios':'Explorar'}</small></button>`).join('')}</div></section>`).join('');
+  $('filter-categories').innerHTML=[{id:'todos',name:'Todo',emoji:'✨'},...CATEGORIES].map(c=>`<button class="filter-chip ${state.category===c.id?'active':''}" data-filter="${c.id}">${c.emoji} ${esc(c.id==='todos'?(window.WTG_I18N?.t('Todo')||'Todo'):catInfo(c.id).name)}</button>`).join('');
+  $('business-category').innerHTML=CATEGORIES.map(c=>`<option value="${c.id}">${esc(catInfo(c.id).name)}</option>`).join('');
+}
+function placeCard(p){const c=catInfo(p.cat),fav=state.favorites.includes(p.id),gallery=placeGalleryPhotos(p),photoCount=gallery.length,coverPhoto=placeCoverUrl(p);const provenance=p.source==='patrocinado'?'Publicidad · '+(p.plan==='premium'?'Premium':'Destacado')+' · Ficha verificada por el anunciante':p.source==='propietario'?'Ficha básica verificada · Datos del propietario':p.source==='google'?GOOGLE_BRAND:(p.source==='mitur'?'Guía oficial de Turismo RD':p.source==='editorial'?'Lugar documentado':p.source==='overture'?'© Overture Maps':'© OpenStreetMap');return `<article class="place-card ${coverPhoto?'wtg-has-photo':'wtg-no-photo'}"><div class="place-photo">${placePhotoMarkup(p)}<button type="button" class="wtg-open-photo" data-place="${esc(p.id)}" aria-label="Abrir detalles de ${esc(p.name)}"></button><span class="card-tag">${p.sponsored?'★ Anuncio · ':''}${c.emoji} ${esc(c.name)}</span>${photoCount>1?`<span class="wtg-place-gallery-count" aria-label="${photoCount} fotografías de este lugar">📷 ${photoCount} fotos</span>`:''}<button class="fav-button ${fav?'active':''}" data-fav="${esc(p.id)}" aria-label="${fav?'Quitar de favoritos':'Agregar a favoritos'}">${fav?'♥':'♡'}</button>${coverPhoto?'<span class="card-image-caption">Foto vinculada al lugar</span>':''}</div><div class="place-body"><button class="place-title" data-place="${esc(p.id)}">${esc(p.name)}</button><div class="place-meta"><span>⌖</span><b>${esc(p.address||'Dirección no publicada')}</b></div><div class="place-footer"><span class="distance-badge">↗ ${distance(p.distance)}</span><button class="card-open" data-place="${esc(p.id)}">Ver detalles →</button></div><small class="source-credit">${provenance}</small>${googleAttribution(p)}${gallery[0]?.attribution?`<small class="photo-authors"><a href="${esc(gallery[0].source)}" target="_blank" rel="noopener noreferrer">Foto: ${esc(gallery[0].attribution)}</a>${gallery[0].license?` · <a href="${esc(gallery[0].license)}" target="_blank" rel="noopener noreferrer">Licencia</a>`:''}</small>`:''}</div></article>`}
+function emptyBlock(msg,action='Cambiar ubicación',target='location'){const categoryLabel=state.category==='todos'?'sitios de interés':(catInfo(state.category)?.name||'lugares');const mapsUrl='https://www.openstreetmap.org/#map=12/'+state.lat+'/'+state.lon;return `<div class="empty-state"><span class="empty-emoji">🧭</span><h3>${msg}</h3><p>${state.dataMode==='error'?'No se pudo conectar con el catálogo en vivo. No mostraremos lugares inventados; intenta de nuevo.':(String(state.dataError).includes('Importación pendiente')?'Todavía no se ha importado el directorio nacional. No es un problema del filtro: faltan datos por publicar.':'La cobertura con fotos todavía es limitada. Amplía el radio o abre Destinos con fotos para ver la selección disponible.')}</p><button data-empty="${target}">${action} →</button><button type="button" class="photo-contribute" data-report-missing="yes">¿Conoces un lugar cercano que falta? Avísanos</button></div>`}
+function renderProvincePremium(){
+  const panel=document.getElementById('province-premium-list');if(!panel)return;
+  const prov=provinceFromCity();
+  const selected=wtgSponsors.filter(x=>x.province===prov&&x.plan==='premium'&&x.active&&x.approved&&x.paymentVerified)
+    .sort((a,b)=>String(a.name).localeCompare(String(b.name),'es'));
+  const container=document.getElementById('province-premium-container');if(container)container.hidden=!selected.length;
+  // One sponsor visible at a time; all approved advertisers receive a turn.
+  panel.innerHTML=selected.map((x,i)=>{const source=safeUrl(x.sourceUrl||x.website||'');const cat=catInfo(x.cat);
+    return `<article class="wtg-provincial-premium" data-premium-slide="${i}" ${i?'hidden':''}><div class="premium-marker">PUBLICIDAD · PREMIUM · ${esc(prov)}</div><div><strong>${esc(x.name)}</strong><small>${esc(cat.name)} · ${esc(x.province)}</small></div>${source?`<a target="_blank" rel="noopener noreferrer" href="${esc(source)}">Ver negocio ↗</a>`:''}</article>`;
+  }).join('');
+}
+const wtgFailedLocalPhotos=new Set();
+function startDestinationRotation(rail){
+ if(rail.dataset.wtgCarousel==='yes')return;
+ rail.addEventListener('error',event=>{
+   const img=event.target;
+   if(img?.tagName!=='IMG')return;
+   const url=img.getAttribute('src');
+   if(url)wtgFailedLocalPhotos.add(url);
+   img.closest('.wtg-local-card')?.remove();
+   if(!rail.querySelector('.wtg-local-card')){
+     const section=rail.closest('.wtg-local-discovery');
+     if(section)section.hidden=true;
+   }
+ },true);
+ rail.dataset.wtgCarousel='yes';
+ let holdUntil=0;
+ const hold=()=>{holdUntil=Date.now()+12000};
+ rail.addEventListener('pointerdown',hold,{passive:true});
+ rail.addEventListener('touchstart',hold,{passive:true});
+ rail.addEventListener('focusin',hold);
+ if(window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return;
+ setInterval(()=>{
+   if(document.hidden||state.view!=='inicio'||Date.now()<holdUntil||
+      rail.offsetParent===null||rail.children.length<2)return;
+   const card=rail.querySelector('.wtg-local-card');if(!card)return;
+   const step=card.getBoundingClientRect().width+12;
+   const max=rail.scrollWidth-rail.clientWidth;
+   if(max<=0)return;
+   rail.scrollTo({left:rail.scrollLeft+step>max-25?0:rail.scrollLeft+step,behavior:'smooth'});
+ },4800);
+}
+function renderLocalDiscovery(){
+ const section=document.getElementById('wtg-local-discovery');
+ const rail=document.getElementById('wtg-local-cards');
+ if(!section||!rail)return;
+ const city=state.city==='Cerca de mí'?(provinceFromCity()||'tu zona'):state.city;
+ const title=document.getElementById('wtg-local-title'),subtitle=document.getElementById('wtg-local-subtitle');
+ if(title)title.textContent='Descubre '+city;
+ if(subtitle)subtitle.textContent='Fotografías auténticas y lugares para visitar en '+city;
+ const list=state.places.filter(p=>
+   p.distance<=state.radius+100&&hasCatalogPhoto(p)&&
+   !wtgFailedLocalPhotos.has(placeCoverUrl(p))&&
+   isTouristDiscovery(p)
+ );
+ const iconic=p=>/malec[oó]n|sombrillas|do[ñn]a blanca|telef[eé]rico|monumento|fortaleza|plaza|catedral|paseo|cascada|bugg(?:y|ies)|atv/i.test(p.name)?0:1;
+ list.sort((a,b)=>tourismRank(a)-tourismRank(b)||iconic(a)-iconic(b)||
+   (a.distance-b.distance)||(a.source==='google'?0:1)-(b.source==='google'?0:1));
+ const photographed=list.slice(0,12);
+ const signature=city+'|'+photographed.map(p=>p.id+'@'+p.photo).join('|');
+ if(rail.dataset.wtgSignature!==signature){
+   rail.dataset.wtgSignature=signature;
+   rail.innerHTML=photographed.map(p=>'<button type="button" class="wtg-local-card" data-place="'+esc(p.id)+'" aria-label="Descubrir '+esc(p.name)+'">'+
+      '<img loading="lazy" decoding="async" src="'+esc(placeCoverUrl(p))+'" alt="Fotografía de '+esc(p.name)+'" referrerpolicy="'+(p.source==='google'?'strict-origin-when-cross-origin':'no-referrer')+'">'+
+      '<span class="wtg-local-card-caption"><strong>'+esc(p.name)+'</strong><small>'+esc(catInfo(p.cat).name)+' · '+distance(p.distance)+'</small></span></button>').join('');
+   rail.scrollLeft=0;
+ }
+ section.hidden=!photographed.length;
+ startDestinationRotation(rail);
+}
+function renderHome(){renderProvincePremium();renderLocalDiscovery();
+ const teaser=document.querySelector('.taxi-teaser');
+ if(teaser)teaser.hidden=!(state.province==='Puerto Plata'||['Puerto Plata','Sosúa','Cabarete'].includes(state.city));
+ const list=$('home-list');
+ const candidates=state.places.filter(p=>p.distance<=state.radius+100&&isVisibleBusiness(p));
+ $('home-count').textContent=state.dataMode==='loading'?'...':candidates.length;
+ const googleCount=candidates.filter(p=>p.source==='google').length;
+ const coverage=document.getElementById('wtg-coverage-counts');
+ const allNearby=state.places.filter(p=>p&&p.nameKnown!==false&&
+   !['escuelas','iglesias'].includes(p.cat)&&p.distance<=state.radius+100);
+ if(coverage)coverage.textContent=state.dataMode==='loading'?'Consultando lugares…':`${allNearby.length} lugares registrados en esta zona · ${candidates.length} con fotografías · ${googleCount} resultados recientes`;
+ const sorted=tourismSort(candidates).slice(0,12);
+ // Keep image elements mounted if another provider update leaves the cards unchanged.
+ const homeSignature=[state.dataMode,state.city,state.radius,window.WTG_I18N?.lang||'es',...sorted.map(p=>
+  [p.id,p.name,p.address,Math.round(p.distance),placeCoverUrl(p),
+   state.favorites.includes(p.id)?'fav':'',placeGalleryPhotos(p).length].join('|'))].join('~');
+ if(!list.dataset||list.dataset.wtgSignature!==homeSignature){
+ list.innerHTML=state.dataMode==='loading'&&!sorted.length?
+   '<div class="wtg-loading-cards" aria-label="Buscando fotos de negocios reales"><div class="wtg-skeleton-card"></div><div class="wtg-skeleton-card"></div><div class="wtg-skeleton-card"></div></div>':
+   sorted.length?sorted.map(placeCard).join(''):
+   emptyBlock('Todavía no hay fotografías verificadas para esta búsqueda','Cambiar zona','location');
+ if(list.dataset)list.dataset.wtgSignature=homeSignature;
+ }
+  const mainPromo=document.getElementById('province-anchor-sponsor');
+  if(mainPromo){mainPromo.hidden=provinceFromCity()!=='Puerto Plata';}
+  const alert=$('location-alert'),title=$('location-alert-title'),desc=$('location-alert-desc'),btn=$('alert-locate');
+  if(state.dataMode==='error'){alert.style.background='#fff6e9';alert.style.borderColor='#f1e0c7';title.textContent='Catálogo temporalmente no disponible';desc.textContent='No se cargaron fichas de muestra ni coordenadas estimadas. Reintenta la consulta.';btn.innerHTML='Reintentar ↻';btn.dataset.action='retry';}
+  else if(state.mode==='gps'){alert.style.background='#e9f7f4';alert.style.borderColor='#d8efea';title.textContent='Ubicación actual activada';desc.textContent=`${state.places.filter(hasCatalogPhoto).length} lugares con fotografía · distancia en línea recta · precisión GPS aproximada ${Number.isFinite(state.gpsAccuracy)?'±'+distance(state.gpsAccuracy):'no informada'}. ${state.gpsAccuracy>1000?'La señal es imprecisa: activa GPS y Wi-Fi e inténtalo otra vez.':''}`;btn.innerHTML='Cambiar zona →';btn.dataset.action='change';}
+  else{alert.style.background='#e9f7f4';alert.style.borderColor='#d8efea';title.textContent=state.mode==='demo'?'Vista de ejemplo: Puerto Plata':`Explorando ${state.city}`;desc.textContent=state.mode==='demo'?'Se muestra Puerto Plata como zona de ejemplo, no tu ubicación real. Elige una provincia o activa tu GPS.':'Esto es una ciudad seleccionada, NO tu ubicación. Activa el GPS para ver solo lugares cerca de ti.';btn.innerHTML='Usar mi ubicación →';btn.dataset.action='locate';}
+}
+function matches(p){return placeMatchesCategory(p,state.category)&&(!state.search||p.matchedSearch===state.search||`${p.name} ${p.address} ${catInfo(p.cat).name}`.toLocaleLowerCase('es').includes(state.search.toLocaleLowerCase('es')))&&p.distance<=state.radius+100}
+function renderExplore(){
+  // Every named, geolocated business in the area is searchable inside this app.
+  // A missing photo does not erase a real establishment from Explore.
+  const arr=state.places.filter(p=>matches(p)&&
+    p.nameKnown!==false&&String(p.name||'').trim()&&
+    // Keep schools/churches out of default tourist discovery but show them
+    // when the user explicitly chooses those categories from the menu.
+    (state.category!=='todos'||!['escuelas','iglesias'].includes(p.cat)));
+  // Photo-first relevance: Google with a real linked photo, then other photographed
+  // listings, then authentic no-photo directory records. Nearby within each tier.
+  const priority=p=>p.source==='google'&&hasCatalogPhoto(p)?0:
+    hasCatalogPhoto(p)?1:p.source==='google'?2:3;
+  const touristDefault=state.category==='todos'&&!state.search;
+  arr.sort((a,b)=>(touristDefault?tourismRank(a)-tourismRank(b):0)||priority(a)-priority(b)||a.distance-b.distance);
+  const withPhoto=arr.filter(hasCatalogPhoto).length;
+  const showAll=!!state.exploreShowAll;
+  $('explore-count').textContent=state.dataMode==='loading'?'...':(touristDefault&&!showAll?withPhoto:arr.length);
+  $('explore-context').textContent=`${arr.length} lugares disponibles · ${withPhoto} con fotografía · ${state.city} · hasta ${distance(state.radius)}`;
+  const directoryToggle=$('wtg-explore-directory-toggle');
+  if(directoryToggle){
+    directoryToggle.hidden=!touristDefault||!arr.length||withPhoto===arr.length;
+    directoryToggle.textContent=showAll?'Ver selección con fotografías':'Ver todos los lugares de esta zona ('+arr.length+')';
+    directoryToggle.setAttribute?.('aria-pressed',String(showAll));
+  }
+  // Keep ALL categories in the general photo-first catalogue for every city.
+  // Tourist ranking changes order only, not eligibility. Without-photo records
+  // remain searchable through their individual category or by name.
+  const photographed=arr.filter(hasCatalogPhoto);
+  const photoFirst=state.category==='todos'&&!state.search;
+  const display=photoFirst&&!showAll?photographed:arr;
+  // iPhone and other small screens should not create 80 full photo cards at once.
+  // Keep ALL results accessible via "Ver más"; the source catalogue and search
+  // stay unchanged. Reset the visible batch when location/filter changes.
+  const mobileExplore=!!window.matchMedia?.('(max-width:820px)')?.matches;
+  const mobileExploreKey=[state.city,state.radius,state.category,state.search].join('|');
+  if(mobileExplore&&state.exploreMobileKey!==mobileExploreKey){
+    state.exploreMobileKey=mobileExploreKey;
+    state.exploreMobileLimit=24;
+  }
+  const visibleLimit=mobileExplore?(state.exploreMobileLimit||24):(state.exploreLimit||80);
+  const shown=display.slice(0,visibleLimit);
+  const expandPuertoPlata=photoFirst&&state.dataMode!=='loading'&&provinceFromCity()==='Puerto Plata'&&state.radius<30000&&withPhoto<=8?
+    '<div class="wtg-more-explore"><span>Esta búsqueda cubre solo '+distance(state.radius)+'. Amplía la zona de Puerto Plata para descubrir más lugares.</span><button type="button" data-expand-puerto-plata="yes">Explorar hasta 30 km ↓</button></div>':'';
+  const googleMore=wtgGoogleBusy&&photoFirst?
+    '<div class="wtg-more-explore wtg-auto-discovery" role="status" aria-live="polite">Descubriendo más lugares de esta zona…</div>':'';
+
+  const exploreTarget=$('explore-list');
+  const exploreSignature=[state.dataMode,state.city,state.radius,state.category,state.search,showAll?'all':'photos',window.WTG_I18N?.lang||'es',
+    visibleLimit,wtgGoogleBusy?'busy':'idle',...shown.map(p=>
+    [p.id,p.name,p.address,Math.round(p.distance),placeCoverUrl(p),
+      state.favorites.includes(p.id)?'fav':'',placeGalleryPhotos(p).length].join('|'))].join('~');
+  if(!exploreTarget.dataset||exploreTarget.dataset.wtgSignature!==exploreSignature){
+  exploreTarget.innerHTML=state.dataMode==='loading'&&!arr.length?
+    '<div class="loading-state"><span class="spinner"></span><div>Buscando lugares reales de esta zona...</div></div>':
+    arr.length?shown.map(placeCard).join('')+
+     (display.length>shown.length?`<div class="wtg-more-explore"><span>Mostrando ${shown.length} de ${display.length} lugares</span><button type="button" data-more-explore="yes">Ver más lugares ↓</button></div>`:'')+expandPuertoPlata+googleMore:
+    googleMore+expandPuertoPlata+emptyBlock('Buscando lugares con fotografías en esta zona','Cambiar zona','location');
+  if(exploreTarget.dataset)exploreTarget.dataset.wtgSignature=exploreSignature;
+  }
+  $('filter-categories').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.category));
+  $('distance-select').value=String(state.radius);
+  if($('search-input').value!==state.search)$('search-input').value=state.search;
+}
+function renderFavorites(){
+ const current=state.places.filter(p=>state.favorites.includes(p.id));
+ const saved=[...state.favoritePlaces];
+ for(const p of current)if(!saved.some(x=>x.id===p.id))saved.push(p);
+ const arr=saved.map(p=>({...p,distance:haversine(state.lat,state.lon,p.lat,p.lon)}));const pending=state.favorites.filter(id=>!saved.some(p=>p.id===id)).length;const reminder=pending?`<div class="empty-state"><span class="empty-emoji">☁</span><h3>${pending} favoritos guardados</h3><p>Abre Explorar y visita la zona de esos lugares para volver a cargar sus fichas.</p><button data-empty="explore">Explorar lugares →</button></div>`:'';$('favorite-list').innerHTML=arr.length?arr.map(placeCard).join('')+reminder:pending?reminder:`<div class="empty-state"><span class="empty-emoji">💚</span><h3>¡Aquí comienza tu lista!</h3><p>Cuando encuentres un lugar especial, toca el corazón para guardarlo. Los favoritos se guardan en este dispositivo.</p><button data-empty="explore">Explorar lugares →</button></div>`}
+window.addEventListener('wtg-auth-session',event=>{
+ const userId=event.detail?.userId||null;
+ if((window.WTG_auth?.user?.id||null)!==userId)return;
+ state.favorites=loadScoped('wtg_favorites',userId);
+ state.favoritePlaces=loadScoped('wtg_favorite_places',userId);
+ state.businesses=loadScoped('wtg_businesses',userId);
+ renderFavorites();
+ if(state.view==='mis-negocios'){renderMyBusinesses();if(userId)void refreshMyBusinessSubmissions();}
+ window.WTG_PROFILE?.refresh?.();
+});
+window.addEventListener('wtg-cloud-favorites',event=>{
+ const userId=window.WTG_auth?.user?.id||null;
+ if(!userId||event.detail?.userId!==userId)return;
+ const ids=(event.detail?.placeIds||[]).filter(id=>typeof id==='string'&&id.length<=250);
+ if(!ids.length)return;
+ state.favorites=Array.from(new Set([...state.favorites,...ids]));
+ saveScoped('wtg_favorites',state.favorites);
+ renderFavorites();window.WTG_PROFILE?.refresh?.();
+});
+function toggleFavorite(id){
+ const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);
+ if(!p)return;
+ const has=state.favorites.includes(id);
+ state.favorites=has?state.favorites.filter(x=>x!==id):[...state.favorites,id];
+ state.favoritePlaces=has?state.favoritePlaces.filter(x=>x.id!==id):
+   (p.source==='google'?state.favoritePlaces:[...state.favoritePlaces,p]);
+ saveScoped('wtg_favorites',state.favorites);
+ saveScoped('wtg_favorite_places',state.favoritePlaces);
+ window.WTG_auth?.syncFavorite?.(id,!has);
+ window.WTG_PROFILE?.refresh?.();
+ toast(has?'Eliminado de favoritos':'Guardado en tus favoritos ♥');renderAll();
+}
+function renderAll(){if(!wtgProvincePreview)updateProvinceHero();updateProviderNotice();renderCategories();renderHome();renderExplore();renderFavorites();if(state.view==='mapa')renderMap();renderTaxis();$('location-label').textContent=(window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')?('📍 '+(window.WTG_ACTIVE_DESTINATION||window.WTG_ACTIVE_COUNTRY)):state.mode==='gps'?`📍 ${state.city==='Cerca de mí'?'Mi GPS':state.city}`:state.mode==='pending'?'📍 Activar ubicación':`📍 ${state.city}`;window.WTG_EXPERIENCE?.update?.();window.WTG_AREA_DISCOVERY?.refresh?.();window.WTG_PILOT?.refresh?.();window.WTG_PHOTO_ATLAS?.refresh?.();}
+function openPlace(id){window.WTG_auth?.recordView?.(id, state.places.find(p=>p.id===id)?.cat||"atracciones");const p=state.places.find(x=>x.id===id)||state.favoritePlaces.find(x=>x.id===id);if(!p)return;window.WTG_PROFILE?.recordOpen?.(p);
+  const c=catInfo(p.cat),fav=state.favorites.includes(id),website=safeUrl(p.website),phone=normalizedPhone(p.phone),photoTotal=placeGalleryPhotos(p).length;
+  const osmMap=`https://www.openstreetmap.org/?mlat=${encodeURIComponent(p.lat)}&mlon=${encodeURIComponent(p.lon)}#map=18/${p.lat}/${p.lon}`;
+  // Google Maps will route by Google Place ID if available; otherwise by the exact OSM mapped point.
+  const directions=p.googleDirections||`https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=${encodeURIComponent(state.lat+','+state.lon)}%3B${encodeURIComponent(p.lat+','+p.lon)}`;
+  const prov=p.sponsored?'Anunciante verificado · Publicidad':p.source==='propietario'?'Ficha revisada · Propietario':p.source==='google'?GOOGLE_BRAND:(p.source==='mitur'?'Ministerio de Turismo RD':p.source==='editorial'?'Cartografía documentada · consulta la fuente':p.source==='overture'?'© Overture Maps · Confirmar datos':'© OpenStreetMap contributors');
+  $('place-modal-body').innerHTML=`${placeGalleryMarkup(p)}<div class="detail-content"><div class="wtg-detail-eyebrow">✦ DESCUBRE ESTE LUGAR · ${photoTotal?photoTotal+" FOTO"+(photoTotal===1?"":"S"):"FOTOGRAFÍA PENDIENTE"}</div><span class="detail-cat">${c.emoji} ${esc(c.name)}</span><h2 id="place-modal-title">${esc(p.name)}</h2><p class="detail-location">⌖ ${esc(p.address||'Dirección no publicada')} · ${distance(p.distance)} en línea recta ${state.mode==='gps'?'desde tu GPS':'desde el centro de búsqueda'}</p><p class="detail-description">${esc(p.description||'Esta ficha se obtuvo de un proveedor de lugares reales. Confirma datos importantes antes de visitar.')}</p><div class="detail-facts"><div>🗺️ Fuente: ${prov}</div><div>📍 Punto registrado: ${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}</div>${googleAttribution(p)}<div>📞 ${phone?esc(p.phone):'Teléfono no disponible en la fuente'}</div>${p.tags?.opening_hours?`<div>🕒 Horario registrado: ${esc(p.tags.opening_hours)}</div>`:''}${['osm','overture'].includes(p.source)?`<div>ℹ️ ${esc(p.accuracy||'Punto registrado en OpenStreetMap')}. Si es un área extensa, este punto puede NO ser su entrada. Comprueba la llegada antes de viajar.</div>`:p.source==='mitur'?'<div>ℹ️ Punto de destino vinculado por Turismo RD; la entrada exacta puede ser distinta. Confirma el acceso.</div>':''}</div><div class="detail-actions"><button class="primary" type="button" data-internal-map="${esc(id)}">🗺️ Ver ubicación en Where to Go</button><a target="_blank" rel="noopener" href="${esc(directions)}">🚗 Iniciar navegación ↗</a><a target="_blank" rel="noopener" href="https://waze.com/ul?ll=${encodeURIComponent(p.lat+','+p.lon)}&navigate=yes">🚗 Waze ↗</a><button data-fav="${esc(id)}">${fav?'♥ Quitar favorito':'♡ Guardar lugar'}</button><button type="button" data-wtg-visited="${esc(id)}">✓ Marcar como visitado</button><button type="button" data-wtg-trip="${esc(id)}">🧳 Guardar en un viaje</button>${website?`<a href="${esc(website)}" target="_blank" rel="noopener">🌐 Sitio web ↗</a>`:''}${phone?`<a href="tel:${esc(phone)}">📞 Llamar</a>`:''}${!p.photo&&window.WTG_GOOGLE_PLACES?.configured()&&!p.googlePhotoTried?`<button type="button" data-fetch-google-photo="${esc(p.id)}">📷 Buscar foto del negocio en Google</button>`:''}${!p.photo?`<button type="button" data-photo-place="${esc(p.id)}">📷 Aportar foto verificada</button>`:''}${p.source==='google'?`<a target="_blank" rel="noopener" href="${esc(p.googleUri||directions)}">Ver ficha en Google Maps ↗</a>`:`<a class="full-line" target="_blank" rel="noopener" href="${esc(p.source==='mitur'||p.source==='editorial'||p.source==='overture'||p.sponsored||p.source==='propietario'?(safeUrl(p.sourceUrl)||osmMap):osmMap)}">${p.sponsored?'Ver web del anunciante ↗':p.source==='propietario'?'Ver ubicación verificada ↗':p.source==='mitur'?'Ver fuente turística oficial ↗':p.source==='overture'?'Ver datos de Overture Maps ↗':p.source==='editorial'?'Ver fuente del lugar ↗':'Ver ficha en OpenStreetMap ↗'}</a>`}</div></div>`;
+  openModal('place-modal');
+  // Al abrir un lugar sin foto se intenta verificar esa ficha, no otro negocio.
+  // Se evita repetir la consulta y el presupuesto técnico limita el consumo.
+  if(!p.photo&&!p.googlePhotoTried&&!wtgPhotoAttempted.has(p.id)&&wtgPhotoBudget>0&&window.WTG_GOOGLE_PLACES?.configured())void fetchVerifiedGooglePhoto(id);
+  if(p.source==='google'&&!p.detailsLoaded){getGoogleDetails(p).then(()=>{if(state.modal==='place-modal'&&$('place-modal-title')?.textContent===p.name)openPlace(id)})}
+  // Photographs from the batch catalog are licensed and attributed before display.
+
+}
+function openModal(id){closeModals();$(id).hidden=false;$('overlay').hidden=false;state.modal=id;document.body.style.overflow='hidden';const focused=$(id).querySelector('button:not([disabled])');focused?.focus({preventScroll:true})}
+function closeModals(){for(const id of ['place-modal','location-modal','register-modal','report-modal'])$(id).hidden=true;$('overlay').hidden=true;state.modal=null;document.body.style.overflow='';wtgProvincePreview='';updateProvinceHero();window.WTG_EXPERIENCE?.update?.();window.WTG_PILOT?.refresh?.();}
+function openReport(placeId=''){
+  const p=state.places.find(x=>x.id===placeId)||state.favoritePlaces.find(x=>x.id===placeId);
+  const form=$('report-form');form.reset();
+  $('report-province').value=provinceFromCity()||state.province||'';
+  $('report-city').value=state.city||'';
+  $('report-id').value=p?.id||'';
+  $('report-name').value=p?.name||'';
+  $('report-category').value=p?.cat||(state.category==='todos'?'':state.category);
+  if(p){
+    $('report-kind').value='foto';
+    $('report-map').value=p.sourceUrl||`https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lon}#map=18/${p.lat}/${p.lon}`;
+    $('report-caption').textContent='Comparte un enlace a una foto que sea tuya o que puedas autorizar. La revisaremos antes de publicarla.';
+  }else{
+    $('report-kind').value='lugar';
+    $('report-caption').textContent='Incluye el nombre exacto y un enlace con el punto real en un mapa. No usaremos tu posición GPS como dirección del lugar.';
+  }
+  openModal('report-modal');
+}
+function openRegister(plan='basico'){$('register-form').reset();
+  const feedback=$('wtg-business-feedback');if(feedback){feedback.hidden=true;feedback.textContent='';}
+  $('business-city').value=state.mode==='gps'?'':state.city;
+  if($('business-province')){$('business-province').innerHTML='<option value="">Selecciona una provincia</option>'+PROVINCES.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');$('business-province').value=state.province||'';}$('business-plan').value=['basico','destacado','premium'].includes(plan)?plan:'basico';openModal('register-modal')}
+function renderCities(){
+  $('city-options').innerHTML=CITIES.map(c=>`<button class="city-btn" data-city="${esc(c.name)}"><span>${c.emoji}</span><div>${esc(c.name)}<small>${esc(c.region)}</small></div></button>`).join('');
+  $('province-select').innerHTML='<option value="">Selecciona provincia o Distrito Nacional</option>'+PROVINCES.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
+}
+function selectProvinceHub(province){
+  const hub=WTG_PROVINCE_HUBS[province];if(!hub)return;
+  activateDominicanDestination();
+  state.city=hub.city;state.province=province;state.region=province+' · República Dominicana';
+  state.lat=hub.lat;state.lon=hub.lon;state.mode='city';
+  state.category='todos';state.search='';state.radius=30000;state.exploreLimit=80;
+  wtgProvincePreview='';rememberManualLocation();closeModals();
+  if($('taxi-province')){$('taxi-province').value=province;updateTaxiMunicipios();}
+  // Display places from this province's reference city without an external geocoder.
+  toast('Mostrando lugares alrededor de '+hub.city+', '+province+'. Puedes elegir otro municipio.');
+  navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));void loadPlaces();
+}
+function selectCity(name){const c=CITIES.find(x=>x.name===name);if(!c)return;activateDominicanDestination();state.city=c.name;state.province=['Puerto Plata','Sosúa','Cabarete'].includes(c.name)?'Puerto Plata':c.name==='La Romana'?'La Romana':['Punta Cana','Bávaro','Verón–Punta Cana'].includes(c.name)?'La Altagracia':c.name==='Santiago de los Caballeros'?'Santiago':['Las Terrenas','El Limón'].includes(c.name)?'Samaná':c.name==='Santo Domingo de Guzmán'?'Distrito Nacional':'';state.region=c.region;state.lat=c.lat;state.lon=c.lon;state.mode='city';state.category='todos';state.search='';state.radius=(c.name==='Las Terrenas'||c.name==='Puerto Plata')?30000:12000;state.exploreLimit=80;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();navigate(c.name==='Las Terrenas'?'explorar':'inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));toast(`Explorando ${c.name} 🌎`);loadPlaces();}
+function loadCachedMunicipalities(){try{const v=JSON.parse(localStorage.getItem('wtg_municipalities_v2')||'null');return Array.isArray(v)&&v.length===158?v:[]}catch{return[]}}
+async function loadMunicipalities(){
+  municipalities=loadCachedMunicipalities();if(municipalities.length){updateTaxiMunicipios();refreshMunicipalitySelect();return}
+  for(const link of MUNICIPAL_SOURCE){
+    try{const r=await fetch(link,{cache:'force-cache'});if(!r.ok)throw Error('Sin conexión');const list=await r.json();
+      if(!Array.isArray(list)||list.length!==158||!list.every(x=>x.provincia&&x.municipio&&x.adm2_code))throw Error('Índice territorial incompleto');
+      municipalities=list;updateTaxiMunicipios();
+      try{localStorage.setItem('wtg_municipalities_v2',JSON.stringify(list))}catch{}
+      refreshMunicipalitySelect();return;
+    }catch{} 
+  }
+  $('municipal-status').textContent='No fue posible obtener los 158 municipios. Verifica la conexión y reintenta.';
+  $('municipal-retry').hidden=false;
+}
+function refreshMunicipalitySelect(){
+  const p=$('province-select').value,mun=$('municipality-select');
+  const options=municipalities.filter(x=>x.provincia===p).sort((a,b)=>a.municipio.localeCompare(b.municipio,'es'));
+  mun.disabled=!p||!options.length;
+  mun.innerHTML='<option value="">'+(p?'Selecciona municipio':'Primero elige una provincia')+'</option>'+options.map(x=>`<option value="${esc(x.adm2_code)}">${esc(x.municipio)}</option>`).join('');
+  if(p==='Puerto Plata')mun.insertAdjacentHTML('beforeend','<option value="district-cabarete">Cabarete · distrito municipal de Sosúa</option>');
+  if(p==='La Altagracia')mun.insertAdjacentHTML('beforeend','<option value="district-veron">Verón–Punta Cana · distrito municipal de Higüey</option><option value="zone-puntacana">Punta Cana · zona turística</option><option value="zone-bavaro">Bávaro · localidad turística</option>');
+  $('municipal-status').textContent=municipalities.length===158?`31 provincias + Distrito Nacional · 158 municipios en el catálogo territorial. ${p?options.length+' en '+p+'.':''}`:'Cargando el índice oficial de municipios...';
+  $('municipality-go').disabled=!mun.value;
+}
+async function selectMunicipality(){
+  if($('province-select').value==='Puerto Plata' && $('municipality-select').value==='district-cabarete'){selectCity('Cabarete');return;}
+  if($('province-select').value==='La Altagracia'){const special={'district-veron':'Verón–Punta Cana','zone-puntacana':'Punta Cana','zone-bavaro':'Bávaro'}[$('municipality-select').value];if(special){selectCity(special);return;}}
+  const selected=municipalities.find(x=>x.adm2_code===$('municipality-select').value);
+  if(!selected)return toast('Selecciona una provincia y un municipio.');
+  const btn=$('municipality-go');btn.disabled=true;btn.textContent='Buscando ubicación…';
+  try{
+    if(!window.WTG_MUNICIPAL_GEOCODER?.locate)
+      throw Error('No se cargó el índice de coordenadas. Actualiza la aplicación.');
+    const {lat,lon}=await window.WTG_MUNICIPAL_GEOCODER.locate({
+      city:selected.municipio,province:selected.provincia
+    });
+    activateDominicanDestination();state.lat=lat;state.lon=lon;state.city=selected.municipio;state.province=selected.provincia;state.region=selected.provincia+' · RD';state.mode='municipio';state.category='todos';state.search='';state.radius=selected.provincia==='Puerto Plata'?30000:12000;rememberManualLocation();if($('taxi-province')){$('taxi-province').value=state.province;updateTaxiMunicipios();}closeModals();navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));toast(`Explorando ${selected.municipio}, ${selected.provincia}`);loadPlaces();
+  }catch(e){toast(e.message||'No fue posible localizar el municipio.');$('municipal-status').textContent='No se cambió de ciudad: ubicación sin verificar.'}
+  finally{btn.disabled=false;btn.textContent='Explorar este municipio →'}
+}
+// Resolve the city for the GPS coordinates. This is called ONLY after a real
+// device-location permission has been granted (never for manually selected cities).
+async function resolveCurrentCity(lat,lon){
+  // Resolve the country before querying businesses: GPS may point anywhere
+  // in the world. Never apply the Dominican catalogue to another country.
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),8500);
+  try{
+    const url=`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&localityLanguage=es`;
+    const res=await fetch(url,{signal:ctrl.signal});
+    if(!res.ok)throw Error('No se pudo identificar el país');
+    const data=await res.json();
+    if(state.mode!=='gps'||state.lat!==lat||state.lon!==lon)return false;
+    const country=String(data.countryCode||'').trim().toUpperCase();
+    if(!/^[A-Z]{2}$/.test(country))throw Error('País de la ubicación sin verificar');
+    const city=String(data.city||data.locality||data.principalSubdivision||'').trim();
+    state.city=city||'Cerca de mí';
+    state.province=country==='DO'?(canonicalProvince(data.principalSubdivision)||String(data.principalSubdivision||'').trim()):'';
+    state.region=String(data.principalSubdivision||data.countryName||country).trim();
+    window.WTG_ACTIVE_COUNTRY=country;
+    window.WTG_ACTIVE_HAS_COORDINATES=true;
+    window.WTG_ACTIVE_DESTINATION=[state.city,state.region].filter(Boolean).join(' · ');
+    window.WTG_EXPERIENCE?.update?.();
+    renderAll();
+    return true;
+  }catch(error){
+    console.warn('Ubicación detectada, país pendiente de verificar:',String(error));
+    state.dataMode='live';state.dataError='No pudimos identificar el país a partir del GPS. Selecciona una ciudad para buscar negocios correctos.';
+    window.WTG_ACTIVE_COUNTRY='';window.WTG_ACTIVE_HAS_COORDINATES=false;
+    renderAll();
+    return false;
+  }finally{clearTimeout(timer)}
+}
+// Many mobile browsers require a tap before requesting precise location.
+function showFirstLocationChoice(){if(!state.modal)openModal('location-modal')}
+function requestLocation(){
+  // The browser/OS owns the permission popup. We never draw a fake alert.
+  if(!window.isSecureContext||!navigator.geolocation){
+    window.dispatchEvent(new CustomEvent('wtg-location-error',{detail:{code:0,reason:'unsupported'}}));
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    state.lat=pos.coords.latitude;state.lon=pos.coords.longitude;
+    state.gpsAccuracy=Number.isFinite(pos.coords.accuracy)?pos.coords.accuracy:null;
+    state.mode='gps';state.city='Cerca de mí';state.province='';state.region='Ubicación actual';
+    state.category='todos';state.search='';state.radius=12000;
+    closeModals();
+    const identified=await resolveCurrentCity(state.lat,state.lon);
+    if(identified){
+      window.dispatchEvent(new CustomEvent('wtg-destination-changed'));
+      // A business invited by a direct proposal link must stay on that view
+      // after granting location. Do not replace the intended #promocionar URL.
+      const sharedBusinessView=state.view==='promocionar'&&location.hash==='#promocionar';
+      navigate(sharedBusinessView?'promocionar':'inicio');
+      void loadPlaces();
+      window.dispatchEvent(new CustomEvent('wtg-location-success',{detail:{lat:state.lat,lon:state.lon,country:window.WTG_ACTIVE_COUNTRY,city:state.city,province:state.province}}));
+    }else{
+      window.dispatchEvent(new CustomEvent('wtg-location-error',{detail:{code:0,reason:'country-unverified'}}));
+    }
+  },error=>{
+    if(state.mode==='pending'){state.dataMode='live';renderAll();}
+    window.dispatchEvent(new CustomEvent('wtg-location-error',{detail:{code:error.code}}));
+  },{enableHighAccuracy:false,timeout:13500,maximumAge:180000});
+}
+
+function renderMap(){if(window.WTG_GOOGLE_PLACES?.configured()||state.placesProvider==='google'){void renderGoogleMapLinks();return;}$('map-help').textContent='Mapa: © OpenStreetMap contributors · Leaflet. Las coordenadas pueden representar el centro de un área.';const arr=sortByDistance(state.places.filter(p=>p.source!=='google'&&hasCatalogPhoto(p)&&placeMatchesCategory(p,state.category)&&(state.category!=='todos'||isVisibleBusiness(p))&&p.distance<=state.radius));$('map-count').textContent=arr.length;$('map-places').innerHTML=arr.length?arr.slice(0,85).map(p=>`<div class="map-place" role="button" tabindex="0" data-map-place="${esc(p.id)}"><span class="map-emoji">${catInfo(p.cat).emoji}</span><div><strong>${esc(p.name)}</strong><small>${catInfo(p.cat).name} · ${distance(p.distance)}</small></div></div>`).join(''):'<div style="padding:20px;font-size:12px;color:#8aa1ac">Sin lugares cargados. Prueba ampliar la zona.</div>';
+  const mapElement=$('world-map');if(typeof window.L==='undefined'){mapElement.innerHTML='<div class="map-fallback"><div><b>🗺️ Mapa no disponible</b>Se requiere conexión a internet para cargar el mapa. Puedes abrir los lugares desde las fichas.</div></div>';return;}
+  if(!state.map){mapElement.innerHTML='';state.map=L.map('world-map',{zoomControl:true}).setView([state.lat,state.lon],13);L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',maxZoom:19}).addTo(state.map)}
+  state.markers.forEach(m=>m.remove());state.markers=[];
+  const userMarker=L.circleMarker([state.lat,state.lon],{radius:10,weight:4,color:'#fff',fillColor:'#0a9090',fillOpacity:1}).addTo(state.map).bindPopup(state.mode==='gps'?'Tu ubicación actual':'Centro de búsqueda');state.markers.push(userMarker);
+  for(const p of arr.slice(0,130)){const circle=L.circleMarker([p.lat,p.lon],{radius:7,color:'#fff',weight:2,fillColor:categoryColor(p.cat),fillOpacity:.95}).addTo(state.map);circle.bindPopup(`<b>${esc(p.name)}</b><br>${catInfo(p.cat).emoji} ${catInfo(p.cat).name}<br>${distance(p.distance)}`);circle.on('click',()=>{state.selectedMapPlace=p.id});state.markers.push(circle)}
+  state.map.setView([state.lat,state.lon],state.radius>12000?11:state.radius>5500?12:13,{animate:false});setTimeout(()=>state.map.invalidateSize(),140);
+}
+let wtgEmbeddedGoogleMap=null;
+let wtgEmbeddedMarkers=[];
+let wtgMapRenderToken=0;
+let wtgPendingMapPlace='';
+async function renderGoogleMapLinks(){
+  const token=++wtgMapRenderToken;
+  // Everything is discoverable in the app, even a genuine establishment without a picture.
+  const arr=sortByDistance(state.places.filter(p=>p&&p.nameKnown!==false&&
+    String(p.name||'').trim()&&Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&
+    p.distance<=state.radius+100&&placeMatchesCategory(p,state.category)&&
+    (state.category!=='todos'||!['escuelas','iglesias'].includes(p.cat)))).slice(0,130);
+  $('map-count').textContent=arr.length;
+  $('map-help').textContent='Mapa interactivo dentro de Where to Go · ubicaciones aproximadas cuando la fuente no publica su entrada exacta.';
+  $('map-places').innerHTML=arr.length?arr.map(p=>'<button type="button" class="map-place" data-map-place="'+esc(p.id)+'"><span class="map-emoji">'+catInfo(p.cat).emoji+'</span><span><strong>'+esc(p.name)+'</strong><small>'+esc(catInfo(p.cat).name)+' · '+distance(p.distance)+'</small></span></button>').join(''):'<p>Sin lugares en esta zona. Cambia de municipio o amplía el radio.</p>';
+  const node=$('world-map');
+  if(!window.WTG_GOOGLE_PLACES?.configured()){
+    node.innerHTML='<div class="map-fallback">El mapa interactivo no está configurado en esta publicación. Puedes explorar los negocios y abrir sus fichas dentro de la app.</div>';
+    return;
+  }
+  // Do not clear a previously mounted Google map while refreshing place markers.
+  if(!wtgEmbeddedGoogleMap||wtgEmbeddedGoogleMap.getDiv()!==node)node.textContent='Cargando mapa interactivo…';
+  try{
+    const loaded=await window.WTG_GOOGLE_PLACES.loadScript();
+    if(!loaded||token!==wtgMapRenderToken||state.view!=='mapa')return;
+    const {Map}=await window.google.maps.importLibrary('maps');
+    if(token!==wtgMapRenderToken||state.view!=='mapa')return;
+    if(state.map){state.map.remove();state.map=null;state.markers=[];}
+    if(!wtgEmbeddedGoogleMap||wtgEmbeddedGoogleMap.getDiv()!==node){
+      node.replaceChildren();
+      wtgEmbeddedGoogleMap=new Map(node,{
+        center:{lat:state.lat,lng:state.lon},
+        zoom:state.radius>30000?10:state.radius>12000?11:13,
+        mapTypeControl:false,streetViewControl:false,fullscreenControl:false
+      });
+    }
+    wtgEmbeddedMarkers.forEach(marker=>marker.setMap(null));
+    wtgEmbeddedMarkers=[];
+    const markerClass=window.google.maps.Marker;
+    if(typeof markerClass==='function'){
+      for(const p of arr){
+        const marker=new markerClass({map:wtgEmbeddedGoogleMap,position:{lat:p.lat,lng:p.lon},title:p.name});
+        marker.addListener('click',()=>openPlace(p.id));
+        wtgEmbeddedMarkers.push(marker);
+      }
+    }
+    const selected=arr.find(p=>p.id===wtgPendingMapPlace);
+    wtgPendingMapPlace='';
+    wtgEmbeddedGoogleMap.setCenter(selected?{lat:selected.lat,lng:selected.lon}:{lat:state.lat,lng:state.lon});
+    wtgEmbeddedGoogleMap.setZoom(selected?16:state.radius>30000?10:state.radius>12000?11:13);
+  }catch(error){
+    console.warn('Mapa interno no disponible:',String(error));
+    if(token===wtgMapRenderToken)node.innerHTML='<div class="map-fallback">No fue posible cargar el mapa en este momento. La lista de lugares sigue disponible dentro de Where to Go.</div>';
+  }
+}
+function categoryColor(cat){return {restaurantes:'#e88d5b',bares:'#b26bcb',playas:'#2aaacf',piscinas:'#2c9bbc',hoteles:'#dfa05d',resorts:'#349f72',villas:'#8865b3',discotecas:'#9558cb',parques:'#43a16f',entretenimiento:'#ee9b4e',cafes:'#bf8060',atracciones:'#4b91c0'}[cat]||'#087e86'}
+let wtgLastBusinessSyncUser='';
+async function refreshMyBusinessSubmissions(){
+ const user=window.WTG_auth?.user;
+ if(!user||!window.WTG_SUBMISSIONS){state.businesses=state.businesses.filter(b=>!b.cloudStored);renderMyBusinesses();return}
+ try{
+  const remote=await window.WTG_SUBMISSIONS.listBusinesses();
+  if(window.WTG_auth?.user?.id!==user.id)return;
+  wtgLastBusinessSyncUser=user.id;
+  // Drafts remain on-device; cloud records are fetched freshly after login.
+  state.businesses=[...remote.map(b=>({...b,ownerId:user.id,cloudStored:true})),...state.businesses.filter(b=>!b.cloudStored)];
+  renderMyBusinesses();
+ }catch(e){console.warn('Solicitudes remotas sin cargar:',String(e?.message||e).slice(0,130))}
+}
+function renderMyBusinesses(){const user=window.WTG_auth?.user;
+const arr=state.businesses.filter(b=>!b.cloudStored||b.ownerId===user?.id);
+$('my-businesses').innerHTML=arr.length?arr.map((b,i)=>`<article class="business-card"><span class="status">${esc(b.cloudStored?(b.status||"Pendiente de revisión"):"Borrador local · no enviado")}</span><h3>${esc(b.name)}</h3><p>${catInfo(b.category).emoji} ${catInfo(b.category).name} · ${esc(b.city)} · Plan ${b.plan==='premium'?'Premium':b.plan==='destacado'?'Destacado':'Básico'} (no activado)</p><p>📍 ${esc(b.address)} · ☎ ${esc(b.phone)}</p>${b.description?`<p>${esc(b.description)}</p>`:''}${b.cloudStored?`<p>📷 ${Number(b.photoCount)||0} foto(s) enviadas de forma privada para revisión.</p>`:''}${b.reviewNote?`<p><strong>Respuesta del equipo:</strong> ${esc(b.reviewNote)}</p>`:''}${b.cloudStored?`<small>Referencia: ${esc(String(b.id).slice(0,8))} · Solo el equipo autorizado puede aprobar, rechazar o cobrar.</small>`:`<button data-remove-business="${state.businesses.indexOf(b)}">Borrar borrador local</button>`}</article>`).join(''):`<div class="empty-state" style="margin-bottom:20px"><span class="empty-emoji">🏪</span><h3>Todavía no tienes fichas</h3><p>Solicita el registro de tu negocio. La recepción se confirma únicamente cuando nuestro sistema registra la solicitud; la publicación requiere revisión y pago.</p><button data-open-register="destacado">Registrar mi negocio →</button></div>`;}
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(state.toastTimeout);state.toastTimeout=setTimeout(()=>el.classList.remove('show'),4200)}
+
+// TRANSPORTE — directorio con contacto verificado del propietario.
+// No inventamos ubicación física de operadores sin sede pública confirmada.
+const TAXI_OPERATORS=[{
+ id:'clemente-transport-vip',name:'Clemente Transport VIP',province:'Puerto Plata',municipalities:'toda-la-provincia',
+ description:'Traslados privados y turísticos, aeropuertos POP · STI · SDQ, hoteles, resorts y villas. Atención mediante reserva.',
+ phone:'829-586-9111',whatsapp:'https://wa.me/18295869111?text='+encodeURIComponent('Hola, quiero reservar un traslado con Clemente Transport VIP. Vengo de Where to Go.'),
+ site:'https://clementetransportvip.com/',type:'Transporte turístico y privado',featured:true
+}];
+function ensureTaxiSelectors(){
+ const prov=$('taxi-province'),mun=$('taxi-municipality');if(!prov||!mun)return;
+ if(prov.options.length<3){prov.innerHTML='<option value="">Todas las provincias</option>'+PROVINCES.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');}
+ if(!prov.dataset.bound){
+   prov.onchange=()=>{updateTaxiMunicipios();renderTaxis()};
+   mun.onchange=renderTaxis;prov.dataset.bound='yes';
+ }
+ if(!prov.dataset.setInitial){prov.value=PROVINCES.includes(state.province)?state.province:'Puerto Plata';prov.dataset.setInitial='yes';updateTaxiMunicipios();}
+}
+function updateTaxiMunicipios(){
+ const prov=$('taxi-province').value, mun=$('taxi-municipality');
+ mun.innerHTML='<option value="">Todos los municipios</option>'+municipalities.filter(m=>m.provincia===prov).sort((a,b)=>a.municipio.localeCompare(b.municipio,'es')).map(m=>`<option value="${esc(m.municipio)}">${esc(m.municipio)}</option>`).join('');
+ mun.disabled=!prov;
+}
+function renderTaxis(){
+ if(!$('taxi-list'))return;
+ ensureTaxiSelectors();const p=$('taxi-province').value, m=$('taxi-municipality').value;
+ const results=TAXI_OPERATORS.filter(o=>(!p||o.province===p)&&(!m||o.municipalities==='toda-la-provincia'));
+ $('taxi-count').textContent=results.length;
+ $('taxi-list').innerHTML=results.length?results.map(o=>`<article class="taxi-feature"><div class="taxi-logo">CT<span>VIP</span></div><div class="taxi-info"><div class="taxi-label">★ OPERADOR DESTACADO · ${esc(o.province.toUpperCase())}</div><h3>${esc(o.name)}</h3><p>${esc(o.description)}</p><div class="taxi-facts"><span>✧ ${esc(o.type)}</span><span>⌖ Servicio en ${esc(o.province)} y traslados nacionales</span><span>☏ ${esc(o.phone)}</span></div><div class="taxi-buttons"><a href="${esc(o.whatsapp)}" target="_blank" rel="noopener" class="btn btn-primary">Reservar por WhatsApp ↗</a><a href="tel:${esc(normalizedPhone("+1"+o.phone))}" class="outline-btn">Llamar</a><a href="${esc(o.site)}" target="_blank" rel="noopener" class="outline-btn">Sitio web ↗</a></div><div class="taxi-disclaimer">Perfil comercial confirmado por el propietario · No se publica una dirección física sin verificar.</div></div></article>`).join(''):`<div class="taxi-empty"><div class="taxi-empty-icon">🚘</div><h3>Sin operadores verificados en esta selección</h3><p>Estamos incorporando proveedores de transporte por municipio. No mostramos taxis inventados.</p><button class="btn btn-primary" data-view="promocionar">Registrar una empresa ↗</button></div>`;
+}
+
+const wtgOriginalRenderTaxis=renderTaxis;
+renderTaxis=function(){
+ wtgOriginalRenderTaxis();
+ const prov=$('taxi-province')?.value||state.province;
+ const mun=$('taxi-municipality')?.value||'';
+ if(prov!==state.province)return;
+ const extra=state.places.filter(x=>x.cat==='taxis'&&x.source==='osm'&&(!mun||state.city===mun)).slice(0,70);
+ if(!extra.length)return;
+ const list=$('taxi-list');
+ const wrap=document.createElement('div');wrap.className='wtg-taxi-free';
+ wrap.innerHTML='<h3>Más transporte registrado cerca de ti</h3>'+extra.map(p=>`<article class="wtg-taxi-item"><div><strong>${esc(p.name)}</strong><small>🗺️ © OpenStreetMap · ${distance(p.distance)} · ${esc(p.address||'Dirección no publicada')}</small></div><a href="https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lon}#map=18/${p.lat}/${p.lon}" target="_blank" rel="noopener">Ver en mapa ↗</a></article>`).join('');
+ list.appendChild(wrap);
+ $('taxi-count').textContent=Number($('taxi-count').textContent||0)+extra.length;
+};
+function putNearbyResultsFirst(){
+  // On iPhone, people should SEE nearby establishments when they enter.
+  // The scenic hero remains further down, never above all the real results.
+  const home=$('view-inicio'),heading=home?.querySelector('.results-heading');
+  const list=$('home-list'),tools=home?.querySelector('.wtg-v8-home-tools');
+  const welcome=home?.querySelector('.welcome-row');
+  if(!home||!heading||!list||!tools||!welcome)return;
+  welcome.insertAdjacentElement('afterend',tools);
+  const shortcuts=home.querySelector('.wtg-v8-category-shortcuts');
+  if(shortcuts)tools.insertAdjacentElement('afterend',shortcuts);
+  (shortcuts||tools).insertAdjacentElement('afterend',heading);
+  heading.insertAdjacentElement('afterend',list);
+}
+function startup(){createProvinceControls();ensureProviderBanner();renderCities();loadMunicipalities();renderCategories();const d=new Date();$('today-label').textContent=new Intl.DateTimeFormat('es',{day:'numeric',month:'long',year:'numeric'}).format(d);const startView=location.hash.slice(1);navigate($('view-'+startView)?startView:'inicio');
+  document.addEventListener('click',e=>{
+    const v=e.target.closest('[data-view]');if(v){navigate(v.dataset.view);return}
+    const c=e.target.closest('[data-cat]');if(c){if(c.dataset.cat==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=c.dataset.cat;state.search='';const expand=state.mode!=='gps'&&state.radius<30000;if(expand)state.radius=30000;navigate('explorar');void loadPlaces();return}
+    const f=e.target.closest('[data-filter]');if(f){if(f.dataset.filter==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=f.dataset.filter;const expand=state.mode!=='gps'&&state.category!=='todos'&&state.radius<30000;if(expand)state.radius=30000;void loadPlaces();return}
+    const expandPuertoPlata=e.target.closest('[data-expand-puerto-plata]');if(expandPuertoPlata){state.radius=30000;state.exploreLimit=80;void loadPlaces();return}
+    const more=e.target.closest('[data-more-explore]');if(more){
+      if(window.matchMedia?.('(max-width:820px)')?.matches)
+        state.exploreMobileLimit=(state.exploreMobileLimit||24)+24;
+      else state.exploreLimit=(state.exploreLimit||80)+80;
+      renderExplore();return
+    }
+    const unpictured=e.target.closest('[data-toggle-unpictured]');if(unpictured){state.showUnpictured=!state.showUnpictured;state.exploreLimit=80;renderExplore();return}
+    const morePhotos=e.target.closest('[data-more-photo]');if(morePhotos){void enrichVisiblePhotoCards(state.loadingId,12);return}
+    const googleMore=e.target.closest('[data-google-more]');if(googleMore){void loadMoreGoogleBusinesses();return}
+    const allCategories=e.target.closest('[data-show-all-cats]');if(allCategories){
+      $('home-categories').classList.remove('wtg-v8-expanded');
+      state.category='todos';state.search='';navigate('explorar');return
+    }
+    const googlePhoto=e.target.closest('[data-fetch-google-photo]');if(googlePhoto){void fetchVerifiedGooglePhoto(googlePhoto.dataset.fetchGooglePhoto);return}
+    const photo=e.target.closest('[data-photo-place]');if(photo){openReport(photo.dataset.photoPlace);return}
+    const missing=e.target.closest('[data-report-missing]');if(missing){openReport();return}
+    const gallery=e.target.closest('.wtg-gallery');
+    if(gallery){
+      const thumb=e.target.closest('[data-gallery-thumb]');
+      const step=e.target.closest('[data-gallery-step]');
+      if(thumb){selectGalleryPhoto(gallery,Number(thumb.dataset.galleryThumb));return}
+      if(step){selectGalleryPhoto(gallery,Number(gallery.dataset.galleryCurrent||0)+Number(step.dataset.galleryStep));return}
+    }
+    const mark=e.target.closest('[data-wtg-visited]');if(mark){const p=state.places.find(x=>x.id===mark.dataset.wtgVisited)||state.favoritePlaces.find(x=>x.id===mark.dataset.wtgVisited);if(p){closeModals();window.WTG_PROFILE?.markVisited?.(p)}return}
+    const saveTrip=e.target.closest('[data-wtg-trip]');if(saveTrip){const p=state.places.find(x=>x.id===saveTrip.dataset.wtgTrip)||state.favoritePlaces.find(x=>x.id===saveTrip.dataset.wtgTrip);if(p){closeModals();window.WTG_PROFILE?.addToTrip?.(p)}return}
+    const fav=e.target.closest('[data-fav]');if(fav){toggleFavorite(fav.dataset.fav);if(state.modal==='place-modal')openPlace(fav.dataset.fav);return}
+    const place=e.target.closest('[data-place]');if(place){openPlace(place.dataset.place);return}
+    const city=e.target.closest('[data-city]');if(city){selectCity(city.dataset.city);return}
+    const promo=e.target.closest('[data-open-register],.choose-plan');if(promo){openRegister(promo.dataset.plan||promo.dataset.openRegister||'basico');return}
+    const rem=e.target.closest('[data-remove-business]');if(rem){if(confirm('¿Quieres eliminar esta ficha de prueba de este dispositivo?')){const idx=Number(rem.dataset.removeBusiness);if(!Number.isInteger(idx)||idx<0||state.businesses[idx]?.cloudStored)return;state.businesses.splice(idx,1);saveScoped('wtg_businesses',state.businesses.filter(x=>!x.cloudStored));renderMyBusinesses();toast('Ficha eliminada.')}return}
+    const internalMap=e.target.closest('[data-internal-map]');if(internalMap){wtgPendingMapPlace=internalMap.dataset.internalMap;closeModals();navigate('mapa');return}
+    const mp=e.target.closest('[data-map-place]');if(mp){const place=state.places.find(x=>x.id===mp.dataset.mapPlace);if(wtgEmbeddedGoogleMap&&place){wtgEmbeddedGoogleMap.panTo({lat:place.lat,lng:place.lon});wtgEmbeddedGoogleMap.setZoom(16);openPlace(place.id);return}const p=state.places.find(x=>x.id===mp.dataset.mapPlace);if(p&&state.map){state.map.setView([p.lat,p.lon],15);state.markers.find(m=>m.getLatLng&&Math.abs(m.getLatLng().lat-p.lat)<.00001&&Math.abs(m.getLatLng().lng-p.lon)<.00001)?.openPopup()}return}
+    const empty=e.target.closest('[data-empty]');if(empty){if(empty.dataset.empty==='radius'){$('distance-select').value='30000';state.radius=30000;loadPlaces()}else if(empty.dataset.empty==='explore')navigate('explorar');else openModal('location-modal');return}
+    if(e.target.closest('[data-close]')){closeModals();return}
+  });
+  // Swipe only the gallery image; leave the vertical page scroll intact.
+  let galleryTouch=null;
+  document.addEventListener('pointerdown',e=>{
+    const stage=e.target.closest?.('#place-modal .wtg-gallery-stage');
+    if(!stage||e.pointerType!=='touch'||e.target.closest('button'))return;
+    galleryTouch={x:e.clientX,y:e.clientY,id:e.pointerId,stage};
+  },{passive:true});
+  document.addEventListener('pointerup',e=>{
+    const touch=galleryTouch;galleryTouch=null;
+    if(!touch||touch.id!==e.pointerId||!touch.stage.isConnected)return;
+    const dx=e.clientX-touch.x,dy=e.clientY-touch.y;
+    if(Math.abs(dx)<55||Math.abs(dx)<Math.abs(dy)*1.4)return;
+    const gallery=touch.stage.closest('.wtg-gallery');
+    if(gallery)selectGalleryPhoto(gallery,Number(gallery.dataset.galleryCurrent||0)+(dx<0?1:-1));
+  },{passive:true});
+  document.addEventListener('pointercancel',()=>{galleryTouch=null},{passive:true});
+  $('overlay').addEventListener('click',closeModals);document.addEventListener('keydown',e=>{
+    if(e.key==='Escape')closeModals();
+    if(e.key==='Enter'&&e.target.matches('[data-map-place]'))e.target.click();
+    const gallery=e.target.closest?.('#place-modal .wtg-gallery');
+    if(gallery&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){
+      e.preventDefault();
+      selectGalleryPhoto(gallery,Number(gallery.dataset.galleryCurrent||0)+(e.key==='ArrowRight'?1:-1));
+    }
+  });
+  $('location-pill').onclick=()=>openModal('location-modal');$('top-refresh').onclick=()=>{toast('Actualizando lugares...');loadPlaces(true)};$('top-business').onclick=()=>navigate('promocionar');$('side-promote').onclick=()=>navigate('promocionar');$('mobile-brand').onclick=()=>navigate('inicio');
+  $('hero-explore').onclick=()=>navigate('explorar');$('home-see-all').onclick=()=>navigate('explorar');$('show-all-categories').onclick=()=>{state.category='todos';state.search='';$('home-categories').classList.remove('wtg-v8-expanded');navigate('explorar');};$('promo-banner-btn').onclick=()=>navigate('promocionar');
+  $('alert-locate').onclick=()=>{if($('alert-locate').dataset.action==='retry'){loadPlaces(true)}else if($('alert-locate').dataset.action==='change'){openModal('location-modal')}else requestLocation()};
+  $('use-live-location').onclick=requestLocation;$('province-select').onchange=refreshMunicipalitySelect;$('municipality-select').onchange=()=>{$('municipality-go').disabled=!$('municipality-select').value};$('municipality-go').onclick=selectMunicipality;$('municipal-retry').onclick=()=>{ $('municipal-retry').hidden=true;loadMunicipalities()};$('business-cta').onclick=()=>openRegister('basico');$('home-see-taxis').onclick=()=>navigate('taxis');$('taxi-register').onclick=()=>{openRegister('basico');$('business-category').value='taxis'};$('add-another-business').onclick=()=>openRegister('basico');$('explore-map').onclick=()=>navigate('mapa');
+  $('recenter-map').onclick=()=>{if(state.map)state.map.setView([state.lat,state.lon],13)};
+  if($('retry-google-provider'))$('retry-google-provider').onclick=()=>{if(window.WTG_GOOGLE_PLACES?.configured()){toast('Actualizando resultados de esta zona…');void loadPlaces(true);}else toast('No hay proveedor de lugares configurado para esta publicación.');};
+  $('search-input').addEventListener('input',e=>{state.search=e.target.value.trim();renderExplore()});$('search-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&state.search.length>=3){e.preventDefault();void runGoogleBusinessSearch()}});$('clear-search').onclick=()=>{state.search='';$('search-input').value='';renderExplore()};if($('google-search-submit'))$('google-search-submit').onclick=()=>{state.search=$('search-input').value.trim();void runGoogleBusinessSearch()};
+  $('distance-select').addEventListener('change',e=>{state.radius=Number(e.target.value);loadPlaces()});
+  $('report-form').onsubmit=async e=>{
+    e.preventDefault();
+    const val=id=>$(id).value.trim();
+    const kind=val('report-kind'), name=val('report-name'), mapUrl=val('report-map'), imageUrl=val('report-image');
+    const file=$('report-upload').files?.[0];
+    if(file && (file.size>6*1024*1024 || !['image/jpeg','image/png','image/webp'].includes(file.type))){toast('La foto debe ser JPG, PNG o WebP de hasta 6 MB.');return}
+    if(!name||!val('report-province')||!val('report-city')||!$('report-consent').checked){toast('Completa los campos y el permiso.');return}
+    if(kind==='lugar'&&!safeUrl(mapUrl)){toast('Incluye un enlace de mapa para verificar dónde queda el lugar.');return}
+    if(kind==='foto'&&!file&&!safeUrl(imageUrl)){toast('Adjunta la fotografía o un enlace autorizado.');return}
+    const button=$('report-form').querySelector('[type="submit"]');button.disabled=true;
+    try{
+      const data=new URLSearchParams({
+        'form-name':'wtg-sugerencias','bot-field':'',tipo:kind,nombre:name,
+        referencia:val('report-id'),categoria:val('report-category'),provincia:val('report-province'),
+        localidad:val('report-city'),mapa:mapUrl,foto:imageUrl,
+        observaciones:val('report-notes'),contacto:val('report-contact'),
+        permiso:'Declara autorización para compartir foto/datos',fecha:new Date().toISOString()
+      });
+      if(!window.WTG_SUBMISSIONS)throw Error('Servidor de reportes no configurado');
+      const receipt=await window.WTG_SUBMISSIONS.submitReport(Object.fromEntries(data),file);
+      closeModals();toast('Reporte recibido '+receipt.id.slice(0,8)+'; pendiente de revisión.');
+    }catch(err){toast('El reporte no fue enviado: '+String(err?.message||'Error').slice(0,140));}
+    finally{button.disabled=false;}
+  };
+  $('report-category').innerHTML='<option value="">No lo sé</option>'+CATEGORIES.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  $('register-form').onsubmit=async e=>{
+    e.preventDefault();
+    const feedback=$('wtg-business-feedback');
+    const report=message=>{if(feedback){feedback.textContent=message;feedback.hidden=false;feedback.scrollIntoView({block:'nearest',behavior:'smooth'});}else toast(message);};
+    if(feedback){feedback.textContent='';feedback.hidden=true;}
+    const get=id=>$(id).value.trim();
+    const b={id:`draft-${Date.now()}`,name:get('business-name'),category:get('business-category'),
+      province:get('business-province'),city:get('business-city'),address:get('business-address'),phone:get('business-phone'),
+      mapUrl:get('business-map-url'),
+      plan:get('business-plan'),description:get('business-description'),createdAt:new Date().toISOString()};
+    if(!b.name||!b.category||!b.province||!b.city||!b.address||!b.phone||!$('business-consent').checked){report('Completa los campos obligatorios y acepta las condiciones.');return;}
+    const files=Array.from($('business-photos')?.files||[]);
+    if(files.length<1||files.length>5){report('Selecciona de 1 a 5 fotos auténticas de tu negocio.');return;}
+    if(files.some(file=>file.size<=0||file.size>5*1024*1024||!['image/jpeg','image/png','image/webp'].includes(file.type))){
+      report('Fotos JPG, PNG o WebP, máximo 5 MB por foto.');return;
+    }
+    const submitBtn=$('register-form').querySelector('[type="submit"]');
+    const originalLabel=submitBtn?.textContent||'Enviar solicitud de registro →';
+    if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Enviando fotos y solicitud…';}
+    if(feedback){feedback.hidden=false;feedback.textContent='Enviando tu solicitud y las fotografías privadas. No cierres este formulario.';}
+    try{
+      if(!window.WTG_SUBMISSIONS)throw Error('No hay servidor de solicitudes conectado.');
+      const receipt=await window.WTG_SUBMISSIONS.submitBusiness(b,files);
+      // Authenticated cloud records are never persisted into a shared local draft list.
+      state.businesses.unshift({...b,id:receipt.id,status:'Pendiente de revisión',photoCount:files.length,cloudStored:true,ownerId:window.WTG_auth?.user?.id});
+      closeModals();navigate('mis-negocios');renderMyBusinesses();
+      toast('Solicitud recibida con número '+receipt.id.slice(0,8)+'; pendiente de revisión, sin cobro.');
+    }catch(err){
+      // Leave the form AND selected photos intact, so the owner can retry.
+      // Never report a failed network request as a received application.
+      report('No se envió la solicitud: '+String(err?.message||'error').slice(0,160)+'. Tus datos y fotos siguen seleccionados; puedes reintentar.');
+    }finally{if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=originalLabel;}}
+  };
+  renderAll();
+  // Do not block nearby places behind editorial catalogs and business extras.
+  // These can load in parallel and enrich the visible list once ready.
+  void wtgManifest();
+  void loadLocalAdventureCatalog().then(()=>{
+    if(state.dataMode==='live'&&state.places.length)applyNearby(state.remotePlaces,state.dataError);
+  });
+  void Promise.allSettled([loadApprovedFreeBusinesses(),loadApprovedSponsors()]).then(()=>{
+    if(state.dataMode==='live'&&state.places.length)applyNearby(state.remotePlaces,state.dataError);
+  });
+  // Do not spend paid Google Places requests behind the opening screen.
+  // Begin discovery only after the visitor chooses a destination or resumes.
+  if(state.mode!=='pending'&&!window.WTG_ONBOARDING_ENABLED)void loadPlaces();
+  // La bienvenida pide ubicación solo después de un toque explícito.
+  if(window.WTG_ONBOARDING_ENABLED){if(window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO')renderAll();return;}
+  if(window.WTG_ACTIVE_COUNTRY&&window.WTG_ACTIVE_COUNTRY!=='DO'){renderAll();return;}
+  if(window.isSecureContext&&navigator.geolocation){
+    if(navigator.permissions?.query){
+      navigator.permissions.query({name:'geolocation'})
+        .then(result=>{
+          if(result.state==='denied'){
+            if(state.mode==='pending'){state.dataMode='live';renderAll();showFirstLocationChoice()}
+          }else requestLocation();
+        })
+        .catch(()=>requestLocation());
+    }else requestLocation();
+  }else{
+    if(state.mode==='pending'){state.dataMode='live';renderAll();showFirstLocationChoice()}
+  }
+  if('serviceWorker' in navigator&&window.isSecureContext){window.addEventListener('load',()=>navigator.serviceWorker.getRegistrations().then(rs=>rs.filter(r=>r.scope.includes('/where-to-go-app/')).forEach(r=>r.unregister())).catch(()=>{}))}
+}
+document.addEventListener('click',event=>{
+  if(!event.target.closest?.('#wtg-explore-directory-toggle'))return;
+  state.exploreShowAll=!state.exploreShowAll;
+  state.exploreMobileLimit=24;
+  renderExplore();
+});
+window.WTG_GOOGLE_TEXT_SEARCH=runGoogleBusinessSearch;
+document.addEventListener('DOMContentLoaded',startup);
+
+window.addEventListener('wtg-world-request-gps',()=>{window.WTG_ACTIVE_HAS_COORDINATES=false;window.WTG_ACTIVE_COUNTRY=null;window.WTG_ACTIVE_DESTINATION='';try{sessionStorage.removeItem('wtg_world_selection')}catch{};document.getElementById('main-content').hidden=false;document.getElementById('wtg-world-empty').hidden=true;requestLocation()});
+window.addEventListener('wtg-world-return-pilot',event=>{
+  window.WTG_ACTIVE_COUNTRY='DO';window.WTG_ACTIVE_DESTINATION='';
+  const place=event.detail||{};
+  if(place.coordinates){
+    state.lat=place.coordinates.lat;state.lon=place.coordinates.lon;
+    state.city=place.city||'Puerto Plata';state.region=place.region||'República Dominicana';
+    state.province=canonicalProvince(place.region)||state.province||'';
+  }else{
+    state.lat=19.7934;state.lon=-70.6884;state.city='Puerto Plata';
+    state.region='Puerto Plata';state.province='Puerto Plata';
+  }
+  state.mode='municipio';state.category='todos';state.search='';state.radius=state.province==='Puerto Plata'?30000:12000;
+  state.exploreLimit=80;rememberManualLocation();
+  if($('taxi-province')&&state.province){$('taxi-province').value=state.province;updateTaxiMunicipios();}
+  navigate('inicio');window.dispatchEvent(new CustomEvent('wtg-destination-changed'));
+  renderAll();void loadPlaces();
+});
+window.addEventListener('wtg-world-selected',event=>{
+  const selection=event.detail||{},country=selection.country;
+  if(!/^[A-Z]{2}$/.test(country||''))return;
+  window.WTG_ACTIVE_COUNTRY=country;
+  window.WTG_ACTIVE_HAS_COORDINATES=!!selection.coordinates;
+  window.WTG_ACTIVE_DESTINATION=[selection.city,selection.region,selection.countryName].filter(Boolean).join(' · ')||country;
+  ++state.loadingId;
+  state.mode=country==='DO'?'municipio':'city';
+  if(selection.coordinates){state.lat=selection.coordinates.lat;state.lon=selection.coordinates.lon;}
+  state.city=selection.city||selection.countryName||country;
+  state.region=country==='DO'?(selection.region||'República Dominicana'):(selection.region||selection.countryName||country);
+  state.province=country==='DO'?canonicalProvince(selection.region):'';
+  state.category='todos';state.search='';state.radius=country==='DO'&&state.province==='Puerto Plata'?30000:12000;state.exploreLimit=80;
+  state.places=[];state.remotePlaces=[];state.catalog=[];
+  state.dataMode='loading';state.dataError='Buscando negocios y lugares del destino seleccionado…';
+  if(country==='DO'&&selection.coordinates)rememberManualLocation();
+  navigate('inicio');
+  window.dispatchEvent(new CustomEvent('wtg-destination-changed'));
+  renderAll();
+  if(selection.coordinates)void loadPlaces();
+});
+window.addEventListener('wtg-language-changed',()=>{if(typeof renderAll==='function'&&document.getElementById('home-list'))renderAll();});

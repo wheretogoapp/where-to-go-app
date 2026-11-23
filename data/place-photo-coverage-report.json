@@ -1,0 +1,87 @@
+{
+  "generatedAt": "2026-11-23T11:26:42.923250+00:00",
+  "cataloguePlaces": 44696,
+  "mainNationalVerifiedPhotos": 62,
+  "editorialPhotoEntries": 106,
+  "editorialRegionsWithPhotos": 19,
+  "editorialByProvince": {
+    "Distrito Nacional": 43,
+    "Duarte": 2,
+    "Hato Mayor": 1,
+    "Independencia": 2,
+    "La Altagracia": 9,
+    "La Romana": 2,
+    "La Vega": 6,
+    "María Trinidad Sánchez": 1,
+    "Monte Cristi": 1,
+    "Pedernales": 2,
+    "Peravia": 2,
+    "Puerto Plata": 11,
+    "Samaná": 9,
+    "San Cristóbal": 1,
+    "San José de Ocoa": 2,
+    "San Juan": 2,
+    "San Pedro de Macorís": 3,
+    "Santiago": 4,
+    "Santo Domingo": 3
+  },
+  "galleryPlaces": 93,
+  "galleryPhotoEntries": 560,
+  "galleryDistinctSourceFiles": 560,
+  "uniquePlaceSpecificPhotoFilesAcrossApp": 682,
+  "placeIdsWithAnyVerifiedPhoto": 153,
+  "nationalCataloguePlaceIdsWithPhoto": 90,
+  "crossPlacePhotoReuse": [
+    {
+      "source": "lago enriquillo.jpg",
+      "placeIds": [
+        "osm-node-3684543648",
+        "wd-Q1464758"
+      ]
+    },
+    {
+      "source": "altos de chavon amphitheater.jpg",
+      "placeIds": [
+        "osm-way-140159249",
+        "overture-22579c79-0958-467f-850a-a7b58424a167"
+      ]
+    },
+    {
+      "source": "casa museo hermanas mirabal placa biblioteca.jpg",
+      "placeIds": [
+        "osm-way-320553195",
+        "overture-cf3bfa9a-0e35-4bde-b34c-c1238cbe0cd9"
+      ]
+    },
+    {
+      "source": "casa museo hermanas mirabal bustos.jpg",
+      "placeIds": [
+        "osm-way-320553195",
+        "overture-cf3bfa9a-0e35-4bde-b34c-c1238cbe0cd9"
+      ]
+    },
+    {
+      "source": "salto de limon waterfall in samana, dominican republic.jpg",
+      "placeIds": [
+        "mitur-limon",
+        "osm-node-1645554843"
+      ]
+    },
+    {
+      "source": "damajagua waterfall.jpg",
+      "placeIds": [
+        "mitur-damajagua",
+        "osm-way-320449984"
+      ]
+    },
+    {
+      "source": "museo naval atarazanas reales ccsd 08 10 2018 800.jpg",
+      "placeIds": [
+        "osm-way-1561391674",
+        "wd-Q107041447"
+      ]
+    }
+  ],
+  "repeatedPhotoFilesWithinGalleries": [],
+  "excludes": "Geotagged landscape atlas, provincial hero backgrounds and unapproved business submissions"
+}
