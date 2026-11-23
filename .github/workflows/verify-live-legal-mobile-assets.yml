@@ -45,7 +45,7 @@ jobs:
           assert 'mobile-ui-repair.css' in html, 'Missing mobile contrast and profile repair'
           assert 'legal-language.js' in result['privacidad.html'], 'Missing privacy localization'
           assert 'legal-language.js' in result['terminos.html'], 'Missing terms localization'
-          assert 'const privacy=' in result['legal-language.js'] or 'const data=' in result['legal-language.js']
+          assert 'const data=' in result['legal-language.js?v=1'], 'Legal translation bundle missing'
           assert '"Perfil":' in result['language.js'], 'Profile tab not translated'
           assert 'profilePreviousMobileView' in result['traveler-profile.js'], 'Profile nav fix absent'
           assert 'card-open' in result['mobile-ui-repair.css'], 'Contrast fix absent'
