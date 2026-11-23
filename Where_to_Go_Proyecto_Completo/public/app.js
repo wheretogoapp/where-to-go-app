@@ -1729,22 +1729,26 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
     e.preventDefault();const get=id=>$(id).value.trim();
     const b={id:`draft-${Date.now()}`,name:get('business-name'),category:get('business-category'),
       province:get('business-province'),city:get('business-city'),address:get('business-address'),phone:get('business-phone'),
-      mapUrl:get('business-map-url'),photoUrl:get('business-photo-url'),
-      extraPhotoUrls:get('business-photo-links').split(/\r?\n/).map(x=>x.trim()).filter(Boolean),
+      mapUrl:get('business-map-url'),
       plan:get('business-plan'),description:get('business-description'),createdAt:new Date().toISOString()};
     if(!b.name||!b.province||!b.city||!b.address||!b.phone||!$('business-consent').checked){toast('Completa los campos obligatorios.');return;}
-    if(b.extraPhotoUrls.length>4||b.extraPhotoUrls.some(x=>!safeUrl(x))){toast('Agrega hasta cuatro enlaces válidos a fotos autorizadas.');return;}
+    const files=Array.from($('business-photos')?.files||[]);
+    if(files.length<1||files.length>5){toast('Selecciona de 1 a 5 fotos de tu negocio.');return;}
+    if(files.some(file=>file.size<=0||file.size>5*1024*1024||!['image/jpeg','image/png','image/webp'].includes(file.type))){
+      toast('Fotos JPG, PNG o WebP, máximo 5 MB por foto.');return;
+    }
     const submitBtn=$('register-form').querySelector('[type="submit"]');
     if(submitBtn)submitBtn.disabled=true;
     try{
       if(!window.WTG_SUBMISSIONS)throw Error('No hay servidor de solicitudes conectado.');
-      const receipt=await window.WTG_SUBMISSIONS.submitBusiness(b);
+      const receipt=await window.WTG_SUBMISSIONS.submitBusiness(b,files);
       // Authenticated cloud records are never persisted into a shared local draft list.
       state.businesses.unshift({...b,id:receipt.id,status:'Pendiente de revisión',cloudStored:true,ownerId:window.WTG_auth?.user?.id});
       closeModals();navigate('mis-negocios');renderMyBusinesses();
       toast('Solicitud recibida con número '+receipt.id.slice(0,8)+'; pendiente de revisión, sin cobro.');
     }catch(err){
-      state.businesses.unshift({...b,status:'Borrador local · no enviado',cloudStored:false});
+      // Browser drafts contain only text; file objects are never persisted to localStorage.
+      state.businesses.unshift({...b,status:'Borrador local · fotos pendientes de volver a seleccionar',cloudStored:false});
       saveJSON('wtg_businesses',state.businesses.filter(item=>!item.cloudStored));
       closeModals();navigate('mis-negocios');renderMyBusinesses();
       toast('No se envió la solicitud: '+String(err?.message||'error').slice(0,110)+' Guardada localmente.');
