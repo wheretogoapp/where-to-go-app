@@ -151,6 +151,36 @@ jobs:
           console.log('RESPONSIVE NOTES:',JSON.stringify(notes));
           await browser.close();
           JS
+      - name: Comprobar edición premium realmente servida por GitHub Pages
+        run: |
+          python - <<'PY'
+          import json,time,urllib.request
+          base='https://wheretogoapp.github.io/where-to-go-app/'
+          sha='b9e075d85d5e4b0dacb107504872f06b16aa93d3'
+          paths=['data/release.json','index.html','three-screens-premium.css?v=1']
+          for attempt in range(6):
+            try:
+              fetched={}
+              for path in paths:
+                req=urllib.request.Request(base+path,headers={'User-Agent':'WhereToGo-Public-CSS-Audit','Cache-Control':'no-cache'})
+                with urllib.request.urlopen(req,timeout=18) as res:
+                  assert res.status==200, (path,res.status)
+                  fetched[path]=res.read().decode('utf-8','replace')
+              release=json.loads(fetched[paths[0]])
+              css=fetched[paths[2]]
+              page=fetched[paths[1]]
+              assert release.get('commit')==sha, f'Public version differs: {release.get("commit")}'
+              assert 'three-screens-premium.css' in page, 'Missing style link in public HTML'
+              assert 'THREE SCREEN PREMIUM EDITION' in css, 'Wrong CSS content'
+              assert '#view-inicio' in css and '#view-explorar' in css and '#wtg-traveler-profile' in css
+              print('PUBLIC PREMIUM CSS CONFIRMED:',base+paths[2])
+              print('PUBLIC RELEASE SHA CONFIRMED:',sha)
+              break
+            except Exception as e:
+              print('Attempt',attempt+1,'not confirmed:',str(e)[:220])
+              if attempt==5:raise
+              time.sleep(9)
+          PY
       - name: Guardar capturas de la rama de pruebas
         if: always()
         uses: actions/upload-artifact@v4
