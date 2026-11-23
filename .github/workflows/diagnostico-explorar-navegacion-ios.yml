@@ -1,0 +1,65 @@
+name: Where to Go - Diagnostico abrir Explorar en movil
+on:
+  push:
+    branches:
+      - fix/explore-ios-reopen-20261123
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile-explore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Instalacion de navegador real de prueba
+        run: |
+          npm install --no-save playwright
+          if command -v google-chrome >/dev/null 2>&1;then
+            echo "CHROME_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            npx playwright install chromium
+          fi
+      - name: Probar enlaces de Explorar contra la web publicada
+        run: |
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright';
+          const b=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
+          for(const label of ['hero','tab','sidebar']){
+            const p=await b.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:1,locale:'es-DO'});
+            const events=[];let loads=0;
+            p.on('pageerror',e=>events.push('JS_ERROR:'+e.message.slice(0,160)));
+            p.on('crash',()=>events.push('BROWSER_CRASH'));
+            p.on('domcontentloaded',()=>{loads++});
+            p.on('framenavigated',frame=>{if(frame===p.mainFrame())events.push('NAVIGATED:'+frame.url().slice(0,140))});
+            await p.goto('https://wheretogoapp.github.io/where-to-go-app/',{waitUntil:'domcontentloaded',timeout:60000});
+            await p.waitForFunction(()=>typeof navigate==='function'&&typeof renderExplore==='function',{timeout:20000});
+            await p.evaluate(()=>{
+              document.getElementById('wtg-onboarding').hidden=true;
+              document.getElementById('wtg-onboarding').style.setProperty('display','none','important');
+              document.getElementById('auth-gate').hidden=true;
+              document.getElementById('auth-gate').style.setProperty('display','none','important');
+              document.body.classList.remove('wtg-onboarding-active');
+            });
+            // Test on a loaded destination, not only on an empty initial skeleton.
+            await p.evaluate(()=>{
+              state.city='Puerto Plata';state.province='Puerto Plata';state.mode='city';
+              state.lat=19.7934;state.lon=-70.6884;state.radius=12000;
+              void loadPlaces();
+            });
+            await p.waitForTimeout(13000);
+            const before=await p.evaluate(()=>({view:state.view,total:state.places.length,withPhoto:state.places.filter(hasCatalogPhoto).length,ready:document.readyState,hash:location.hash}));
+            const selector=label==='hero'?'#hero-explore':label==='tab'?'.mobile-tabbar [data-view="explorar"]':'.sidebar [data-view="explorar"]';
+            if(label==='sidebar')await p.evaluate(selector=>document.querySelector(selector).click(),selector);
+            else await p.locator(selector).click({timeout:20000});
+            await p.waitForTimeout(5000);
+            const after=await p.evaluate(()=>({view:state.view,hash:location.hash,count:document.querySelectorAll('#explore-list .place-card').length,htmlLength:document.getElementById('explore-list').innerHTML.length,loading:state.dataMode,bodyWidth:document.documentElement.scrollWidth,jsHeap:performance.memory?.usedJSHeapSize||null}));
+            console.log('EXPLORE_LIVE_TEST',label,JSON.stringify({before,after,loads,events:events.slice(-12)}));
+            if(after.view!=='explorar'||after.count>80||loads>1||events.some(e=>e==='BROWSER_CRASH'))throw Error(label+' Explore navigation was not stable');
+            await p.close();
+          }
+          await b.close();
+          JS
