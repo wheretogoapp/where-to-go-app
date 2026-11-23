@@ -219,6 +219,48 @@ try{
   await page.locator('#auth-email-reveal').click();
   assert(!(await page.locator('#auth-email-fold').evaluate(el=>el.hidden)),'El formulario de correo no se despliega');
   await page.locator('#auth-demo').click();
+
+  // Mobile business pilot: a temporary failure must NOT wipe the photos or form.
+  // Run as guest, so no application or image is uploaded to the owner's database.
+  await page.evaluate(()=>openRegister('basico'));
+  await page.locator('#business-name').fill('Negocio de prueba local');
+  await page.locator('#business-category').selectOption({index:1});
+  await page.locator('#business-province').selectOption('Samaná');
+  await page.locator('#business-city').fill('Las Terrenas');
+  await page.locator('#business-address').fill('Calle de prueba, sin registro real');
+  await page.locator('#business-phone').fill('8090000000');
+  await page.locator('#business-consent').check();
+  await page.locator('#business-photos').setInputFiles({
+    name:'prueba-local.png',mimeType:'image/png',
+    buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO8ZuKQAAAAASUVORK5CYII=','base64')
+  });
+  await page.waitForFunction(()=>document.querySelectorAll('#wtg-business-photo-preview img').length===1);
+  assert(/1 foto/.test(await page.locator('#business-photos-count').textContent()),
+    'El formulario no confirma la fotografía elegida');
+  await page.locator('#register-form button[type="submit"]').click();
+  await page.waitForFunction(()=>
+    (document.getElementById('wtg-business-feedback')?.textContent||'').includes('No se envió'));
+  const retry=await page.evaluate(()=>({
+    stillOpen:!document.getElementById('register-modal').hidden,
+    files:document.getElementById('business-photos').files.length,
+    name:document.getElementById('business-name').value,
+    feedback:document.getElementById('wtg-business-feedback').textContent
+  }));
+  assert(retry.stillOpen&&retry.files===1&&retry.name==='Negocio de prueba local',
+    'Al fallar una solicitud, el formulario debe mantener datos y fotos para reintentar');
+  await page.evaluate(()=>closeModals());
+  console.log('BUSINESS PREVIEW & SAFE RETRY OK: files='+retry.files+', form retained');
+
+  // Visual-first Explore remains default, but a seller can show the full local directory.
+  await page.evaluate(()=>navigate('explorar'));
+  const showDirectory=await page.locator('#wtg-explore-directory-toggle').isVisible();
+  if(showDirectory){
+    await page.locator('#wtg-explore-directory-toggle').click();
+    assert(await page.evaluate(()=>state.exploreShowAll),'Ver todos debe abrir las fichas sin foto');
+    await page.locator('#wtg-explore-directory-toggle').click();
+    assert(!(await page.evaluate(()=>state.exploreShowAll)),'Debe poder volver a la selección fotográfica');
+    console.log('OPTIONAL FULL DIRECTORY OK');
+  }
   if(isPublic)console.log('GOOGLE KEY: deployment workflow separately checks the public restricted key; CI blocks paid Places requests.');
   await page.screenshot({path:'/tmp/where-to-go-iphone-results.png',fullPage:false});
   console.log('MOBILE E2E OK:',JSON.stringify({first,explorer,destination,scriptErrors:errors.slice(0,4)}));
