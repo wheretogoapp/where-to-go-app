@@ -1114,7 +1114,7 @@ function ensureLeaflet(){
   });
   return wtgLeafletLoading;
 }
-function navigate(view){if(!$("view-"+view))view='inicio';state.view=view;document.querySelectorAll('.view').forEach(el=>el.classList.toggle('active',el.id===`view-${view}`));document.querySelectorAll('[data-view]').forEach(el=>el.classList.toggle('active',el.dataset.view===view));$('current-page-label').textContent=viewTitle(view);if(view==='taxis')renderTaxis();if(view==='explorar')renderExplore();if(view==='favoritos')renderFavorites();if(view==='mis-negocios')renderMyBusinesses();if(view==='mapa'){
+function navigate(view){if(!$("view-"+view))view='inicio';state.view=view;document.querySelectorAll('.view').forEach(el=>el.classList.toggle('active',el.id===`view-${view}`));document.querySelectorAll('[data-view]').forEach(el=>el.classList.toggle('active',el.dataset.view===view));$('current-page-label').textContent=viewTitle(view);if(view==='taxis')renderTaxis();if(view==='explorar')renderExplore();if(view==='favoritos')renderFavorites();if(view==='mis-negocios'){renderMyBusinesses();void refreshMyBusinessSubmissions();}if(view==='mapa'){
   const map=$('world-map');
   if(map&&!window.L)map.textContent='Preparando mapa de esta zona…';
   if(window.WTG_GOOGLE_PLACES?.configured())renderMap();
@@ -1551,7 +1551,22 @@ async function renderGoogleMapLinks(){
   }
 }
 function categoryColor(cat){return {restaurantes:'#e88d5b',bares:'#b26bcb',playas:'#2aaacf',piscinas:'#2c9bbc',hoteles:'#dfa05d',resorts:'#349f72',villas:'#8865b3',discotecas:'#9558cb',parques:'#43a16f',entretenimiento:'#ee9b4e',cafes:'#bf8060',atracciones:'#4b91c0'}[cat]||'#087e86'}
-function renderMyBusinesses(){const arr=state.businesses;$('my-businesses').innerHTML=arr.length?arr.map((b,i)=>`<article class="business-card"><span class="status">${esc(b.status||"BORRADOR LOCAL")}</span><h3>${esc(b.name)}</h3><p>${catInfo(b.category).emoji} ${catInfo(b.category).name} · ${esc(b.city)} · Plan ${b.plan==='premium'?'Premium':'Destacado'} (no activado)</p><p>📍 ${esc(b.address)} · ☎ ${esc(b.phone)}</p>${b.description?`<p>${esc(b.description)}</p>`:''}<button data-remove-business="${i}">Eliminar ficha local</button></article>`).join(''):`<div class="empty-state" style="margin-bottom:20px"><span class="empty-emoji">🏪</span><h3>Todavía no tienes fichas</h3><p>Solicita que tu negocio aparezca gratis en el directorio. Revisaremos los datos antes de publicarlo. Las promociones son opcionales.</p><button data-open-register="destacado">Registrar mi negocio →</button></div>`;}
+let wtgLastBusinessSyncUser='';
+async function refreshMyBusinessSubmissions(){
+ const user=window.WTG_auth?.user;
+ if(!user||!window.WTG_SUBMISSIONS){state.businesses=state.businesses.filter(b=>!b.cloudStored);renderMyBusinesses();return}
+ try{
+  const remote=await window.WTG_SUBMISSIONS.listBusinesses();
+  if(window.WTG_auth?.user?.id!==user.id)return;
+  wtgLastBusinessSyncUser=user.id;
+  // Drafts remain on-device; cloud records are fetched freshly after login.
+  state.businesses=[...remote.map(b=>({...b,ownerId:user.id,cloudStored:true})),...state.businesses.filter(b=>!b.cloudStored)];
+  renderMyBusinesses();
+ }catch(e){console.warn('Solicitudes remotas sin cargar:',String(e?.message||e).slice(0,130))}
+}
+function renderMyBusinesses(){const user=window.WTG_auth?.user;
+const arr=state.businesses.filter(b=>!b.cloudStored||b.ownerId===user?.id);
+$('my-businesses').innerHTML=arr.length?arr.map((b,i)=>`<article class="business-card"><span class="status">${esc(b.cloudStored?(b.status||"Pendiente de revisión"):"Borrador local · no enviado")}</span><h3>${esc(b.name)}</h3><p>${catInfo(b.category).emoji} ${catInfo(b.category).name} · ${esc(b.city)} · Plan ${b.plan==='premium'?'Premium':b.plan==='destacado'?'Destacado':'Básico'} (no activado)</p><p>📍 ${esc(b.address)} · ☎ ${esc(b.phone)}</p>${b.description?`<p>${esc(b.description)}</p>`:''}${b.cloudStored?`<small>Referencia: ${esc(String(b.id).slice(0,8))} · Solo el equipo autorizado puede aprobar, rechazar o cobrar.</small>`:`<button data-remove-business="${state.businesses.indexOf(b)}">Borrar borrador local</button>`}</article>`).join(''):`<div class="empty-state" style="margin-bottom:20px"><span class="empty-emoji">🏪</span><h3>Todavía no tienes fichas</h3><p>Solicita el registro de tu negocio. La recepción se confirma únicamente al guardarse en Supabase y la publicación requiere revisión y pago.</p><button data-open-register="destacado">Registrar mi negocio →</button></div>`;}
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(state.toastTimeout);state.toastTimeout=setTimeout(()=>el.classList.remove('show'),4200)}
 
 // TRANSPORTE — directorio con contacto verificado del propietario.
@@ -1646,7 +1661,7 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
     const place=e.target.closest('[data-place]');if(place){openPlace(place.dataset.place);return}
     const city=e.target.closest('[data-city]');if(city){selectCity(city.dataset.city);return}
     const promo=e.target.closest('[data-open-register],.choose-plan');if(promo){openRegister(promo.dataset.plan||promo.dataset.openRegister||'basico');return}
-    const rem=e.target.closest('[data-remove-business]');if(rem){if(confirm('¿Quieres eliminar esta ficha de prueba de este dispositivo?')){state.businesses.splice(Number(rem.dataset.removeBusiness),1);saveJSON('wtg_businesses',state.businesses);renderMyBusinesses();toast('Ficha eliminada.')}return}
+    const rem=e.target.closest('[data-remove-business]');if(rem){if(confirm('¿Quieres eliminar esta ficha de prueba de este dispositivo?')){const idx=Number(rem.dataset.removeBusiness);if(!Number.isInteger(idx)||idx<0||state.businesses[idx]?.cloudStored)return;state.businesses.splice(idx,1);saveJSON('wtg_businesses',state.businesses.filter(x=>!x.cloudStored));renderMyBusinesses();toast('Ficha eliminada.')}return}
     const internalMap=e.target.closest('[data-internal-map]');if(internalMap){wtgPendingMapPlace=internalMap.dataset.internalMap;closeModals();navigate('mapa');return}
     const mp=e.target.closest('[data-map-place]');if(mp){const place=state.places.find(x=>x.id===mp.dataset.mapPlace);if(wtgEmbeddedGoogleMap&&place){wtgEmbeddedGoogleMap.panTo({lat:place.lat,lng:place.lon});wtgEmbeddedGoogleMap.setZoom(16);openPlace(place.id);return}const p=state.places.find(x=>x.id===mp.dataset.mapPlace);if(p&&state.map){state.map.setView([p.lat,p.lon],15);state.markers.find(m=>m.getLatLng&&Math.abs(m.getLatLng().lat-p.lat)<.00001&&Math.abs(m.getLatLng().lng-p.lon)<.00001)?.openPopup()}return}
     const empty=e.target.closest('[data-empty]');if(empty){if(empty.dataset.empty==='radius'){$('distance-select').value='30000';state.radius=30000;loadPlaces()}else if(empty.dataset.empty==='explore')navigate('explorar');else openModal('location-modal');return}
@@ -1703,12 +1718,10 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
         observaciones:val('report-notes'),contacto:val('report-contact'),
         permiso:'Declara autorización para compartir foto/datos',fecha:new Date().toISOString()
       });
-      const body=file?new FormData():data;
-      if(file){for(const [key,value] of data)body.append(key,value);body.append('fotoarchivo',file)}
-      const r=await fetch('/__forms.html',file?{method:'POST',body}:{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:data});
-      if(!r.ok)throw Error('HTTP '+r.status);
-      closeModals();toast('Información recibida para revisión. No se publica automáticamente.');
-    }catch{toast('No se pudo enviar. Revisa si Netlify Forms está activo.');}
+      if(!window.WTG_SUBMISSIONS)throw Error('Servidor de reportes no configurado');
+      const receipt=await window.WTG_SUBMISSIONS.submitReport(Object.fromEntries(data),file);
+      closeModals();toast('Reporte recibido '+receipt.id.slice(0,8)+'; pendiente de revisión.');
+    }catch(err){toast('El reporte no fue enviado: '+String(err?.message||'Error').slice(0,140));}
     finally{button.disabled=false;}
   };
   $('report-category').innerHTML='<option value="">No lo sé</option>'+CATEGORIES.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
@@ -1724,19 +1737,17 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
     const submitBtn=$('register-form').querySelector('[type="submit"]');
     if(submitBtn)submitBtn.disabled=true;
     try{
-      const payload=new URLSearchParams({'form-name':'wtg-negocios','bot-field':'',
-        nombre:b.name,categoria:b.category,provincia:b.province,ciudad:b.city,direccion:b.address,
-        mapa:b.mapUrl,foto:b.photoUrl,fotos_adicionales:b.extraPhotoUrls.join('\n'),telefono:b.phone,plan:b.plan,tarifa:b.plan==='basico'?'US$10 una vez':b.plan==='destacado'?'US$30 mensual':'US$50 mensual',descripcion:b.description,
-        consentimiento:'Confirmo ser propietario o representante del negocio',fecha:b.createdAt});
-      const res=await fetch('/__forms.html',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:payload.toString()});
-      if(!res.ok)throw Error('HTTP '+res.status);
-      state.businesses.unshift({...b,status:'Pendiente de revisión y pago'});saveJSON('wtg_businesses',state.businesses);
+      if(!window.WTG_SUBMISSIONS)throw Error('No hay servidor de solicitudes conectado.');
+      const receipt=await window.WTG_SUBMISSIONS.submitBusiness(b);
+      // Authenticated cloud records are never persisted into a shared local draft list.
+      state.businesses.unshift({...b,id:receipt.id,status:'Pendiente de revisión',cloudStored:true,ownerId:window.WTG_auth?.user?.id});
       closeModals();navigate('mis-negocios');renderMyBusinesses();
-      toast('Solicitud recibida, no publicada. Revisaremos el negocio y te indicaremos cómo pagar; no se ha cobrado.');
+      toast('Solicitud recibida con número '+receipt.id.slice(0,8)+'; pendiente de revisión, sin cobro.');
     }catch(err){
-      state.businesses.unshift({...b,status:'Borrador local · no enviado'});saveJSON('wtg_businesses',state.businesses);
+      state.businesses.unshift({...b,status:'Borrador local · no enviado',cloudStored:false});
+      saveJSON('wtg_businesses',state.businesses.filter(item=>!item.cloudStored));
       closeModals();navigate('mis-negocios');renderMyBusinesses();
-      toast('No pudimos enviar tu solicitud. Se guardó solo en este dispositivo.');
+      toast('No se envió la solicitud: '+String(err?.message||'error').slice(0,110)+' Guardada localmente.');
     }finally{if(submitBtn)submitBtn.disabled=false;}
   };
   renderAll();

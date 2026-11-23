@@ -2632,6 +2632,178 @@ Object.assign(labels, {
   ]
 });
 
+// Release-readiness: newly added menus, account recovery and business UI in six languages.
+Object.assign(labels,{
+  "DESCUBRIR": [
+    "DISCOVER",
+    "DÉCOUVRIR",
+    "DESCUBRIR",
+    "ENTDECKEN",
+    "SCOPRI"
+  ],
+  "MI CUENTA": [
+    "MY ACCOUNT",
+    "MON COMPTE",
+    "MINHA CONTA",
+    "MEIN KONTO",
+    "IL MIO ACCOUNT"
+  ],
+  "INFORMACIÓN Y AYUDA": [
+    "INFORMATION & HELP",
+    "INFORMATIONS ET AIDE",
+    "INFORMAÇÕES E AJUDA",
+    "INFORMATIONEN UND HILFE",
+    "INFORMAZIONI E AIUTO"
+  ],
+  "Ajustes e idioma": [
+    "Settings and language",
+    "Paramètres et langue",
+    "Configurações e idioma",
+    "Einstellungen und Sprache",
+    "Impostazioni e lingua"
+  ],
+  "Mis negocios y registros": [
+    "My businesses and applications",
+    "Mes entreprises et demandes",
+    "Meus negócios e inscrições",
+    "Meine Unternehmen und Anträge",
+    "Le mie attività e richieste"
+  ],
+  "Haz que miles de viajeros descubran tu negocio": [
+    "Help thousands of travelers discover your business",
+    "Faites découvrir votre entreprise à des milliers de voyageurs",
+    "Faça milhares de viajantes descobrirem seu negócio",
+    "Machen Sie Ihr Unternehmen für Tausende Reisende sichtbar",
+    "Fai scoprire la tua attività a migliaia di viaggiatori"
+  ],
+  "Presenta tus servicios a quienes buscan lugares y experiencias en tu destino.": [
+    "Show your services to travelers looking for places and experiences at your destination.",
+    "Présentez vos services aux voyageurs qui cherchent des lieux et expériences à destination.",
+    "Apresente seus serviços aos viajantes que procuram lugares e experiências no destino.",
+    "Präsentieren Sie Ihre Angebote Reisenden, die Erlebnisse vor Ort suchen.",
+    "Presenta i tuoi servizi ai viaggiatori in cerca di luoghi ed esperienze nella tua destinazione."
+  ],
+  "Iniciar sesión o registrarme": [
+    "Sign in or register",
+    "Se connecter ou s'inscrire",
+    "Entrar ou cadastrar-se",
+    "Anmelden oder registrieren",
+    "Accedi o registrati"
+  ],
+  "Explorar lugares": [
+    "Explore places",
+    "Explorer les lieux",
+    "Explorar lugares",
+    "Orte entdecken",
+    "Esplora i luoghi"
+  ],
+  "Promocionar mi negocio →": [
+    "Promote my business →",
+    "Promouvoir mon entreprise →",
+    "Promover meu negócio →",
+    "Mein Unternehmen bewerben →",
+    "Promuovi la mia attività →"
+  ],
+  "Solicitar eliminación de mi cuenta": [
+    "Request account deletion",
+    "Demander la suppression de mon compte",
+    "Solicitar exclusão da minha conta",
+    "Kontolöschung beantragen",
+    "Richiedi la cancellazione dell'account"
+  ],
+  "¿Olvidaste tu contraseña?": [
+    "Forgot your password?",
+    "Mot de passe oublié ?",
+    "Esqueceu sua senha?",
+    "Passwort vergessen?",
+    "Hai dimenticato la password?"
+  ],
+  "Establece una contraseña nueva": [
+    "Set a new password",
+    "Définir un nouveau mot de passe",
+    "Defina uma nova senha",
+    "Neues Passwort festlegen",
+    "Imposta una nuova password"
+  ],
+  "Has abierto un enlace de recuperación. Introduce tu nueva contraseña.": [
+    "You opened a recovery link. Enter your new password.",
+    "Vous avez ouvert un lien de récupération. Saisissez un nouveau mot de passe.",
+    "Você abriu um link de recuperação. Digite sua nova senha.",
+    "Sie haben einen Wiederherstellungslink geöffnet. Geben Sie Ihr neues Passwort ein.",
+    "Hai aperto un link di recupero. Inserisci la nuova password."
+  ],
+  "Nueva contraseña": [
+    "New password",
+    "Nouveau mot de passe",
+    "Nova senha",
+    "Neues Passwort",
+    "Nuova password"
+  ],
+  "Confirmar contraseña": [
+    "Confirm password",
+    "Confirmer le mot de passe",
+    "Confirmar senha",
+    "Passwort bestätigen",
+    "Conferma password"
+  ],
+  "Guardar contraseña nueva": [
+    "Save new password",
+    "Enregistrer le nouveau mot de passe",
+    "Salvar nova senha",
+    "Neues Passwort speichern",
+    "Salva la nuova password"
+  ],
+  "Mis solicitudes de tours": [
+    "My tour applications",
+    "Mes demandes d'excursions",
+    "Minhas solicitações de passeios",
+    "Meine Touranfragen",
+    "Le mie richieste per i tour"
+  ],
+  "Solicitudes de tours": [
+    "Tour applications",
+    "Demandes d'excursions",
+    "Solicitações de passeios",
+    "Touranträge",
+    "Richieste di tour"
+  ],
+  "Pendiente de revisión": [
+    "Pending review",
+    "En attente d'examen",
+    "Pendente de análise",
+    "Wird geprüft",
+    "In attesa di revisione"
+  ],
+  "Borrador local · no enviado": [
+    "Local draft · not submitted",
+    "Brouillon local · non envoyé",
+    "Rascunho local · não enviado",
+    "Lokaler Entwurf · nicht gesendet",
+    "Bozza locale · non inviata"
+  ],
+  "Solicita el registro de tu negocio. La recepción se confirma únicamente al guardarse en Supabase y la publicación requiere revisión y pago.": [
+    "Request a listing for your business. Receipt is only confirmed when saved in Supabase; publication requires review and payment.",
+    "Demandez l'inscription de votre entreprise. La réception est confirmée uniquement après sauvegarde dans Supabase ; la publication nécessite examen et paiement.",
+    "Solicite o cadastro do seu negócio. O recebimento só é confirmado após salvar no Supabase; a publicação exige análise e pagamento.",
+    "Beantragen Sie einen Eintrag für Ihr Unternehmen. Der Eingang gilt erst nach dem Speichern in Supabase als bestätigt; die Veröffentlichung erfordert Prüfung und Zahlung.",
+    "Richiedi la registrazione della tua attività. La ricezione è confermata solo dopo il salvataggio su Supabase; la pubblicazione richiede revisione e pagamento."
+  ],
+  "Mis solicitudes de excursiones": [
+    "My excursion requests",
+    "Mes demandes d'excursions",
+    "Minhas solicitações de excursões",
+    "Meine Ausflugsanfragen",
+    "Le mie richieste di escursioni"
+  ],
+  "Cuenta conectada": [
+    "Account connected",
+    "Compte connecté",
+    "Conta conectada",
+    "Konto verbunden",
+    "Account connesso"
+  ]
+});
+
 // Category labels are stored with stable IDs; proper names and addresses are not translated.
 const categories={
 rios:['Rivers','Rivières','Rios','Flüsse','Fiumi'],balnearios:['Swimming spots','Baignades naturelles','Balneários','Badestellen','Luoghi balneari'],cascadas:['Waterfalls','Cascades','Cachoeiras','Wasserfälle','Cascate'],lagunas:['Lagoons','Lagunes','Lagoas','Lagunen','Lagune'],senderismo:['Hiking','Randonnées','Trilhas','Wandern','Escursionismo'],playas:['Beaches','Plages','Praias','Strände','Spiagge'],parques:['Parks','Parcs','Parques','Parks','Parchi'],atracciones:['Tourist attractions','Sites touristiques','Atrações turísticas','Sehenswürdigkeiten','Attrazioni turistiche'],entretenimiento:['Entertainment','Divertissement','Entretenimento','Unterhaltung','Intrattenimento'],infantil:['Kids activities','Activités enfants','Diversão infantil','Kinderaktivitäten','Attività per bambini'],piscinas:['Swimming pools','Piscines','Piscinas','Pools','Piscine'],restaurantes:['Restaurants','Restaurants','Restaurantes','Restaurants','Ristoranti'],bares:['Bars','Bars','Bares','Bars','Bar'],discotecas:['Nightclubs','Discothèques','Boates','Nachtclubs','Discoteche'],cafes:['Cafés','Cafés','Cafés','Cafés','Caffetterie'],heladerias:['Ice cream shops','Glaciers','Sorveterias','Eisdielen','Gelaterie'],panaderias:['Bakeries','Boulangeries','Padarias','Bäckereien','Panetterie'],pescaderias:['Fish shops','Poissonneries','Peixarias','Fischgeschäfte','Pescherie'],comidarapida:['Fast food','Restauration rapide','Fast food','Schnellimbiss','Fast food'],supermercados:['Supermarkets','Supermarchés','Supermercados','Supermärkte','Supermercati'],colmados:['Local grocery stores','Épiceries locales','Mercearias','Nachbarschaftsläden','Alimentari'],mercados:['Markets','Marchés','Mercados','Märkte','Mercati'],tiendas:['Shops & fashion','Magasins et mode','Lojas e moda','Geschäfte & Mode','Negozi e moda'],ferreterias:['Hardware stores','Quincailleries','Lojas de ferragens','Baumärkte','Ferramenta'],electrodomesticos:['Appliances','Électroménager','Eletrodomésticos','Haushaltsgeräte','Elettrodomestici'],tecnologia:['Technology','Technologie','Tecnologia','Technik','Tecnologia'],barberias:['Barbers','Barbiers','Barbearias','Barbershops','Barbieri'],salones:['Beauty salons','Salons de beauté','Salões de beleza','Schönheitssalons','Saloni di bellezza'],unas:['Nail salons','Ongleries','Salões de unhas','Nagelstudios','Centri unghie'],spas:['Spas & massage','Spas et massages','Spas e massagens','Spas & Massagen','Spa e massaggi'],gimnasios:['Gyms','Salles de sport','Academias','Fitnessstudios','Palestre'],hoteles:['Hotels','Hôtels','Hotéis','Hotels','Hotel'],resorts:['Resorts','Resorts','Resorts','Resorts','Resort'],villas:['Villas','Villas','Villas','Villen','Ville'],taxis:['Taxis & transport','Taxis et transport','Táxis e transporte','Taxis & Transport','Taxi e trasporti'],gasolineras:['Gas stations','Stations-service','Postos de combustível','Tankstellen','Distributori'],talleres:['Repair shops','Garages','Oficinas','Werkstätten','Officine'],lavaderos:['Car washes','Stations de lavage','Lava-rápidos','Autowaschanlagen','Autolavaggi'],farmacias:['Pharmacies','Pharmacies','Farmácias','Apotheken','Farmacie'],hospitales:['Hospitals & clinics','Hôpitaux et cliniques','Hospitais e clínicas','Krankenhäuser & Kliniken','Ospedali e cliniche'],odontologia:['Dentists','Dentistes','Dentistas','Zahnärzte','Dentisti'],veterinarias:['Veterinarians','Vétérinaires','Veterinários','Tierärzte','Veterinari'],mascotas:['Pet shops','Animaleries','Pet shops','Tierhandlungen','Negozi animali'],bancos:['Banks','Banques','Bancos','Banken','Banche'],cajeros:['ATMs','Distributeurs automatiques','Caixas eletrônicos','Geldautomaten','Bancomat'],lavanderias:['Laundries','Blanchisseries','Lavanderias','Wäschereien','Lavanderie'],servicios:['Professional services','Services professionnels','Serviços profissionais','Professionelle Dienstleistungen','Servizi professionali'],escuelas:['Schools','Écoles','Escolas','Schulen','Scuole'],iglesias:['Churches','Églises','Igrejas','Kirchen','Chiese'],deportes:['Sports','Sports','Esportes','Sport','Sport']

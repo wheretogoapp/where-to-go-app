@@ -1,0 +1,110 @@
+name: Where to Go - Seis prioridades QA (sin servicios pagados)
+on:
+  push:
+    branches: [feature/six-priorities-release-readiness-20261123]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  release-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: No tocar Place IDs, Google, mapas ni catálogos
+        run: |
+          python - <<'PY'
+          import subprocess
+          base='4ca9fe74dc87b071c8ff80de46ede88fb0ff2944'
+          diff=subprocess.check_output(['git','diff','--name-only',base,'HEAD'],text=True).splitlines()
+          forbidden=['/public/google-places-adapter.js','/public/google-places-key.js',
+            '/public/world-geography.js','/public/world-location.js','/public/municipality-geocoder.js',
+            '/public/data/','/public/assets/places/']
+          touched=[f for f in diff if any(x in f for x in forbidden)]
+          assert not touched,'Protected locations and photo data changed: '+str(touched)
+          print('DATA_MAP_PROTECTION_PASS: existing Google Places, coordinates, photos and provinces unchanged')
+          PY
+      - name: Revisar sintaxis JavaScript y todas las pruebas locales
+        run: |
+          for f in app.js language.js tours.js traveler-profile.js commercial-submissions.js \
+            header-drawer.js google-places-adapter.js; do
+            node --check "Where_to_Go_Proyecto_Completo/public/$f"
+          done
+          node --input-type=module --check < Where_to_Go_Proyecto_Completo/public/auth.js
+          node --test Where_to_Go_Proyecto_Completo/tests/*.test.cjs
+      - name: Auditoría catálogo, fotografías, tamaños y cinco pestañas
+        run: python Where_to_Go_Proyecto_Completo/tools/audit_release_health.py
+      - name: Instalar navegador de pruebas
+        run: |
+          npm install --no-save playwright
+          if command -v google-chrome >/dev/null 2>&1;then
+            echo "CHROME_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            npx playwright install chromium
+          fi
+      - name: Evaluar UX de iPhone 390 y 360, formularios y seis idiomas
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory Where_to_Go_Proyecto_Completo/public >/tmp/wtg-six-server.log 2>&1 &
+          sleep 2
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
+          const languages=[['en','DISCOVER'],['fr','DÉCOUVRIR'],['pt','DESCUBRIR'],['de','ENTDECKEN'],['it','SCOPRI'],['es','DESCUBRIR']];
+          for(const width of [390,360]){
+            const page=await browser.newPage({viewport:{width,height:844},isMobile:true,hasTouch:true,locale:'es-DO'});
+            await page.route('https://maps.googleapis.com/**',r=>r.abort());
+            await page.route('https://cdn.jsdelivr.net/**',r=>r.abort());
+            await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded',timeout:45000});
+            await page.waitForFunction(()=>!!window.WTG_I18N&&!!window.WTG_SUBMISSIONS&&typeof navigate==='function',{timeout:20000});
+            await page.evaluate(()=>{
+              for(const id of ['wtg-onboarding','auth-gate']){
+                const e=document.getElementById(id);if(e){e.hidden=true;e.style.setProperty('display','none','important')}
+              }
+              document.body.classList.remove('wtg-onboarding-active');
+            });
+            const screen=await page.evaluate(()=>{
+              const rect=x=>{const r=document.querySelector(x).getBoundingClientRect();return {x:r.x,right:r.right,width:r.width}};
+              return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,
+                hamburger:rect('#wtg-mobile-menu-trigger'),logo:rect('#mobile-brand'),
+                tabs:document.querySelectorAll('.mobile-tabbar .mobile-tab').length};
+            });
+            if(screen.tabs!==5||screen.hamburger.right>=screen.logo.x||
+              screen.documentWidth>screen.width+2)
+              throw Error('Small-screen layout broken '+JSON.stringify(screen));
+            await page.locator('#wtg-mobile-menu-trigger').click();
+            for(const [lang,expected] of languages){
+              await page.evaluate(lang=>window.WTG_I18N.change(lang,false),lang);
+              await page.waitForTimeout(120);
+              const title=(await page.locator('.wtg-drawer-section-label').first().textContent()).trim();
+              if(title!==expected)throw Error('Menu translation '+lang+' expected '+expected+' got '+title);
+              if(lang!=='es'){
+                const business=(await page.locator('.wtg-drawer-business strong').textContent()).trim();
+                if(business==='Haz que miles de viajeros descubran tu negocio')
+                  throw Error('Business CTA not translated '+lang);
+              }
+            }
+            await page.locator('.wtg-drawer-cta').click();
+            const prices=await page.locator('#view-promocionar .plan-price strong').allTextContents();
+            if(prices.join(',')!=='$10,$30,$50')throw Error('Commercial price list changed: '+prices);
+            await page.locator('.mobile-tabbar [data-view="tours"]').click();
+            if(!(await page.locator('#wtg-tours-own-open').count()))throw Error('Tour application status missing');
+            await page.locator('.mobile-tabbar [data-profile-open]').click();
+            if(!(await page.locator('#wtg-profile-delete-account').count()))throw Error('Account deletion request missing');
+            await page.screenshot({path:'/tmp/wtg-six-'+width+'.png'});
+            console.log('SIX_PRIORITIES_MOBILE_PASS',width,JSON.stringify({screen,prices,langs:languages.length,cloudAdapter:true}));
+            await page.close();
+          }
+          await browser.close();
+          JS
+      - name: Guardar capturas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: six-priority-mobile-proof
+          path: /tmp/wtg-six-*.png
+          if-no-files-found: ignore
