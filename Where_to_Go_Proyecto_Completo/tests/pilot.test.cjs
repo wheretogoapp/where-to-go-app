@@ -15,15 +15,16 @@ test('bundled photos allowed; executable and protocol-relative URLs rejected',()
 });
 test('every pilot record has documented coordinates, photo bytes, author and source',()=>{
  assert.ok(places.length>=40);const ids=new Set();const names=new Set();
- for(const p of places){assert.ok(!ids.has(p.id));ids.add(p.id);assert.ok(Number.isFinite(p.lat)&&Number.isFinite(p.lon));assert.ok(p.lat>17&&p.lat<20&&p.lon>-73&&p.lon<-68);assert.ok(p.sourceUrl.startsWith('https://'));assert.ok(p.photoSource.startsWith('https://commons.wikimedia.org/wiki/File:'));assert.ok(p.photoAttribution);assert.ok(p.province);const bytes=fs.readFileSync(path.join(root,p.photo));assert.equal(bytes[0],255);assert.equal(bytes[1],216);assert.ok(bytes.length>1000);const key=p.name+'|'+p.province;assert.ok(!names.has(key),'duplicate destination '+key);names.add(key)}
+ for(const p of places){assert.ok(!ids.has(p.id));ids.add(p.id);assert.ok(Number.isFinite(p.lat)&&Number.isFinite(p.lon));assert.ok(p.lat>17&&p.lat<20&&p.lon>-73&&p.lon<-68);assert.ok(p.sourceUrl.startsWith('https://'));assert.ok(p.photoSource.startsWith('https://commons.wikimedia.org/wiki/File:'));assert.ok(p.photoAttribution);assert.ok(p.province);if(p.photo.startsWith('/assets/places/')){const bytes=fs.readFileSync(path.join(root,p.photo));assert.equal(bytes[0],255);assert.equal(bytes[1],216);assert.ok(bytes.length>1000);}else{assert.ok(p.photo.startsWith('https://commons.wikimedia.org/wiki/Special:FilePath/'),'Externally hosted pilot photo must be from attributed Wikimedia Commons');}const key=p.name+'|'+p.province;assert.ok(!names.has(key),'duplicate destination '+key);names.add(key)}
 });
 test('Ocoa pilot includes a photographed destination with contact',()=>{
  const p=places.find(p=>p.name==='Rancho La Vereda');assert.equal(p.province,'San José de Ocoa');assert.ok(p.phone);assert.ok(p.description.includes('no es una entrada verificada'));
 });
-test('failed/missing photo does not qualify for the nearby photo feed',()=>{
- vm.runInContext('state.catalog=[{id:"a",name:"No photo",lat:18.5,lon:-70.5},{id:"b",name:"With photo",lat:18.5,lon:-70.5,photo:"/assets/places/sample.jpg"}];state.lat=18.5;state.lon=-70.5;state.radius=2000;renderAll=()=>{};applyNearby([])',ctx);
- assert.deepEqual(JSON.parse(vm.runInContext('JSON.stringify(state.places.map(p=>p.id))',ctx)),['b']);
+test('Explorar retains real nearby locations, but home photo feed requires attributable photos',()=>{
+ vm.runInContext('state.catalog=[{id:"a",name:"No photo",cat:"atracciones",lat:18.5,lon:-70.5},{id:"b",name:"With photo",cat:"atracciones",lat:18.5,lon:-70.5,photo:"/assets/places/sample.jpg",photoSource:"https://commons.wikimedia.org/wiki/File:sample.jpg",photoAttribution:"Wikimedia Commons"}];state.lat=18.5;state.lon=-70.5;state.radius=2000;renderAll=()=>{};applyNearby([])',ctx);
+ assert.deepEqual(JSON.parse(vm.runInContext('JSON.stringify(state.places.map(p=>p.id))',ctx)),['a','b']);
+ assert.deepEqual(JSON.parse(vm.runInContext('JSON.stringify(state.places.filter(isVisibleBusiness).map(p=>p.id))',ctx)),['b']);
 });
 test('service worker caches pilot and supports versioned script URLs offline',()=>{
- const s=fs.readFileSync(path.join(root,'service-worker.js'),'utf8');assert.ok(s.includes("'/data/pilot-places.json'"));assert.ok(s.includes('ignoreSearch:true'));assert.ok(s.includes("'/pilot.js'"));
+ const s=fs.readFileSync(path.join(root,'service-worker.js'),'utf8');assert.ok(s.includes("'/data/pilot-places.json'"));assert.ok(s.includes('ignoreSearch:true'));assert.ok(s.includes("'/traveler-profile.js'"));assert.ok(s.includes("'/auth.js'"));
 });
