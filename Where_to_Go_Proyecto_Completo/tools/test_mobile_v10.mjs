@@ -251,6 +251,17 @@ try{
   await page.evaluate(()=>closeModals());
   console.log('BUSINESS PREVIEW & SAFE RETRY OK: files='+retry.files+', form retained');
 
+  // Organizers can inspect selected tour photographs without uploading them.
+  await page.evaluate(()=>navigate('tours'));
+  await page.locator('#wtg-tours-apply').click();
+  await page.locator('#wtg-tours-photos').setInputFiles({
+    name:'tour-local.png',mimeType:'image/png',
+    buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO8ZuKQAAAAASUVORK5CYII=','base64')
+  });
+  await page.waitForFunction(()=>document.querySelectorAll('#wtg-tour-photo-preview img').length===1);
+  await page.locator('#wtg-tours-close').click();
+  console.log('TOUR PRIVATE PHOTO PREVIEW OK');
+
   // Visual-first Explore remains default, but a seller can show the full local directory.
   await page.evaluate(()=>navigate('explorar'));
   const showDirectory=await page.locator('#wtg-explore-directory-toggle').isVisible();
