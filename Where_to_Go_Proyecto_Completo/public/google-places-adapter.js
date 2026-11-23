@@ -66,6 +66,58 @@ function shiftedCenter(lat,lon,radius,sector='center'){
   return {lat:lat+n*offset/111195,lng:lon+e*offset/longitudeMeters};
 }
 function scanStages(){return SCAN_STAGES.map((x,i)=>({...x,index:i}));}
+// Protect the browser from bursts, repeated identical searches, and
+// continuously retrying a quota/billing outage. Actual account-wide billing
+// safeguards MUST be configured in Google Cloud quotas; browser guards alone
+// are not a hard spending cap.
+const MAX_PARALLEL_PLACES=4;
+const MIN_RETRY_INTERVAL_MS=90*1000;
+const pendingSearches=new Map();
+const waitQueue=[];
+let runningPlaces=0,issuedPlaces=0,blockedUntil=0,lastLimitReason='';
+function googleUsage(){
+ return Object.freeze({inFlight:runningPlaces,queued:waitQueue.length,
+  requestsThisPage:issuedPlaces,temporarilyLimited:Date.now()<blockedUntil,
+  lastLimitReason});
+}
+function limitCause(error){
+ const message=String(error?.code||'')+' '+String(error?.message||error||'');
+ if(/(?:429|403|401|OVER_QUERY_LIMIT|RESOURCE_EXHAUSTED|RATE_LIMIT|PERMISSION_DENIED|REQUEST_DENIED|BILLING|quota exceeded|rate limit exceeded)/i.test(message))
+  return message.slice(0,160);
+ return '';
+}
+async function guardedPlacesQuery(key,call){
+ if(Date.now()<blockedUntil){
+  const err=new Error('Google Places: temporalmente limitado. Prueba después; el directorio local sigue disponible.');
+  err.code='WTG_GOOGLE_LIMITED';throw err;
+ }
+ if(pendingSearches.has(key))return pendingSearches.get(key);
+ const task=(async()=>{
+  if(runningPlaces>=MAX_PARALLEL_PLACES){
+   await new Promise(resolve=>waitQueue.push(resolve));
+  }
+  runningPlaces++;
+  try{
+   if(Date.now()<blockedUntil){
+    const err=new Error('Google Places: temporalmente limitado');
+    err.code='WTG_GOOGLE_LIMITED';throw err;
+   }
+   issuedPlaces++;
+   return await call();
+  }catch(error){
+   const cause=limitCause(error);
+   if(cause){lastLimitReason=cause;blockedUntil=Date.now()+MIN_RETRY_INTERVAL_MS;}
+   throw error;
+  }finally{
+   runningPlaces--;
+   const wake=waitQueue.shift();
+   if(wake)wake();
+  }
+ })();
+ pendingSearches.set(key,task);
+ try{return await task}
+ finally{if(pendingSearches.get(key)===task)pendingSearches.delete(key)}
+}
 let promise=null;
 function configured(){return typeof root.WTG_GOOGLE_MAPS_KEY==='string'&&root.WTG_GOOGLE_MAPS_KEY.trim().length>15}
 function load(){
@@ -140,7 +192,9 @@ async function nearby({lat,lon,radius=12000,category='todos',batch='main',sector
   if(!types.length)return {status:'unsupported',places:[]};
   const queryRadius=sector==='center'?radius:Math.max(1200,Math.min(20000,radius*0.68));
   const results=await Promise.allSettled(types.slice(0,10).map(async type=>{
-   const response=await Place.searchNearby({fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],locationRestriction:{center:shiftedCenter(lat,lon,radius,sector),radius:Math.min(50000,Math.max(100,queryRadius))},includedPrimaryTypes:[type],maxResultCount:20,rankPreference:'DISTANCE'});
+   const center=shiftedCenter(lat,lon,radius,sector);
+   const requestKey=['nearby',center.lat.toFixed(5),center.lng.toFixed(5),Math.round(queryRadius),type].join('|');
+   const response=await guardedPlacesQuery(requestKey,()=>Place.searchNearby({fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],locationRestriction:{center,radius:Math.min(50000,Math.max(100,queryRadius))},includedPrimaryTypes:[type],maxResultCount:20,rankPreference:'DISTANCE'}));
    return response.places||[];
   }));
   const map=new Map();let failures=0;
@@ -177,12 +231,12 @@ async function searchCategory({category,lat,lon,radius=12000,city=''}) {
  try {
   const {Place}=await root.google.maps.importLibrary('places');
   const query=phrase+(city?' en '+String(city).slice(0,90):'');
-  const found=await Place.searchByText({
+  const found=await guardedPlacesQuery('category|'+category+'|'+lat.toFixed(5)+'|'+lon.toFixed(5)+'|'+Math.round(radius)+'|'+query,()=>Place.searchByText({
    textQuery:query,
    fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],
    locationBias:{center:{lat,lng:lon},radius:Math.min(50000,Math.max(1200,radius))},
    maxResultCount:20
-  });
+  }));
   const places=[];
   for(const p of found.places||[]){
    if(!p?.id||!p.location||!p.displayName)continue;
@@ -209,12 +263,13 @@ async function searchText({query,lat,lon,radius=12000}){
  if(!await load())return {status:'unconfigured',places:[]};
  try{
   const {Place}=await root.google.maps.importLibrary('places');
-  const response=await Place.searchByText({
-    textQuery:String(query).trim().slice(0,110),
+  const safeQuery=String(query).trim().slice(0,110);
+  const response=await guardedPlacesQuery('text|'+lat.toFixed(5)+'|'+lon.toFixed(5)+'|'+Math.round(radius)+'|'+safeQuery,()=>Place.searchByText({
+    textQuery:safeQuery,
     fields:['id','displayName','location','formattedAddress','types','googleMapsURI','photos'],
     locationBias:{center:{lat,lng:lon},radius:Math.min(50000,Math.max(2000,radius))},
     maxResultCount:20
-  });
+  }));
   const matches=[];
   for(const p of response.places||[]){
     if(!p.id||!p.location||!p.displayName)continue;
@@ -264,12 +319,12 @@ async function matchPhoto({name,lat,lon}){
  try{
   const {Place}=await root.google.maps.importLibrary('places');
   if(typeof Place.searchByText!=='function')return {status:'unavailable'};
-  const result=await Place.searchByText({
+  const result=await guardedPlacesQuery('photo|'+lat.toFixed(5)+'|'+lon.toFixed(5)+'|'+String(name).slice(0,110),()=>Place.searchByText({
    textQuery:String(name).slice(0,110),
    fields:['id','displayName','location','photos','googleMapsURI'],
    locationBias:{center:{lat,lng:lon},radius:500},
    maxResultCount:5
-  });
+  }));
   const found=(result.places||[]).filter(p=>p?.location)
     .map(p=>({place:p,quality:matchQuality(name,p.displayName),
       distance:meters(lat,lon,p.location.lat(),p.location.lng())}))
@@ -289,5 +344,5 @@ async function matchPhoto({name,lat,lon}){
   return {status:'not-found'};
  }catch(e){return {status:'error',message:String(e?.message||'No fue posible consultar Google Places').slice(0,160)}}
 }
-root.WTG_GOOGLE_PLACES=Object.freeze({configured,loadScript:load,nearby,searchCategory,scanStages,shiftedCenter,searchText,matchPhoto,sameEstablishment,matchQuality,meters});
+root.WTG_GOOGLE_PLACES=Object.freeze({configured,loadScript:load,nearby,searchCategory,scanStages,shiftedCenter,searchText,matchPhoto,sameEstablishment,matchQuality,meters,usage:googleUsage});
 })(window);
