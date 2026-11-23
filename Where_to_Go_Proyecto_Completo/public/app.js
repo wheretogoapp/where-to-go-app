@@ -221,11 +221,13 @@ document.addEventListener('error', event => {
   // Re-render once after the failed URL is memoized; no retry loop.
   if(!wtgBrokenPhotoRefreshScheduled&&typeof state!=='undefined'){
     wtgBrokenPhotoRefreshScheduled=true;
-    requestAnimationFrame(()=>{
+    // Many remote photos can fail together; wait briefly and redraw once
+    // instead of rebuilding the entire mobile card grid every animation frame.
+    setTimeout(()=>{
       wtgBrokenPhotoRefreshScheduled=false;
       if(state.view==='explorar')renderExplore();
       else if(state.view==='inicio')renderHome();
-    });
+    },240);
   }
 },true);
 function regionalScene(p){
@@ -1284,7 +1286,17 @@ function renderExplore(){
   const photographed=arr.filter(hasCatalogPhoto);
   const photoFirst=state.category==='todos'&&!state.search;
   const display=photoFirst?photographed:arr;
-  const shown=display.slice(0,state.exploreLimit||80);
+  // iPhone and other small screens should not create 80 full photo cards at once.
+  // Keep ALL results accessible via "Ver más"; the source catalogue and search
+  // stay unchanged. Reset the visible batch when location/filter changes.
+  const mobileExplore=!!window.matchMedia?.('(max-width:820px)')?.matches;
+  const mobileExploreKey=[state.city,state.radius,state.category,state.search].join('|');
+  if(mobileExplore&&state.exploreMobileKey!==mobileExploreKey){
+    state.exploreMobileKey=mobileExploreKey;
+    state.exploreMobileLimit=24;
+  }
+  const visibleLimit=mobileExplore?(state.exploreMobileLimit||24):(state.exploreLimit||80);
+  const shown=display.slice(0,visibleLimit);
   const expandPuertoPlata=photoFirst&&state.dataMode!=='loading'&&provinceFromCity()==='Puerto Plata'&&state.radius<30000&&withPhoto<=8?
     '<div class="wtg-more-explore"><span>Esta búsqueda cubre solo '+distance(state.radius)+'. Amplía la zona de Puerto Plata para descubrir más lugares.</span><button type="button" data-expand-puerto-plata="yes">Explorar hasta 30 km ↓</button></div>':'';
   const googleMore=wtgGoogleBusy&&photoFirst?
@@ -1292,7 +1304,7 @@ function renderExplore(){
 
   const exploreTarget=$('explore-list');
   const exploreSignature=[state.dataMode,state.city,state.radius,state.category,state.search,window.WTG_I18N?.lang||'es',
-    state.exploreLimit,wtgGoogleBusy?'busy':'idle',...shown.map(p=>
+    visibleLimit,wtgGoogleBusy?'busy':'idle',...shown.map(p=>
     [p.id,p.name,p.address,Math.round(p.distance),placeCoverUrl(p),
       state.favorites.includes(p.id)?'fav':'',placeGalleryPhotos(p).length].join('|'))].join('~');
   if(!exploreTarget.dataset||exploreTarget.dataset.wtgSignature!==exploreSignature){
@@ -1605,7 +1617,12 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
     const c=e.target.closest('[data-cat]');if(c){if(c.dataset.cat==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=c.dataset.cat;state.search='';const expand=state.mode!=='gps'&&state.radius<30000;if(expand)state.radius=30000;navigate('explorar');void loadPlaces();return}
     const f=e.target.closest('[data-filter]');if(f){if(f.dataset.filter==='taxis'){navigate('taxis');return}state.exploreLimit=80;state.category=f.dataset.filter;const expand=state.mode!=='gps'&&state.category!=='todos'&&state.radius<30000;if(expand)state.radius=30000;void loadPlaces();return}
     const expandPuertoPlata=e.target.closest('[data-expand-puerto-plata]');if(expandPuertoPlata){state.radius=30000;state.exploreLimit=80;void loadPlaces();return}
-    const more=e.target.closest('[data-more-explore]');if(more){state.exploreLimit=(state.exploreLimit||80)+80;renderExplore();return}
+    const more=e.target.closest('[data-more-explore]');if(more){
+      if(window.matchMedia?.('(max-width:820px)')?.matches)
+        state.exploreMobileLimit=(state.exploreMobileLimit||24)+24;
+      else state.exploreLimit=(state.exploreLimit||80)+80;
+      renderExplore();return
+    }
     const unpictured=e.target.closest('[data-toggle-unpictured]');if(unpictured){state.showUnpictured=!state.showUnpictured;state.exploreLimit=80;renderExplore();return}
     const morePhotos=e.target.closest('[data-more-photo]');if(morePhotos){void enrichVisiblePhotoCards(state.loadingId,12);return}
     const googleMore=e.target.closest('[data-google-more]');if(googleMore){void loadMoreGoogleBusinesses();return}
