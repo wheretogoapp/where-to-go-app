@@ -266,7 +266,10 @@ test('Al ampliar, fusionar por Place ID y conservar negocios sin fotografía',()
 
 test('Ampliación manual recorre como máximo dos sectores por toque',()=>{
  const src=fs.readFileSync(path.join(root,'app.js'),'utf8');
- assert(src.includes('for(let part=0;part<2&&wtgGoogleStage<stages.length;part++)'));
+ assert(src.includes('async function loadMoreGoogleBusinesses(maxStages=2)'));
+ assert(src.includes('for(let part=0;part<maxStages&&wtgGoogleStage<stages.length;part++)'));
+ assert(src.includes('await loadMoreGoogleBusinesses(n===0?2:1)'));
+ assert(src.includes("if(state.category==='todos'&&wtgGoogleStage===0)wtgGoogleStage=1"));
  assert(src.includes("batch:stage.batch,sector:stage.sector"));
  assert(src.includes("Google: '+added+' negocios nuevos con foto"));
 });
