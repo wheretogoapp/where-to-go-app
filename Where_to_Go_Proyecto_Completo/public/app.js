@@ -1244,7 +1244,9 @@ function renderHome(){renderProvincePremium();renderLocalDiscovery();
  $('home-count').textContent=state.dataMode==='loading'?'...':candidates.length;
  const googleCount=candidates.filter(p=>p.source==='google').length;
  const coverage=document.getElementById('wtg-coverage-counts');
- if(coverage)coverage.textContent=state.dataMode==='loading'?'Consultando lugares…':`${candidates.length} con foto en esta zona · ${googleCount} Google Maps · ${candidates.length-googleCount} otras fuentes`;
+ const allNearby=state.places.filter(p=>p&&p.nameKnown!==false&&
+   !['escuelas','iglesias'].includes(p.cat)&&p.distance<=state.radius+100);
+ if(coverage)coverage.textContent=state.dataMode==='loading'?'Consultando lugares…':`${allNearby.length} lugares registrados en esta zona · ${candidates.length} con fotografías · ${googleCount} resultados recientes`;
  const sorted=tourismSort(candidates).slice(0,12);
  // Keep image elements mounted if another provider update leaves the cards unchanged.
  const homeSignature=[state.dataMode,state.city,state.radius,window.WTG_I18N?.lang||'es',...sorted.map(p=>
@@ -1277,15 +1279,23 @@ function renderExplore(){
     hasCatalogPhoto(p)?1:p.source==='google'?2:3;
   const touristDefault=state.category==='todos'&&!state.search;
   arr.sort((a,b)=>(touristDefault?tourismRank(a)-tourismRank(b):0)||priority(a)-priority(b)||a.distance-b.distance);
-  $('explore-count').textContent=state.dataMode==='loading'?'...':(state.category==='todos'&&!state.search?arr.filter(hasCatalogPhoto).length:arr.length);
   const withPhoto=arr.filter(hasCatalogPhoto).length;
-  $('explore-context').textContent=`${withPhoto} lugares con foto de ${arr.length} fichas · ${state.city} · hasta ${distance(state.radius)}`;
+  const showAll=!!state.exploreShowAll;
+  const touristDefault=state.category==='todos'&&!state.search;
+  $('explore-count').textContent=state.dataMode==='loading'?'...':(touristDefault&&!showAll?withPhoto:arr.length);
+  $('explore-context').textContent=`${arr.length} lugares disponibles · ${withPhoto} con fotografía · ${state.city} · hasta ${distance(state.radius)}`;
+  const directoryToggle=$('wtg-explore-directory-toggle');
+  if(directoryToggle){
+    directoryToggle.hidden=!touristDefault||!arr.length||withPhoto===arr.length;
+    directoryToggle.textContent=showAll?'Ver selección con fotografías':'Ver todos los lugares de esta zona ('+arr.length+')';
+    directoryToggle.setAttribute('aria-pressed',String(showAll));
+  }
   // Keep ALL categories in the general photo-first catalogue for every city.
   // Tourist ranking changes order only, not eligibility. Without-photo records
   // remain searchable through their individual category or by name.
   const photographed=arr.filter(hasCatalogPhoto);
   const photoFirst=state.category==='todos'&&!state.search;
-  const display=photoFirst?photographed:arr;
+  const display=photoFirst&&!showAll?photographed:arr;
   // iPhone and other small screens should not create 80 full photo cards at once.
   // Keep ALL results accessible via "Ver más"; the source catalogue and search
   // stay unchanged. Reset the visible batch when location/filter changes.
@@ -1303,7 +1313,7 @@ function renderExplore(){
     '<div class="wtg-more-explore wtg-auto-discovery" role="status" aria-live="polite">Descubriendo más lugares de esta zona…</div>':'';
 
   const exploreTarget=$('explore-list');
-  const exploreSignature=[state.dataMode,state.city,state.radius,state.category,state.search,window.WTG_I18N?.lang||'es',
+  const exploreSignature=[state.dataMode,state.city,state.radius,state.category,state.search,showAll?'all':'photos',window.WTG_I18N?.lang||'es',
     visibleLimit,wtgGoogleBusy?'busy':'idle',...shown.map(p=>
     [p.id,p.name,p.address,Math.round(p.distance),placeCoverUrl(p),
       state.favorites.includes(p.id)?'fav':'',placeGalleryPhotos(p).length].join('|'))].join('~');
@@ -1791,6 +1801,12 @@ function startup(){createProvinceControls();ensureProviderBanner();renderCities(
   }
   if('serviceWorker' in navigator&&window.isSecureContext){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js').catch(()=>{}))}
 }
+document.addEventListener('click',event=>{
+  if(!event.target.closest?.('#wtg-explore-directory-toggle'))return;
+  state.exploreShowAll=!state.exploreShowAll;
+  state.exploreMobileLimit=24;
+  renderExplore();
+});
 window.WTG_GOOGLE_TEXT_SEARCH=runGoogleBusinessSearch;
 document.addEventListener('DOMContentLoaded',startup);
 
