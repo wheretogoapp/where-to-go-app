@@ -52,7 +52,8 @@ async function loginEmail(create){
   if(!client){showMessage('No es posible crear una cuenta ahora. Puedes explorar sin guardar una cuenta.');return;}
   if(busy)return;
   const email=document.getElementById('auth-email').value.trim();const password=document.getElementById('auth-password').value;
-  if(!email||password.length<6){showMessage('Escribe un correo válido y una contraseña de al menos 6 caracteres.');return;}
+  const minimum=create?12:6;
+  if(!email||password.length<minimum){showMessage(create?'Para crear una cuenta, utiliza un correo válido y una contraseña de al menos 12 caracteres.':'Escribe tu correo y contraseña para iniciar sesión.');return;}
   busy=true;showMessage('');
   try{
     const res=create?await client.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}}):await client.auth.signInWithPassword({email,password});
@@ -175,7 +176,7 @@ recoveryForm?.addEventListener('submit',async event=>{
  event.preventDefault();
  const pass=document.getElementById('wtg-new-password')?.value||'';
  const confirm=document.getElementById('wtg-confirm-password')?.value||'';
- if(pass.length<8||pass!==confirm)return recoveryMessage.textContent='Usa al menos 8 caracteres e introduce la misma contraseña dos veces.';
+ if(pass.length<12||pass!==confirm)return recoveryMessage.textContent='Utiliza al menos 12 caracteres y confirma la contraseña dos veces.';
  if(!client)return recoveryMessage.textContent='El servicio de cuentas no está disponible.';
  const button=recoveryForm.querySelector('button[type="submit"]');button.disabled=true;
  try{
