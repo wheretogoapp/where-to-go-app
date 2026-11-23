@@ -190,3 +190,6 @@
 }
 .wtg-drawer-category-empty{margin:12px 4px;color:#e3eef7;font-size:12px;line-height:1.45}
 @media(max-width:355px){.wtg-drawer-category-grid{grid-template-columns:1fr}}
+
+/* Membership check owns admin visibility; CSS must respect hidden even if links are flex. */
+#wtg-reviewer-entry[hidden]{display:none!important}
