@@ -60,3 +60,23 @@ test('Ninguna fotografía ni ficha completa se almacena en un caché permanente'
  assert.match(adapter,/pendingSearches\.delete\(key\)/);
  assert.match(adapter,/MAX_PARALLEL_PLACES=4/);
 });
+
+test('El sector centro de turismo duplica exactamente las 8 consultas ya hechas en inicio',async()=>{
+ const calls=[];
+ const api=createAdapter(async args=>{
+  calls.push(JSON.stringify({primary:args.includedPrimaryTypes[0],
+   center:args.locationRestriction.center,radius:args.locationRestriction.radius}));
+  return {places:[]};
+ });
+ await api.nearby({lat:19.7934,lon:-70.6884,category:'todos',batch:'main'});
+ const firstTen=new Set(calls);
+ calls.length=0;
+ await api.nearby({lat:19.7934,lon:-70.6884,category:'todos',batch:'tourism',sector:'center'});
+ assert.equal(calls.length,8);
+ assert(calls.every(x=>firstTen.has(x)),'Los 8 tipos turísticos del centro repiten exactamente las consultas principales');
+ const app=fs.readFileSync(path.join(__dirname,'..','public','app.js'),'utf8');
+ assert.match(app,/if\(state\.category==='todos'&&wtgGoogleStage===0\)wtgGoogleStage=1;/,
+  'Saltar la etapa 0 redundante, sin alterar las fotos del principal');
+ assert.match(app,/await loadMoreGoogleBusinesses\(n===0\?2:1\);/,
+  'Mantener exactamente los tres sectores automáticos únicos: norte, este y sur');
+});
