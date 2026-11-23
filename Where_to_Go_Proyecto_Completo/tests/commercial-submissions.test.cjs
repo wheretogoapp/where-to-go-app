@@ -51,18 +51,20 @@ test('Solicitudes comerciales: RLS nunca permite publicar o pagar desde cliente'
 });
 test('Sin cuenta jamás se registra un negocio',async()=>{
  const {api,calls}=harness(false);
- await assert.rejects(api.submitBusiness({name:'Restaurante',phone:'809',province:'Puerto Plata',plan:'basico'}),/Inicia sesión/);
+ await assert.rejects(api.submitBusiness({name:'Restaurante',phone:'809',province:'Puerto Plata',plan:'basico'},[{size:1000,type:'image/jpeg'}]),/Inicia sesión/);
  assert.equal(calls.insert.length,0);
 });
 test('Negocio autenticado recibe UUID y estado pendiente desde servidor',async()=>{
  const {api,calls}=harness();
  const details={name:'Restaurante real',phone:'809-555',province:'Puerto Plata',plan:'premium'};
- const row=await api.submitBusiness(details);
+ const row=await api.submitBusiness(details,[{size:1000,type:'image/jpeg'}]);
  assert.equal(row.status,'pending');
  assert.equal(calls.insert.length,1);
  assert.equal(calls.insert[0].table,'business_submissions');
  assert.equal(calls.insert[0].row.user_id,userId);
  assert.equal(calls.insert[0].row.plan,'premium');
+ assert.equal(calls.uploads[0].bucket,'wtg-business-applications');
+ assert.equal(calls.insert[0].row.photo_paths.length,1);
 });
 test('Tour: fotos privadas bajo carpeta del propietario, máximo 5',async()=>{
  const {api,calls}=harness();
@@ -101,4 +103,13 @@ test('Nunca permitir TRUNCATE, UPDATE ni DELETE a usuarios autenticados en solic
   'La migración debe revocar permisos por defecto que RLS no protege, como TRUNCATE');
  assert.match(sql,/grant select, insert on table[\s\S]*?to authenticated;/i,
   'Los clientes deben disponer únicamente de SELECT e INSERT');
+});
+
+test('Negocios sin foto o con más de cinco fotos son rechazados antes de subir',async()=>{
+ const {api,calls}=harness();
+ const details={name:'Restaurante real',phone:'809',province:'Puerto Plata',plan:'basico'};
+ await assert.rejects(api.submitBusiness(details,[]),/entre 1 y 5/);
+ await assert.rejects(api.submitBusiness(details,Array(6).fill({size:1000,type:'image/jpeg'})),/entre 1 y 5/);
+ await assert.rejects(api.submitBusiness(details,[{size:7*1024*1024,type:'image/jpeg'}]),/máximo 5 MB/);
+ assert.equal(calls.uploads.length,0);
 });

@@ -19,16 +19,35 @@ function databaseError(error){
   return Error('El servidor rechazó el permiso. Revisa las políticas RLS o tu sesión.');
  return Error('No se pudo enviar la solicitud: '+raw);
 }
-async function submitBusiness(details){
+async function submitBusiness(details,photos){
  const {db,user}=session();
  if(!details||!['basico','destacado','premium'].includes(details.plan)||!details.name||!details.phone||!details.province)
   throw Error('Completa los datos y el plan antes de solicitar el registro.');
- const {data,error}=await db.from('business_submissions').insert({
-  user_id:user.id,plan:details.plan,details
- }).select('id,status,created_at').single();
- if(error)throw databaseError(error);
- if(!data?.id||data.status!=='pending')throw Error('No se obtuvo confirmación del registro; no se considera enviado.');
- return data;
+ const files=Array.from(photos||[]);
+ if(files.length<1||files.length>5)throw Error('Selecciona entre 1 y 5 fotos de tu negocio.');
+ if(files.some(file=>file.size<=0||file.size>5*1024*1024||
+  !['image/jpeg','image/png','image/webp'].includes(file.type)))
+  throw Error('Las fotos deben ser JPG, PNG o WebP, máximo 5 MB cada una.');
+ const uploaded=[];
+ try{
+  for(const [i,file] of files.entries()){
+   const suffix=({'image/jpeg':'jpg','image/png':'png','image/webp':'webp'})[file.type];
+   const random=crypto.randomUUID?.()||Date.now()+'-'+i+'-'+Math.random().toString(36).slice(2);
+   const path=user.id+'/'+random+'.'+suffix;
+   const {error}=await db.storage.from('wtg-business-applications').upload(path,file,{contentType:file.type,upsert:false});
+   if(error)throw databaseError(error);
+   uploaded.push(path);
+  }
+  const {data,error}=await db.from('business_submissions').insert({
+   user_id:user.id,plan:details.plan,details,photo_paths:uploaded
+  }).select('id,status,created_at').single();
+  if(error)throw databaseError(error);
+  if(!data?.id||data.status!=='pending')throw Error('No se confirmó el registro del negocio.');
+  return data;
+ }catch(error){
+  if(uploaded.length)try{await db.storage.from('wtg-business-applications').remove(uploaded)}catch{}
+  throw error;
+ }
 }
 async function listBusinesses(){
  const {db,user}=session();

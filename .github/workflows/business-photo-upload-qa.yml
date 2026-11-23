@@ -1,0 +1,35 @@
+name: Where to Go - Negocios fotos privadas QA
+on:
+  push:
+    branches: [feature/business-direct-photo-uploads-20261123]
+permissions:
+  contents: read
+jobs:
+  test-business-photo-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Syntax and cloud-submission unit tests
+        run: |
+          node --check Where_to_Go_Proyecto_Completo/public/app.js
+          node --check Where_to_Go_Proyecto_Completo/public/commercial-submissions.js
+          node --test Where_to_Go_Proyecto_Completo/tests/commercial-submissions.test.cjs
+      - name: Photo input, private storage and moderation guard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('Where_to_Go_Proyecto_Completo')
+          html=(p/'public/index.html').read_text()
+          js=(p/'public/commercial-submissions.js').read_text()
+          sql=(p/'supabase/business-photo-uploads-v1.sql').read_text()
+          assert 'id="business-photos"' in html and 'multiple required' in html
+          assert 'id="business-photo-url"' not in html
+          assert 'id="business-photo-links"' not in html
+          assert "wtg-business-applications" in js and "photo_paths:uploaded" in js
+          assert 'public=false' in sql and 'for insert to authenticated' in sql
+          assert 'for select to authenticated' in sql
+          print('BUSINESS_PRIVATE_PHOTO_QA_PASS')
+          PY
