@@ -60,3 +60,13 @@ País/ciudad universal, seis idiomas y mejora posterior, catálogos y portadas r
 - **Sí, pero por fases:** tours, alojamientos, reservas, promociones, paneles de negocios.
 - **Pendiente de validación:** publicación de videos de experiencias y sección social. No implementar ni comprometer costos hasta investigar prueba pequeña.
 - **No:** anunciar lanzamiento oficial ahora, activar pagos sin pruebas, publicar negocios/fotos sin revisión, falsear fotos, imponer gastos nuevos sin autorización.
+
+
+## Hipótesis opcional: red de creadores e influencers de viaje
+**No añadir una quinta pestaña principal hasta validar el producto.** Crear inicialmente una sección de creadores/embajadores dentro de Experiencias o Descubrir.
+- **Perfil de creador voluntario:** destinos visitados, enlaces a lugares reales, lista de experiencias y métricas públicas no invasivas.
+- **Clips vinculados a fichas**, no reproducción infinita de videos sin contexto. Contenido del viajero tras consentimiento y moderación.
+- **Enlaces de invitación y reserva rastreables** con códigos propios; comisiones solo por reservas verificadas y no canceladas, con contratos, políticas fiscales y prevención de fraude.
+- **Compartir en Facebook, Instagram y WhatsApp** mediante enlaces aprobados, tarjetas con imagen legal y deep links. La integración no permite controlar cuentas ajenas ni leer perfiles privados sin autorización.
+- **Etiquetas de colaboraciones pagadas**, derecho a retirar contenido, informes de abuso y transparencia de conflictos de interés.
+- Validar la idea con 10–20 creadores turísticos y métricas de visitas a fichas, consultas, reservas completadas y costo de moderación. Si no mejora utilidad/ingresos, no expandir.
