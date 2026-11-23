@@ -2206,6 +2206,7 @@ Object.assign(labels, {
 
 // Additional translated interface actions, profile status and business navigation.
 Object.assign(labels, {
+  "Perfil": ["Profile","Profil","Perfil","Profil","Profilo"],
   "WHERE TO GO · MI ESPACIO": [
     "WHERE TO GO · MY SPACE",
     "WHERE TO GO · MON ESPACE",

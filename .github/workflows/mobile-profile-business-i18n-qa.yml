@@ -12,6 +12,8 @@ jobs:
     timeout-minutes: 13
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -20,6 +22,7 @@ jobs:
           node --check Where_to_Go_Proyecto_Completo/public/language.js
           node --check Where_to_Go_Proyecto_Completo/public/traveler-profile.js
           node --check Where_to_Go_Proyecto_Completo/public/app.js
+          node --check Where_to_Go_Proyecto_Completo/public/legal-language.js
           python - <<'PY'
           from pathlib import Path
           p=Path('Where_to_Go_Proyecto_Completo/public')
@@ -34,7 +37,16 @@ jobs:
           for price in ('<strong>$10</strong>','<strong>$30</strong>','<strong>$50</strong>'):
               assert price in promo, 'Business promotion tier missing: '+price
           assert 'pago único' in promo and 'USD / mes' in promo
-          print('Protected business prices, seven tabs and versioned language assets present')
+          import subprocess
+          base='4e4459c1aa1811b2fc24df938479fc8710c7314d'
+          for name in ('app.js','google-places-adapter.js','world-explorer.js','world-location.js',
+                       'province-heroes.js','onboarding.js'):
+              current=(p/name).read_bytes()
+              original=subprocess.check_output(['git','show',base+':Where_to_Go_Proyecto_Completo/public/'+name])
+              assert current==original,'Protected application/map logic changed: '+name
+          for name in ('privacidad.html','terminos.html'):
+              assert './legal-language.js?v=1' in (p/name).read_text()
+          print('Protected Google/region logic untouched; business plans and translated legal pages present')
           PY
       - name: Probar traducciones con el conjunto existente
         run: |
@@ -135,6 +147,119 @@ jobs:
               throw Error('Profile still blocks Inicio tab');
             if(pageLoads.length!==1)throw Error('Unwanted reload switching mobile tabs');
             console.log('UI_QA_PASS',name,'languages=6', 'business-prices=10/30/50', 'seven-tabs=ok');
+            await page.close();
+          }
+          await browser.close();
+          JS
+      - name: Confirmar la versión pública en navegador móvil real emulado
+        run: |
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright';
+          const site='https://wheretogoapp.github.io/where-to-go-app/';
+          const sha='13dbfbc1a33bf74dc5370d6032b5d8260478590b';
+          const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
+          const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'es-DO'});
+          await page.route('https://maps.googleapis.com/**',r=>r.abort());
+          let loads=0;page.on('domcontentloaded',()=>loads++);
+          const response=await page.goto(site,{waitUntil:'domcontentloaded',timeout:50000});
+          if(response?.status()!==200)throw Error('Site unavailable: '+response?.status());
+          await page.waitForFunction(()=>!!window.WTG_I18N&&!!window.WTG_PROFILE,{timeout:22000});
+          const snap=await page.evaluate(async()=>{
+            const r=await fetch('./data/release.json',{cache:'no-store'});
+            const release=await r.json();
+            const css=await fetch('./mobile-ui-repair.css?v=1',{cache:'no-store'});
+            const styles=await css.text();
+            return {sha:release.commit,cssStatus:css.status,cssBytes:styles.length,
+              cssHasFix:styles.includes('Readable action labels'),
+              hasBusiness:!!document.querySelector('.mobile-tabbar [data-view="promocionar"]'),
+              tabs:document.querySelectorAll('.mobile-tabbar .mobile-tab').length,
+              profileVersion:!!document.querySelector('script[src*="traveler-profile.js?v=2"]'),
+              langVersion:!!document.querySelector('script[src*="language.js?v=7.2"]'),
+              businessPrices:[...document.querySelectorAll('#view-promocionar .plan-price strong')].map(e=>e.textContent.trim())};
+          });
+          console.log('PUBLIC_LIVE_ASSETS:',JSON.stringify(snap));
+          if(snap.sha!==sha||snap.cssStatus!==200||snap.cssBytes<4500||!snap.cssHasFix||
+             !snap.hasBusiness||snap.tabs!==7||!snap.profileVersion||!snap.langVersion||
+             snap.businessPrices.join(',')!=='$10,$30,$50')
+            throw Error('Public assets not updated: '+JSON.stringify(snap));
+          await page.evaluate(()=>{
+            document.getElementById('wtg-onboarding').hidden=true;
+            document.getElementById('wtg-onboarding').style.setProperty('display','none','important');
+            document.getElementById('auth-gate').hidden=true;
+            document.getElementById('auth-gate').style.setProperty('display','none','important');
+            document.body.classList.remove('wtg-onboarding-active');
+          });
+          await page.locator('.mobile-tabbar [data-profile-open]').click();
+          const first=await page.evaluate(()=>{
+            const p=document.getElementById('wtg-traveler-profile').getBoundingClientRect();
+            const n=document.querySelector('.mobile-tabbar').getBoundingClientRect();
+            return {profileBottom:p.bottom,navTop:n.top,active:!!document.querySelector('.mobile-tabbar [data-profile-open].active')};
+          });
+          if(first.profileBottom>first.navTop+2||!first.active)throw Error('Public profile hides navigation: '+JSON.stringify(first));
+          await page.locator('.mobile-tabbar [data-view="promocionar"]').click();
+          if(!(await page.evaluate(()=>document.getElementById('wtg-traveler-profile').hidden&&document.getElementById('view-promocionar').classList.contains('active'))))
+            throw Error('Public business tab blocked by profile');
+          await page.locator('.mobile-tabbar [data-view="explorar"]').click();
+          await page.evaluate(()=>{
+            document.getElementById('explore-list').innerHTML='<article class="place-card"><div class="place-body"><div class="place-footer"><button class="card-open">Ver detalles →</button></div></div></article>';
+          });
+          const styles=await page.evaluate(()=>{
+            const e=document.querySelector('#view-explorar .card-open'),cs=getComputedStyle(e);
+            return {text:cs.color,fill:cs.webkitTextFillColor,background:cs.backgroundImage};
+          });
+          if(styles.text!=='rgb(16, 45, 70)'||!styles.background.includes('gradient'))
+            throw Error('Public detail button still unreadable: '+JSON.stringify(styles));
+          await page.evaluate(()=>window.WTG_I18N.change('en',false));
+          await page.waitForTimeout(350);
+          const translated=await page.locator('.mobile-tabbar [data-view="promocionar"] small').innerText();
+          if(translated!=='Businesses')throw Error('Public business navigation untranslated: '+translated);
+          if(loads!==1)throw Error('The page navigated/reloaded unexpectedly');
+          console.log('PUBLIC_LIVE_MOBILE_PASS:',JSON.stringify({first,styles,translated,loads,sha:snap.sha}));
+          await browser.close();
+          JS
+      - name: Comprobar documentos completos en seis idiomas
+        run: |
+          python -m http.server 8766 --bind 127.0.0.1 --directory Where_to_Go_Proyecto_Completo/public >/tmp/legal-http.log 2>&1 &
+          sleep 2
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
+          const labels={
+            en:['Privacy policy','Terms and conditions'],
+            fr:['Politique de confidentialité','Conditions générales'],
+            pt:['Política de privacidade','Termos e condições'],
+            de:['Datenschutzerklärung','Nutzungsbedingungen'],
+            it:['Informativa sulla privacy','Termini e condizioni']
+          };
+          for(const [file,index,count] of [['privacidad.html',0,17],['terminos.html',1,14]]){
+            const page=await browser.newPage({locale:'es-DO'});
+            const errors=[];page.on('pageerror',e=>errors.push(e.message));
+            await page.goto('http://127.0.0.1:8766/'+file,{waitUntil:'domcontentloaded',timeout:15000});
+            await page.waitForFunction(()=>!!window.WTG_LEGAL_I18N,{timeout:5000});
+            for(const lang of ['en','fr','pt','de','it']){
+              await page.locator('#wtg-legal-language').selectOption(lang);
+              const info=await page.evaluate(()=>({
+                lang:document.documentElement.lang,title:document.querySelector('header h1').textContent,
+                sections:document.querySelectorAll('main h2,main p').length,
+                first:document.querySelector('main h2').textContent,
+                body:document.querySelector('main p').textContent.slice(0,85),
+                links:[...document.querySelectorAll('main p a')].length,
+                providerLink:[...document.querySelectorAll('main p a')].some(a=>a.href.includes('google.com')||a.href.includes('privacidad.html'))
+              }));
+              console.log('LEGAL_I18N_PASS_CANDIDATE',file,lang,JSON.stringify(info));
+              if(info.lang!==lang||info.title!==labels[lang][index]||info.sections!==count||
+                 info.first.startsWith('1. Qué')||info.first.startsWith('1. Alcance')||
+                 !info.providerLink||errors.length)
+                throw Error('Legal translation broken: '+JSON.stringify(info)+' JS='+JSON.stringify(errors));
+            }
+            await page.locator('#wtg-legal-language').selectOption('es');
+            const restored=await page.evaluate(()=>({
+              lang:document.documentElement.lang,first:document.querySelector('main h2').textContent,
+              title:document.querySelector('header h1').textContent}));
+            if(restored.lang!=='es'||!restored.first.startsWith('1.')||
+               restored.title!==(index===0?'Política de privacidad':'Términos y condiciones'))
+              throw Error('Spanish legal source was not restored: '+JSON.stringify(restored));
+            console.log('LEGAL_SIX_LANGUAGES_PASS',file);
             await page.close();
           }
           await browser.close();
