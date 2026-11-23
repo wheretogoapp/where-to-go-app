@@ -1487,7 +1487,10 @@ function requestLocation(){
     const identified=await resolveCurrentCity(state.lat,state.lon);
     if(identified){
       window.dispatchEvent(new CustomEvent('wtg-destination-changed'));
-      navigate('inicio');
+      // A business invited by a direct proposal link must stay on that view
+      // after granting location. Do not replace the intended #promocionar URL.
+      const sharedBusinessView=state.view==='promocionar'&&location.hash==='#promocionar';
+      navigate(sharedBusinessView?'promocionar':'inicio');
       void loadPlaces();
       window.dispatchEvent(new CustomEvent('wtg-location-success',{detail:{lat:state.lat,lon:state.lon,country:window.WTG_ACTIVE_COUNTRY,city:state.city,province:state.province}}));
     }else{
