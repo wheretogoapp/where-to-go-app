@@ -215,6 +215,9 @@ try{
 
   await page.evaluate(()=>window.WTG_auth?.showLogin());
   await page.waitForSelector('#auth-gate:not([hidden])',{timeout:10000});
+  assert(await page.locator('[data-social="apple"]').isDisabled(),'Apple no debe ofrecerse sin proveedor configurado');
+  assert(await page.locator('[data-social="facebook"]').isDisabled(),'Facebook no debe ofrecerse sin proveedor configurado');
+  assert(!(await page.locator('[data-social="google"]').isDisabled()),'Google debe seguir disponible');
   assert(await page.locator('#auth-email-fold').evaluate(el=>el.hidden),'El formulario de correo aparece antes de elegirlo');
   await page.locator('#auth-email-reveal').click();
   assert(!(await page.locator('#auth-email-fold').evaluate(el=>el.hidden)),'El formulario de correo no se despliega');
