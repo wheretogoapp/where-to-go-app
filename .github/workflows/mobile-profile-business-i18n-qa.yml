@@ -12,6 +12,8 @@ jobs:
     timeout-minutes: 13
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -20,6 +22,7 @@ jobs:
           node --check Where_to_Go_Proyecto_Completo/public/language.js
           node --check Where_to_Go_Proyecto_Completo/public/traveler-profile.js
           node --check Where_to_Go_Proyecto_Completo/public/app.js
+          node --check Where_to_Go_Proyecto_Completo/public/legal-language.js
           python - <<'PY'
           from pathlib import Path
           p=Path('Where_to_Go_Proyecto_Completo/public')
@@ -34,7 +37,16 @@ jobs:
           for price in ('<strong>$10</strong>','<strong>$30</strong>','<strong>$50</strong>'):
               assert price in promo, 'Business promotion tier missing: '+price
           assert 'pago único' in promo and 'USD / mes' in promo
-          print('Protected business prices, seven tabs and versioned language assets present')
+          import subprocess
+          base='4e4459c1aa1811b2fc24df938479fc8710c7314d'
+          for name in ('app.js','google-places-adapter.js','world-explorer.js','world-location.js',
+                       'province-heroes.js','onboarding.js'):
+              current=(p/name).read_bytes()
+              original=subprocess.check_output(['git','show',base+':Where_to_Go_Proyecto_Completo/public/'+name])
+              assert current==original,'Protected application/map logic changed: '+name
+          for name in ('privacidad.html','terminos.html'):
+              assert './legal-language.js?v=1' in (p/name).read_text()
+          print('Protected Google/region logic untouched; business plans and translated legal pages present')
           PY
       - name: Probar traducciones con el conjunto existente
         run: |
@@ -203,6 +215,53 @@ jobs:
           if(translated!=='Businesses')throw Error('Public business navigation untranslated: '+translated);
           if(loads!==1)throw Error('The page navigated/reloaded unexpectedly');
           console.log('PUBLIC_LIVE_MOBILE_PASS:',JSON.stringify({first,styles,translated,loads,sha:snap.sha}));
+          await browser.close();
+          JS
+      - name: Comprobar documentos completos en seis idiomas
+        run: |
+          python -m http.server 8766 --bind 127.0.0.1 --directory Where_to_Go_Proyecto_Completo/public >/tmp/legal-http.log 2>&1 &
+          sleep 2
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
+          const labels={
+            en:['Privacy policy','Terms and conditions'],
+            fr:['Politique de confidentialité','Conditions générales'],
+            pt:['Política de privacidade','Termos e condições'],
+            de:['Datenschutzerklärung','Nutzungsbedingungen'],
+            it:['Informativa sulla privacy','Termini e condizioni']
+          };
+          for(const [file,index,count] of [['privacidad.html',0,17],['terminos.html',1,14]]){
+            const page=await browser.newPage({locale:'es-DO'});
+            const errors=[];page.on('pageerror',e=>errors.push(e.message));
+            await page.goto('http://127.0.0.1:8766/'+file,{waitUntil:'domcontentloaded',timeout:15000});
+            await page.waitForFunction(()=>!!window.WTG_LEGAL_I18N,{timeout:5000});
+            for(const lang of ['en','fr','pt','de','it']){
+              await page.locator('#wtg-legal-language').selectOption(lang);
+              const info=await page.evaluate(()=>({
+                lang:document.documentElement.lang,title:document.querySelector('header h1').textContent,
+                sections:document.querySelectorAll('main h2,main p').length,
+                first:document.querySelector('main h2').textContent,
+                body:document.querySelector('main p').textContent.slice(0,85),
+                links:[...document.querySelectorAll('main p a')].length,
+                providerLink:[...document.querySelectorAll('main p a')].some(a=>a.href.includes('google.com')||a.href.includes('privacidad.html'))
+              }));
+              console.log('LEGAL_I18N_PASS_CANDIDATE',file,lang,JSON.stringify(info));
+              if(info.lang!==lang||info.title!==labels[lang][index]||info.sections!==count||
+                 info.first.startsWith('1. Qué')||info.first.startsWith('1. Alcance')||
+                 !info.providerLink||errors.length)
+                throw Error('Legal translation broken: '+JSON.stringify(info)+' JS='+JSON.stringify(errors));
+            }
+            await page.locator('#wtg-legal-language').selectOption('es');
+            const restored=await page.evaluate(()=>({
+              lang:document.documentElement.lang,first:document.querySelector('main h2').textContent,
+              title:document.querySelector('header h1').textContent}));
+            if(restored.lang!=='es'||!restored.first.startsWith('1.')||
+               restored.title!==(index===0?'Política de privacidad':'Términos y condiciones'))
+              throw Error('Spanish legal source was not restored: '+JSON.stringify(restored));
+            console.log('LEGAL_SIX_LANGUAGES_PASS',file);
+            await page.close();
+          }
           await browser.close();
           JS
       - name: Guardar capturas de las pantallas verificadas
