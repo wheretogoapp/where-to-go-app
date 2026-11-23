@@ -1,0 +1,135 @@
+/* Where to Go — safe mobile navigation, business entry, and legibility fix.
+   No changes to maps, Places, photos, search radii or province data. */
+@media(max-width:769px){
+ /* Profile is a panel above the persistent navigation, not a full-screen trap. */
+ #wtg-traveler-profile:not([hidden]){
+   inset:0 0 calc(66px + env(safe-area-inset-bottom)) 0!important;
+   bottom:calc(66px + env(safe-area-inset-bottom))!important;
+   z-index:14000!important;
+   overscroll-behavior:contain;
+   padding-bottom:0!important;
+ }
+ #wtg-traveler-profile .wtg-profile-shell{
+   min-height:100%!important;
+   padding-bottom:max(20px,env(safe-area-inset-bottom))!important;
+ }
+ body.wtg-profile-open .mobile-tabbar,
+ .mobile-tabbar{
+   display:flex!important;
+   position:fixed!important;
+   bottom:0!important;left:0!important;right:0!important;
+   z-index:15010!important;
+   height:calc(66px + env(safe-area-inset-bottom))!important;
+   justify-content:space-evenly!important;
+   align-items:stretch!important;
+   overflow:visible!important;
+   padding:0 2px env(safe-area-inset-bottom)!important;
+   background:#f9fcff!important;border-top:1px solid #bbd4e6!important;
+   box-shadow:0 -10px 30px rgba(1,21,46,.13)!important;
+   -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+ }
+ .mobile-tabbar .mobile-tab{
+   flex:1 1 0!important;min-width:0!important;
+   min-height:58px!important;
+   padding:5px 1px!important;gap:2px!important;
+   display:flex!important;flex-direction:column!important;
+   justify-content:center!important;align-items:center!important;
+   color:#456c8b!important;opacity:1!important;
+   border-radius:11px!important;
+ }
+ .mobile-tabbar .mobile-tab span{
+   line-height:23px!important;font-size:21px!important;
+ }
+ .mobile-tabbar .mobile-tab small{
+   font-size:clamp(9px,2.55vw,11px)!important;
+   font-weight:800!important;white-space:nowrap!important;
+   letter-spacing:-.01em!important;line-height:1.3!important;
+   opacity:1!important;
+ }
+ .mobile-tabbar .mobile-tab.active,
+ body.wtg-profile-open .mobile-tabbar [data-profile-open]{
+   color:#0755ad!important;background:rgba(18,103,178,.09)!important;
+ }
+ .mobile-tabbar .mobile-tab:focus-visible{
+   outline:3px solid #f4bc5a!important;outline-offset:-3px!important
+ }
+ html[data-wtg-theme="dark"] .mobile-tabbar{
+   background:#092744!important;border-color:#325b7b!important;
+ }
+ html[data-wtg-theme="dark"] .mobile-tabbar .mobile-tab{
+   color:#c9dcef!important
+ }
+ html[data-wtg-theme="dark"] .mobile-tabbar .mobile-tab.active,
+ html[data-wtg-theme="dark"] body.wtg-profile-open .mobile-tabbar [data-profile-open]{
+   color:#f6d186!important;background:#1c4167!important
+ }
+ /* Keep all seven destinations available without hiding any icon. */
+ @media(max-width:354px){
+   .mobile-tabbar .mobile-tab span{font-size:19px!important}
+   .mobile-tabbar .mobile-tab small{font-size:9px!important}
+ }
+}
+/* Readable action labels on photo-rich cards, independently of theme. */
+#view-explorar #explore-list .place-card .card-open,
+#view-inicio #home-list .place-card .card-open{
+ background:linear-gradient(125deg,#fce2a4,#eebd5e)!important;
+ color:#102d46!important;-webkit-text-fill-color:#102d46!important;
+ opacity:1!important;text-shadow:none!important;
+ border:1px solid #e7ad45!important;border-radius:999px!important;
+ font-size:clamp(12px,3vw,14px)!important;
+ font-weight:900!important;letter-spacing:0!important;
+ padding:11px 16px!important;min-height:46px!important;
+ min-width:117px!important;display:inline-flex!important;
+ align-items:center!important;justify-content:center!important;
+ white-space:nowrap!important;
+ box-shadow:0 7px 17px rgba(3,23,44,.2)!important;
+}
+#view-explorar #explore-list .place-card .card-open:focus-visible,
+#view-inicio #home-list .place-card .card-open:focus-visible{
+ outline:3px solid #2465ae!important;outline-offset:2px!important
+}
+#view-explorar #explore-list .place-card .place-footer{
+ flex-wrap:wrap!important;gap:9px!important;align-items:center!important;
+}
+#view-explorar #explore-list .place-card .distance-badge,
+#view-inicio #home-list .place-card .distance-badge{
+ color:#0a456b!important;-webkit-text-fill-color:#0a456b!important;
+ background:#e6f4ff!important;border:1px solid #a5d0ec!important;
+ opacity:1!important;font-weight:850!important;
+ padding:5px 9px!important;border-radius:999px!important;
+}
+#view-explorar #explore-list .place-card .source-credit,
+#view-explorar #explore-list .place-card .photo-authors,
+#view-inicio #home-list .place-card .source-credit{
+ color:#bcd1e4!important;-webkit-text-fill-color:#bcd1e4!important;
+ opacity:1!important;font-size:12px!important;line-height:1.55!important
+}
+html[data-wtg-theme="light"] #view-explorar #explore-list .place-card .source-credit,
+html[data-wtg-theme="light"] #view-explorar #explore-list .place-card .photo-authors,
+html[data-wtg-theme="light"] #view-inicio #home-list .place-card .source-credit{
+ color:#4a6278!important;-webkit-text-fill-color:#4a6278!important;
+}
+html[data-wtg-theme="dark"] #view-explorar #explore-list .place-card .place-meta,
+html[data-wtg-theme="dark"] #view-explorar #explore-list .place-card .place-meta b{
+ color:#e5f3ff!important;-webkit-text-fill-color:#e5f3ff!important
+}
+#view-explorar #explore-list .place-card .photo-authors a{
+ color:inherit!important;text-decoration:underline;text-underline-offset:2px
+}
+/* Genuine business promotion, not a new price table or fake payment system. */
+#view-promocionar .plans-grid .plan{
+ border-radius:22px!important;box-shadow:0 12px 32px rgba(4,26,48,.17)!important
+}
+#view-promocionar .plans-grid .plan-price strong{
+ font-size:clamp(30px,5vw,42px)!important;font-weight:900!important;
+}
+#view-promocionar .plans-grid .choose-plan{
+ min-height:46px!important;border-radius:13px!important;font-weight:850!important;
+}
+@media(max-width:769px){
+ #view-promocionar .business-hero{border-radius:20px!important}
+ #view-promocionar .plans-grid{gap:12px!important}
+ #view-promocionar .plans-grid .plan{padding:20px!important}
+}
+/* The profile overlay must never hide site navigation or require X to escape. */
+body.wtg-profile-open #wtg-traveler-profile{touch-action:pan-y}
