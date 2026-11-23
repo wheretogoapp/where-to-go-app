@@ -1,0 +1,55 @@
+/* Brand-controlled international drawer, independent from bottom five tabs. */
+.wtg-header-menu-glyph{display:none;font-size:19px;line-height:1;color:#eacb8b;margin-left:6px}
+.wtg-main-drawer[hidden],.wtg-main-drawer-backdrop[hidden]{display:none!important}
+.wtg-main-drawer-backdrop{position:fixed;inset:0;background:rgba(2,15,33,.65);z-index:12000;backdrop-filter:blur(4px)}
+.wtg-main-drawer{
+ position:fixed;z-index:12001;top:0;left:0;bottom:0;
+ width:min(365px,calc(100vw - 30px));max-width:100%;
+ display:flex;flex-direction:column;
+ color:#f5faff;background:linear-gradient(165deg,#0d3059,#061b35 75%);
+ border-right:1px solid rgba(228,196,130,.28);
+ box-shadow:20px 0 65px rgba(0,12,32,.45);
+ padding-top:env(safe-area-inset-top);
+}
+.wtg-drawer-head{padding:22px 21px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(225,238,255,.12)}
+.wtg-drawer-head>div{display:grid;gap:3px}
+.wtg-drawer-head strong{font-size:22px;letter-spacing:-.04em;color:#fff;-webkit-text-fill-color:#fff}
+.wtg-drawer-head small{font-size:12px;color:#bdd3e8;-webkit-text-fill-color:#bdd3e8}
+#wtg-drawer-close{height:40px;width:40px;flex:0 0 40px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:#193f68;color:#fff;font-size:27px;cursor:pointer}
+.wtg-drawer-scroll{overflow-y:auto;overscroll-behavior:contain;flex:1;padding:14px 15px max(30px,env(safe-area-inset-bottom))}
+.wtg-drawer-section-label{font-size:10px;font-weight:900;letter-spacing:.13em;color:#e5c88e;-webkit-text-fill-color:#e5c88e;margin:17px 11px 9px}
+.wtg-drawer-links{display:grid;gap:3px}
+.wtg-drawer-links button,.wtg-drawer-links a{
+ display:flex;align-items:center;gap:13px;min-height:46px;
+ text-align:left;text-decoration:none;
+ width:100%;padding:11px 13px;border-radius:12px;
+ border:1px solid transparent;background:transparent;
+ color:#e9f4ff!important;-webkit-text-fill-color:#e9f4ff!important;
+ font-family:inherit;font-size:14px;font-weight:650;cursor:pointer;
+}
+.wtg-drawer-links button:hover,.wtg-drawer-links a:hover,
+.wtg-drawer-links button:focus-visible,.wtg-drawer-links a:focus-visible{
+ background:rgba(190,215,242,.12);border-color:rgba(210,232,255,.2)
+}
+.wtg-drawer-links span{color:inherit!important;-webkit-text-fill-color:inherit!important}
+.wtg-drawer-business{
+ border:1px solid rgba(235,202,139,.54);border-radius:20px;
+ background:linear-gradient(140deg,#20466a,#0e3152 80%);
+ padding:17px;margin:8px 2px 12px;
+ box-shadow:0 9px 22px rgba(0,10,25,.2);
+ display:grid;gap:9px;
+}
+.wtg-drawer-business-icon{color:#eac783;-webkit-text-fill-color:#eac783;font-size:23px}
+.wtg-drawer-business strong{color:#fff;-webkit-text-fill-color:#fff;font-size:18px;line-height:1.25;letter-spacing:-.025em}
+.wtg-drawer-business p{color:#d5e3f0!important;-webkit-text-fill-color:#d5e3f0!important;font-size:12px;line-height:1.55;margin:0}
+.wtg-drawer-cta{min-height:46px;border:0;border-radius:12px;padding:12px 14px;background:#efd19b;color:#183651!important;-webkit-text-fill-color:#183651!important;font-size:14px;font-weight:900;cursor:pointer}
+.wtg-drawer-cta:focus-visible,#wtg-drawer-close:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media(max-width:769px){
+ .wtg-header-menu-glyph{display:inline}
+ .topbar .mobile-brand{gap:5px!important;cursor:pointer}
+ .topbar .mobile-brand:focus-visible{outline:2px solid #eacb8b;outline-offset:3px}
+}
+@media(min-width:770px){
+ .wtg-main-drawer,.wtg-main-drawer-backdrop{display:none!important}
+}
+@media(prefers-reduced-motion:reduce){.wtg-main-drawer,.wtg-main-drawer-backdrop{transition:none!important}}
