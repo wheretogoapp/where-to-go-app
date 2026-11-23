@@ -2,6 +2,18 @@
    Google, Facebook, Apple, email/password; no mock sessions or fake success.
    User activity is saved only after personalization opt-in. */
 const settings=window.WTG_CONFIG||{};
+// Do not advertise unconfigured identity providers as working sign-in methods.
+const availableSocialProviders=new Set(['google']);
+document.querySelectorAll('[data-social]').forEach(button=>{
+ if(availableSocialProviders.has(button.dataset.social))return;
+ button.disabled=true;
+ button.setAttribute('aria-disabled','true');
+ button.title='Próximamente · inicia sesión con Google o correo';
+ const notice=document.createElement('small');
+ notice.textContent=' · Próximamente';
+ notice.className='wtg-social-coming-soon';
+ button.append(notice);
+});
 const gate=document.getElementById('auth-gate');
 const error=document.getElementById('auth-error');
 const note=document.getElementById('auth-config-note');
@@ -50,6 +62,7 @@ async function loginEmail(create){
   finally{busy=false;}
 }
 async function social(provider){
+  if(!availableSocialProviders.has(provider)){showMessage('Este acceso estará disponible próximamente. Usa Google o correo.');return;}
   if(!client){showMessage('El acceso con '+provider+' no está disponible ahora. Prueba con tu correo o explora sin iniciar sesión.');return;}
   if(busy)return;busy=true;showMessage('');
   try{
