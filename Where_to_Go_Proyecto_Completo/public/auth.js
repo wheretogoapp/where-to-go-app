@@ -64,6 +64,18 @@ async function setPersonalization(value){
   currentProfile={personalization_opt_in:!!value};
   window.dispatchEvent(new CustomEvent('wtg-personalization-changed',{detail:{enabled:!!value}}));
 }
+async function updateReviewerShortcut(userId){
+  const link=document.getElementById('wtg-reviewer-entry');
+  if(!link)return;
+  link.hidden=true;
+  if(!userId||!client)return;
+  try{
+    const {data,error:e}=await client.from('wtg_reviewers')
+      .select('role').eq('user_id',userId).maybeSingle();
+    if(currentUser?.id!==userId)return;
+    if(!e&&data&&['owner','moderator'].includes(data.role))link.hidden=false;
+  }catch{/* Never block traveler login because staff UI is unavailable. */}
+}
 function handleUser(user){
   const previousId=currentUser?.id||null;
   currentUser=user||null;
@@ -71,6 +83,7 @@ function handleUser(user){
   if(previousId!==nextId){
     currentProfile=null;
     window.dispatchEvent(new CustomEvent('wtg-auth-session',{detail:{userId:nextId}}));
+    void updateReviewerShortcut(nextId);
   }
   const avatar=document.getElementById('top-business');if(avatar)avatar.textContent=user?(user.email||'WT').slice(0,2).toUpperCase():'WT';
   window.WTG_PROFILE?.setSession?.(currentUser,client);
