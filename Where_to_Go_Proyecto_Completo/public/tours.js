@@ -43,10 +43,11 @@ function setup(){
   history.hidden=false;history.textContent='Consultando tus solicitudes…';
   try{
    const rows=await window.WTG_SUBMISSIONS.listTours();
+   const statusName={pending:'Pendiente de revisión',reviewing:'En revisión',approved:'Aprobada',rejected:'Rechazada',cancelled:'Cancelada'};
    history.innerHTML=rows.length?rows.map(row=>'<article class="wtg-tour-request"><strong>'+
-      escape(row.details?.tour_name||'Tour')+'</strong><small> · '+escape(row.status)+
+      escape(row.details?.tour_name||'Tour')+'</strong><small> · '+escape(statusName[row.status]||row.status)+
       ' · '+escape((row.created_at||'').slice(0,10))+
-      '</small><p>Código: '+escape(row.id.slice(0,8))+'</p></article>').join(''):
+      '</small><p>Fotos privadas enviadas: '+Number(row.photoCount||0)+' · Código: '+escape(row.id.slice(0,8))+'</p></article>').join(''):
       '<p>Aún no tienes solicitudes de excursiones registradas.</p>';
   }catch(error){history.textContent='No se pudieron consultar solicitudes: '+String(error?.message||'Error').slice(0,180)}
  });
