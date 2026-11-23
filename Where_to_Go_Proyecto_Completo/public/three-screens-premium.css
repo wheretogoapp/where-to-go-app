@@ -502,3 +502,24 @@ html[data-wtg-theme="dark"] #view-explorar #filter-categories button{
   color:#163b58!important
  }
 }
+
+/* Light mode QA: connect the background edge-to-edge and fix mobile branding. */
+html[data-wtg-theme="light"] body,
+html[data-wtg-theme="light"] #app,
+html[data-wtg-theme="light"] .main-shell,
+html[data-wtg-theme="light"] #main-content{
+ background:#edf5fc!important
+}
+html[data-wtg-theme="light"] .topbar #mobile-brand .wtg-mobile-brand-text strong,
+html[data-wtg-theme="light"] .topbar #mobile-brand strong{
+ color:#143b59!important;text-shadow:none!important
+}
+html[data-wtg-theme="light"] .topbar #mobile-brand .wtg-mobile-brand-text small{
+ color:#92661d!important;text-shadow:none!important
+}
+html[data-wtg-theme="light"] .topbar .breadcrumb,
+html[data-wtg-theme="light"] .topbar #current-page-label{color:#193d58!important}
+html[data-wtg-theme="light"] #view-inicio .wtg-local-heading .mini-eyebrow,
+html[data-wtg-theme="light"] #view-explorar .mini-eyebrow{
+ color:#865917!important
+}
