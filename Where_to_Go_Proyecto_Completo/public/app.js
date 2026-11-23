@@ -1281,7 +1281,6 @@ function renderExplore(){
   arr.sort((a,b)=>(touristDefault?tourismRank(a)-tourismRank(b):0)||priority(a)-priority(b)||a.distance-b.distance);
   const withPhoto=arr.filter(hasCatalogPhoto).length;
   const showAll=!!state.exploreShowAll;
-  const touristDefault=state.category==='todos'&&!state.search;
   $('explore-count').textContent=state.dataMode==='loading'?'...':(touristDefault&&!showAll?withPhoto:arr.length);
   $('explore-context').textContent=`${arr.length} lugares disponibles · ${withPhoto} con fotografía · ${state.city} · hasta ${distance(state.radius)}`;
   const directoryToggle=$('wtg-explore-directory-toggle');
