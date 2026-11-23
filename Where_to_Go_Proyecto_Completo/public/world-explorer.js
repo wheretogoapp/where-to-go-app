@@ -72,7 +72,7 @@ function init(){
    status.textContent=available
     ?'República Dominicana: elige la provincia y luego la ciudad o municipio.'
     :entriesForCountry(code).length
-      ?'Selecciona una ciudad para buscar lugares reales con Google Places.'
+      ?'Selecciona una ciudad para buscar lugares reales.'
       :'Este país no tiene todavía un índice de ciudades verificadas. No se mostrarán ubicaciones inventadas.';
    apply.textContent=available?'Explorar destino en República Dominicana':'Explorar destino seleccionado';
  }
@@ -109,7 +109,7 @@ function init(){
      }else{
        const canQuery=!!window.WTG_GOOGLE_PLACES?.configured();
        setPilotVisible(canQuery);
-       if(notice){notice.textContent=canQuery?'Explorando lugares de '+label+' con Google Places.':'Google Places no está configurado; no hay lugares disponibles en '+label+'.';notice.hidden=canQuery;}
+       if(notice){notice.textContent=canQuery?'Explorando lugares de '+label+'.':'La búsqueda de lugares no está disponible ahora en '+label+'.';notice.hidden=canQuery;}
        const selectedLabel=document.getElementById('wtg-world-selected');
        if(selectedLabel)selectedLabel.textContent=label;
      }
@@ -143,7 +143,7 @@ function init(){
      const label=[saved.countryName,saved.city].filter(Boolean).join(' · ');
      const pillLabel=document.getElementById('location-label');if(pillLabel)pillLabel.textContent='📍 '+label;
      setPilotVisible(!!saved.coordinates&&!!window.WTG_GOOGLE_PLACES?.configured());
-     if(notice){notice.textContent='Destino seleccionado: '+label+'. '+(saved.coordinates?'Buscando lugares reales disponibles mediante Google Places.':'Selecciona una ciudad para empezar.');notice.hidden=false}
+     if(notice){notice.textContent='Destino seleccionado: '+label+'. '+(saved.coordinates?'Buscando lugares reales disponibles.':'Selecciona una ciudad para empezar.');notice.hidden=false}
      const selected=document.getElementById('wtg-world-selected');if(selected)selected.textContent=label;
      window.dispatchEvent(new CustomEvent('wtg-world-selected',{detail:saved}));
    }
