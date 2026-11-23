@@ -178,7 +178,7 @@ Object.assign(labels,{
   'Crear cuenta':['Create account','Créer un compte','Criar conta','Konto erstellen','Crea account'],
   'Explorar demostración sin cuenta':['Explore demo without an account','Explorer la démo sans compte','Explorar demonstração sem conta','Demo ohne Konto ansehen','Esplora demo senza account'],
   'Quiero guardar mi historial de lugares vistos para recibir recomendaciones personalizadas. Puedo desactivarlo.':['I agree to save viewed places for personalized recommendations. I can turn this off.','J’accepte d’enregistrer mes visites pour des recommandations personnalisées. Je peux désactiver cette option.','Aceito salvar lugares vistos para recomendações personalizadas. Posso desativar isso.','Ich stimme zu, angesehene Orte für Empfehlungen zu speichern. Ich kann dies deaktivieren.','Accetto di salvare i luoghi visti per consigli personalizzati. Posso disattivarlo.'],
-  'El acceso real se activa al conectar Supabase y los proveedores.':['Real sign-in requires Supabase and configured providers.','La connexion réelle nécessite Supabase et les fournisseurs configurés.','O acesso real precisa do Supabase e provedores configurados.','Echte Anmeldung benötigt Supabase und konfigurierte Anbieter.','L’accesso reale richiede Supabase e provider configurati.'],
+  'El acceso con tu cuenta no está disponible ahora.':['Sign-in is unavailable right now.','La connexion est indisponible pour le moment.','O login está indisponível no momento.','Die Anmeldung ist derzeit nicht verfügbar.','L’accesso non è disponibile al momento.'],
   'NUEVO':['NEW','NOUVEAU','NOVO','NEU','NOVITÀ'],
   'LOCAL':['LOCAL','LOCAL','LOCAL','LOKAL','LOCALE'],
   'Qué ver':['Things to see','À voir','O que ver','Sehenswertes','Da vedere'],
@@ -2221,12 +2221,12 @@ Object.assign(labels, {
     "Dein Profil wird vorbereitet…",
     "Preparazione del tuo profilo…"
   ],
-  "Guardado en este dispositivo. La sincronización entre equipos necesita activar la tabla privada de perfil en Supabase.": [
-    "Saved on this device. Syncing across devices requires enabling the private profile table in Supabase.",
-    "Enregistré sur cet appareil. La synchronisation nécessite d’activer la table privée des profils dans Supabase.",
-    "Salvo neste dispositivo. Para sincronizar entre aparelhos, é necessário ativar a tabela privada de perfis no Supabase.",
-    "Auf diesem Gerät gespeichert. Für die Synchronisierung muss die private Profiltabelle in Supabase aktiviert werden.",
-    "Salvato su questo dispositivo. La sincronizzazione richiede l’attivazione della tabella privata dei profili in Supabase."
+  "Guardado en este dispositivo. La sincronización con tu cuenta no está disponible ahora.": [
+    "Saved on this device. Account sync is not available right now.",
+    "Enregistré sur cet appareil. La synchronisation du compte est indisponible pour le moment.",
+    "Salvo neste dispositivo. A sincronização com a conta não está disponível agora.",
+    "Auf diesem Gerät gespeichert. Die Kontosynchronisierung ist derzeit nicht verfügbar.",
+    "Salvato su questo dispositivo. La sincronizzazione dell'account non è disponibile al momento."
   ],
   "Modo invitado · Los datos de este perfil permanecen en este dispositivo.": [
     "Guest mode · Profile data stays on this device.",
@@ -2235,12 +2235,12 @@ Object.assign(labels, {
     "Gastmodus · Die Profildaten bleiben auf diesem Gerät.",
     "Modalità ospite · I dati del profilo restano su questo dispositivo."
   ],
-  "Cuenta conectada · Tu perfil de viajes se sincroniza con Supabase.": [
-    "Account connected · Your travel profile syncs with Supabase.",
-    "Compte connecté · Votre profil de voyage est synchronisé avec Supabase.",
-    "Conta conectada · Seu perfil de viagens é sincronizado com o Supabase.",
-    "Konto verbunden · Dein Reiseprofil wird mit Supabase synchronisiert.",
-    "Account collegato · Il tuo profilo viaggi si sincronizza con Supabase."
+  "Cuenta conectada · Tus viajes y preferencias están sincronizados.": [
+    "Account connected · Your trips and preferences are synced.",
+    "Compte connecté · Vos voyages et préférences sont synchronisés.",
+    "Conta conectada · Suas viagens e preferências estão sincronizadas.",
+    "Konto verbunden · Deine Reisen und Einstellungen sind synchronisiert.",
+    "Account collegato · I tuoi viaggi e le tue preferenze sono sincronizzati."
   ],
   "Conectando el perfil de viajes con tu cuenta…": [
     "Connecting your travel profile to your account…",
@@ -2781,12 +2781,12 @@ Object.assign(labels,{
     "Lokaler Entwurf · nicht gesendet",
     "Bozza locale · non inviata"
   ],
-  "Solicita el registro de tu negocio. La recepción se confirma únicamente al guardarse en Supabase y la publicación requiere revisión y pago.": [
-    "Request a listing for your business. Receipt is only confirmed when saved in Supabase; publication requires review and payment.",
-    "Demandez l'inscription de votre entreprise. La réception est confirmée uniquement après sauvegarde dans Supabase ; la publication nécessite examen et paiement.",
-    "Solicite o cadastro do seu negócio. O recebimento só é confirmado após salvar no Supabase; a publicação exige análise e pagamento.",
-    "Beantragen Sie einen Eintrag für Ihr Unternehmen. Der Eingang gilt erst nach dem Speichern in Supabase als bestätigt; die Veröffentlichung erfordert Prüfung und Zahlung.",
-    "Richiedi la registrazione della tua attività. La ricezione è confermata solo dopo il salvataggio su Supabase; la pubblicazione richiede revisione e pagamento."
+  "Solicita el registro de tu negocio. La recepción se confirma únicamente cuando nuestro sistema registra la solicitud; la publicación requiere revisión y pago.": [
+    "Request a business listing. Receipt is confirmed only when our system records the request; publication requires review and payment.",
+    "Demandez le référencement de votre entreprise. La réception n'est confirmée que lorsque notre système enregistre la demande ; la publication nécessite un examen et un paiement.",
+    "Solicite o cadastro do seu negócio. O recebimento só é confirmado quando nosso sistema registra a solicitação; a publicação exige análise e pagamento.",
+    "Beantrage einen Geschäftseintrag. Der Eingang gilt erst als bestätigt, wenn unser System den Antrag erfasst; die Veröffentlichung erfordert Prüfung und Zahlung.",
+    "Richiedi la registrazione della tua attività. La ricezione è confermata solo quando il nostro sistema registra la richiesta; la pubblicazione richiede revisione e pagamento."
   ],
   "Mis solicitudes de excursiones": [
     "My excursion requests",
