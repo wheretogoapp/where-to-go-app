@@ -47,7 +47,7 @@ function setup(){
    history.innerHTML=rows.length?rows.map(row=>'<article class="wtg-tour-request"><strong>'+
       escape(row.details?.tour_name||'Tour')+'</strong><small> · '+escape(statusName[row.status]||row.status)+
       ' · '+escape((row.created_at||'').slice(0,10))+
-      '</small><p>Fotos privadas enviadas: '+Number(row.photoCount||0)+' · Código: '+escape(row.id.slice(0,8))+'</p></article>').join(''):
+      '</small><p>Fotos privadas enviadas: '+Number(row.photoCount||0)+' · Código: '+escape(row.id.slice(0,8))+'</p>'+(row.review_note?'<p><strong>Respuesta del equipo:</strong> '+escape(row.review_note)+'</p>':'')+'</article>').join(''):
       '<p>Aún no tienes solicitudes de excursiones registradas.</p>';
   }catch(error){history.textContent='No se pudieron consultar solicitudes: '+String(error?.message||'Error').slice(0,180)}
  });
