@@ -58,8 +58,8 @@ create policy "Tour organizers submit requests" on public.tour_submissions
     user_id = (select auth.uid())
     and status = 'pending'
     and reviewed_at is null
-    and (select bool_and(path like ((select auth.uid())::text || '/%'))
-         from unnest(photo_paths) as path)
+    and (select coalesce(bool_and(uploaded.path like ((select auth.uid())::text || '/%')), false)
+         from unnest(photo_paths) as uploaded(path))
   );
 
 -- Private bucket: applicants cannot browse another organizer's photos.
