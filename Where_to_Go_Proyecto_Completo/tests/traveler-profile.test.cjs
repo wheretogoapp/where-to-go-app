@@ -75,7 +75,7 @@ test('Instalación iOS/Android y metadatos PWA usan iconos reales del logo aprob
  assert(html.includes('rel="apple-touch-icon" href="/assets/wtg-icon-180.png"'));
  assert(html.includes('id="wtg-traveler-profile"'));
  assert(html.includes('data-profile-open'));
- assert(html.includes('src="/traveler-profile.js?v=1"'));
+ assert(/src="\/traveler-profile\.js\?v=\d+"/.test(html),'El perfil usa un JavaScript versionado para actualizar la caché del móvil');
  assert(html.includes('href="/traveler-profile.css?v=1"'));
  assert(css.includes('#wtg-traveler-profile[hidden]'));
  for(const n of [180,192,512])assert(fs.statSync(path.join(root,'assets','wtg-icon-'+n+'.png')).size>15000);
