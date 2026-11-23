@@ -133,3 +133,13 @@ html[data-wtg-theme="dark"] #view-explorar #explore-list .place-card .place-meta
 }
 /* The profile overlay must never hide site navigation or require X to escape. */
 body.wtg-profile-open #wtg-traveler-profile{touch-action:pan-y}
+
+/* Dark premium stylesheet previously forced gold text onto gold action buttons.
+   Match its theme-specific specificity and keep the legible navy label. */
+html[data-wtg-theme="dark"] #view-explorar #explore-list .place-card .card-open,
+html[data-wtg-theme="light"] #view-explorar #explore-list .place-card .card-open,
+html[data-wtg-theme="dark"] #view-inicio #home-list .place-card .card-open,
+html[data-wtg-theme="light"] #view-inicio #home-list .place-card .card-open{
+ color:#102d46!important;-webkit-text-fill-color:#102d46!important;
+ text-shadow:none!important;opacity:1!important;
+}
