@@ -28,7 +28,7 @@ jobs:
           assert 'aria-label="Volver al inicio"' in header
           assert 'aria-controls="wtg-main-drawer"' in header
           assert 'header-drawer.js?v=2' in h and 'header-drawer.css?v=2' in h
-          assert h.count('class="mobile-tab')==5
+          assert h.split('<nav class="mobile-tabbar"',1)[1].split('</nav>',1)[0].count('class="mobile-tab ') == 5
           print('PASS: hamburger first at far left, original logo unchanged and five bottom tabs preserved')
           PY
       - name: Instalar navegador móvil de pruebas
