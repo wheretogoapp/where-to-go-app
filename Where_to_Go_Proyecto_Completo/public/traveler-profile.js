@@ -115,10 +115,10 @@ function placeList(items,kind){
 }
 function statusText(){
  if(!active.user)return 'Modo invitado · Los datos de este perfil permanecen en este dispositivo.';
- if(active.cloud==='ok')return 'Cuenta conectada · Tu perfil de viajes se sincroniza con Supabase.';
+ if(active.cloud==='ok')return 'Cuenta conectada · Tus viajes y preferencias están sincronizados.';
  if(active.cloud==='connecting')return 'Conectando el perfil de viajes con tu cuenta…';
  if(active.cloud==='storage-error')return 'No se pudo guardar en este dispositivo. Revisa el espacio disponible.';
- return 'Guardado en este dispositivo. La sincronización entre equipos necesita activar la tabla privada de perfil en Supabase.';
+ return 'Guardado en este dispositivo. La sincronización con tu cuenta no está disponible ahora.';
 }
 function renderStatus(){const e=$('wtg-profile-sync');if(e)e.textContent=statusText()}
 function render(){
@@ -232,7 +232,7 @@ async function clearHistory(){
  state.visited=[];state.explored=[];put();tell('Historial de este perfil borrado.');
  if(active.client&&active.user){
   const r=await active.client.from('activity_events').delete().eq('user_id',active.user.id);
-  if(r.error)tell('El historial del perfil se borró. Los eventos anteriores del servidor requieren habilitar la política de eliminación en Supabase.');
+  if(r.error)tell('Se borró el historial local, pero no se pudo eliminar toda la actividad guardada en tu cuenta. Inténtalo nuevamente o solicita ayuda.');
  }
 }
 let beforeInstall=null;
