@@ -1287,7 +1287,7 @@ function renderExplore(){
   if(directoryToggle){
     directoryToggle.hidden=!touristDefault||!arr.length||withPhoto===arr.length;
     directoryToggle.textContent=showAll?'Ver selección con fotografías':'Ver todos los lugares de esta zona ('+arr.length+')';
-    directoryToggle.setAttribute('aria-pressed',String(showAll));
+    directoryToggle.setAttribute?.('aria-pressed',String(showAll));
   }
   // Keep ALL categories in the general photo-first catalogue for every city.
   // Tourist ranking changes order only, not eligibility. Without-photo records
