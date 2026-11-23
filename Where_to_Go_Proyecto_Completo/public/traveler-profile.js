@@ -36,34 +36,56 @@ const put=()=>{
 };
 async function syncCloud(){
  if(!active.client||!active.user)return;
- const who=active.user.id;
+ const who=active.user.id,version=cloudVersion;
  const data=cloudData();
+ active.cloud='connecting';renderStatus();
  try{
   const result=await active.client.from('traveler_profiles').upsert({user_id:who,data,updated_at:now()},{onConflict:'user_id'});
   if(result.error)throw result.error;
-  if(active.user?.id!==who)return;
+  if(active.user?.id!==who||cloudVersion!==version)return;
+  if(state.updatedAt!==data.updatedAt){
+   // A new edit was made while the previous request was in flight.
+   // Do not claim that this newer edit was synced.
+   active.cloud='connecting';renderStatus();
+   clearTimeout(cloudTimer);
+   cloudTimer=setTimeout(()=>{void syncCloud()},650);
+   return;
+  }
   active.cloud='ok';renderStatus();
  }catch(e){
-  if(active.user?.id!==who)return;
-  active.cloud='local';
-  renderStatus();
+  if(active.user?.id!==who||cloudVersion!==version)return;
+  active.cloud='local';renderStatus();
  }
 }
 async function fetchCloud(){
  if(!active.client||!active.user)return;
  const who=active.user.id, version=++cloudVersion;
+ const initially=state.updatedAt;
+ active.cloud='connecting';renderStatus();
  try{
   const result=await active.client.from('traveler_profiles').select('data,updated_at').eq('user_id',who).maybeSingle();
   if(result.error)throw result.error;
   if(active.user?.id!==who||cloudVersion!==version)return;
   const remote=result.data?.data;
-  if(remote?.v===2 && Array.isArray(remote.visited)&&Array.isArray(remote.explored)&&Array.isArray(remote.trips) && (Date.parse(remote.updatedAt||0)>Date.parse(state.updatedAt||0))){
+  const valid=remote?.v===2&&Array.isArray(remote.visited)&&Array.isArray(remote.explored)&&Array.isArray(remote.trips);
+  // A local edit made during this network request always takes precedence.
+  const localEdited=state.updatedAt!==initially;
+  const remoteDate=valid?Date.parse(remote.updatedAt||0):0;
+  const localDate=Date.parse(state.updatedAt||0);
+  if(valid&&!localEdited&&remoteDate>localDate){
    state={...empty(),...remote};
    try{localStorage.setItem(storageKey(),JSON.stringify(cloudData()))}catch{}
    applyPreferences();render();
-  }else if(!result.data){await syncCloud();return}
+  }else if(!valid||localEdited||localDate>remoteDate){
+   // Previously this branch reported 'synced' without uploading newer local
+   // history or trips. Now wait for a confirmed server write.
+   await syncCloud();
+   return;
+  }
   active.cloud='ok';renderStatus();
- }catch(e){if(active.user?.id===who){active.cloud='local';renderStatus()}}
+ }catch(e){
+  if(active.user?.id===who&&cloudVersion===version){active.cloud='local';renderStatus()}
+ }
 }
 function setSession(user,client){
  const old=active.user?.id||'';
@@ -71,7 +93,11 @@ function setSession(user,client){
  active.user=user||null;active.client=client||null;
  if(old!==next){
   cloudVersion++;
+  clearTimeout(cloudTimer);
+  cloudTimer=null;
   state=read();active.cloud=next?'connecting':'local';active.pending=null;
+  active.lastOpen='';active.lastOpenAt=0;
+  names.clear();
   applyPreferences();render();
  }
  if(next&&client)void fetchCloud();
@@ -100,7 +126,12 @@ function markVisited(p){
  put();active.tab='visited';render();open();
 }
 function favoriteCount(){
- try{const x=JSON.parse(localStorage.getItem('wtg_favorites')||'[]');return Array.isArray(x)?x.length:0}catch{return 0}
+ const key='wtg_favorites_'+(active.user?.id?'user_'+active.user.id:'guest');
+ try{
+  const fallback=active.user?[]:JSON.parse(localStorage.getItem('wtg_favorites')||'[]');
+  const x=JSON.parse(localStorage.getItem(key)||'null')||fallback;
+  return Array.isArray(x)?x.length:0;
+ }catch{return 0}
 }
 function rowLabel(item){
  // An external provider's place name is resolved from the currently open session only.
