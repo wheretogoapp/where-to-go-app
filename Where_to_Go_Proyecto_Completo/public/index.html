@@ -226,6 +226,17 @@
           <button type="button" data-drawer-view="taxis">🚘 <span>Taxis y transporte</span></button>
           <button type="button" data-drawer-view="favoritos">♡ <span>Mis favoritos</span></button>
         </nav>
+        <details id="wtg-drawer-categories" class="wtg-drawer-categories" open>
+          <summary id="wtg-drawer-categories-summary" aria-controls="wtg-drawer-category-content">🧭 Todas las categorías <span id="wtg-drawer-category-count" aria-live="polite"></span></summary>
+          <div id="wtg-drawer-category-content" class="wtg-drawer-category-content">
+            <label class="wtg-drawer-category-search-label" for="wtg-drawer-category-search">Buscar categoría</label>
+            <input id="wtg-drawer-category-search" type="search" autocomplete="off" placeholder="Ej. playas, restaurantes, hoteles…" aria-label="Buscar categoría en el menú" />
+            <nav id="wtg-drawer-category-list" aria-label="Todas las categorías de lugares">
+              <p class="wtg-drawer-category-loading">Preparando categorías…</p>
+            </nav>
+            <p id="wtg-drawer-category-empty" class="wtg-drawer-category-empty" hidden>No encontramos esa categoría. Prueba otra palabra.</p>
+          </div>
+        </details>
         <div class="wtg-drawer-section-label">MI CUENTA</div>
         <nav aria-label="Mi cuenta y configuración" class="wtg-drawer-links">
           <button type="button" data-drawer-profile="home">♙ <span>Mi perfil</span></button>
