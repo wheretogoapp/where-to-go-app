@@ -11,6 +11,7 @@ on:
       - 'Where_to_Go_Proyecto_Completo/tests/rd-national-coverage.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/tests/traveler-profile.test.cjs'
+      - 'Where_to_Go_Proyecto_Completo/tests/traveler-sync-isolation.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/tools/test_mobile_v10.mjs'
       - 'Where_to_Go_Proyecto_Completo/supabase/traveler-profile-v2.sql'
       - 'Where_to_Go_Proyecto_Completo/public/**'
@@ -114,6 +115,7 @@ jobs:
           node --check /tmp/where-to-go-pages/header-drawer.js
           node --input-type=module --check < /tmp/where-to-go-pages/auth.js
           node --test Where_to_Go_Proyecto_Completo/tests/traveler-profile.test.cjs
+          node --test Where_to_Go_Proyecto_Completo/tests/traveler-sync-isolation.test.cjs
           node --check /tmp/where-to-go-pages/google-places-adapter.js
           node --test Where_to_Go_Proyecto_Completo/tests/google-places-browser.test.cjs
           node --test Where_to_Go_Proyecto_Completo/tests/premium-experience.test.cjs
