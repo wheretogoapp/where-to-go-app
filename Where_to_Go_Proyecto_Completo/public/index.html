@@ -84,7 +84,7 @@
 
     <div class="main-shell">
       <header class="topbar">
-        <button id="mobile-brand" class="mobile-brand" aria-label="Volver al inicio"><span class="mobile-brand-icon"><img src="/assets/wtg-logo-hd.webp?v=1" width="34" height="34" alt=""></span><span class="wtg-mobile-brand-text"><strong>Where to Go<span class="brand-dot">.</span></strong><small>A dónde ir</small></span></button>
+        <button id="mobile-brand" class="mobile-brand" type="button" aria-label="Abrir menú principal" aria-controls="wtg-main-drawer" aria-expanded="false"><span class="mobile-brand-icon"><img src="/assets/wtg-logo-hd.webp?v=1" width="34" height="34" alt=""></span><span class="wtg-mobile-brand-text"><strong>Where to Go<span class="brand-dot">.</span></strong><small>A dónde ir</small></span><span class="wtg-header-menu-glyph" aria-hidden="true">☰</span></button>
         <div class="topbar-left"><span class="breadcrumb">Descubre el mundo</span><span class="crumb-separator">/</span><strong id="current-page-label">Inicio</strong></div>
         <div class="topbar-actions"><label class="wtg-language-control" for="wtg-language-select"><span aria-hidden="true">🌐</span> <span class="visually-hidden">Idioma / Language</span><select id="wtg-language-select" aria-label="Idioma / Language"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="it">Italiano</option></select></label>
           <button class="location-pill" id="location-pill" title="Detectar o cambiar país, región y ciudad" aria-haspopup="dialog" aria-controls="wtg-world-dialog"><span class="pin-icon">⌖</span><span class="location-pill-text" id="location-label">Tu ubicación</span><span class="chevron">⌄</span></button>
@@ -210,6 +210,34 @@
 
     <nav class="mobile-tabbar" aria-label="Navegación móvil"><button type="button" class="mobile-tab active" data-view="inicio"><span>⌂</span><small>Inicio</small></button><button type="button" class="mobile-tab" data-view="explorar"><span>◈</span><small>Explorar</small></button><button type="button" class="mobile-tab" data-view="mapa"><span>♧</span><small>Mapa</small></button><button type="button" class="mobile-tab" data-view="tours"><span>🧭</span><small>Tours</small></button><button type="button" class="mobile-tab" data-profile-open aria-label="Abrir mi perfil"><span>♙</span><small>Perfil</small></button></nav>
 
+
+    <div id="wtg-main-drawer-backdrop" class="wtg-main-drawer-backdrop" hidden></div>
+    <aside id="wtg-main-drawer" class="wtg-main-drawer" role="dialog" aria-modal="true" aria-label="Menú principal de Where to Go" hidden>
+      <div class="wtg-drawer-head"><div><strong>Where to Go<span class="brand-dot">.</span></strong><small>A dónde ir · Descubre el mundo</small></div><button type="button" id="wtg-drawer-close" aria-label="Cerrar menú">×</button></div>
+      <div class="wtg-drawer-scroll">
+        <div class="wtg-drawer-section-label">DESCUBRIR</div>
+        <nav aria-label="Explorar Where to Go" class="wtg-drawer-links">
+          <button type="button" data-drawer-view="inicio">⌂ <span>Inicio</span></button>
+          <button type="button" data-drawer-view="explorar">◈ <span>Explorar lugares</span></button>
+          <button type="button" data-drawer-view="mapa">⌖ <span>Mapa interactivo</span></button>
+          <button type="button" data-drawer-view="tours">🧭 <span>Tours y excursiones</span></button>
+          <button type="button" data-drawer-view="taxis">🚘 <span>Taxis y transporte</span></button>
+          <button type="button" data-drawer-view="favoritos">♡ <span>Mis favoritos</span></button>
+        </nav>
+        <div class="wtg-drawer-section-label">MI CUENTA</div>
+        <nav aria-label="Mi cuenta y configuración" class="wtg-drawer-links">
+          <button type="button" data-drawer-profile="home">♙ <span>Mi perfil</span></button>
+          <button type="button" data-drawer-profile="trips">🧳 <span>Mis viajes</span></button>
+          <button type="button" data-drawer-profile="settings">⚙ <span>Ajustes e idioma</span></button>
+          <button type="button" data-drawer-login>🔐 <span>Iniciar sesión o registrarme</span></button>
+        </nav>
+        <div class="wtg-drawer-section-label">PARA NEGOCIOS</div>
+        <div class="wtg-drawer-business"><span class="wtg-drawer-business-icon" aria-hidden="true">✦</span><strong>Haz que miles de viajeros descubran tu negocio</strong><p>Presenta tus servicios a quienes buscan lugares y experiencias en tu destino.</p><button type="button" data-drawer-view="promocionar" class="wtg-drawer-cta">Promocionar mi negocio →</button></div>
+        <nav aria-label="Gestión de negocios" class="wtg-drawer-links"><button type="button" data-drawer-view="mis-negocios">▣ <span>Mis negocios y registros</span></button></nav>
+        <div class="wtg-drawer-section-label">INFORMACIÓN Y AYUDA</div>
+        <nav aria-label="Información legal" class="wtg-drawer-links"><a href="/privacidad.html">🔒 <span>Política de privacidad</span></a><a href="/terminos.html">▤ <span>Términos y condiciones</span></a></nav>
+      </div>
+    </aside>
     <div id="overlay" class="overlay" hidden></div>
     <section id="place-modal" class="sheet place-sheet" role="dialog" aria-modal="true" aria-labelledby="place-modal-title" hidden><button class="modal-close" data-close aria-label="Cerrar">×</button><div id="place-modal-body"></div></section>
     <section id="location-modal" class="sheet location-sheet" role="dialog" aria-modal="true" aria-labelledby="loc-modal-title" hidden><button class="modal-close" data-close aria-label="Cerrar">×</button><div class="sheet-icon">🌍</div><h2 id="loc-modal-title">¿Dónde quieres explorar?</h2><p>Usa tu ubicación actual o descubre cualquier destino.</p><button id="use-live-location" class="btn btn-primary full-width">⌖ Usar mi ubicación actual</button><div class="modal-divider">O EXPLORA REPÚBLICA DOMINICANA</div>
@@ -288,7 +316,7 @@
   </nav>
   <div class="wtg-profile-body">
    <section data-profile-panel="home"><h3>Tu mundo, a tu manera 🌎</h3><p>Aquí se reúne todo lo que guardas para tus próximas aventuras: favoritos, lugares visitados y viajes.</p>
-    <div class="wtg-profile-quickmenu"><h4>Accesos rápidos</h4><div class="wtg-profile-quickgrid"><button type="button" id="wtg-profile-favorites" class="wtg-profile-quick"><span aria-hidden="true">♡</span><strong>Mis favoritos</strong></button><button type="button" id="wtg-profile-trips-quick" class="wtg-profile-quick"><span aria-hidden="true">🧳</span><strong>Mis viajes</strong></button><button type="button" id="wtg-profile-business" class="wtg-profile-quick"><span aria-hidden="true">✦</span><strong>Promocionar mi negocio</strong></button><button type="button" id="wtg-profile-account-quick" class="wtg-profile-quick"><span aria-hidden="true">⚙</span><strong>Ajustes</strong></button><a class="wtg-profile-quick" href="/privacidad.html" target="_blank" rel="noopener"><span aria-hidden="true">🔒</span><strong>Política de privacidad</strong></a><a class="wtg-profile-quick" href="/terminos.html" target="_blank" rel="noopener"><span aria-hidden="true">▤</span><strong>Términos y condiciones</strong></a></div></div><div class="wtg-profile-cta"><button type="button" class="wtg-profile-secondary" id="wtg-profile-install">📲 Instalar Where to Go</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-signin">🔐 Iniciar sesión o cambiar cuenta</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-logout">Cerrar sesión</button></div>
+    <div class="wtg-profile-cta"><button type="button" class="wtg-profile-secondary" id="wtg-profile-install">📲 Instalar Where to Go</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-signin">🔐 Iniciar sesión o cambiar cuenta</button><button type="button" class="wtg-profile-secondary" id="wtg-profile-logout">Cerrar sesión</button></div>
     <p class="wtg-profile-note">Ver un lugar no confirma que lo hayas visitado. Puedes marcarlo como visitado desde su ficha. El historial de lugares explorados solo se guarda si lo activas en Ajustes.</p>
    </section>
    <section data-profile-panel="visited" hidden><h3>Mis lugares visitados 📍</h3><p>Solo lugares que marcaste como visitados; no comprobamos tu ubicación física.</p><div id="wtg-profile-visited"></div>
@@ -335,6 +363,7 @@
   <link rel="stylesheet" href="/three-screens-premium.css?v=1" />
   <link rel="stylesheet" href="/mobile-ui-repair.css?v=1" />
   <link rel="stylesheet" href="/five-tab-profile-hub.css?v=1" />
+  <link rel="stylesheet" href="/header-drawer.css?v=1" />
   <script defer src="/language.js?v=7.3"></script>
   <script defer src="/province-heroes.js?v=10.0"></script>
   <script defer src="/config.js?v=6"></script>
@@ -353,6 +382,7 @@
   <script defer src="/photo-atlas.js?v=13.0"></script>
   <script defer src="/tours.js?v=1"></script>
   <script defer src="/traveler-profile.js?v=3"></script>
+  <script defer src="/header-drawer.js?v=1"></script>
   <script type="module" src="/auth.js?v=14"></script>
 </body>
 </html>
