@@ -55,11 +55,17 @@ jobs:
           test -s /tmp/where-to-go-pages/onboarding.css
           test -s /tmp/where-to-go-pages/traveler-profile.js
           test -s /tmp/where-to-go-pages/traveler-profile.css
+          test -s /tmp/where-to-go-pages/business-photo-preview.js
+          test -s /tmp/where-to-go-pages/business-share.js
           test -s /tmp/where-to-go-pages/assets/wtg-icon-180.png
           test -s /tmp/where-to-go-pages/assets/wtg-icon-192.png
           test -s /tmp/where-to-go-pages/assets/wtg-icon-512.png
           grep -q 'id="wtg-traveler-profile"' /tmp/where-to-go-pages/index.html
           grep -q '/where-to-go-app/traveler-profile.js' /tmp/where-to-go-pages/index.html
+          grep -q '/where-to-go-app/business-photo-preview.js' /tmp/where-to-go-pages/index.html
+          grep -q '/where-to-go-app/business-share.js' /tmp/where-to-go-pages/index.html
+          grep -q 'id="wtg-business-photo-preview"' /tmp/where-to-go-pages/index.html
+          grep -q 'id="wtg-tour-photo-preview"' /tmp/where-to-go-pages/index.html
           grep -q '/where-to-go-app/assets/wtg-icon-180.png' /tmp/where-to-go-pages/index.html
           test -s /tmp/where-to-go-pages/ux-polish.css
           grep -q 'id="wtg-onboarding"' /tmp/where-to-go-pages/index.html
@@ -98,6 +104,8 @@ jobs:
           node --test Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs
           node --check /tmp/where-to-go-pages/onboarding.js
           node --check /tmp/where-to-go-pages/traveler-profile.js
+          node --check /tmp/where-to-go-pages/business-photo-preview.js
+          node --check /tmp/where-to-go-pages/business-share.js
           node --input-type=module --check < /tmp/where-to-go-pages/auth.js
           node --test Where_to_Go_Proyecto_Completo/tests/traveler-profile.test.cjs
           node --check /tmp/where-to-go-pages/google-places-adapter.js
@@ -276,7 +284,7 @@ jobs:
               assert 'enrichDominicanGooglePlaces' in js,'Falta conexión Google con catálogo dominicano'
               assert 'renderLocalDiscovery' in js,'No se publicó la portada de descubrimiento por destino'
               print('Google Places: integración RD publicada')
-          for asset in ('world-location.js','world-explorer.js','world-explorer.css','city-covers.js','world-geography.js','native-mobile.css','local-discovery.css','onboarding.js','onboarding.css','ux-polish.css','municipality-geocoder.js','area-discovery.js','area-discovery.css'):
+          for asset in ('world-location.js','world-explorer.js','world-explorer.css','city-covers.js','world-geography.js','native-mobile.css','local-discovery.css','onboarding.js','onboarding.css','ux-polish.css','municipality-geocoder.js','area-discovery.js','area-discovery.css','business-photo-preview.js','business-share.js'):
               with urllib.request.urlopen(base+asset,timeout=20) as response:
                   assert response.status==200 and len(response.read())>100,asset
                   print('ASSET MUNDIAL PUBLICADO:',asset)
