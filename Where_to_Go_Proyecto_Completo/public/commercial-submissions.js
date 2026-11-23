@@ -52,11 +52,11 @@ async function submitBusiness(details,photos){
 async function listBusinesses(){
  const {db,user}=session();
  const {data,error}=await db.from('business_submissions')
-  .select('id,plan,details,status,created_at,photo_paths')
+  .select('id,plan,details,status,created_at,photo_paths,review_note')
   .eq('user_id',user.id).order('created_at',{ascending:false}).limit(50);
  if(error)throw databaseError(error);
  return (data||[]).map(row=>({
-  ...row.details,id:row.id,plan:row.plan,photoCount:Array.isArray(row.photo_paths)?row.photo_paths.length:0,
+  ...row.details,id:row.id,plan:row.plan,reviewNote:row.review_note||'',photoCount:Array.isArray(row.photo_paths)?row.photo_paths.length:0,
   status:({pending:'Pendiente de revisión',reviewing:'En revisión',approved:'Aprobada',rejected:'Rechazada',cancelled:'Cancelada'})[row.status]||row.status,
   cloudStored:true,createdAt:row.created_at
  }));
@@ -104,7 +104,7 @@ async function submitTour(form){
 async function listTours(){
  const {db,user}=session();
  const {data,error}=await db.from('tour_submissions')
-  .select('id,details,status,created_at,photo_paths')
+  .select('id,details,status,created_at,photo_paths,review_note')
   .eq('user_id',user.id).order('created_at',{ascending:false}).limit(50);
  if(error)throw databaseError(error);
  return (data||[]).map(row=>({...row,photoCount:Array.isArray(row.photo_paths)?row.photo_paths.length:0}));
