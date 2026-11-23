@@ -1,0 +1,96 @@
+name: Where to Go - Menú superior y cinco botones
+on:
+  push:
+    branches: [design/header-drawer-business-cta-20261123]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile-drawer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Test de estructura y sintaxis
+        run: |
+          node --check Where_to_Go_Proyecto_Completo/public/header-drawer.js
+          node --check Where_to_Go_Proyecto_Completo/public/traveler-profile.js
+          node --test Where_to_Go_Proyecto_Completo/tests/traveler-profile.test.cjs
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('Where_to_Go_Proyecto_Completo/public')
+          h=(p/'index.html').read_text()
+          nav=h.split('<nav class="mobile-tabbar"',1)[1].split('</nav>',1)[0]
+          assert nav.count('class="mobile-tab')==5
+          assert 'wtg-main-drawer' in h and 'data-drawer-view="promocionar"' in h
+          assert 'id="wtg-profile-business"' not in h
+          assert 'data-drawer-view="mis-negocios"' in h
+          assert 'data-drawer-login' in h
+          assert 'href="/privacidad.html"' in h and 'href="/terminos.html"' in h
+          assert (p/'header-drawer.css').read_text().count('{')==(p/'header-drawer.css').read_text().count('}')
+          print('PASS: menú arriba, cinco botones abajo, perfil separado, CTA y legales')
+          PY
+      - name: Instalar navegador
+        run: |
+          npm install --no-save playwright
+          if command -v google-chrome >/dev/null 2>&1;then
+            echo "CHROME_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            npx playwright install chromium
+          fi
+      - name: Probar menú y navegación en 390px y 360px
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory Where_to_Go_Proyecto_Completo/public >/tmp/wtg-menu-server.log 2>&1 &
+          sleep 2
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
+          for(const width of [390,360]){
+            const page=await browser.newPage({viewport:{width,height:844},isMobile:true,hasTouch:true,locale:'es-DO'});
+            page.on('pageerror',e=>console.log('PAGE_ERROR',e.message.slice(0,120)));
+            await page.route('https://maps.googleapis.com/**',r=>r.abort());
+            await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
+            await page.waitForFunction(()=>window.WTG_MAIN_MENU&&window.WTG_PROFILE&&typeof navigate==='function');
+            await page.evaluate(()=>{
+              for(const id of ['wtg-onboarding','auth-gate']){
+                const e=document.getElementById(id);if(e){e.hidden=true;e.style.setProperty('display','none','important')}
+              }
+              document.body.classList.remove('wtg-onboarding-active');
+            });
+            if(await page.locator('.mobile-tabbar .mobile-tab').count()!==5)throw Error('Seven tabs still visible');
+            await page.locator('#mobile-brand').click();
+            if(!(await page.evaluate(()=>!document.getElementById('wtg-main-drawer').hidden)))throw Error('Brand menu did not open');
+            if(await page.locator('.wtg-drawer-links button, .wtg-drawer-links a').count()<10)throw Error('Incomplete menu');
+            await page.screenshot({path:'/tmp/wtg-drawer-'+width+'.png'});
+            await page.locator('[data-drawer-view="promocionar"]').click();
+            const business=await page.evaluate(()=>({
+              opened:document.getElementById('view-promocionar').classList.contains('active'),
+              drawerClosed:document.getElementById('wtg-main-drawer').hidden,
+              prices:[...document.querySelectorAll('#view-promocionar .plan-price strong')].map(el=>({price:el.textContent,color:getComputedStyle(el).color}))
+            }));
+            if(!business.opened||!business.drawerClosed||business.prices.map(p=>p.price).join(',')!=='$10,$30,$50')throw Error('CTA broken '+JSON.stringify(business));
+            await page.locator('#mobile-brand').click();
+            await page.locator('[data-drawer-profile="settings"]').click();
+            if(!(await page.evaluate(()=>!document.getElementById('wtg-traveler-profile').hidden&&!document.querySelector('[data-profile-panel="settings"]').hidden)))throw Error('Profile settings shortcut broken');
+            await page.locator('.mobile-tabbar [data-view="inicio"]').click();
+            await page.locator('#mobile-brand').click();
+            await page.locator('[data-drawer-view="favoritos"]').click();
+            if(!(await page.evaluate(()=>document.getElementById('view-favoritos').classList.contains('active'))))throw Error('Favorites shortcut broken');
+            await page.locator('#mobile-brand').click();
+            await page.keyboard.press('Escape');
+            if(!(await page.evaluate(()=>document.getElementById('wtg-main-drawer').hidden)))throw Error('Escape does not close menu');
+            console.log('HEADER_DRAWER_QA_PASS',width,JSON.stringify(business));
+            await page.close();
+          }
+          await browser.close();
+          JS
+      - name: Capturas de prueba
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: menu-superior-capturas
+          path: /tmp/wtg-drawer-*.png
+          if-no-files-found: ignore
