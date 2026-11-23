@@ -7,6 +7,7 @@ on:
       - '.github/workflows/publicar-demo-movil.yml'
       - 'Where_to_Go_Proyecto_Completo/tools/build_pages_preview.py'
       - 'Where_to_Go_Proyecto_Completo/tests/google-places-browser.test.cjs'
+      - 'Where_to_Go_Proyecto_Completo/tests/google-places-cost-guard.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/tests/premium-experience.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/tests/rd-national-coverage.test.cjs'
       - 'Where_to_Go_Proyecto_Completo/tests/i18n-six-languages.test.cjs'
@@ -126,6 +127,7 @@ jobs:
           node --test Where_to_Go_Proyecto_Completo/tests/traveler-sync-isolation.test.cjs
           node --check /tmp/where-to-go-pages/google-places-adapter.js
           node --test Where_to_Go_Proyecto_Completo/tests/google-places-browser.test.cjs
+          node --test Where_to_Go_Proyecto_Completo/tests/google-places-cost-guard.test.cjs
           node --test Where_to_Go_Proyecto_Completo/tests/premium-experience.test.cjs
           node --test Where_to_Go_Proyecto_Completo/tests/rd-national-coverage.test.cjs
           node --check /tmp/where-to-go-pages/area-discovery.js
