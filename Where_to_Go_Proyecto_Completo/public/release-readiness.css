@@ -63,3 +63,42 @@
 @media(prefers-reduced-motion:reduce){
  .wtg-recovery-dialog,.wtg-recovery-card{transition:none!important;animation:none!important}
 }
+
+
+/* Pilot business onboarding: photos never leave the phone until the owner sends them. */
+#register-modal .wtg-business-photo-preview[hidden],
+#register-modal .wtg-business-feedback[hidden]{display:none!important}
+#register-modal .wtg-business-photo-preview{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(72px,1fr));
+ gap:9px;margin:8px 0 14px;max-width:100%;
+}
+#register-modal .wtg-business-photo-thumb{
+ min-width:0;overflow:hidden;border-radius:12px;
+ border:1px solid rgba(202,169,92,.55);background:#eaf1f8;
+ color:#16334d;text-align:center;
+}
+#register-modal .wtg-business-photo-thumb img{
+ display:block;width:100%;aspect-ratio:1/1;object-fit:cover;
+}
+#register-modal .wtg-business-photo-thumb>span{
+ display:grid;place-items:center;aspect-ratio:1/1;
+ padding:6px;font-size:11px;
+}
+#register-modal .wtg-business-photo-thumb small{
+ display:block;padding:5px;font-size:11px;font-weight:700;
+}
+#register-modal .wtg-business-feedback{
+ margin:12px 0;padding:12px 14px;
+ border-radius:12px;border:1px solid #d0a95f;
+ background:#fff7e7;color:#382b18;
+ font-size:13px;line-height:1.5;
+ overflow-wrap:anywhere;
+}
+#register-modal button[type="submit"]:disabled{
+ opacity:.68;cursor:progress;
+}
+@media(max-width:420px){
+ #register-modal .wtg-business-photo-preview{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+ }
+}
