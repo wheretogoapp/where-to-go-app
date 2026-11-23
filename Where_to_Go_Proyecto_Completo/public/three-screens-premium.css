@@ -212,10 +212,7 @@ html{scroll-padding-top:76px}
             linear-gradient(127deg,#081f40,#0d3e61 62%,#062b48)!important;
  border-bottom:1px solid #8db8c655!important
 }
-#wtg-traveler-profile .wtg-profile-cover::after{
- content:"✦";font-size:165px;color:#efce7330;
- right:30px;bottom:-40px;pointer-events:none
-}
+
 #wtg-traveler-profile .wtg-profile-brand{
  color:#e9f8fc!important;letter-spacing:.14em!important;font-size:11px!important;font-weight:800!important
 }
