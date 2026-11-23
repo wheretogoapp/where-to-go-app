@@ -4,7 +4,7 @@
 body.wtg-profile-open{overflow:hidden!important}
 .wtg-profile-shell{width:min(100%,670px);min-height:100%;margin:0 auto;background:#061a37;box-shadow:0 30px 110px #000b;padding-bottom:calc(35px + env(safe-area-inset-bottom))}
 .wtg-profile-cover{position:relative;min-height:245px;overflow:hidden;padding:calc(24px + env(safe-area-inset-top)) 25px 25px;background:radial-gradient(circle at 80% 23%,#20e69d55,transparent 29%),radial-gradient(circle at 16% 70%,#0d74c65c,transparent 46%),linear-gradient(125deg,#092859,#043c53 68%,#062747);border-bottom:1px solid #51bcd35c}
-.wtg-profile-cover::after{content:"✦";position:absolute;right:22px;bottom:-34px;font-size:180px;color:#79f3b112;pointer-events:none}
+
 .wtg-profile-close{position:absolute;right:22px;top:calc(20px + env(safe-area-inset-top));width:43px;height:43px;display:grid;place-items:center;border:1px solid #c5e6ff88;border-radius:50%;background:#062a4b9c;color:white;font-size:25px;cursor:pointer;z-index:2}
 .wtg-profile-brand{display:flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.12em;font-weight:800;color:#cbf8d9}
 .wtg-profile-brand img{width:39px;height:39px;object-fit:contain}
