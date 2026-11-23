@@ -917,6 +917,11 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
       return;
     }
     if(result?.places?.length)mergeGoogleListings(result,typeof localPlaces==='function'?localPlaces():localPlaces,'Google Maps · búsqueda principal');
+    // Main already queried all eight tourism/center types at this exact radius.
+    // Stage 0 would issue identical paid Nearby Search queries again, but cannot
+    // add a new sector. Start expansion at stage 1 (north) without losing a
+    // destination, place card or Google image from the main search.
+    if(state.category==='todos'&&wtgGoogleStage===0)wtgGoogleStage=1;
     // Las cinco clases de comercios cotidianos se consultan también en Inicio,
     // únicamente en la vista general. No se realiza un rastreo nacional.
     if(state.category==='todos'&&state.mode!=='sector'&&result?.status!=='error'){
@@ -946,7 +951,7 @@ async function enrichDominicanGooglePlaces(token,localPlaces){
 }
 // Explorar físicamente otros sectores del municipio. Una pulsación consulta
 // solo un sector y reúne las fotos en memoria de esta pantalla.
-async function loadMoreGoogleBusinesses(){
+async function loadMoreGoogleBusinesses(maxStages=2){
  if(wtgGoogleBusy||state.category!=='todos'||!window.WTG_GOOGLE_PLACES?.configured())return;
  const stages=window.WTG_GOOGLE_PLACES.scanStages();
  if(wtgGoogleStage>=stages.length)return;
@@ -957,7 +962,7 @@ async function loadMoreGoogleBusinesses(){
  try{
    // Cada toque explora hasta dos sectores; se consulta en vivo sin descargar
    // una base nacional ni disparar decenas de llamadas al abrir la página.
-   for(let part=0;part<2&&wtgGoogleStage<stages.length;part++){
+   for(let part=0;part<maxStages&&wtgGoogleStage<stages.length;part++){
      if(token!==state.loadingId)break;
      const stage=stages[wtgGoogleStage];
      toast('Google Maps: ampliando '+stage.name.toLowerCase()+'…');
@@ -1000,7 +1005,10 @@ async function autoDiscoverNearbyPhotos(token){
   for(let n=0;n<count;n++){
     if(token!==state.loadingId)return;
     wtgAutoDiscoveryBudget-=2;
-    await loadMoreGoogleBusinesses();
+    // The first automatic pass explores 2 distinct sectors and the second 1.
+    // Previously the fourth pass slot repeated 8 already-paid center types.
+    // We retain the original three distinct automatic sectors: north/east/south.
+    await loadMoreGoogleBusinesses(n===0?2:1);
   }
 }
 async function runGoogleBusinessSearch(){
