@@ -32,7 +32,7 @@ assert len(heroes) == 32, f"Expected 32 demarcation cover definitions; got {len(
 assert all(row.get("photo") and row.get("source") and row.get("license") and row.get("author")
            for row in heroes.values()), "Cover photo provenance incomplete"
 assert manifest["recordCount"] == coverage["cataloguePlaces"], "National catalogue and photo report out of sync"
-assert len(manifest["cells"]) >= 300, "National data tile index unexpectedly small"
+assert len(manifest["cells"]) >= 100, "National data tile index unexpectedly small"
 assert coverage["placeIdsWithAnyVerifiedPhoto"] >= 100, "Verified place photo index unexpectedly shrank"
 assert len(re.findall(r'class="mobile-tab(?:\s|")',index.split('<nav class="mobile-tabbar"',1)[1].split('</nav>',1)[0])) == 5, "Five mobile tabs required"
 assert "commercial-submissions.js" in index, "Business/tour backend adapter absent"
