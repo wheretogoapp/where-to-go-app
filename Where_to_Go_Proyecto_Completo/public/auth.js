@@ -16,29 +16,25 @@ function closeGate(){gate.hidden=true;document.body.classList.add('wtg-auth-done
 function openGate(){gate.hidden=false;document.body.classList.remove('wtg-auth-done');}
 async function loadProfile(){
   if(!client||!currentUser)return;
+  const userId=currentUser.id;
   try{
-    const {data,error:e}=await client.from('profiles').select('personalization_opt_in').eq('id',currentUser.id).maybeSingle();
+    const {data,error:e}=await client.from('profiles').select('personalization_opt_in').eq('id',userId).maybeSingle();
     if(e)throw e;
+    if(currentUser?.id!==userId)return;
     currentProfile=data||null;
-    if(!data){const {error:insError}=await client.from('profiles').insert({id:currentUser.id,personalization_opt_in:document.getElementById('auth-consent').checked});if(insError)throw insError;
+    if(!data){const {error:insError}=await client.from('profiles').insert({id:userId,personalization_opt_in:document.getElementById('auth-consent').checked});if(insError)throw insError;
       currentProfile={personalization_opt_in:document.getElementById('auth-consent').checked};}
     document.getElementById('auth-consent').checked=!!currentProfile?.personalization_opt_in;
     window.dispatchEvent(new CustomEvent('wtg-personalization-changed',{detail:{enabled:!!currentProfile?.personalization_opt_in}}));
-    await importLocalFavorites();
-    const listed=await client.from('favorites').select('place_id').eq('user_id',currentUser.id).limit(500);
+    // Never auto-import unscoped guest favorites into someone else's account.
+    const listed=await client.from('favorites').select('place_id').eq('user_id',userId).limit(500);
+    if(currentUser?.id!==userId)return;
     if(!listed.error&&Array.isArray(listed.data)){
       window.dispatchEvent(new CustomEvent('wtg-cloud-favorites',{
-        detail:{placeIds:listed.data.map(row=>row.place_id).filter(id=>typeof id==='string')}
+        detail:{userId,placeIds:listed.data.map(row=>row.place_id).filter(id=>typeof id==='string')}
       }));
     }
   }catch(e){console.warn('No se pudo cargar el perfil:',e?.message)}
-}
-async function importLocalFavorites(){
-  if(!client||!currentUser)return;
-  try{const keys=JSON.parse(localStorage.getItem('wtg_favorites')||'[]');
-    if(Array.isArray(keys)&&keys.length){const payload=keys.slice(0,150).filter(s=>typeof s==='string').map(place_id=>({user_id:currentUser.id,place_id}));
-      if(payload.length)await client.from('favorites').upsert(payload,{onConflict:'user_id,place_id'});}}
-  catch(e){console.warn('Favoritos sin sincronizar:',e?.message)}
 }
 async function loginEmail(create){
   if(!client){showMessage('No es posible crear una cuenta ahora. Puedes explorar sin guardar una cuenta.');return;}
@@ -69,7 +65,13 @@ async function setPersonalization(value){
   window.dispatchEvent(new CustomEvent('wtg-personalization-changed',{detail:{enabled:!!value}}));
 }
 function handleUser(user){
+  const previousId=currentUser?.id||null;
   currentUser=user||null;
+  const nextId=currentUser?.id||null;
+  if(previousId!==nextId){
+    currentProfile=null;
+    window.dispatchEvent(new CustomEvent('wtg-auth-session',{detail:{userId:nextId}}));
+  }
   const avatar=document.getElementById('top-business');if(avatar)avatar.textContent=user?(user.email||'WT').slice(0,2).toUpperCase():'WT';
   window.WTG_PROFILE?.setSession?.(currentUser,client);
   if(user){demoMode=false;closeGate();loadProfile();}
@@ -100,8 +102,8 @@ window.WTG_auth={
   },
   showLogin(){demoMode=false;openGate();},
   async signOut(){
-    if(client){await client.auth.signOut();currentUser=null;}
-    demoMode=false;window.WTG_PROFILE?.setSession?.(null,null);openGate();
+    if(client){const {error:logoutError}=await client.auth.signOut();if(logoutError)throw logoutError;}
+    demoMode=false;handleUser(null);openGate();
   }
 };
 document.querySelectorAll('[data-social]').forEach(button=>button.addEventListener('click',()=>social(button.dataset.social)));
