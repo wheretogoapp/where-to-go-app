@@ -1,0 +1,39 @@
+name: Where to Go - CDN staging scalability readiness
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cdn-staging-readiness.yml'
+      - 'Where_to_Go_Proyecto_Completo/tools/build_cloudflare_preview.py'
+      - 'Where_to_Go_Proyecto_Completo/tools/build_pages_preview.py'
+      - 'Where_to_Go_Proyecto_Completo/public/index.html'
+      - 'Where_to_Go_Proyecto_Completo/public/app.js'
+      - 'Where_to_Go_Proyecto_Completo/public/manifest.webmanifest'
+      - 'Where_to_Go_Proyecto_Completo/public/admin.html'
+permissions:
+  contents: read
+jobs:
+  prepare_cdn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Construir y validar versión raíz para CDN (sin publicar)
+        run: |
+          python Where_to_Go_Proyecto_Completo/tools/build_cloudflare_preview.py --output /tmp/where-to-go-cdn-staging
+          test -s /tmp/where-to-go-cdn-staging/_headers
+          test -s /tmp/where-to-go-cdn-staging/index.html
+          test -s /tmp/where-to-go-cdn-staging/admin.html
+          test -s /tmp/where-to-go-cdn-staging/data/places/manifest.json
+          grep -q 'src="/google-places-adapter.js' /tmp/where-to-go-cdn-staging/index.html
+          grep -q 'start_url' /tmp/where-to-go-cdn-staging/manifest.webmanifest
+          grep -q 'X-Frame-Options: DENY' /tmp/where-to-go-cdn-staging/_headers
+          grep -q 'Cache-Control: no-store' /tmp/where-to-go-cdn-staging/_headers
+          node --check /tmp/where-to-go-cdn-staging/app.js
+          node --check /tmp/where-to-go-cdn-staging/google-places-adapter.js
+          node --input-type=module --check < /tmp/where-to-go-cdn-staging/auth.js
+          echo "CDN STAGING READY: no public traffic, no Google Places calls and no paid hosting"
