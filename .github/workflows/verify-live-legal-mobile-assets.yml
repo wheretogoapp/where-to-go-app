@@ -46,9 +46,9 @@ jobs:
           assert 'legal-language.js' in result['privacidad.html'], 'Missing privacy localization'
           assert 'legal-language.js' in result['terminos.html'], 'Missing terms localization'
           assert 'const data=' in result['legal-language.js?v=1'], 'Legal translation bundle missing'
-          assert '"Perfil":' in result['language.js'], 'Profile tab not translated'
-          assert 'profilePreviousMobileView' in result['traveler-profile.js'], 'Profile nav fix absent'
-          assert 'card-open' in result['mobile-ui-repair.css'], 'Contrast fix absent'
+          assert '"Perfil":' in result['language.js?v=7.2'], 'Profile tab not translated'
+          assert 'profilePreviousMobileView' in result['traveler-profile.js?v=2'], 'Profile nav fix absent'
+          assert 'card-open' in result['mobile-ui-repair.css?v=1'], 'Contrast fix absent'
           print('EXACT_PUBLIC_RELEASE_CONFIRMED',wanted)
           print('ALL_EIGHT_REAL_PUBLIC_FILES_CONFIRMED',root)
           PY
