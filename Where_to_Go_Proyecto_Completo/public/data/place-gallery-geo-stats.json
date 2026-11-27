@@ -1,6 +1,6 @@
 {
   "matcher": "GPS <=160m/800m or exact distinctive name AND Wikimedia DR categories",
-  "startedAt": "2026-11-26T08:34:28.649172+00:00",
+  "startedAt": "2026-11-27T08:33:47.759129+00:00",
   "catalogueRows": 44696,
   "candidates": 0,
   "processed": 0,
@@ -11,7 +11,7 @@
   "http429": 0,
   "source": "Wikimedia Commons coordinates, exact subject-name match and CC license",
   "deduplicatedExistingPhotos": 0,
-  "finishedAt": "2026-11-26T08:34:28.649678+00:00",
+  "finishedAt": "2026-11-27T08:33:47.759720+00:00",
   "newPlaces": [],
   "totalGalleryPhotos": 560,
   "totalPlacesWithGallery": 93
